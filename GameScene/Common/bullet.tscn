@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bj58mpupaygv8"]
+
+[ext_resource type="PackedScene" uid="uid://d155ketyg2q77" path="res://Component/Hitbox/hitbox.tscn" id="1_1nhgk"]
+[ext_resource type="Script" uid="uid://ch4rroed4lkbk" path="res://Bullet.gd" id="2_shu2l"]
+
+[node name="Bullet" unique_id=466385270 instance=ExtResource("1_1nhgk")]
+collision_mask = 0
+script = ExtResource("2_shu2l")
+damage_source_type = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="1" unique_id=1376631923]
+hframes = 3

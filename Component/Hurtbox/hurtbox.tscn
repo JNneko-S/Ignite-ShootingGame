@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://d4ikto8y7jfwf"]
+
+[ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="1_w5k6g"]
+
+[node name="Hurtbox" type="Area2D" unique_id=935907973]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_w5k6g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1856668573]
+
+[node name="Timer" type="Timer" parent="." unique_id=1078240979]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

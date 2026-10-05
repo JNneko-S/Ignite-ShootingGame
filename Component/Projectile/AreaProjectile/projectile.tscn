@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://xnlrm0l37rap"]
+
+[ext_resource type="Script" uid="uid://b2ybr038w05h3" path="res://Component/Projectile/AreaProjectile/projectile.gd" id="1_tm405"]
+[ext_resource type="PackedScene" uid="uid://d155ketyg2q77" path="res://Component/Hitbox/hitbox.tscn" id="2_nqfee"]
+
+[node name="Projectile" type="Area2D" unique_id=753101119]
+collision_layer = 0
+collision_mask = 128
+script = ExtResource("1_tm405")
+
+[node name="VisualRoot" type="Node2D" parent="." unique_id=1505287453]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot" unique_id=1699136720]
+z_index = 2
+texture_filter = 1
+animation = &""
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=196155440]
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=744235173]
+position = Vector2(-5.68434e-14, -5.68434e-14)
+scale = Vector2(1.4, 1.4)
+
+[node name="Hitbox" parent="." unique_id=2085938192 instance=ExtResource("2_nqfee")]
+collision_layer = 4
+collision_mask = 32
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
+
+[editable path="Hitbox"]

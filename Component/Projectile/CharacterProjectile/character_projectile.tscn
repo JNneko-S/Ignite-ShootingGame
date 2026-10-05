@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dyk06yx10ak4q"]
+
+[ext_resource type="Script" uid="uid://xchyfr3avu0m" path="res://Component/Hitbox/Hitbox.gd" id="1_t2ll8"]
+[ext_resource type="Script" uid="uid://csb15tme1pejd" path="res://Component/Projectile/CharacterProjectile/character_projectile.gd" id="1_xtwu1"]
+
+[node name="CharacterProjectile" type="CharacterBody2D" unique_id=1749592914]
+process_mode = 1
+collision_layer = 8
+script = ExtResource("1_xtwu1")
+speed = 10.0
+
+[node name="VisualRoot" type="Node2D" parent="." unique_id=227830311]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot" unique_id=1769133107]
+z_index = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1836529520]
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=556284651]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_t2ll8")
+metadata/_custom_type_script = "uid://xchyfr3avu0m"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=338653067]
+debug_color = Color(0.999517, 0, 0.1105, 0.42)

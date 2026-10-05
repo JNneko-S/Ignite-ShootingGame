@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://11552kg7s1wm"]
+
+[ext_resource type="Script" uid="uid://bf1681kg5hhgq" path="res://Component/HP/hp_component.gd" id="1_62y3i"]
+
+[node name="HPComponent" type="Node2D"]
+script = ExtResource("1_62y3i")

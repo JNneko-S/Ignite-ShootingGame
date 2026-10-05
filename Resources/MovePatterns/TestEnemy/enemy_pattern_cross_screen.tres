@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MovePattern" format=3 uid="uid://o8k0stcmoj"]
+
+[ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="2"]
+
+[sub_resource type="Resource" id="step_a"]
+script = ExtResource("2")
+target = Vector2(576, 300)
+duration = 5.0
+y_trans = 1
+
+[sub_resource type="Resource" id="step_b"]
+script = ExtResource("2")
+target = Vector2(1192, 120)
+duration = 3.0
+y_trans = 1
+
+[resource]
+script = ExtResource("1")
+start_position = Vector2(-40, 160)
+steps = Array[ExtResource("2")]([SubResource("step_a"), SubResource("step_b")])
