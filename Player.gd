@@ -24,6 +24,7 @@ class_name Player
 @export var muzzle_offset : Vector2 = Vector2(0, -16)
 
 @onready var hp_component: HPComponent = $HPComponent
+@onready var graze_effect: GPUParticles2D = $GrazeEffect
 
 var graze_count : int = 0
 var is_focusing : bool = false
@@ -86,6 +87,7 @@ func _on_graze_area_area_entered(area: Area2D) -> void:
 		graze_count += 1
 		grazed.emit(graze_count)
 		graze_hit.emit(area.global_position, graze_area.get_overlapping_areas().size())
+		graze_effect.emitting = true
 
 func _on_graze_area_area_exited(area: Area2D) -> void:
 	_grazed_hitboxes.erase(area)
