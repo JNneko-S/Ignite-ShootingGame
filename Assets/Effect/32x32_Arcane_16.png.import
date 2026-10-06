@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://do3h1318hr5d1"
-path="res://.godot/imported/laser-bolts.png-1698360bad7dd87ad45a9ff0ef44ffde.ctex"
+uid="uid://dl1tyft1wtew8"
+path="res://.godot/imported/32x32_Arcane_16.png-61a8ed80cc656908caf9f0f4272f7204.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/laser-bolts.png"
-dest_files=["res://.godot/imported/laser-bolts.png-1698360bad7dd87ad45a9ff0ef44ffde.ctex"]
+source_file="res://Assets/Effect/32x32_Arcane_16.png"
+dest_files=["res://.godot/imported/32x32_Arcane_16.png-61a8ed80cc656908caf9f0f4272f7204.ctex"]
 
 [params]
 

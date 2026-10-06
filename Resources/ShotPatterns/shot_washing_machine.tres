@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dptujuh1tatt6"]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="1_e23av"]
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("1_e23av")
+start_delay = 1.0
+shot_count = 150
+interval = 0.06
+pause = 2.0
+bullet_count = 5
+spread_angle = 360.0
+rotate_per_shot = 9.0
+reverse_every_shots = 25
+bullet_speed = 160.0

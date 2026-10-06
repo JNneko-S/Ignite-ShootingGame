@@ -59,7 +59,7 @@ func _convert_relative(offset : Vector2) -> Vector2:
 		offset.x = -offset.x
 	return offset
 
-func _on_hurtbox_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void:
+func _on_hurtbox_damage(damage : int) -> void:
 	hp_component.apply_damage(ceili(damage))
 
 func _die() -> void:

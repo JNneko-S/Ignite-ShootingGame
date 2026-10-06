@@ -4,11 +4,11 @@ class_name Hurtbox
 @export var character : CharacterBody2D
 
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var cool_down: Timer = $CoolDown
+@onready var cool_down: Timer = $Timer
 
 var current_area : Area2D
 
-signal recieved_damage(damage : float, knockback_dir : Vector2)
+signal recieved_damage(damage : int)
 
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:

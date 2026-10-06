@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://cl4bv6vi5lqk1"]
+
+[ext_resource type="Texture2D" uid="uid://cmmwt1ibk8nv0" path="res://Assets/Effect/64x64_Aura_3.png" id="1_rrml2"]
+
+[sub_resource type="Curve" id="Curve_xijl7"]
+_data = [Vector2(0.7429245, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.3825605, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qdq5c"]
+curve = SubResource("Curve_xijl7")
+
+[sub_resource type="Gradient" id="Gradient_7gpve"]
+colors = PackedColorArray(0.9688112, 1, 0.73790896, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_jhy2k"]
+gradient = SubResource("Gradient_7gpve")
+
+[sub_resource type="Gradient" id="Gradient_70gwt"]
+offsets = PackedFloat32Array(0.7837838, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qdq5c"]
+gradient = SubResource("Gradient_70gwt")
+
+[sub_resource type="Curve" id="Curve_uw5jk"]
+_limits = [0.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5330189, 0), 0.0, 0.0, 0, 0, Vector2(0.8066038, 0), 0.0, 0.0, 0, 0, Vector2(1, 100), 85.75683, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_gwm8q"]
+curve = SubResource("Curve_uw5jk")
+
+[sub_resource type="Curve" id="Curve_mearq"]
+_data = [Vector2(0, 0), 0.0, 6.02816, 0, 0, Vector2(0.25, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_gj3l6"]
+curve = SubResource("Curve_mearq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jhy2k"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 10.0
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angular_velocity_min = -326.75
+angular_velocity_max = 309.39996
+gravity = Vector3(0, 0, 0)
+linear_accel_min = 9.999997
+linear_accel_max = 14.999997
+radial_accel_min = 76.31
+radial_accel_max = 76.31
+tangential_accel_min = 20.079998
+tangential_accel_max = 20.079998
+damping_min = 16.265001
+damping_max = 35.341003
+damping_curve = SubResource("CurveTexture_gwm8q")
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_gj3l6")
+color = Color(1, 1, 0.8455873, 1)
+color_ramp = SubResource("GradientTexture1D_qdq5c")
+color_initial_ramp = SubResource("GradientTexture1D_jhy2k")
+alpha_curve = SubResource("CurveTexture_qdq5c")
+hue_variation_min = 0.039999977
+hue_variation_max = 0.039999977
+
+[node name="GrazeEffect" type="GPUParticles2D" unique_id=634594498]
+self_modulate = Color(1, 1, 1, 0.517)
+emitting = false
+amount = 10
+texture = ExtResource("1_rrml2")
+lifetime = 0.3
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_jhy2k")

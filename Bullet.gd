@@ -5,6 +5,7 @@ class_name Bullet
 
 var direction : Vector2 = Vector2.UP
 var speed : float = 600.0
+var accel : float = 0.0
 
 func _ready() -> void:
 	if animation_player:
@@ -13,10 +14,13 @@ func _ready() -> void:
 	add_child(notifier)
 	notifier.screen_exited.connect(queue_free)
 
-func setup(dir: Vector2, dmg: int) -> void:
+func setup(dir : Vector2, spd : float, dmg : int, acc : float = 0.0) -> void:
 	direction = dir.normalized()
+	speed = spd
 	damage = dmg
+	accel = acc
 	rotation = direction.angle() + PI / 2.0
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta : float) -> void:
+	speed = maxf(speed + accel * delta, 0.0)
 	global_position += direction * speed * delta
