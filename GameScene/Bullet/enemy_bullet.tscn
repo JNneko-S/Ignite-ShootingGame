@@ -14,12 +14,13 @@ damage_source_type = 1
 
 [node name="Sprite2D" parent="." index="0" unique_id=1376631923]
 position = Vector2(-0.45, 0)
+scale = Vector2(2, 2)
 texture = ExtResource("2_pa34p")
 hframes = 2
 vframes = 2
 frame = 2
 
 [node name="CollisionShape2D" parent="." index="1" unique_id=1399399970]
-position = Vector2(0, -4)
+position = Vector2(0, -9)
 shape = SubResource("CircleShape2D_52nf7")
 debug_color = Color(0.993777, 0.07577468, 0, 0.41960785)
