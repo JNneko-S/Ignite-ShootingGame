@@ -23,6 +23,18 @@ class_name Player
 @export var shot_angles : Array[float] = [0.0]
 @export var muzzle_offset : Vector2 = Vector2(0, -16)
 
+@export_group("ショットの威力(距離減衰)")
+## 通常ショット1発の基礎ダメージ
+@export var shot_damage : float = 1.0
+## 画面中央から撃ったときの威力倍率
+@export var shot_power_at_center : float = 1.2
+## 画面の端から撃ったときの威力倍率
+@export var shot_power_at_edge : float = 0.85
+## 威力に応じて弾の色を変える(弾の見た目に掛け合わせる)
+@export var tint_shot_by_power : bool = true
+@export var shot_color_low : Color = Color(0.6, 0.75, 1.0)
+@export var shot_color_high : Color = Color(1.0, 1.0, 1.0)
+
 @export_group("残機")
 ## 残機の数(0のとき被弾するとゲームオーバー)
 @export var lives : int = 2
@@ -45,6 +57,10 @@ var _is_alive : bool = true
 var _invincible : bool = false
 var _blink_tween : Tween
 
+var is_igniting : bool = false
+var _ignite_invincible : bool = false
+@onready var ignite_aura : IgniteAura = get_node_or_null("IgniteAura")
+
 signal grazed(total : int)
 ## グレイズした瞬間に出る。演出(GrazeEffect)やゲージ側はこれを受け取る。
 ## bullet_position: 掠めた弾の位置 / density: その時 GrazeArea 内にある弾の数(密度の目安)
@@ -55,10 +71,18 @@ signal damaged
 signal lives_changed(lives : int)
 ## 残機が尽きて被弾したときに出る
 signal game_over
+## イグナイトのボタンが押された(ゲージ側が発動できるか判断する)
+signal ignite_pressed
+signal ignite_started(level : int, duration : float)
+signal ignite_ended
 
 func _ready() -> void:
 	add_to_group("player") # 敵の狙い撃ち用
 	_spawn_position = global_position # 復活位置は、最初に置かれた位置
+	if ignite_aura == null:
+		push_warning("Player: 子に IgniteAura(ignite_aura.gd)が見つかりません。ノード名を IgniteAura にしてください")
+	if not InputMap.has_action("UI_Ignite"):
+		push_warning("Player: Input Map に UI_Ignite が登録されていないため、イグナイトは発動できません")
 	shoot_timer.wait_time = fire_interval
 	# シェイプがシーン内で共有されないよう複製してから半径を変更する
 	graze_shape.shape = graze_shape.shape.duplicate()
@@ -68,6 +92,9 @@ func _physics_process(delta: float) -> void:
 	# UI_Focus が InputMap に未登録でもエラーにならないようにしている
 	is_focusing = InputMap.has_action("UI_Focus") and Input.is_action_pressed("UI_Focus")
 	_update_graze_radius()
+
+	if InputMap.has_action("UI_Ignite") and Input.is_action_just_pressed("UI_Ignite"):
+		ignite_pressed.emit()
 
 	var dir := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
 	var speed := move_speed
@@ -89,7 +116,16 @@ func _shoot(delta: float) -> void:
 		bullet.global_position = global_position + muzzle_offset
 		var direction := Vector2.UP.rotated(deg_to_rad(angle_deg))
 		if bullet.has_method("setup"):
-			bullet.setup(direction, 300, 1, 0)
+			var t := _center_distance_ratio(bullet.global_position)
+			var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
+			bullet.setup(direction, 300, shot_damage * power, 0)
+			if tint_shot_by_power:
+				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
+
+## 画面中央からの距離を 0.0(中央)〜1.0(角)で返す
+func _center_distance_ratio(pos : Vector2) -> float:
+	var size := get_viewport_rect().size
+	return clampf(pos.distance_to(size / 2.0) / (size.length() / 2.0), 0.0, 1.0)
 
 func _update_graze_radius() -> void:
 	var radius := graze_radius
@@ -116,7 +152,7 @@ func _on_graze_area_area_exited(area: Area2D) -> void:
 
 func _on_hurtbox_recieved_damage(damage: int) -> void:
 	# 無敵中・死亡中は被弾を無視する
-	if _invincible or not _is_alive:
+	if _invincible or _ignite_invincible or not _is_alive:
 		return
 	hp_component.apply_damage(ceili(damage))
 	damaged.emit()
@@ -167,3 +203,24 @@ func _end_invincibility() -> void:
 func add_life(amount: int = 1) -> void:
 	lives += amount
 	lives_changed.emit(lives)
+
+## イグナイト発動。無敵になり、オーラが出る(レベルに応じた無敵時間とオーラ半径)
+func start_ignite(level : int, duration : float) -> void:
+	if is_igniting or not _is_alive:
+		return
+	is_igniting = true
+	_ignite_invincible = true
+	if ignite_aura:
+		ignite_aura.activate(level, duration)
+	ignite_started.emit(level, duration)
+	var wait := create_tween() # ノードに紐づくので、途中で消えても安全
+	wait.tween_interval(duration)
+	await wait.finished
+	_end_ignite()
+
+func _end_ignite() -> void:
+	is_igniting = false
+	_ignite_invincible = false
+	if ignite_aura:
+		ignite_aura.deactivate()
+	ignite_ended.emit()

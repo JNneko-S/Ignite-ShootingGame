@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://co8nbu3ldl1ly"]
+
+[ext_resource type="Script" uid="uid://ii56u6k12wfm" path="res://ignite_visual.gd" id="1_2guf0"]
+[ext_resource type="Texture2D" uid="uid://vh6v8vc48c3n" path="res://Assets/Effect/64x64_Aura_4.png" id="1_yuquj"]
+[ext_resource type="Texture2D" uid="uid://cb7vr2tfaemqf" path="res://Assets/Effect/64x64_Aura_7.png" id="2_2guf0"]
+[ext_resource type="Texture2D" uid="uid://cmmwt1ibk8nv0" path="res://Assets/Effect/64x64_Aura_3.png" id="3_rs730"]
+
+[node name="Ignite" type="Node2D" unique_id=1104348565]
+script = ExtResource("1_2guf0")
+
+[node name="First" type="Sprite2D" parent="." unique_id=942403999]
+self_modulate = Color(1, 0.03429321, 0.17495185, 1)
+texture = ExtResource("1_yuquj")
+
+[node name="Second" type="Sprite2D" parent="." unique_id=683069167]
+self_modulate = Color(0.9999947, 0.4044998, 0.36155388, 1)
+scale = Vector2(1.5190048, 1.5190048)
+texture = ExtResource("2_2guf0")
+
+[node name="Third" type="Sprite2D" parent="." unique_id=394469187]
+self_modulate = Color(1, 0.48899934, 0.5085073, 1)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("3_rs730")

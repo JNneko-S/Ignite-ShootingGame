@@ -12,7 +12,10 @@
 [ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="10_5lt6n"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="11_5lt6n"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="11_kku2p"]
-[ext_resource type="Resource" uid="uid://db60l7egsc8eu" path="res://Resources/ShotPatterns/shot_aim_4way.tres" id="13_kku2p"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="13_kku2p"]
+[ext_resource type="Resource" uid="uid://dptujuh1tatt6" path="res://Resources/ShotPatterns/shot_washing_machine.tres" id="14_spej0"]
+[ext_resource type="Resource" uid="uid://cluhmyjtyp3xf" path="res://Resources/ShotPatterns/shot_spiral.tres" id="15_yintm"]
+[ext_resource type="Resource" uid="uid://dxn8rh0juqjqd" path="res://Resources/ShotPatterns/shot_ring.tres" id="16_yintm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -255,12 +258,33 @@ script = ExtResource("9_syiav")
 start_position = Vector2(128, -32)
 steps = Array[ExtResource("10_5lt6n")]([SubResource("Resource_e0xeq"), SubResource("Resource_msk85")])
 
-[node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui")]
+[sub_resource type="Resource" id="Resource_qiivi"]
+resource_local_to_scene = true
+script = ExtResource("11_kku2p")
+bullet_scene = ExtResource("13_kku2p")
+start_delay = 1.0
+interval = 1.0
+pause = 3.0
+bullet_count = 4
+spread_angle = 60.0
+aim_at_player = true
+bullet_speed = 100.0
+bullet_accel = 10.0
+
+[sub_resource type="Resource" id="Resource_spej0"]
+script = ExtResource("11_kku2p")
+shot_count = 100
+pause = 0.0
+bullet_count = 10
+spread_angle = 90.0
+bullet_accel = 100.0
+metadata/_custom_type_script = "uid://ct8u3n22w477n"
+
+[node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui", "lives_label")]
 script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
-graze_per_level = null
-density_bonus = null
+lives_label = NodePath("UI/CanvasLayer/Label2")
 
 [node name="UI" type="Control" parent="." unique_id=673629792]
 layout_mode = 3
@@ -338,7 +362,25 @@ position = Vector2(128, -32)
 pattern = SubResource("Resource_kku2p")
 
 [node name="EnemyShooterComponent2" parent="Enemy" unique_id=140393654 instance=ExtResource("11_5lt6n")]
-patterns = Array[ExtResource("11_kku2p")]([ExtResource("13_kku2p")])
+patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_qiivi")])
 debug_log = true
 
+[node name="EnemyShooterComponent" parent="." unique_id=131439299 instance=ExtResource("11_5lt6n")]
+position = Vector2(256, 160)
+patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_spej0")])
+default_bullet_scene = ExtResource("13_kku2p")
+
+[node name="EnemyShooterComponent2" parent="." unique_id=180410204 instance=ExtResource("11_5lt6n")]
+position = Vector2(256, 160)
+patterns = Array[ExtResource("11_kku2p")]([ExtResource("14_spej0"), ExtResource("15_yintm")])
+default_bullet_scene = ExtResource("13_kku2p")
+
+[node name="EnemyShooterComponent3" parent="." unique_id=636231277 instance=ExtResource("11_5lt6n")]
+position = Vector2(256, 160)
+patterns = Array[ExtResource("11_kku2p")]([ExtResource("16_yintm")])
+default_bullet_scene = ExtResource("13_kku2p")
+
+[editable path="Player"]
+[editable path="Player/Ignite"]
+[editable path="Player/Hurtbox"]
 [editable path="Enemy/EnemyShooterComponent2"]
