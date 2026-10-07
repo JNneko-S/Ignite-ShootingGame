@@ -258,7 +258,7 @@ script = ExtResource("9_syiav")
 start_position = Vector2(128, -32)
 steps = Array[ExtResource("10_5lt6n")]([SubResource("Resource_e0xeq"), SubResource("Resource_msk85")])
 
-[sub_resource type="Resource" id="Resource_qiivi"]
+[sub_resource type="Resource" id="Resource_yintm"]
 resource_local_to_scene = true
 script = ExtResource("11_kku2p")
 bullet_scene = ExtResource("13_kku2p")
@@ -285,6 +285,7 @@ script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
+ignite_seconds_per_level = 0.6
 
 [node name="UI" type="Control" parent="." unique_id=673629792]
 layout_mode = 3
@@ -353,6 +354,13 @@ zoom = Vector2(0.75, 0.75)
 
 [node name="Player" parent="." unique_id=1981584153 instance=ExtResource("4_nr4bh")]
 position = Vector2(240, 552)
+move_speed = 200.0
+graze_radius = 15.0
+focus_graze_multiplier = 0.9
+shot_power_at_center = 1.5
+shot_color_high = Color(1, 0.34901962, 0.33333334, 1)
+respawn_delay = 1.0
+clear_bullets_on_death = true
 
 [node name="Marker2D" type="Marker2D" parent="." unique_id=2125530553]
 position = Vector2(16, 368)
@@ -362,7 +370,7 @@ position = Vector2(128, -32)
 pattern = SubResource("Resource_kku2p")
 
 [node name="EnemyShooterComponent2" parent="Enemy" unique_id=140393654 instance=ExtResource("11_5lt6n")]
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_qiivi")])
+patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_yintm")])
 debug_log = true
 
 [node name="EnemyShooterComponent" parent="." unique_id=131439299 instance=ExtResource("11_5lt6n")]

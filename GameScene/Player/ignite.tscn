@@ -7,6 +7,14 @@
 
 [node name="Ignite" type="Node2D" unique_id=1104348565]
 script = ExtResource("1_2guf0")
+first_rotation_period = 4.0
+second_rotation_period = -4.0
+third_rotation_period = 3.0
+pulse_period = 1.0
+blink_time = 2.0
+blink_min_alpha = 0.2
+blink_freq_start = 1.5
+blink_freq_end = 1.0
 
 [node name="First" type="Sprite2D" parent="." unique_id=942403999]
 self_modulate = Color(1, 0.03429321, 0.17495185, 1)
@@ -14,7 +22,7 @@ texture = ExtResource("1_yuquj")
 
 [node name="Second" type="Sprite2D" parent="." unique_id=683069167]
 self_modulate = Color(0.9999947, 0.4044998, 0.36155388, 1)
-scale = Vector2(1.5190048, 1.5190048)
+scale = Vector2(1.7, 1.7)
 texture = ExtResource("2_2guf0")
 
 [node name="Third" type="Sprite2D" parent="." unique_id=394469187]

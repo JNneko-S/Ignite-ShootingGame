@@ -17,6 +17,9 @@ var graze_per_level : float = 10.0
 var density_bonus : float = 0.05
 ## 発動時の無敵時間 = レベル × この値(Lv1:0.5s / Lv6:3.0s / Lv10:5.0s)
 var invincible_seconds_per_level : float = 0.5
+## レベルごとに秒数を直接指定する(Lv1, Lv2, ... の順)。空なら上の式を使う。
+## 要素が足りないレベルは、上の式で補う
+var custom_durations : Array[float] = []
 
 var level : int = MIN_LEVEL
 var _progress : float = 0.0
@@ -34,6 +37,8 @@ func can_ignite() -> bool:
 	return level >= 1
 
 func invincible_time(for_level : int) -> float:
+	if for_level >= 1 and for_level <= custom_durations.size():
+		return custom_durations[for_level - 1]
 	return for_level * invincible_seconds_per_level
 
 ## グレイズ1回分を加算する。density は GrazeArea 内の弾数(自分を含む)
