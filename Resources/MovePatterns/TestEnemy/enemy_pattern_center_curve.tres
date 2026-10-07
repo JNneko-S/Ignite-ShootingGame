@@ -3,22 +3,6 @@
 [ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="2"]
 [ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="2_qws2v"]
 
-[sub_resource type="Resource" id="Resource_rq5yo"]
-script = ExtResource("2_qws2v")
-target = Vector2(240, 304)
-duration = 1.5
-y_trans = 4
-y_ease = 3
-metadata/_custom_type_script = "uid://e6xjmp17mmgm"
-
-[sub_resource type="Resource" id="Resource_bpl48"]
-script = ExtResource("2_qws2v")
-target = Vector2(568, 120)
-x_trans = 2
-x_ease = 0
-metadata/_custom_type_script = "uid://e6xjmp17mmgm"
-
 [resource]
 script = ExtResource("2")
 start_position = Vector2(240, -64)
-steps = Array[ExtResource("2_qws2v")]([SubResource("Resource_rq5yo"), SubResource("Resource_bpl48")])

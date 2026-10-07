@@ -11,8 +11,16 @@ class_name EnemyShooter
 @export var bullet_parent : Node
 ## true なら、画面内にいる間だけ撃つ(画面外からの不意打ち・無駄撃ち防止)
 @export var only_when_on_screen : bool = true
+## true なら、発射のたびに使われている値をデバッグ出力に表示する(設定が効いているかの確認用)
+@export var debug_log : bool = false
 
 func _ready() -> void:
+	if debug_log:
+		print("[EnemyShooter] 開始 node=%s patterns=%d" % [get_path(), patterns.size()])
+		for pattern in patterns:
+			print("    start_delay=%.2f shot_count=%d interval=%.2f loop=%s pause=%.2f bullet_count=%d" % [
+				pattern.start_delay, pattern.shot_count, pattern.interval,
+				pattern.loop, pattern.pause, pattern.bullet_count])
 	for pattern in patterns:
 		_run_pattern(pattern)
 
@@ -23,6 +31,10 @@ func _run_pattern(pattern : ShotPattern) -> void:
 		for i in maxi(pattern.shot_count, 1):
 			if _can_fire():
 				_fire(pattern, shot_index)
+				if debug_log:
+					print("[EnemyShooter] t=%.2f node=%s shot=%d interval=%.2f pause=%.2f pattern=%s" % [
+						Time.get_ticks_msec() / 1000.0, get_path(), shot_index, pattern.interval, pattern.pause,
+						pattern.resource_path if pattern.resource_path != "" else "(シーン内に埋め込み)"])
 			shot_index += 1
 			await _wait(pattern.interval)
 		if not pattern.loop:
@@ -59,7 +71,7 @@ func _fire(pattern : ShotPattern, shot_index : int) -> void:
 				offset = -pattern.spread_angle / 2.0 + pattern.spread_angle * i / (count - 1)
 		var angle := base + deg_to_rad(offset)
 
-		var bullet : Bullet = scene.instantiate()
+		var bullet : Node2D = scene.instantiate()
 		parent.add_child(bullet)
 		bullet.global_position = global_position
 		if bullet.has_method("setup"):
@@ -67,10 +79,10 @@ func _fire(pattern : ShotPattern, shot_index : int) -> void:
 
 ## 回転量(発射回数換算)。reverse_every_shots が設定されていれば、行って戻る動きになる
 func _rotation_steps(pattern : ShotPattern, shot_index : int) -> int:
-	var n : int = pattern.reverse_every_shots
+	var n := pattern.reverse_every_shots
 	if n <= 0:
 		return shot_index
-	var k : int = shot_index % (n * 2)
+	var k := shot_index % (n * 2)
 	return k if k < n else n * 2 - k
 
 ## このノードに紐づく Tween で待つ。ノードが消えたときに安全に処理が止まる

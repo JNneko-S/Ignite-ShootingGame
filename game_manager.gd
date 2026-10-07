@@ -8,6 +8,9 @@ class_name GameManager
 ## 未設定なら子の "UI" を使う
 @export var ui : IgniteUI
 
+## 残機を表示するラベル(任意)
+@export var lives_label : LivesLabel
+
 @export_group("イグナイト")
 @export var graze_per_level : float = 10.0
 @export var density_bonus : float = 0.05
@@ -31,6 +34,8 @@ func _ready() -> void:
 	if player:
 		player.graze_hit.connect(_on_player_graze_hit)
 		player.damaged.connect(ignite.on_miss)
+		if lives_label:
+			lives_label.bind(player)
 	else:
 		push_warning("GameManager: Player が見つかりません")
 

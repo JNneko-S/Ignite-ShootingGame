@@ -5,9 +5,6 @@
 [ext_resource type="Resource" uid="uid://oqs6gtgwa13w" path="res://Resources/MovePatterns/TestEnemy/enemy_pattern_center_curve.tres" id="2_dxnol"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="3_2ly0f"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="5_2fvp3"]
-[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="6_rq5yo"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="7_bpl48"]
-[ext_resource type="Resource" uid="uid://b01hij6ecumdj" path="res://Resources/ShotPatterns/shot_aimed_3way.tres" id="8_rq5yo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jhy2k"]
 
@@ -42,7 +39,3 @@ debug_color = Color(0.607722, 0.53875893, 0.11474762, 0.41960785)
 [node name="HPComponent" parent="." unique_id=2079593739 instance=ExtResource("5_2fvp3")]
 max_hp = 3
 hp = 3
-
-[node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("6_rq5yo")]
-position = Vector2(0, -7)
-patterns = Array[ExtResource("7_bpl48")]([ExtResource("8_rq5yo")])

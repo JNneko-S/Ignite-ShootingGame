@@ -5,10 +5,14 @@
 [ext_resource type="Script" uid="uid://dff5rlfjhbgsr" path="res://ignite_ui.gd" id="2_n7bgm"]
 [ext_resource type="Texture2D" uid="uid://c8xomjayp7pli" path="res://Assets/1_Industrial_Tileset_1.png" id="2_nr4bh"]
 [ext_resource type="Texture2D" uid="uid://plwrfeyaxsw8" path="res://Assets/2_Industrial_Tileset_1_Background.png" id="3_hqgk5"]
+[ext_resource type="Script" uid="uid://ce41j8w4twusb" path="res://lives_label.gd" id="3_n7bgm"]
 [ext_resource type="PackedScene" uid="uid://ul2o805ej4sw" path="res://player.tscn" id="4_nr4bh"]
-[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="10_5lt6n"]
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="8_n7bgm"]
+[ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="9_syiav"]
+[ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="10_5lt6n"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="11_5lt6n"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="11_kku2p"]
-[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="12_nxg43"]
+[ext_resource type="Resource" uid="uid://db60l7egsc8eu" path="res://Resources/ShotPatterns/shot_aim_4way.tres" id="13_kku2p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -227,101 +231,36 @@ texture = ExtResource("3_hqgk5")
 sources/0 = SubResource("TileSetAtlasSource_04jf3")
 sources/1 = SubResource("TileSetAtlasSource_cb2im")
 
-[sub_resource type="Resource" id="Resource_spej0"]
-script = ExtResource("11_kku2p")
-bullet_scene = ExtResource("12_nxg43")
-start_delay = 0.0
-shot_count = 300
-pause = 0.0
-bullet_count = 10
-spread_angle = 360.0
-rotate_per_shot = 20.0
-reverse_every_shots = 60
-bullet_speed = 100.0
-bullet_accel = 200.0
+[sub_resource type="Resource" id="Resource_e0xeq"]
+script = ExtResource("10_5lt6n")
+target = Vector2(128, 256)
+duration = 2.0
+wait_after = 1.0
+x_trans = 1
+x_ease = 1
+y_trans = 1
+y_ease = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_msk85"]
+script = ExtResource("10_5lt6n")
+target = Vector2(128, 648)
+wait_after = 1.0
+y_trans = 1
+y_ease = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
 
 [sub_resource type="Resource" id="Resource_kku2p"]
-script = ExtResource("11_kku2p")
-bullet_scene = ExtResource("12_nxg43")
-start_delay = 0.2
-shot_count = 65
-interval = 0.8
-pause = 0.0
-bullet_count = 12
-spread_angle = 90.0
-aim_at_player = true
-rotate_per_shot = 2.0
-reverse_every_shots = 5
-bullet_speed = 200.0
-bullet_accel = 150.0
-
-[sub_resource type="Animation" id="Animation_7uoxh"]
-resource_name = "Loop"
-length = 10.0
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("EnemyShooterComponent:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.033333335, 0.06666667, 0.1, 0.13333334, 0.16666667, 0.2, 0.23333333, 0.26666668, 0.3, 0.33333334, 0.36666667, 0.4, 0.43333334, 0.46666667, 0.5, 0.53333336, 0.56666666, 0.6, 0.6333333, 0.6666667, 0.7, 0.73333335, 0.76666665, 0.8, 0.8333333, 0.8666667, 0.9, 0.93333334, 0.96666664, 1, 1.0333333, 1.0666667, 1.1, 1.1333333, 1.1666666, 1.2, 1.2333333, 1.2666667, 1.3, 1.3333334, 1.3666667, 1.4, 1.4333333, 1.4666667, 1.5, 1.5333333, 1.5666667, 1.6, 1.6333333, 1.6666666, 1.7, 1.7333333, 1.7666667, 1.8, 1.8333334, 1.8666667, 1.9, 1.9333333, 1.9666667, 2, 3, 3.0333333, 3.0666666, 3.1, 3.1333334, 3.1666667, 3.2, 3.2333333, 3.2666667, 3.3, 3.3333333, 3.3666666, 3.4, 3.4333334, 3.4666667, 3.5, 3.5333333, 3.5666666, 3.6, 3.6333334, 3.6666667, 3.7, 3.7333333, 3.7666667, 3.8, 3.8333333, 3.8666666, 3.9, 3.9333334, 3.9666667, 4, 4.0333333, 4.0666666, 4.1, 4.133333, 4.1666665, 4.2, 4.233333, 4.266667, 4.3, 4.3333335, 4.366667, 4.4, 4.4333334, 4.4666667, 4.5, 4.5333333, 4.5666666, 4.6, 4.633333, 4.6666665, 4.7, 4.733333, 4.766667, 4.8, 4.8333335, 4.866667, 4.9, 4.9333334, 4.9666667, 5, 6, 6.0333333, 6.0666666, 6.1, 6.133333, 6.1666665, 6.2, 6.233333, 6.266667, 6.3, 6.3333335, 6.366667, 6.4, 6.4333334, 6.4666667, 6.5, 6.5333333, 6.5666666, 6.6, 6.633333, 6.6666665, 6.7, 6.733333, 6.766667, 6.8, 6.8333335, 6.866667, 6.9, 6.9333334, 6.9666667, 7, 7.0333333, 7.0666666, 7.1, 7.133333, 7.1666665, 7.2, 7.233333, 7.266667, 7.3, 7.3333335, 7.366667, 7.4, 7.4333334, 7.4666667, 7.5, 7.5333333, 7.5666666, 7.6, 7.633333, 7.6666665, 7.7, 7.733333, 7.766667, 7.8, 7.8333335, 7.866667, 7.9, 7.9333334, 7.9666667, 8, 10),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(248, 176), Vector2(247.99998, 176), Vector2(247.99977, 176), Vector2(247.99886, 176), Vector2(247.99637, 176), Vector2(247.99112, 176), Vector2(247.9816, 176), Vector2(247.96591, 176), Vector2(247.94185, 176), Vector2(247.90685, 176), Vector2(247.85803, 176), Vector2(247.79213, 176), Vector2(247.7056, 176), Vector2(247.5945, 176), Vector2(247.45459, 176), Vector2(247.28125, 176), Vector2(247.06955, 176), Vector2(246.81421, 176), Vector2(246.5096, 176), Vector2(246.14977, 176), Vector2(245.7284, 176), Vector2(245.23885, 176), Vector2(244.67415, 176), Vector2(244.02695, 176), Vector2(243.2896, 176), Vector2(242.45409, 176), Vector2(241.51207, 176), Vector2(240.45485, 176), Vector2(239.2734, 176), Vector2(237.95836, 176), Vector2(236.5, 176), Vector2(234.88829, 176), Vector2(233.11281, 176), Vector2(231.16284, 176), Vector2(229.02733, 176), Vector2(226.69484, 176), Vector2(224.1536, 176), Vector2(221.39154, 176), Vector2(218.39622, 176), Vector2(215.15485, 176), Vector2(211.65433, 176), Vector2(207.88116, 176), Vector2(203.8216, 176), Vector2(199.46147, 176), Vector2(194.78629, 176), Vector2(189.78125, 176), Vector2(184.43118, 176), Vector2(178.72058, 176), Vector2(172.6336, 176), Vector2(166.15405, 176), Vector2(159.26544, 176), Vector2(151.95084, 176), Vector2(144.1931, 176), Vector2(135.97467, 176), Vector2(127.27762, 176), Vector2(118.08371, 176), Vector2(108.374435, 176), Vector2(98.13086, 176), Vector2(87.333725, 176), Vector2(75.96338, 176), Vector2(64, 176), Vector2(64, 176), Vector2(64.00002, 176), Vector2(64.0004, 176), Vector2(64.002, 176), Vector2(64.006325, 176), Vector2(64.015434, 176), Vector2(64.032, 176), Vector2(64.05928, 176), Vector2(64.101135, 176), Vector2(64.162, 176), Vector2(64.24691, 176), Vector2(64.3615, 176), Vector2(64.512, 176), Vector2(64.70521, 176), Vector2(64.94854, 176), Vector2(65.25, 176), Vector2(65.61817, 176), Vector2(66.06225, 176), Vector2(66.592, 176), Vector2(67.217804, 176), Vector2(67.950615, 176), Vector2(68.802, 176), Vector2(69.784096, 176), Vector2(70.90965, 176), Vector2(72.192, 176), Vector2(73.64506, 176), Vector2(75.283356, 176), Vector2(77.121994, 176), Vector2(79.17669, 176), Vector2(81.46373, 176), Vector2(84, 176), Vector2(86.802986, 176), Vector2(89.89077, 176), Vector2(93.282, 176), Vector2(96.99595, 176), Vector2(101.05246, 176), Vector2(105.47201, 176), Vector2(110.27558, 176), Vector2(115.48483, 176), Vector2(121.121994, 176), Vector2(127.209885, 176), Vector2(133.77188, 176), Vector2(140.832, 176), Vector2(148.41483, 176), Vector2(156.5456, 176), Vector2(165.25, 176), Vector2(174.55446, 176), Vector2(184.48596, 176), Vector2(195.072, 176), Vector2(206.34076, 176), Vector2(218.32097, 176), Vector2(231.04202, 176), Vector2(244.53374, 176), Vector2(258.82666, 176), Vector2(273.95197, 176), Vector2(289.94138, 176), Vector2(306.8271, 176), Vector2(324.642, 176), Vector2(343.41962, 176), Vector2(363.19412, 176), Vector2(384, 176), Vector2(384, 176), Vector2(384, 176), Vector2(383.99982, 176), Vector2(383.99915, 176), Vector2(383.9973, 176), Vector2(383.99344, 176), Vector2(383.9864, 176), Vector2(383.9748, 176), Vector2(383.95703, 176), Vector2(383.93115, 176), Vector2(383.89505, 176), Vector2(383.84637, 176), Vector2(383.7824, 176), Vector2(383.7003, 176), Vector2(383.59686, 176), Vector2(383.46875, 176), Vector2(383.3123, 176), Vector2(383.12354, 176), Vector2(382.8984, 176), Vector2(382.63245, 176), Vector2(382.32098, 176), Vector2(381.95914, 176), Vector2(381.54175, 176), Vector2(381.0634, 176), Vector2(380.5184, 176), Vector2(379.90085, 176), Vector2(379.20456, 176), Vector2(378.42316, 176), Vector2(377.5499, 176), Vector2(376.5779, 176), Vector2(375.5, 176), Vector2(374.30872, 176), Vector2(372.99643, 176), Vector2(371.55515, 176), Vector2(369.9767, 176), Vector2(368.25272, 176), Vector2(366.3744, 176), Vector2(364.3329, 176), Vector2(362.11896, 176), Vector2(359.72314, 176), Vector2(357.1358, 176), Vector2(354.34695, 176), Vector2(351.3464, 176), Vector2(348.1237, 176), Vector2(344.66812, 176), Vector2(340.96875, 176), Vector2(337.01434, 176), Vector2(332.79346, 176), Vector2(328.2944, 176), Vector2(323.5052, 176), Vector2(318.41357, 176), Vector2(313.00714, 176), Vector2(307.27316, 176), Vector2(301.19867, 176), Vector2(294.77042, 176), Vector2(287.9749, 176), Vector2(280.7985, 176), Vector2(273.22714, 176), Vector2(265.24667, 176), Vector2(256.8425, 176), Vector2(248, 176), Vector2(248, 176)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("EnemyShooterComponent/EnemyShooterComponent3:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.033333335, 0.06666667, 0.1, 0.13333334, 0.16666667, 0.2, 0.23333333, 0.26666668, 0.3, 0.33333334, 0.36666667, 0.4, 0.43333334, 0.46666667, 0.5, 0.53333336, 0.56666666, 0.6, 0.6333333, 0.6666667, 0.7, 0.73333335, 0.76666665, 0.8, 0.8333333, 0.8666667, 0.9, 0.93333334, 0.96666664, 1, 1.0333333, 1.0666667, 1.1, 1.1333333, 1.1666666, 1.2, 1.2333333, 1.2666667, 1.3, 1.3333334, 1.3666667, 1.4, 1.4333333, 1.4666667, 1.5, 1.5333333, 1.5666667, 1.6, 1.6333333, 1.6666666, 1.7, 1.7333333, 1.7666667, 1.8, 1.8333334, 1.8666667, 1.9, 1.9333333, 1.9666667, 2, 3, 3.0333333, 3.0666666, 3.1, 3.1333334, 3.1666667, 3.2, 3.2333333, 3.2666667, 3.3, 3.3333333, 3.3666666, 3.4, 3.4333334, 3.4666667, 3.5, 3.5333333, 3.5666666, 3.6, 3.6333334, 3.6666667, 3.7, 3.7333333, 3.7666667, 3.8, 3.8333333, 3.8666666, 3.9, 3.9333334, 3.9666667, 4, 4.0333333, 4.0666666, 4.1, 4.133333, 4.1666665, 4.2, 4.233333, 4.266667, 4.3, 4.3333335, 4.366667, 4.4, 4.4333334, 4.4666667, 4.5, 4.5333333, 4.5666666, 4.6, 4.633333, 4.6666665, 4.7, 4.733333, 4.766667, 4.8, 4.8333335, 4.866667, 4.9, 4.9333334, 4.9666667, 5, 6, 6.0333333, 6.0666666, 6.1, 6.133333, 6.1666665, 6.2, 6.233333, 6.266667, 6.3, 6.3333335, 6.366667, 6.4, 6.4333334, 6.4666667, 6.5, 6.5333333, 6.5666666, 6.6, 6.633333, 6.6666665, 6.7, 6.733333, 6.766667, 6.8, 6.8333335, 6.866667, 6.9, 6.9333334, 6.9666667, 7, 7.0333333, 7.0666666, 7.1, 7.133333, 7.1666665, 7.2, 7.233333, 7.266667, 7.3, 7.3333335, 7.366667, 7.4, 7.4333334, 7.4666667, 7.5, 7.5333333, 7.5666666, 7.6, 7.633333, 7.6666665, 7.7, 7.733333, 7.766667, 7.8, 7.8333335, 7.866667, 7.9, 7.9333334, 7.9666667, 8, 10),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [0.0, -0.00026913636095595404, -0.0010763610247083166, -0.0024211205281877285, -0.004302493758714804, -0.006719190971102018, -0.009669555227713733, -0.013151565141437671, -0.01716283688719733, -0.021700615790172795, -0.026761796075195354, -0.032342907700484425, -0.03844012513515627, -0.04504927028506023, -0.05216581102986062, -0.05978487585221792, -0.06790124506028006, -0.07650934201017368, -0.08560328577105647, -0.09517681505337494, -0.105223405242314, -0.11573614551267486, -0.12670784415897973, -0.1381309642270745, -0.1499977112892159, -0.16229990470727707, -0.17502916488626674, -0.18817671431746508, -0.20173359994197781, -0.21569044738049215, -0.2300378120336255, -0.24476574605816204, -0.2598642547975061, -0.27532287546126355, -0.29113109844566054, -0.3072780396398844, -0.3237527447130528, -0.340543767793795, -0.35763966301074035, -0.375028727018929, -0.3926991, -0.4106385883549102, -0.428834855471667, -0.44727553524456454, -0.4659479880610462, -0.48483929342827636, -0.5039366244801791, -0.5232269202837792, -0.5426967922124426, -0.5623330388930547, -0.582122131258842, -0.6020506338697906, -0.6221047367788479, -0.642270723665721, -0.6625348313967372, -0.6828831563980842, -0.70330170146919, -0.7237765162228627, -0.7442936034585301, -0.7648388723488608, -0.7853982, -0.7853982, -0.7848599125312314, -0.7832454632037267, -0.7805559441967679, -0.7767931977357136, -0.7719598033109393, -0.7660590747977158, -0.759095054970268, -0.7510725114787487, -0.7419969536727977, -0.7318745931027526, -0.7207123698521745, -0.7085179349828308, -0.6952996446830229, -0.6810665631934221, -0.6658284335487075, -0.6495956951325832, -0.632379501232796, -0.6141916137110304, -0.5950445551463934, -0.5749513747685153, -0.5539258942277936, -0.5319824969351838, -0.5091362567989943, -0.4854027626747115, -0.4607983758385892, -0.4353398554806098, -0.40904475661821316, -0.3819309853691877, -0.354017290492159, -0.3253225611858923, -0.29586669313681924, -0.26566967565813115, -0.2347524343306162, -0.20313598836182223, -0.17084210597337446, -0.13789269582703767, -0.10431064966555326, -0.07011885923166261, -0.03534073121528536, 0.0, 0.035878991456677056, 0.07227152569019069, 0.10915288523598576, 0.1464977908689491, 0.18428040160340942, 0.22247506370721482, 0.261055655314415, 0.2999953991717419, 0.3392678925329662, 0.3788460772645408, 0.41870308248643795, 0.45881128830455253, 0.49914326207829873, 0.5396714775403311, 0.580368127543025, 0.6212052176852367, 0.662154847192582, 0.703189021663917, 0.7442795594445784, 0.7853982, 0.7853982, 0.7648388562567615, 0.7442936180877113, 0.7237765513328975, 0.703301713172535, 0.6828831446947392, 0.6625348431000821, 0.642270735369066, 0.622104713372158, 0.6020506104631007, 0.5821221780722219, 0.5623330388930547, 0.5426967922124426, 0.5232268734703993, 0.503936647886869, 0.4848393168349663, 0.46594794124766636, 0.44727555865125446, 0.428834855471667, 0.41063856494822026, 0.3926991, 0.3750287738323088, 0.35763966301074035, 0.3405437443871051, 0.3237527213063629, 0.30727806304657435, 0.29113109844566054, 0.27532287546126355, 0.25986420798412624, 0.24476576946485196, 0.2300378120336255, 0.21569049419387198, 0.20173355312859798, 0.18817672602081004, 0.17502914147957682, 0.16229992811396698, 0.14999769958587095, 0.13813097593041945, 0.1267078558623247, 0.11573615721601982, 0.10522337013227911, 0.0951767974983575, 0.08560327406771151, 0.07650935371351864, 0.06790121580191766, 0.05978489925890784, 0.05216583443655054, 0.04504926443338775, 0.03844010465430259, 0.032342895997139465, 0.026761804852704074, 0.021700623104763395, 0.01716281494342553, 0.013151563678519551, 0.009669537672696293, 0.0067191712217073984, 0.004302477300885954, 0.002421141191906173, 0.0010763800426438763, 0.0002691301206958485, 0.0, 0.0]
-}
-
-[sub_resource type="Animation" id="Animation_n7bgm"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("EnemyShooterComponent:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(248, 176)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("EnemyShooterComponent/EnemyShooterComponent3:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_syiav"]
-_data = {
-&"Loop": SubResource("Animation_7uoxh"),
-&"RESET": SubResource("Animation_n7bgm")
-}
+script = ExtResource("9_syiav")
+start_position = Vector2(128, -32)
+steps = Array[ExtResource("10_5lt6n")]([SubResource("Resource_e0xeq"), SubResource("Resource_msk85")])
 
 [node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui")]
 script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
+graze_per_level = null
+density_bonus = null
 
 [node name="UI" type="Control" parent="." unique_id=673629792]
 layout_mode = 3
@@ -346,6 +285,14 @@ offset_left = 24.0
 offset_right = 76.0
 offset_bottom = 23.0
 text = "Ignite"
+
+[node name="Label2" type="Label" parent="UI/CanvasLayer" unique_id=237769609]
+offset_left = 416.0
+offset_top = 8.0
+offset_right = 462.0
+offset_bottom = 31.0
+text = "残機:1"
+script = ExtResource("3_n7bgm")
 
 [node name="Parallax2D" type="Parallax2D" parent="." unique_id=692685510]
 repeat_size = Vector2(0, 330)
@@ -386,17 +333,12 @@ position = Vector2(240, 552)
 [node name="Marker2D" type="Marker2D" parent="." unique_id=2125530553]
 position = Vector2(16, 368)
 
-[node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("10_5lt6n")]
-position = Vector2(248, 176)
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_spej0")])
+[node name="Enemy" parent="." unique_id=724143726 instance=ExtResource("8_n7bgm")]
+position = Vector2(128, -32)
+pattern = SubResource("Resource_kku2p")
 
-[node name="EnemyShooterComponent3" parent="EnemyShooterComponent" unique_id=685481398 instance=ExtResource("10_5lt6n")]
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_kku2p")])
+[node name="EnemyShooterComponent2" parent="Enemy" unique_id=140393654 instance=ExtResource("11_5lt6n")]
+patterns = Array[ExtResource("11_kku2p")]([ExtResource("13_kku2p")])
+debug_log = true
 
-[node name="EnemyShooterComponent4" parent="EnemyShooterComponent" unique_id=326221846 instance=ExtResource("10_5lt6n")]
-rotation = -3.1415927
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_kku2p")])
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1741339107]
-libraries/ = SubResource("AnimationLibrary_syiav")
-autoplay = &"Loop"
+[editable path="Enemy/EnemyShooterComponent2"]

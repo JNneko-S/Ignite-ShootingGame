@@ -31,8 +31,8 @@ point_count = 4
 curve = SubResource("Curve_uw5jk")
 
 [sub_resource type="Curve" id="Curve_mearq"]
-_data = [Vector2(0, 0), 0.0, 6.02816, 0, 0, Vector2(0.25, 1), 0.0, 0.0, 0, 0]
-point_count = 2
+_data = [Vector2(0, 0), 0.0, 4.901449, 0, 0, Vector2(0.74157304, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.51666665), -1.0559324, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_gj3l6"]
 curve = SubResource("Curve_mearq")
