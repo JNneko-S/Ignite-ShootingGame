@@ -10,6 +10,11 @@ class_name IgniteAura
 @export var params : IgniteParams
 ## 見た目(Ignite シーンのルート)。未指定なら、子孫から自動で探す
 @export var visual : IgniteVisual
+## true なら、オーラに入った物や、発動時に重なっている物を出力する(反射しない原因の調査用)
+@export var debug_log : bool = false
+## true なら、当たり判定の半径を First の見た目の大きさに毎フレーム合わせる
+## (出現の拡大アニメーションも、当たり判定と同時に進む)
+@export var sync_hitbox_to_visual : bool = true
 
 @export_group("オーラ")
 ## オーラ半径 = base_radius + radius_per_level × レベル
@@ -21,6 +26,7 @@ class_name IgniteAura
 
 var _shape_node : CollisionShape2D
 var _radius : float = 0.0
+var _active : bool = false
 var _fallback_on : bool = false
 var _chain_until_msec : int = 0
 
@@ -54,20 +60,25 @@ func _ready() -> void:
 func activate(level : int, duration : float) -> void:
 	_radius = base_radius + radius_per_level * level
 	_chain_until_msec = Time.get_ticks_msec() + int(duration * 1000.0)
+	_active = true
 
 	# 見た目を先に出す(当たり判定側で何かあっても、表示は止まらないように)
 	if visual:
-		# 最大レベルのときの半径を 1.0 とした比率で、スプライトを拡縮する
-		var max_radius := base_radius + radius_per_level * IgniteGauge.MAX_LEVEL
-		visual.show_aura(level, _radius / max_radius, duration)
+		# First の縁が、この効果半径にぴったり重なるようにスケールされる
+		visual.show_aura(level, _radius, duration)
+		if sync_hitbox_to_visual:
+			_radius = 1.0 # 出現アニメーション中は、見た目の大きさに従う
 	else:
 		_fallback_on = true
 		queue_redraw()
 
-	(_shape_node.shape as CircleShape2D).radius = _radius
+	_apply_radius(_radius)
 	set_deferred("monitoring", true)
+	if debug_log:
+		_debug_report()
 
 func deactivate() -> void:
+	_active = false
 	set_deferred("monitoring", false)
 	if visual:
 		visual.hide_aura()
@@ -75,11 +86,38 @@ func deactivate() -> void:
 		_fallback_on = false
 		queue_redraw()
 
+## 見た目の First の大きさに、当たり判定の半径を合わせ続ける
+func _physics_process(_delta : float) -> void:
+	if not _active or visual == null or not sync_hitbox_to_visual:
+		return
+	var r := visual.current_radius()
+	if r > 0.0:
+		_apply_radius(r)
+
+func _apply_radius(r : float) -> void:
+	_radius = maxf(r, 1.0)
+	(_shape_node.shape as CircleShape2D).radius = _radius
+
 func _draw() -> void:
 	if _fallback_on and _radius > 0.0:
 		draw_circle(Vector2.ZERO, _radius, fallback_color)
 		draw_arc(Vector2.ZERO, _radius, 0.0, TAU, 64, Color(fallback_color, 0.9), 2.0)
 
 func _on_area_entered(area : Area2D) -> void:
+	if debug_log:
+		print("[IgniteAura] 入った: %s / EnemyBullet=%s / script=%s / layer=%d" % [
+			area.get_path(), area is EnemyBullet,
+			area.get_script().resource_path if area.get_script() else "(なし)", area.collision_layer])
 	if area is EnemyBullet and not area.is_ignited():
 		area.ignite(params, _chain_until_msec, false)
+
+## 発動の2フレーム後に、実際に重なっている Area を一覧する
+func _debug_report() -> void:
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var overlaps := get_overlapping_areas()
+	print("[IgniteAura] monitoring=%s mask=%d 半径=%.0f 重なっているArea=%d個" % [
+		monitoring, collision_mask, _radius, overlaps.size()])
+	for a in overlaps.slice(0, 5):
+		print("    %s / EnemyBullet=%s / layer=%d / monitorable=%s" % [
+			a.get_path(), a is EnemyBullet, a.collision_layer, a.monitorable])

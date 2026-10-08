@@ -7,15 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://plwrfeyaxsw8" path="res://Assets/2_Industrial_Tileset_1_Background.png" id="3_hqgk5"]
 [ext_resource type="Script" uid="uid://ce41j8w4twusb" path="res://lives_label.gd" id="3_n7bgm"]
 [ext_resource type="PackedScene" uid="uid://ul2o805ej4sw" path="res://player.tscn" id="4_nr4bh"]
-[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="8_n7bgm"]
-[ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="9_syiav"]
-[ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="10_5lt6n"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="11_5lt6n"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="11_kku2p"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="13_kku2p"]
-[ext_resource type="Resource" uid="uid://dptujuh1tatt6" path="res://Resources/ShotPatterns/shot_washing_machine.tres" id="14_spej0"]
-[ext_resource type="Resource" uid="uid://cluhmyjtyp3xf" path="res://Resources/ShotPatterns/shot_spiral.tres" id="15_yintm"]
-[ext_resource type="Resource" uid="uid://dxn8rh0juqjqd" path="res://Resources/ShotPatterns/shot_ring.tres" id="16_yintm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -234,51 +228,33 @@ texture = ExtResource("3_hqgk5")
 sources/0 = SubResource("TileSetAtlasSource_04jf3")
 sources/1 = SubResource("TileSetAtlasSource_cb2im")
 
-[sub_resource type="Resource" id="Resource_e0xeq"]
-script = ExtResource("10_5lt6n")
-target = Vector2(128, 256)
-duration = 2.0
-wait_after = 1.0
-x_trans = 1
-x_ease = 1
-y_trans = 1
-y_ease = 1
-metadata/_custom_type_script = "uid://e6xjmp17mmgm"
-
-[sub_resource type="Resource" id="Resource_msk85"]
-script = ExtResource("10_5lt6n")
-target = Vector2(128, 648)
-wait_after = 1.0
-y_trans = 1
-y_ease = 1
-metadata/_custom_type_script = "uid://e6xjmp17mmgm"
-
-[sub_resource type="Resource" id="Resource_kku2p"]
-script = ExtResource("9_syiav")
-start_position = Vector2(128, -32)
-steps = Array[ExtResource("10_5lt6n")]([SubResource("Resource_e0xeq"), SubResource("Resource_msk85")])
-
-[sub_resource type="Resource" id="Resource_qiivi"]
-resource_local_to_scene = true
+[sub_resource type="Resource" id="Resource_n7bgm"]
 script = ExtResource("11_kku2p")
 bullet_scene = ExtResource("13_kku2p")
-start_delay = 1.0
+start_delay = 2.0
+shot_count = 150
 interval = 1.0
-pause = 3.0
-bullet_count = 4
-spread_angle = 60.0
-aim_at_player = true
-bullet_speed = 100.0
-bullet_accel = 10.0
-
-[sub_resource type="Resource" id="Resource_spej0"]
-script = ExtResource("11_kku2p")
-shot_count = 100
 pause = 0.0
-bullet_count = 10
-spread_angle = 90.0
+bullet_count = 50
+spread_angle = 360.0
+rotate_per_shot = 3.0
+reverse_every_shots = 500
+bullet_speed = 160.0
 bullet_accel = 100.0
-metadata/_custom_type_script = "uid://ct8u3n22w477n"
+
+[sub_resource type="Resource" id="Resource_syiav"]
+script = ExtResource("11_kku2p")
+bullet_scene = ExtResource("13_kku2p")
+start_delay = 0.0
+shot_count = 50
+interval = 0.2
+pause = 5.0
+bullet_count = 5
+spread_angle = 90.0
+rotate_per_shot = 3.0
+reverse_every_shots = 600
+bullet_speed = 160.0
+bullet_accel = 100.0
 
 [node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui", "lives_label")]
 script = ExtResource("1_7uoxh")
@@ -357,30 +333,10 @@ position = Vector2(240, 552)
 [node name="Marker2D" type="Marker2D" parent="." unique_id=2125530553]
 position = Vector2(16, 368)
 
-[node name="Enemy" parent="." unique_id=724143726 instance=ExtResource("8_n7bgm")]
-position = Vector2(128, -32)
-pattern = SubResource("Resource_kku2p")
-
-[node name="EnemyShooterComponent2" parent="Enemy" unique_id=140393654 instance=ExtResource("11_5lt6n")]
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_qiivi")])
-debug_log = true
-
-[node name="EnemyShooterComponent" parent="." unique_id=131439299 instance=ExtResource("11_5lt6n")]
-position = Vector2(256, 160)
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_spej0")])
-default_bullet_scene = ExtResource("13_kku2p")
-
-[node name="EnemyShooterComponent2" parent="." unique_id=180410204 instance=ExtResource("11_5lt6n")]
-position = Vector2(256, 160)
-patterns = Array[ExtResource("11_kku2p")]([ExtResource("14_spej0"), ExtResource("15_yintm")])
-default_bullet_scene = ExtResource("13_kku2p")
-
-[node name="EnemyShooterComponent3" parent="." unique_id=636231277 instance=ExtResource("11_5lt6n")]
-position = Vector2(256, 160)
-patterns = Array[ExtResource("11_kku2p")]([ExtResource("16_yintm")])
-default_bullet_scene = ExtResource("13_kku2p")
+[node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("11_5lt6n")]
+position = Vector2(248, 200)
+patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_n7bgm"), SubResource("Resource_syiav")])
 
 [editable path="Player"]
 [editable path="Player/Ignite"]
 [editable path="Player/Hurtbox"]
-[editable path="Enemy/EnemyShooterComponent2"]

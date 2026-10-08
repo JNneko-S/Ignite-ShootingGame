@@ -73,10 +73,15 @@ collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_onrkg")
 bullet_scene = ExtResource("2_sweqy")
+lives = 10
 clear_bullets_on_death = false
 
 [node name="Ignite" parent="." unique_id=1104348565 instance=ExtResource("3_1jxqw")]
 z_index = 1
+first_pulse = 0.01
+second_pulse = 0.05
+third_pulse = 0.05
+pulse_period = 0.8
 
 [node name="HPComponent" parent="." unique_id=874755007 instance=ExtResource("2_i3pqv")]
 
@@ -119,8 +124,10 @@ collision_layer = 256
 collision_mask = 32
 script = ExtResource("7_dw050")
 params = SubResource("Resource_b26j0")
-visual = NodePath("../Ignite")
 base_radius = 24.0
+radius_per_level = null
+fallback_color = null
+visual = NodePath("../Ignite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="IgniteAura" unique_id=1982773436]
 shape = SubResource("CircleShape2D_gj3l6")

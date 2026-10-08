@@ -136,7 +136,8 @@ func _update_graze_radius() -> void:
 		circle.radius = radius
 
 func _on_graze_area_area_entered(area: Area2D) -> void:
-	if not _is_alive:
+	# 無敵中(復活直後・イグナイト中)と、死亡中はグレイズしない
+	if is_invincible():
 		return
 	if area is Hitbox and area.damage_source_type == Hitbox.DamageSourceType.Enemy:
 		if _grazed_hitboxes.has(area):
@@ -198,6 +199,10 @@ func _start_invincibility(seconds: float) -> void:
 func _end_invincibility() -> void:
 	_invincible = false
 	modulate.a = 1.0
+
+## 無敵状態か(死亡中・復活後の無敵・イグナイト中のどれか)
+func is_invincible() -> bool:
+	return not _is_alive or _invincible or _ignite_invincible
 
 ## 残機を増やす(1UPアイテムなどから呼ぶ)
 func add_life(amount: int = 1) -> void:

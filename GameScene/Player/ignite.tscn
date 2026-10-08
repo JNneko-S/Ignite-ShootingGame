@@ -5,8 +5,19 @@
 [ext_resource type="Texture2D" uid="uid://cb7vr2tfaemqf" path="res://Assets/Effect/64x64_Aura_7.png" id="2_2guf0"]
 [ext_resource type="Texture2D" uid="uid://cmmwt1ibk8nv0" path="res://Assets/Effect/64x64_Aura_3.png" id="3_rs730"]
 
-[node name="Ignite" type="Node2D" unique_id=1104348565]
+[node name="IgniteVisual" type="Node2D" unique_id=1104348565]
 script = ExtResource("1_2guf0")
+grow_time = 0.5
+first_rotation_period = 3.0
+second_rotation_period = -4.0
+first_pulse = 0.05
+second_pulse = 0.1
+third_pulse = 0.1
+pulse_period = 1.0
+blink_time = 2.0
+blink_min_alpha = 0.2
+blink_freq_start = 2.0
+blink_freq_end = 2.0
 
 [node name="First" type="Sprite2D" parent="." unique_id=942403999]
 self_modulate = Color(1, 0.03429321, 0.17495185, 1)

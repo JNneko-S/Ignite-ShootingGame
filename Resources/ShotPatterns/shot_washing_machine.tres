@@ -6,12 +6,13 @@
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_e23av")
-start_delay = 1.0
-shot_count = 150
-interval = 0.06
+start_delay = 2.0
+shot_count = 300
+interval = 0.05
 pause = 2.0
-bullet_count = 5
+bullet_count = 50
 spread_angle = 360.0
-rotate_per_shot = 9.0
-reverse_every_shots = 25
+rotate_per_shot = 3.0
+reverse_every_shots = 50
 bullet_speed = 160.0
+bullet_accel = 100.0
