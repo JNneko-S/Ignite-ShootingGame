@@ -2,9 +2,19 @@ extends Hitbox
 class_name EnemyBullet
 ## 敵の弾。Hitbox を継承しているので、自機の GrazeArea / Hurtbox がそのまま反応する。
 ## Area2D + CollisionShape2D のシーンにこのスクリプトを付けて使う。
-## イグナイトのオーラに触れると ignite() が呼ばれ、変色して敵へ跳ね返る反射弾になる。
+##
+## 状態:
+##   NORMAL  : 通常の敵弾
+##   IGNITED : 反射弾(敵へ弧を描いて飛ぶ。イグナイトのフレアに触れると変わる)
+##   BURNING : 焼却中(イグナイトの範囲に入った弾。燃えて消える)
 
-enum BulletState { NORMAL, IGNITED }
+enum BulletState { NORMAL, IGNITED, BURNING }
+
+# ---- 連鎖の許可(イグナイトON中かつ高レベルのときだけ。全ての敵弾で共有) ----
+static var _chain_allowed : bool = false
+
+static func set_chain_allowed(allowed : bool) -> void:
+	_chain_allowed = allowed
 
 var direction : Vector2 = Vector2.DOWN
 var speed : float = 250.0
@@ -20,7 +30,7 @@ var _retarget_in : float = 0.0
 
 func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
-	add_to_group("enemy_bullet") # 被弾時の弾消しの対象
+	add_to_group("enemy_bullet") # 被弾時・イグナイト終了時の弾消しの対象
 	# 当たったら消える(自機に当たっても、反射弾が敵に当たっても)
 	damage_dealt.connect(func(_hurtbox : Hurtbox) -> void: queue_free())
 	area_entered.connect(_on_area_entered)
@@ -36,14 +46,30 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	accel = acc
 	rotation = direction.angle() + PI / 2.0
 
+func is_normal() -> bool:
+	return _state == BulletState.NORMAL
+
 func is_ignited() -> bool:
 	return _state == BulletState.IGNITED
 
-## 着火して反射弾になる。
+## 焼却: 燃えて消える。成功したら true(スコア加算の判定に使う)
+func burn() -> bool:
+	if _state != BulletState.NORMAL:
+		return false
+	_state = BulletState.BURNING
+	remove_from_group("enemy_bullet")
+	set_deferred("monitorable", false) # 自機に当たらなくなる
+	set_deferred("monitoring", false)
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(self, "modulate", Color(1.0, 0.5, 0.1, 0.0), 0.18)
+	tween.tween_property(self, "scale", scale * 1.6, 0.18)
+	tween.chain().tween_callback(queue_free)
+	return true
+
+## 反射弾になる。
 ## chain_until_msec: この時刻まで連鎖できる / is_chain: 連鎖で着火したか
-## 反射弾は距離減衰を受けず、威力は常に base_damage
 func ignite(params : IgniteParams, chain_until_msec : int, is_chain : bool = false) -> void:
-	if _state == BulletState.IGNITED:
+	if _state != BulletState.NORMAL:
 		return
 	_state = BulletState.IGNITED
 	_params = params
@@ -62,20 +88,23 @@ func ignite(params : IgniteParams, chain_until_msec : int, is_chain : bool = fal
 	set_deferred("collision_mask", params.ignited_collision_mask)
 
 func _on_area_entered(area : Area2D) -> void:
-	# 連鎖: 反射弾が、他の敵弾に触れたら着火させる(イグナイト中のみ)
-	if _state != BulletState.IGNITED or not _params.chain_enabled:
-		return
-	if Time.get_ticks_msec() > _chain_until_msec:
-		return
-	if area is EnemyBullet and not area.is_ignited():
-		area.ignite(_params, _chain_until_msec, true)
+	match _state:
+		BulletState.IGNITED:
+			# 連鎖: 反射弾が他の敵弾に触れたら反射させる(連鎖が許可されている間のみ)
+			if not _chain_allowed or not _params.chain_enabled:
+				return
+			if Time.get_ticks_msec() > _chain_until_msec:
+				return
+			if area is EnemyBullet and area.is_normal():
+				area.ignite(_params, _chain_until_msec, true)
 
 func _physics_process(delta : float) -> void:
-	if _state == BulletState.NORMAL:
-		speed = maxf(speed + accel * delta, 0.0)
-		global_position += direction * speed * delta
-	else:
-		_move_ignited(delta)
+	match _state:
+		BulletState.NORMAL:
+			speed = maxf(speed + accel * delta, 0.0)
+			global_position += direction * speed * delta
+		BulletState.IGNITED:
+			_move_ignited(delta)
 
 func _move_ignited(delta : float) -> void:
 	_age += delta

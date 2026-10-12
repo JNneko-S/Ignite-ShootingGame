@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://b0ylnmqsxmsiq"]
+
+[ext_resource type="Script" uid="uid://bbg2tu640qar2" path="res://ignite_flare.gd" id="1_eubnr"]
+[ext_resource type="Texture2D" uid="uid://dxqha2sjoi5wv" path="res://Assets/explosion.png" id="2_lkd3e"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_exsn3"]
+radius = 7.071068
+
+[node name="IgniteFlare" type="Area2D" unique_id=810510861]
+script = ExtResource("1_eubnr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=719226091]
+shape = SubResource("CircleShape2D_exsn3")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1785100111]
+texture = ExtResource("2_lkd3e")
+hframes = 5
+frame = 3

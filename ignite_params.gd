@@ -26,7 +26,7 @@ class_name IgniteParams
 @export var sway_frequency : float = 2.5
 
 @export_group("色")
-## オーラに直接触れて変色した弾の色
+## フレアに触れて反射した弾の色
 @export var direct_color : Color = Color(1.0, 0.65, 0.2)
 ## 連鎖で変色した弾の色
 @export var chain_color : Color = Color(1.0, 0.3, 0.2)

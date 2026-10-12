@@ -12,8 +12,8 @@ class_name IgniteVisual
 @export var debug_log : bool = false
 
 @export_group("出現するレベル")
-@export var second_unlock_level : int = 5
-@export var third_unlock_level : int = 10
+@export var second_unlock_level : int = 3
+@export var third_unlock_level : int = 5
 
 @export_group("サイズ合わせ")
 ## First のテクスチャで、効果範囲の縁にあたる半径(ピクセル)。0 なら画像から自動で測る
@@ -22,8 +22,6 @@ class_name IgniteVisual
 @export_range(0.05, 1.0, 0.05) var edge_alpha_threshold : float = 0.5
 
 @export_group("出現・消滅")
-## 発動時、0 → 目標サイズまで大きくなる時間(秒)
-@export var grow_time : float = 0.25
 ## 終了時のフェードアウト時間(秒)
 @export var fade_time : float = 0.2
 
@@ -57,7 +55,7 @@ var _pulse : Array[float] = [0.0, 0.0, 0.0]
 
 var _scale_factor : float = 1.0 # 元のスケールに掛ける倍率(効果範囲に合わせて決まる)
 var _first_radius_px : float = 0.0
-var _grow : float = 0.0 # 出現アニメーション用(0→1)。Tween で動かす
+var _grow : float = 1.0 # 拡大・縮小は IgniteAura が半径で行うので、ここでは常に1.0
 var _tweens : Array[Tween] = []
 var _fade_tween : Tween
 
@@ -79,7 +77,7 @@ func _ready() -> void:
 # ---------------------------------------------------------------- 外部から呼ぶ
 
 ## 発動時に呼ぶ。
-## radius: オーラの効果半径(px)。First の縁がこの半径に一致するようにスケールする
+## radius: オーラの半径(px)の初期値。以降は set_radius で更新される
 ## duration: 発動(無敵)の長さ。終了前の点滅のタイミングに使う
 func show_aura(level : int, radius : float, duration : float) -> void:
 	_kill_tweens()
@@ -93,7 +91,7 @@ func show_aura(level : int, radius : float, duration : float) -> void:
 	if _first_radius_px > 0.0 and _layers[0]:
 		# First の最終的な半径が、ちょうど radius になる倍率
 		_scale_factor = radius / (_first_radius_px * _base_scales[0].x)
-	_grow = 0.0
+	_grow = 1.0
 
 	for i in _layers.size():
 		var layer := _layers[i]
@@ -109,11 +107,6 @@ func show_aura(level : int, radius : float, duration : float) -> void:
 	if debug_log:
 		_debug_report()
 
-	# 出現: 0 → 1 へ、少しオーバーシュートして落ち着く
-	var grow := _track(create_tween())
-	grow.tween_property(self, "_grow", 1.0, grow_time)\
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
 	var periods := [first_rotation_period, second_rotation_period, third_rotation_period]
 	var pulses := [first_pulse, second_pulse, third_pulse]
 	for i in _layers.size():
@@ -121,6 +114,11 @@ func show_aura(level : int, radius : float, duration : float) -> void:
 			_start_rotation(i, periods[i])
 			_start_pulse(i, pulses[i])
 	_start_blink(duration)
+
+## オーラの現在の半径(px)を反映する。IgniteAura が拡大・縮小のたびに呼ぶ
+func set_radius(radius : float) -> void:
+	if _first_radius_px > 0.0 and _layers[0]:
+		_scale_factor = radius / (_first_radius_px * _base_scales[0].x)
 
 ## 終了時に呼ぶ。フェードアウトして、全ての Tween を止める
 func hide_aura() -> void:

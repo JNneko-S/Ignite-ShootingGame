@@ -13,9 +13,6 @@
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="11_5lt6n"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="11_kku2p"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="13_kku2p"]
-[ext_resource type="Resource" uid="uid://dptujuh1tatt6" path="res://Resources/ShotPatterns/shot_washing_machine.tres" id="14_spej0"]
-[ext_resource type="Resource" uid="uid://cluhmyjtyp3xf" path="res://Resources/ShotPatterns/shot_spiral.tres" id="15_yintm"]
-[ext_resource type="Resource" uid="uid://dxn8rh0juqjqd" path="res://Resources/ShotPatterns/shot_ring.tres" id="16_yintm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -258,7 +255,7 @@ script = ExtResource("9_syiav")
 start_position = Vector2(128, -32)
 steps = Array[ExtResource("10_5lt6n")]([SubResource("Resource_e0xeq"), SubResource("Resource_msk85")])
 
-[sub_resource type="Resource" id="Resource_yintm"]
+[sub_resource type="Resource" id="Resource_nxg43"]
 resource_local_to_scene = true
 script = ExtResource("11_kku2p")
 bullet_scene = ExtResource("13_kku2p")
@@ -285,7 +282,7 @@ script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
-ignite_seconds_per_level = 0.6
+graze_radius_scales = Array[float]([1.5, 1.0, 0.9])
 
 [node name="UI" type="Control" parent="." unique_id=673629792]
 layout_mode = 3
@@ -370,22 +367,12 @@ position = Vector2(128, -32)
 pattern = SubResource("Resource_kku2p")
 
 [node name="EnemyShooterComponent2" parent="Enemy" unique_id=140393654 instance=ExtResource("11_5lt6n")]
-patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_yintm")])
+patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_nxg43")])
 debug_log = true
 
 [node name="EnemyShooterComponent" parent="." unique_id=131439299 instance=ExtResource("11_5lt6n")]
 position = Vector2(256, 160)
 patterns = Array[ExtResource("11_kku2p")]([SubResource("Resource_spej0")])
-default_bullet_scene = ExtResource("13_kku2p")
-
-[node name="EnemyShooterComponent2" parent="." unique_id=180410204 instance=ExtResource("11_5lt6n")]
-position = Vector2(256, 160)
-patterns = Array[ExtResource("11_kku2p")]([ExtResource("14_spej0"), ExtResource("15_yintm")])
-default_bullet_scene = ExtResource("13_kku2p")
-
-[node name="EnemyShooterComponent3" parent="." unique_id=636231277 instance=ExtResource("11_5lt6n")]
-position = Vector2(256, 160)
-patterns = Array[ExtResource("11_kku2p")]([ExtResource("16_yintm")])
 default_bullet_scene = ExtResource("13_kku2p")
 
 [editable path="Player"]

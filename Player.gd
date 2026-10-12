@@ -11,6 +11,8 @@ class_name Player
 @export var graze_radius : float = 24.0
 ## 低速移動中のグレイズ半径の倍率(1.0で変化なし)
 @export var focus_graze_multiplier : float = 1.0
+## 難易度などによる、グレイズ半径の倍率(GameManager が設定する)
+var graze_radius_scale : float = 1.0
 
 @export_group("攻撃")
 @export var bullet_scene : PackedScene
@@ -20,6 +22,7 @@ class_name Player
 @onready var graze_area: Area2D = $GrazeArea
 @onready var graze_shape: CollisionShape2D = $GrazeArea/GrazeShape
 @onready var shoot_timer: Timer = $ShootTimer
+## 通常時(強化なし)の発射角度
 @export var shot_angles : Array[float] = [0.0]
 @export var muzzle_offset : Vector2 = Vector2(0, -16)
 
@@ -35,18 +38,33 @@ class_name Player
 @export var shot_color_low : Color = Color(0.6, 0.75, 1.0)
 @export var shot_color_high : Color = Color(1.0, 1.0, 1.0)
 
+@export_group("ショット強化(Lv5イグナイトで+1段階。被弾で失う)")
+## way弾の角度の間隔(度)
+@export var power_spread_deg : float = 8.0
+## バースト弾の、1発ごとの間隔(秒)
+@export var power_burst_gap : float = 0.06
+## 高速連射の段階(4・5段階目)の、発射間隔の倍率
+@export var power_fast_interval_scale : float = 0.5
+
+@export_group("被弾")
+## 被弾して生き残ったあとの無敵時間(秒)。点滅し、この間はグレイズもできない
+@export var hit_invincible_time : float = 3.0
+
 @export_group("残機")
-## 残機の数(0のとき被弾するとゲームオーバー)
-@export var lives : int = 2
-## 被弾してから復活するまでの時間(秒)
+## 残機の数(0のとき死亡するとゲームオーバー)
+@export var lives : int = 3
+## 死亡してから復活するまでの時間(秒)
 @export var respawn_delay : float = 0.6
 ## 復活後の無敵時間(秒)
 @export var respawn_invincible_time : float = 3.0
-## 被弾時に画面内の敵弾を消すか("enemy_bullet" グループの弾が対象)
+## 死亡時に画面内の敵弾を消すか("enemy_bullet" グループの弾が対象)
 @export var clear_bullets_on_death : bool = true
 
 @onready var hp_component: HPComponent = $HPComponent
 @onready var graze_effect: GPUParticles2D = $GrazeEffect
+@onready var ignite_aura : IgniteAura = get_node_or_null("IgniteAura")
+
+const MAX_SHOT_STAGE : int = 5
 
 var graze_count : int = 0
 var is_focusing : bool = false
@@ -55,26 +73,35 @@ var _grazed_hitboxes : Dictionary = {}
 var _spawn_position : Vector2
 var _is_alive : bool = true
 var _invincible : bool = false
+var _invincible_end_msec : int = 0
 var _blink_tween : Tween
 
+## イグナイトがONか(ONの間、ゲージが減り続け、フレアが残る)
 var is_igniting : bool = false
-var _ignite_invincible : bool = false
-@onready var ignite_aura : IgniteAura = get_node_or_null("IgniteAura")
+## ゲージのレベルによる補正(GameManager が設定する)
+var level_move_scale : float = 1.0
+var level_power_scale : float = 1.0
+
+## 現在のショット強化の段階(0〜5)
+var shot_stage : int = 0
 
 signal grazed(total : int)
 ## グレイズした瞬間に出る。演出(GrazeEffect)やゲージ側はこれを受け取る。
 ## bullet_position: 掠めた弾の位置 / density: その時 GrazeArea 内にある弾の数(密度の目安)
 signal graze_hit(bullet_position : Vector2, density : int)
-## 被弾したときに出る(イグナイトゲージの減少などが受け取る)
+## 被弾したときに出る(無敵中・死亡中は出ない)。ゲージ(体力)の減少はこれを受けて行う
 signal damaged
 ## 残機が変化したときに出る(UI用)
 signal lives_changed(lives : int)
-## 残機が尽きて被弾したときに出る
+## 残機が尽きて死亡したときに出る
 signal game_over
-## イグナイトのボタンが押された(ゲージ側が発動できるか判断する)
+## 復活が完了したときに出る
+signal respawned
+## イグナイトのボタンが押された(ON/OFFの切り替えは GameManager が行う)
 signal ignite_pressed
-signal ignite_started(level : int, duration : float)
-signal ignite_ended
+## イグナイトのON/OFFが切り替わった
+signal ignite_toggled(on : bool)
+signal shot_stage_changed(stage : int)
 
 func _ready() -> void:
 	add_to_group("player") # 敵の狙い撃ち用
@@ -97,20 +124,55 @@ func _physics_process(delta: float) -> void:
 		ignite_pressed.emit()
 
 	var dir := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
-	var speed := move_speed
+	var speed := move_speed * level_move_scale
 	if is_focusing:
 		speed *= focus_speed_multiplier
 	velocity = dir * speed
 	move_and_slide()
 	_shoot(delta)
 
-func _shoot(delta: float) -> void:
+# ---------------------------------------------------------------- ショット
+
+func _shoot(_delta: float) -> void:
 	if not Input.is_action_pressed("UI_Shoot") or shoot_timer.time_left > 0.0:
 		return
 	if bullet_scene == null:
 		return
-	shoot_timer.start()
-	for angle_deg in shot_angles:
+	var pattern := _shot_pattern()
+	shoot_timer.start(fire_interval * pattern["interval_scale"])
+	_fire_volley(pattern["angles"])
+	# バースト: 同じ弾を、少しずつ遅らせて撃つ
+	for i in range(1, pattern["burst"]):
+		var wait := create_tween()
+		wait.tween_interval(power_burst_gap * i)
+		wait.tween_callback(_fire_volley.bind(pattern["angles"]))
+
+## ショット強化の段階に応じた、発射の内容
+##   0: 通常 / 1: 3点バースト / 2: 3way / 3: 3way 3点バースト / 4: 5way 高速連射 / 5: 7way 高速連射
+func _shot_pattern() -> Dictionary:
+	match shot_stage:
+		1:
+			return {"angles": shot_angles, "burst": 3, "interval_scale": 1.0}
+		2:
+			return {"angles": _way_angles(3), "burst": 1, "interval_scale": 1.0}
+		3:
+			return {"angles": _way_angles(3), "burst": 3, "interval_scale": 1.0}
+		4:
+			return {"angles": _way_angles(5), "burst": 1, "interval_scale": power_fast_interval_scale}
+		5:
+			return {"angles": _way_angles(7), "burst": 1, "interval_scale": power_fast_interval_scale}
+	return {"angles": shot_angles, "burst": 1, "interval_scale": 1.0}
+
+func _way_angles(count : int) -> Array[float]:
+	var angles : Array[float] = []
+	for i in count:
+		angles.append((i - (count - 1) / 2.0) * power_spread_deg)
+	return angles
+
+func _fire_volley(angles : Array) -> void:
+	if not _is_alive:
+		return
+	for angle_deg in angles:
 		var bullet : Bullet = bullet_scene.instantiate()
 		get_tree().current_scene.add_child(bullet)
 		bullet.global_position = global_position + muzzle_offset
@@ -118,17 +180,33 @@ func _shoot(delta: float) -> void:
 		if bullet.has_method("setup"):
 			var t := _center_distance_ratio(bullet.global_position)
 			var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
-			bullet.setup(direction, 300, shot_damage * power, 0)
+			bullet.setup(direction, 300, shot_damage * power * level_power_scale, 0)
 			if tint_shot_by_power:
 				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
+
+## ショットを1段階強化する(最大5段階)
+func power_up_shot() -> void:
+	if shot_stage >= MAX_SHOT_STAGE:
+		return
+	shot_stage += 1
+	shot_stage_changed.emit(shot_stage)
+
+## ショット強化を全て失う(被弾・死亡時)
+func reset_shot_power() -> void:
+	if shot_stage == 0:
+		return
+	shot_stage = 0
+	shot_stage_changed.emit(shot_stage)
 
 ## 画面中央からの距離を 0.0(中央)〜1.0(角)で返す
 func _center_distance_ratio(pos : Vector2) -> float:
 	var size := get_viewport_rect().size
 	return clampf(pos.distance_to(size / 2.0) / (size.length() / 2.0), 0.0, 1.0)
 
+# ---------------------------------------------------------------- グレイズ
+
 func _update_graze_radius() -> void:
-	var radius := graze_radius
+	var radius := graze_radius * graze_radius_scale
 	if is_focusing:
 		radius *= focus_graze_multiplier
 	var circle := graze_shape.shape as CircleShape2D
@@ -136,7 +214,8 @@ func _update_graze_radius() -> void:
 		circle.radius = radius
 
 func _on_graze_area_area_entered(area: Area2D) -> void:
-	if not _is_alive:
+	# 無敵中(復活直後・イグナイト後)と、死亡中はグレイズしない
+	if is_invincible():
 		return
 	if area is Hitbox and area.damage_source_type == Hitbox.DamageSourceType.Enemy:
 		if _grazed_hitboxes.has(area):
@@ -150,15 +229,29 @@ func _on_graze_area_area_entered(area: Area2D) -> void:
 func _on_graze_area_area_exited(area: Area2D) -> void:
 	_grazed_hitboxes.erase(area)
 
-func _on_hurtbox_recieved_damage(damage: int) -> void:
-	# 無敵中・死亡中は被弾を無視する
-	if _invincible or _ignite_invincible or not _is_alive:
-		return
-	hp_component.apply_damage(ceili(damage))
-	damaged.emit()
+# ---------------------------------------------------------------- 被弾・死亡・復活
 
+## 被弾。レベル(体力)を減らすかどうかは、damaged を受けた側(GameManager)が決める
+func _on_hurtbox_recieved_damage(_damage: int) -> void:
+	# 無敵中・死亡中は被弾を無視する
+	if _invincible or not _is_alive:
+		return
+	damaged.emit()
+	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
+	if _is_alive:
+		start_invincibility(hit_invincible_time)
+
+## HPComponent 側から呼ばれる場合に備えて残している(体力はゲージで管理するので通常は使わない)
 func _on_hp_component_is_dead() -> void:
+	die()
+
+## 死亡する。残機があれば復活、なければゲームオーバー
+func die() -> void:
+	if not _is_alive:
+		return
 	_is_alive = false
+	set_igniting(false)
+	reset_shot_power()
 	if clear_bullets_on_death:
 		get_tree().call_group("enemy_bullet", "queue_free")
 	if lives <= 0:
@@ -183,10 +276,18 @@ func _respawn() -> void:
 	visible = true
 	_is_alive = true
 	set_physics_process(true)
-	_start_invincibility(respawn_invincible_time)
+	start_invincibility(respawn_invincible_time)
+	respawned.emit()
 
-func _start_invincibility(seconds: float) -> void:
+## 無敵にする(点滅する)。すでに無敵で、残りがこれより長ければ何もしない
+func start_invincibility(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	var end_msec := Time.get_ticks_msec() + int(seconds * 1000.0)
+	if _invincible and end_msec <= _invincible_end_msec:
+		return
 	_invincible = true
+	_invincible_end_msec = end_msec
 	if _blink_tween:
 		_blink_tween.kill()
 	_blink_tween = create_tween()
@@ -199,28 +300,22 @@ func _end_invincibility() -> void:
 	_invincible = false
 	modulate.a = 1.0
 
+## 無敵状態か(死亡中・無敵時間中のどれか)
+func is_invincible() -> bool:
+	return not _is_alive or _invincible
+
 ## 残機を増やす(1UPアイテムなどから呼ぶ)
 func add_life(amount: int = 1) -> void:
 	lives += amount
 	lives_changed.emit(lives)
 
-## イグナイト発動。無敵になり、オーラが出る(レベルに応じた無敵時間とオーラ半径)
-func start_ignite(level : int, duration : float) -> void:
-	if is_igniting or not _is_alive:
-		return
-	is_igniting = true
-	_ignite_invincible = true
-	if ignite_aura:
-		ignite_aura.activate(level, duration)
-	ignite_started.emit(level, duration)
-	var wait := create_tween() # ノードに紐づくので、途中で消えても安全
-	wait.tween_interval(duration)
-	await wait.finished
-	_end_ignite()
+# ---------------------------------------------------------------- イグナイト
 
-func _end_ignite() -> void:
-	is_igniting = false
-	_ignite_invincible = false
-	if ignite_aura:
-		ignite_aura.deactivate()
-	ignite_ended.emit()
+## イグナイトのON/OFFを切り替える。ONの間は無敵ではない
+func set_igniting(on : bool) -> void:
+	if is_igniting == on:
+		return
+	if on and not _is_alive:
+		return
+	is_igniting = on
+	ignite_toggled.emit(on)

@@ -77,6 +77,8 @@ clear_bullets_on_death = false
 
 [node name="Ignite" parent="." unique_id=1104348565 instance=ExtResource("3_1jxqw")]
 z_index = 1
+debug_log = true
+blink_freq_start = 1.0
 
 [node name="HPComponent" parent="." unique_id=874755007 instance=ExtResource("2_i3pqv")]
 
@@ -120,7 +122,6 @@ collision_mask = 32
 script = ExtResource("7_dw050")
 params = SubResource("Resource_b26j0")
 visual = NodePath("../Ignite")
-base_radius = 24.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="IgniteAura" unique_id=1982773436]
 shape = SubResource("CircleShape2D_gj3l6")

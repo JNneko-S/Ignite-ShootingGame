@@ -1,77 +1,86 @@
 extends RefCounted
 class_name IgniteGauge
-## イグナイトゲージのロジック。Player や UI を知らず、変化をシグナルで通知するだけ。
-## Lv0 からスタートし、Lv n に到達するのに n × graze_per_level 必要。
-## (Lv1:10 〜 Lv10:100 / 累計550)
+## イグナイトゲージ。体力を兼ねる。Player や UI を知らず、シグナルで通知するだけ。
+## ゲージは 0〜最大値 の連続値で、レベル(Lv0〜Lv5)は値から決まる。
+##   Lv n に到達する値 = graze_per_level × (1 + 2 + ... + n)   例) 20, 60, 120, 200, 300
+## グレイズで増え、イグナイトON中は drain() で減り続ける。
+## 被弾すると miss_penalty だけレベルが下がる。レベルの数 = 耐えられる被弾回数(Lv5なら5回耐える)。
+## Lv0 で被弾する(下がった結果が0未満になる)と死亡(on_miss が true を返す)。
 
 signal level_changed(level : int)
 ## 現在レベル内の進捗(0.0〜1.0)
 signal progress_changed(ratio : float)
 
 const MIN_LEVEL : int = 0
-const MAX_LEVEL : int = 10
+const MAX_LEVEL : int = 5
 
-## Lv1 に到達するのに必要なグレイズ量(Lv n は n 倍)
-var graze_per_level : float = 10.0
+## Lv1 に到達するのに必要なグレイズ量(Lv n に上がるには n 倍)
+var graze_per_level : float = 20.0
 ## 周囲の弾が1発増えるごとの加算ボーナス(密度が高いほど貯まりやすい)
 var density_bonus : float = 0.05
-## 発動時の無敵時間 = レベル × この値(Lv1:0.5s / Lv6:3.0s / Lv10:5.0s)
-var invincible_seconds_per_level : float = 0.5
-## レベルごとに秒数を直接指定する(Lv1, Lv2, ... の順)。空なら上の式を使う。
-## 要素が足りないレベルは、上の式で補う
-var custom_durations : Array[float] = []
+## 開始・復活時のレベル(難易度で決まる)
+var start_level : int = 0
+## 被弾1回で減るレベル(難易度で決まる)
+var miss_penalty : int = 1
 
+var value : float = 0.0
 var level : int = MIN_LEVEL
-var _progress : float = 0.0
+## イグナイトで消費したゲージの累計(被弾で減った分は含まない)。使用回数の計算に使う
+var consumed_total : float = 0.0
 
-## 次のレベルに上がるのに必要な量
-func required_for_next() -> float:
-	return (level + 1) * graze_per_level
+## Lv n に到達するゲージの値
+func threshold(for_level : int) -> float:
+	return graze_per_level * for_level * (for_level + 1) / 2.0
 
+func max_value() -> float:
+	return threshold(MAX_LEVEL)
+
+## 難易度の設定を反映して、開始レベルに戻す
+func configure(new_start_level : int, new_miss_penalty : int) -> void:
+	start_level = clampi(new_start_level, MIN_LEVEL, MAX_LEVEL)
+	miss_penalty = maxi(new_miss_penalty, 1)
+	reset_to_start()
+
+func reset_to_start() -> void:
+	value = threshold(start_level)
+	_update(true)
+
+## 現在レベル内の進捗(0.0〜1.0)
 func ratio() -> float:
 	if level >= MAX_LEVEL:
 		return 1.0
-	return clampf(_progress / required_for_next(), 0.0, 1.0)
-
-func can_ignite() -> bool:
-	return level >= 1
-
-func invincible_time(for_level : int) -> float:
-	if for_level >= 1 and for_level <= custom_durations.size():
-		return custom_durations[for_level - 1]
-	return for_level * invincible_seconds_per_level
+	var low := threshold(level)
+	return clampf((value - low) / (threshold(level + 1) - low), 0.0, 1.0)
 
 ## グレイズ1回分を加算する。density は GrazeArea 内の弾数(自分を含む)
 func add_graze(density : int = 1) -> void:
-	if level >= MAX_LEVEL:
-		return
-	_progress += 1.0 + density_bonus * maxi(density - 1, 0)
-	var leveled := false
-	while level < MAX_LEVEL and _progress >= required_for_next():
-		_progress -= required_for_next()
-		level += 1
-		leveled = true
-	if level >= MAX_LEVEL:
-		_progress = 0.0
-	if leveled:
-		level_changed.emit(level)
-	progress_changed.emit(ratio())
+	value = minf(value + 1.0 + density_bonus * maxi(density - 1, 0), max_value())
+	_update()
 
-## 被弾時: レベルを半分(端数切り捨て)にして進捗をリセット
-func on_miss() -> void:
-	var new_level := maxi(MIN_LEVEL, level / 2)
+## ゲージを減らす(イグナイトON中に毎フレーム呼ぶ)
+func drain(amount : float) -> void:
+	var before := value
+	value = maxf(value - amount, 0.0)
+	consumed_total += before - value
+	_update()
+
+## 被弾。レベルを miss_penalty 下げる。下げた結果が0未満なら死亡として true を返す(Lv0で被弾など)
+## (死亡時のゲージのリセットは、復活時の reset_to_start で行う)
+func on_miss() -> bool:
+	var new_level := level - miss_penalty
+	if new_level < 0:
+		return true
+	value = threshold(new_level)
+	_update()
+	return false
+
+func _update(force : bool = false) -> void:
+	var new_level := MIN_LEVEL
+	for l in range(1, MAX_LEVEL + 1):
+		if value >= threshold(l):
+			new_level = l
 	var changed := new_level != level
 	level = new_level
-	_progress = 0.0
-	if changed:
+	if changed or force:
 		level_changed.emit(level)
 	progress_changed.emit(ratio())
-
-## イグナイト発動時に呼ぶ。消費前のレベルを返し、レベルを0に戻す
-func consume() -> int:
-	var used := level
-	level = MIN_LEVEL
-	_progress = 0.0
-	level_changed.emit(level)
-	progress_changed.emit(ratio())
-	return used
