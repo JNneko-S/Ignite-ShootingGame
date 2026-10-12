@@ -3,7 +3,7 @@ class_name IgniteGauge
 ## イグナイトゲージ。体力を兼ねる。Player や UI を知らず、シグナルで通知するだけ。
 ## ゲージは 0〜最大値 の連続値で、レベル(Lv0〜Lv5)は値から決まる。
 ##   Lv n に到達する値 = graze_per_level × (1 + 2 + ... + n)   例) 20, 60, 120, 200, 300
-## グレイズで増え、イグナイトON中は drain() で減り続ける。
+## グレイズで増え、イグナイトの発動では consume_levels() でレベルを消費する(途中の端数は残る)。
 ## 被弾すると miss_penalty だけレベルが下がる。レベルの数 = 耐えられる被弾回数(Lv5なら5回耐える)。
 ## Lv0 で被弾する(下がった結果が0未満になる)と死亡(on_miss が true を返す)。
 
@@ -25,8 +25,8 @@ var miss_penalty : int = 1
 
 var value : float = 0.0
 var level : int = MIN_LEVEL
-## イグナイトで消費したゲージの累計(被弾で減った分は含まない)。使用回数の計算に使う
-var consumed_total : float = 0.0
+## イグナイトで消費したレベルの累計(被弾で減った分は含まない)
+var levels_consumed_total : int = 0
 
 ## Lv n に到達するゲージの値
 func threshold(for_level : int) -> float:
@@ -57,12 +57,20 @@ func add_graze(density : int = 1) -> void:
 	value = minf(value + 1.0 + density_bonus * maxi(density - 1, 0), max_value())
 	_update()
 
-## ゲージを減らす(イグナイトON中に毎フレーム呼ぶ)
-func drain(amount : float) -> void:
-	var before := value
-	value = maxf(value - amount, 0.0)
-	consumed_total += before - value
+## イグナイトの発動でレベルを count 個消費する。実際に消費した数を返す。
+## 途中の端数は残す(Lv3の40% を1つ消費すると、Lv2の40%)
+func consume_levels(count : int) -> int:
+	var n := clampi(count, 0, level)
+	if n <= 0:
+		return 0
+	var fraction := 0.0
+	if level < MAX_LEVEL:
+		fraction = (value - threshold(level)) / (threshold(level + 1) - threshold(level))
+	var new_level := level - n
+	value = threshold(new_level) + fraction * (threshold(new_level + 1) - threshold(new_level))
+	levels_consumed_total += n
 	_update()
+	return n
 
 ## 被弾。レベルを miss_penalty 下げる。下げた結果が0未満なら死亡として true を返す(Lv0で被弾など)
 ## (死亡時のゲージのリセットは、復活時の reset_to_start で行う)

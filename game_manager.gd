@@ -1,11 +1,13 @@
 extends Node2D
 class_name GameManager
 ## ScrollTest(ステージのルート)にアタッチする配線役。
-## ゲージ(体力)・難易度・イグナイトのON/OFF・スコアをまとめて管理する。
+## ゲージ(体力)・難易度・イグナイトの発動・スコアをまとめて管理する。
 ##
 ## イグナイト:
-##   ボタンでON/OFFを切り替える。ONの間、ゲージが減り続け、焼却範囲とフレア(通った跡の火)が出る。
-##   ONの間はグレイズしてもゲージが増えない。Lv0のままONにしておけば、グレイズを避けて火力を保てる。
+##   ボタンを単押しすると、レベルを1つ消費して発動する。
+##   長押し(1.5秒)すると、そのとき持っているレベルを全て消費して発動する。
+##   消費したレベルの数で、効果の範囲・時間・連鎖が決まる。
+##   発動中は、グレイズしてもゲージが増えない。
 
 enum Difficulty { EASY, NORMAL, HARD }
 
@@ -33,15 +35,14 @@ signal score_changed(score : int)
 @export var graze_per_level : float = 20.0
 @export var density_bonus : float = 0.05
 
-@export_group("イグナイト")
-## ON中、1秒あたりに減るゲージの量。Lv0〜Lv5の順。Lv0は0(消費しない)
-## 値を大きくすると、そのレベルでは短時間で使い切る
-@export var ignite_drain_by_level : Array[float] = [0.0, 20.0, 20.0, 20.0, 20.0, 20.0]
-## 焼却範囲が一瞬だけ広がる最大半径(px)。Lv1〜Lv5の順。0 なら画面全体
+@export_group("イグナイト(消費したレベル 1〜5 の順)")
+## 焼却範囲が一瞬だけ広がる最大半径(px)。0 なら画面全体
 @export var burn_max_radius : Array[float] = [50.0, 75.0, 100.0, 125.0, 0.0]
-## 縮んだあとの半径(px)。Lv1〜Lv5の順。0 なら最大半径の半分
+## 縮んだあとの半径(px)。0 なら最大半径の半分
 @export var burn_final_radius : Array[float] = [0.0, 0.0, 0.0, 0.0, 150.0]
-## 連鎖が使えるレベル
+## 効果の時間(秒)
+@export var ignite_durations : Array[float] = [1.0, 2.0, 3.0, 4.0, 5.0]
+## 連鎖が使える、消費したレベルの数
 @export var chain_min_level : int = 5
 
 @export_group("レベルによる能力(Lv0〜Lv5の順)")
@@ -51,9 +52,7 @@ signal score_changed(score : int)
 @export var shot_power_scales : Array[float] = [1.5, 1.4, 1.3, 1.2, 1.1, 1.0]
 
 @export_group("エンディング条件(エンドB)")
-## 点火の使用回数 = ゲージの累計消費量 ÷ この値(300なら、満タンを使い切るごとに1回)
-@export var consume_per_use : float = 300.0
-## エンドBの選択条件①: 点火の使用回数がこれ以上
+## エンドBの選択条件①: 点火の使用回数(Lv5を長押しで全消費した回数)がこれ以上
 @export var end_b_use_count_required : int = 30
 ## エンドBの選択条件②: 被弾(当たった回数)がこれ以下
 @export var end_b_max_hits : int = 3
@@ -64,7 +63,7 @@ signal score_changed(score : int)
 ## 焼却した弾1発あたりの点数
 @export var score_per_burned_bullet : int = 10
 
-## true なら、ON/OFF・被弾の結果を出力する
+## true なら、発動・被弾の結果を出力する
 @export var debug_ignite : bool = false
 
 var ignite : IgniteGauge = IgniteGauge.new()
@@ -73,6 +72,10 @@ var score : int = 0
 var hit_count : int = 0
 ## 死亡した回数(ノーデスの判定用)
 var death_count : int = 0
+## Lv5を長押しで全消費した回数(点火の使用回数)
+var full_use_count : int = 0
+
+var _ignite_time_left : float = 0.0
 
 func _ready() -> void:
 	if player == null:
@@ -98,7 +101,7 @@ func _ready() -> void:
 	player.graze_hit.connect(_on_player_graze_hit)
 	player.damaged.connect(_on_player_damaged)
 	player.respawned.connect(_on_player_respawned)
-	player.ignite_pressed.connect(_on_player_ignite_pressed)
+	player.ignite_requested.connect(_on_ignite_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
 	if player.ignite_aura:
 		player.ignite_aura.burned.connect(_on_bullet_burned)
@@ -109,27 +112,29 @@ func _ready() -> void:
 func _by_difficulty(values : Array):
 	return values[clampi(int(difficulty), 0, values.size() - 1)]
 
-func _at_level(values : Array, level : int):
-	return values[clampi(level, 0, values.size() - 1)]
-
-# ---------------------------------------------------------------- ゲージの減少
+func _at_level(values : Array, index : int):
+	return values[clampi(index, 0, values.size() - 1)]
 
 func _physics_process(delta : float) -> void:
-	# ONの間、ゲージが減り続ける。Lv0は消費0なので、ONのまま維持できる(グレイズが入らない状態)
-	if player and player.is_igniting:
-		var rate : float = _at_level(ignite_drain_by_level, ignite.level)
-		if rate > 0.0 and ignite.value > 0.0:
-			ignite.drain(rate * delta)
+	if player == null:
+		return
+	# 発動の効果時間を数える。終わったら効果を止める
+	if player.is_igniting and _ignite_time_left > 0.0:
+		_ignite_time_left -= delta
+		if _ignite_time_left <= 0.0:
+			player.set_igniting(false) # → _on_ignite_toggled(false) で効果が止まる
+	# Lv1以上で、効果中でなければ、発動できる(Player が入力を受け付ける)
+	player.ignite_available = ignite.level >= 1 and not player.is_igniting
 
 # ---------------------------------------------------------------- グレイズ・被弾
 
 func _on_player_graze_hit(_bullet_position : Vector2, density : int) -> void:
-	# イグナイトON中は、グレイズしてもゲージが増えない
+	# イグナイトの効果中は、グレイズしてもゲージが増えない
 	if player.is_igniting:
 		return
 	ignite.add_graze(density)
 
-## 被弾: ゲージ(体力)が減る。0以下になったら死亡
+## 被弾: ゲージ(体力)が減る。0未満になったら死亡
 func _on_player_damaged() -> void:
 	hit_count += 1
 	player.reset_shot_power()
@@ -139,26 +144,14 @@ func _on_player_damaged() -> void:
 		print("[Ignite] 被弾 Lv%d → %s" % [level_before, "死亡" if dead else "Lv%d" % ignite.level])
 	if dead:
 		death_count += 1
-		player.die() # イグナイトもOFFになる
+		player.die() # 発動中なら、効果も止まる
 
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:
 	ignite.reset_to_start()
 
-# ---------------------------------------------------------------- イグナイト
-
-func _on_player_ignite_pressed() -> void:
-	player.set_igniting(not player.is_igniting) # ON/OFFの切り替え
-
-func _on_ignite_toggled(on : bool) -> void:
-	if debug_ignite:
-		print("[Ignite] %s Lv%d ゲージ%.0f" % ["ON" if on else "OFF", ignite.level, ignite.value])
-	_refresh_ignite_effects()
-
 func _on_level_changed(_level : int) -> void:
 	_apply_level_stats()
-	if player and player.is_igniting:
-		_refresh_ignite_effects()
 
 ## レベルに応じて、移動速度とショットの威力を変える
 func _apply_level_stats() -> void:
@@ -167,24 +160,49 @@ func _apply_level_stats() -> void:
 	player.level_move_scale = _at_level(move_speed_scales, ignite.level)
 	player.level_power_scale = _at_level(shot_power_scales, ignite.level)
 
-## ONでLv1以上なら、焼却範囲とフレアを出す。Lv0やOFFなら止める
-func _refresh_ignite_effects() -> void:
-	var aura := player.ignite_aura
-	var level := ignite.level
-	var on := player.is_igniting
-	EnemyBullet.set_chain_allowed(on and level >= chain_min_level)
-	if aura == null:
+# ---------------------------------------------------------------- イグナイト
+
+## 発動の要求。単押し(full=false)は1レベル、長押し(full=true)は全レベルを消費する
+func _on_ignite_requested(full : bool) -> void:
+	if player.is_igniting or ignite.level < 1:
+		if debug_ignite:
+			print("[Ignite] 発動できません: 発動中=%s / レベル=%d" % [player.is_igniting, ignite.level])
 		return
-	if on and level >= 1:
-		var max_radius : float = _at_level(burn_max_radius, level - 1)
-		if max_radius <= 0.0:
-			max_radius = get_viewport_rect().size.length() # 画面全体を覆う半径
-		var final_radius : float = _at_level(burn_final_radius, level - 1)
-		if final_radius <= 0.0:
-			final_radius = max_radius * 0.5
-		aura.apply_level(level, max_radius, final_radius)
-	else:
-		aura.stop()
+	var used := ignite.consume_levels(ignite.level if full else 1)
+	if used <= 0:
+		return
+	if full and used >= IgniteGauge.MAX_LEVEL:
+		full_use_count += 1
+	_start_ignite_effect(used)
+
+func _start_ignite_effect(levels : int) -> void:
+	var max_radius : float = _at_level(burn_max_radius, levels - 1)
+	if max_radius <= 0.0:
+		max_radius = get_viewport_rect().size.length() # 画面全体を覆う半径
+	var final_radius : float = _at_level(burn_final_radius, levels - 1)
+	if final_radius <= 0.0:
+		final_radius = max_radius * 0.5
+	var duration : float = _at_level(ignite_durations, levels - 1)
+	if debug_ignite:
+		print("[Ignite] 発動 %dレベル消費 → 残りLv%d / 範囲%.0f→%.0f / %.1f秒" % [
+			levels, ignite.level, max_radius, final_radius, duration])
+
+	_ignite_time_left = duration
+	EnemyBullet.set_chain_allowed(levels >= chain_min_level)
+	player.set_igniting(true)
+	if player.ignite_aura:
+		player.ignite_aura.apply_level(levels, max_radius, final_radius, duration)
+
+## 効果の開始・終了。終了(時間切れ、または死亡)で、焼却範囲とフレアを止める
+func _on_ignite_toggled(on : bool) -> void:
+	if on:
+		return
+	_ignite_time_left = 0.0
+	EnemyBullet.set_chain_allowed(false)
+	if player.ignite_aura:
+		player.ignite_aura.stop()
+	if debug_ignite:
+		print("[Ignite] 終了")
 
 func _on_bullet_burned(_bullet_position : Vector2) -> void:
 	add_score(score_per_burned_bullet)
@@ -197,13 +215,13 @@ func add_score(amount : int) -> void:
 
 # ---------------------------------------------------------------- ストーリー連動
 
-## ゲージを消費している状態か(ON かつ Lv1以上)。炎弾・とどめの判定に使う
+## ゲージを消費している状態か(発動の効果中)。炎弾・とどめの判定に使う
 func is_consuming() -> bool:
-	return player != null and player.is_igniting and ignite.level >= 1
+	return player != null and player.is_igniting
 
-## 点火の使用回数(累計の消費量で数える)
+## 点火の使用回数(Lv5を長押しで全消費した回数)
 func ignite_use_count() -> int:
-	return int(ignite.consumed_total / consume_per_use)
+	return full_use_count
 
 ## とどめの瞬間のステートがイグナイトか。ボスを倒した瞬間に呼ぶ
 func is_finisher_state() -> bool:

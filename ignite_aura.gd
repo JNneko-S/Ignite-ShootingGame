@@ -93,7 +93,7 @@ func is_active() -> bool:
 
 ## ON中のレベルに合わせて効果を整える。
 ## まだ出ていなければ、最大半径まで広がってから縮む。出ていれば、新しい半径へ縮める
-func apply_level(level : int, max_radius : float, final_radius : float) -> void:
+func apply_level(level : int, max_radius : float, final_radius : float, duration : float = 0.0) -> void:
 	var level_changed := level != _level
 	_level = level
 	if debug_log:
@@ -103,7 +103,7 @@ func apply_level(level : int, max_radius : float, final_radius : float) -> void:
 		_active = true
 		_kill_radius_tween()
 		if visual:
-			visual.show_aura(level, 1.0, 0.0)
+			visual.show_aura(level, 1.0, duration) # duration は、終了前の点滅のタイミングに使う
 		else:
 			_fallback_on = true
 		_set_radius(1.0)

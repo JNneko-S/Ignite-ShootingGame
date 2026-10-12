@@ -46,6 +46,12 @@ var graze_radius_scale : float = 1.0
 ## 高速連射の段階(4・5段階目)の、発射間隔の倍率
 @export var power_fast_interval_scale : float = 0.5
 
+@export_group("イグナイト入力")
+## 長押しで「全レベル消費」になるまでの時間(秒)。それより前に離すと、単押し(1レベル消費)
+@export var ignite_hold_time : float = 1.5
+## 溜めの間、自機の周りに出るリングの半径
+@export var charge_ring_radius : float = 36.0
+
 @export_group("被弾")
 ## 被弾して生き残ったあとの無敵時間(秒)。点滅し、この間はグレイズもできない
 @export var hit_invincible_time : float = 3.0
@@ -85,6 +91,13 @@ var level_power_scale : float = 1.0
 ## 現在のショット強化の段階(0〜5)
 var shot_stage : int = 0
 
+## イグナイトを発動できる状態か(Lv1以上で、発動中でない)。GameManager が毎フレーム設定する
+var ignite_available : bool = false
+enum HoldState { IDLE, HOLDING, DONE }
+var _hold_state : HoldState = HoldState.IDLE
+var _hold_time : float = 0.0
+var _charge_ratio : float = 0.0
+
 signal grazed(total : int)
 ## グレイズした瞬間に出る。演出(GrazeEffect)やゲージ側はこれを受け取る。
 ## bullet_position: 掠めた弾の位置 / density: その時 GrazeArea 内にある弾の数(密度の目安)
@@ -97,8 +110,10 @@ signal lives_changed(lives : int)
 signal game_over
 ## 復活が完了したときに出る
 signal respawned
-## イグナイトのボタンが押された(ON/OFFの切り替えは GameManager が行う)
-signal ignite_pressed
+## イグナイトが要求された。full=false は単押し(1レベル消費)、true は長押し(全レベル消費)
+signal ignite_requested(full : bool)
+## 長押しの溜め具合(0.0〜1.0)。リングの表示に使う
+signal ignite_charge_changed(ratio : float)
 ## イグナイトのON/OFFが切り替わった
 signal ignite_toggled(on : bool)
 signal shot_stage_changed(stage : int)
@@ -120,8 +135,7 @@ func _physics_process(delta: float) -> void:
 	is_focusing = InputMap.has_action("UI_Focus") and Input.is_action_pressed("UI_Focus")
 	_update_graze_radius()
 
-	if InputMap.has_action("UI_Ignite") and Input.is_action_just_pressed("UI_Ignite"):
-		ignite_pressed.emit()
+	_update_ignite_input(delta)
 
 	var dir := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
 	var speed := move_speed * level_move_scale
@@ -251,6 +265,7 @@ func die() -> void:
 		return
 	_is_alive = false
 	set_igniting(false)
+	_cancel_ignite_hold()
 	reset_shot_power()
 	if clear_bullets_on_death:
 		get_tree().call_group("enemy_bullet", "queue_free")
@@ -311,7 +326,7 @@ func add_life(amount: int = 1) -> void:
 
 # ---------------------------------------------------------------- イグナイト
 
-## イグナイトのON/OFFを切り替える。ONの間は無敵ではない
+## 発動の効果中かどうかを切り替える(効果の開始・終了は GameManager が行う)。効果中は無敵ではない
 func set_igniting(on : bool) -> void:
 	if is_igniting == on:
 		return
@@ -319,3 +334,44 @@ func set_igniting(on : bool) -> void:
 		return
 	is_igniting = on
 	ignite_toggled.emit(on)
+
+## ボタン入力。単押し(1.5秒未満で離す)は1レベル、長押しは1.5秒たった時点で全レベルを要求する
+func _update_ignite_input(delta : float) -> void:
+	if not InputMap.has_action("UI_Ignite"):
+		return
+	var pressed := Input.is_action_pressed("UI_Ignite")
+	match _hold_state:
+		HoldState.IDLE:
+			if Input.is_action_just_pressed("UI_Ignite") and ignite_available and _is_alive:
+				_hold_state = HoldState.HOLDING
+				_hold_time = 0.0
+		HoldState.HOLDING:
+			if not pressed:
+				_hold_state = HoldState.IDLE
+				_set_charge(0.0)
+				ignite_requested.emit(false) # 単押し
+			else:
+				_hold_time += delta
+				_set_charge(_hold_time / ignite_hold_time)
+				if _hold_time >= ignite_hold_time:
+					_hold_state = HoldState.DONE # 離すまで、次の入力は受けない
+					_set_charge(0.0)
+					ignite_requested.emit(true) # 長押し: 自動で最大
+		HoldState.DONE:
+			if not pressed:
+				_hold_state = HoldState.IDLE
+
+func _cancel_ignite_hold() -> void:
+	_hold_state = HoldState.IDLE
+	_set_charge(0.0)
+
+func _set_charge(ratio : float) -> void:
+	_charge_ratio = clampf(ratio, 0.0, 1.0)
+	ignite_charge_changed.emit(_charge_ratio)
+	queue_redraw()
+
+## 溜めの間、自機の周りにリングを出す
+func _draw() -> void:
+	if _charge_ratio > 0.0:
+		draw_arc(Vector2.ZERO, charge_ring_radius, -PI / 2.0, -PI / 2.0 + TAU * _charge_ratio,
+			48, Color(1.0, 0.6, 0.2, 0.9), 3.0)
