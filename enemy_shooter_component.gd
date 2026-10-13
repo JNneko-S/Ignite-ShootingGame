@@ -73,6 +73,7 @@ func _fire(pattern : ShotPattern, shot_index : int) -> void:
 
 		var bullet : Node2D = scene.instantiate()
 		parent.add_child(bullet)
+		bullet.z_index = 5
 		bullet.global_position = global_position
 		if bullet.has_method("setup"):
 			bullet.setup(Vector2.from_angle(angle), pattern.bullet_speed, pattern.damage, pattern.bullet_accel)

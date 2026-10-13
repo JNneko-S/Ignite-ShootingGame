@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://cjd6edxevmr84"]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="1_sfvom"]
+[ext_resource type="Texture2D" uid="uid://cglub6pmmh52k" path="res://Assets/Designer.png" id="2_d3hfb"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_8f7qq"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="3_d3hfb"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="4_d3hfb"]
+[ext_resource type="Resource" uid="uid://dxn8rh0juqjqd" path="res://Resources/ShotPatterns/shot_ring.tres" id="6_bdtfj"]
+[ext_resource type="Resource" uid="uid://cluhmyjtyp3xf" path="res://Resources/ShotPatterns/shot_spiral.tres" id="7_efmfp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pa34p"]
+radius = 18.0
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_d3hfb"]
+points = PackedVector2Array(-133, -80, -183, 261, -299, 90, -308, -73, -326, -260, 331, -265, 332, -231, 326, -158, 310, -70, 291, 89, 182, 261, 132, -71, 4, 236)
+
+[sub_resource type="Resource" id="Resource_d3hfb"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 0.2
+shot_count = 30
+interval = 0.5
+pause = 1.0
+bullet_count = 5
+spread_angle = 50.0
+rotate_per_shot = 15.0
+reverse_every_shots = 5
+bullet_speed = 200.0
+bullet_accel = 200.0
+
+[sub_resource type="Resource" id="Resource_efmfp"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 3.0
+shot_count = 100
+pause = 1.0
+rotate_per_shot = 2.0
+reverse_every_shots = 1
+bullet_speed = 100.0
+bullet_accel = 100.0
+metadata/_custom_type_script = "uid://ct8u3n22w477n"
+
+[sub_resource type="Resource" id="Resource_f0hy3"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 1.0
+shot_count = 300
+pause = 10.0
+bullet_count = 20
+spread_angle = -360.0
+rotate_per_shot = 5.0
+reverse_every_shots = 100
+bullet_speed = 160.0
+
+[node name="Enemy" unique_id=724143726 instance=ExtResource("1_sfvom")]
+collision_layer = 4
+collision_mask = 4
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+position = Vector2(0, -167.19998)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_d3hfb")
+hframes = 1
+
+[node name="CollisionShape2D" parent="." index="1" unique_id=1904278015]
+position = Vector2(-1, -108.99997)
+shape = SubResource("CircleShape2D_pa34p")
+
+[node name="Hurtbox" parent="." index="2" unique_id=1184106570]
+z_index = 2
+position = Vector2(0, -618)
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 589.80005)
+scale = Vector2(0.4, 0.4)
+shape = SubResource("ConvexPolygonShape2D_d3hfb")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 2000
+hp = 2000
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+z_index = 5
+position = Vector2(-181, -50.99997)
+patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_d3hfb"), ExtResource("6_bdtfj"), ExtResource("7_efmfp")])
+
+[node name="EnemyShooterComponent2" parent="." index="5" unique_id=239371039 instance=ExtResource("3_d3hfb")]
+z_index = 5
+position = Vector2(180, -50.99997)
+patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_d3hfb"), ExtResource("6_bdtfj"), ExtResource("7_efmfp")])
+
+[node name="EnemyShooterComponent5" parent="." index="6" unique_id=686865781 instance=ExtResource("3_d3hfb")]
+z_index = 5
+position = Vector2(0, -103)
+patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_efmfp"), SubResource("Resource_f0hy3")])

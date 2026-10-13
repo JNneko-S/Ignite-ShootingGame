@@ -23,8 +23,8 @@ radius = 9.16
 
 [sub_resource type="Resource" id="Resource_b26j0"]
 script = ExtResource("8_b26j0")
-ignited_collision_layer = 256
-ignited_collision_mask = 32
+ignited_collision_layer = 264
+ignited_collision_mask = 16
 base_damage = 1.0
 chain_enabled = false
 

@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://g4frjt285hub"]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="1_jc5v3"]
+[ext_resource type="Texture2D" uid="uid://ifeqkpnrl8n5" path="res://Assets/enemy-medium.png" id="2_d0vnm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2fvp3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ruu38"]
+size = Vector2(32, 20)
+
+[node name="Medium" unique_id=724143726 instance=ExtResource("1_jc5v3")]
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture = ExtResource("2_d0vnm")
+
+[node name="CollisionShape2D" parent="." index="1" unique_id=1904278015]
+shape = SubResource("CircleShape2D_2fvp3")
+
+[node name="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_ruu38")

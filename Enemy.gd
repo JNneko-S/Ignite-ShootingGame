@@ -1,10 +1,17 @@
 extends CharacterBody2D
 class_name Enemy
+## MovePattern に沿って動く敵。HPComponent と Hurtbox で被ダメージ・死亡を処理する。
+##
+## 必要な子ノード: HPComponent / Hurtbox (Hurtbox直下に CollisionShape2D と CoolDown という名前のTimer)
 
 signal died(enemy : Enemy)
 
 @export var pattern : MovePattern
+## true にすると、パターンを左右反転して動く(同じパターンを逆側から出せる)
 @export var mirror_x : bool = false
+## 移動パターン全体(出現位置と、絶対座標の目標)を、この分だけずらす。
+## スポナーが、同じパターンで隊列を組むときに使う
+@export var path_offset : Vector2 = Vector2.ZERO
 
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
@@ -13,6 +20,7 @@ var _tween : Tween
 var _is_dead : bool = false
 
 func _ready() -> void:
+	add_to_group("enemy") # 反射弾の追尾先
 	hp_component.is_dead.connect(_die)
 	hurtbox.recieved_damage.connect(_on_hurtbox_damage)
 	# Hurtbox の area_entered がエディタで未接続なら、ここで接続する
@@ -47,19 +55,21 @@ func _run_step(step : MoveStep) -> void:
 	await _tween.finished
 
 	if step.wait_after > 0.0 and not _is_dead:
-		await get_tree().create_timer(step.wait_after).timeout
+		_tween = create_tween()
+		_tween.tween_interval(step.wait_after)
+		await _tween.finished
 
 func _convert_absolute(pos : Vector2) -> Vector2:
 	if mirror_x:
 		pos.x = get_viewport_rect().size.x - pos.x
-	return pos
+	return pos + path_offset
 
 func _convert_relative(offset : Vector2) -> Vector2:
 	if mirror_x:
 		offset.x = -offset.x
 	return offset
 
-func _on_hurtbox_damage(damage : int) -> void:
+func _on_hurtbox_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void:
 	hp_component.apply_damage(ceili(damage))
 
 func _die() -> void:
