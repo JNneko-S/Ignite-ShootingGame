@@ -33,6 +33,10 @@ var graze_radius_scale : float = 1.0
 @export var shot_power_at_center : float = 1.2
 ## 画面の端から撃ったときの威力倍率
 @export var shot_power_at_edge : float = 0.85
+## ショットの弾速(px/秒)。自機の移動速度(Lv5で約375)より十分速くすること
+@export var shot_speed : float = 900.0
+## true なら、前進している速度の分だけ弾速を足す。縦に動いても、弾の間隔が一定になり、重ならない
+@export var shot_inherit_forward_speed : bool = true
 ## 威力に応じて弾の色を変える(弾の見た目に掛け合わせる)
 @export var tint_shot_by_power : bool = true
 @export var shot_color_low : Color = Color(0.6, 0.75, 1.0)
@@ -194,7 +198,10 @@ func _fire_volley(angles : Array) -> void:
 		if bullet.has_method("setup"):
 			var t := _center_distance_ratio(bullet.global_position)
 			var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
-			bullet.setup(direction, 300, shot_damage * power * level_power_scale, 0)
+			var speed := shot_speed
+			if shot_inherit_forward_speed:
+				speed += maxf(velocity.dot(direction), 0.0) # 弾の向きに進んでいる速度だけ足す
+			bullet.setup(direction, speed, shot_damage * power * level_power_scale, 0)
 			if tint_shot_by_power:
 				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
 

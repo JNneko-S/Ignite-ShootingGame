@@ -1,13 +1,15 @@
 [gd_scene format=3 uid="uid://ul2o805ej4sw"]
 
-[ext_resource type="Texture2D" uid="uid://besn0sw6ueofn" path="res://Assets/ship.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://cgku0362dxnou" path="res://Player.gd" id="1_onrkg"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="2_i3pqv"]
 [ext_resource type="PackedScene" uid="uid://d0ybnbes8i6vj" path="res://GameScene/Bullet/player_bullet.tscn" id="2_sweqy"]
 [ext_resource type="PackedScene" uid="uid://co8nbu3ldl1ly" path="res://GameScene/Player/ignite.tscn" id="3_1jxqw"]
 [ext_resource type="PackedScene" uid="uid://d4ikto8y7jfwf" path="res://Component/Hurtbox/hurtbox.tscn" id="4_hqtel"]
+[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/makebead-99x99.png" id="5_b26j0"]
 [ext_resource type="PackedScene" uid="uid://cl4bv6vi5lqk1" path="res://GameScene/Player/GrazeEffect.tscn" id="6_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://dsfkddeaqo01p" path="res://Assets/Effect/32x32_Impact_6.png" id="6_n7ghd"]
 [ext_resource type="Script" uid="uid://khde6xp7pdu" path="res://ignite_aura.gd" id="7_dw050"]
+[ext_resource type="Texture2D" uid="uid://dl1tyft1wtew8" path="res://Assets/Effect/32x32_Arcane_16.png" id="7_nvl01"]
 [ext_resource type="Script" uid="uid://cj1p0qdeu80na" path="res://ignite_params.gd" id="8_b26j0"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jhy2k"]
@@ -84,11 +86,19 @@ blink_freq_start = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1093960595]
 z_index = 1
-position = Vector2(0.42, 3)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_4flbx")
-hframes = 5
-vframes = 2
+position = Vector2(0.42, -1)
+scale = Vector2(0.41, 0.41)
+texture = ExtResource("5_b26j0")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=1111090001]
+z_index = 1
+scale = Vector2(0.235, 0.235)
+texture = ExtResource("6_n7ghd")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2D3" unique_id=316507698]
+z_index = 1
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("7_nvl01")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=794175035]
 position = Vector2(0, -6)
@@ -102,7 +112,9 @@ collision_mask = 32
 character = NodePath("..")
 
 [node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=1856668573]
-position = Vector2(-1, -6)
+z_index = 1
+position = Vector2(-0.98, 0.15)
+scale = Vector2(0.755, 0.755)
 shape = SubResource("CircleShape2D_sweqy")
 debug_color = Color(0.5988643, 0.54440135, 3.85046e-07, 0.41960785)
 

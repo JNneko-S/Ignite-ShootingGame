@@ -46,17 +46,19 @@ _data = {
 &"Shoot": SubResource("Animation_yrvfn")
 }
 
-[node name="PlayerBullet" unique_id=466385270 instance=ExtResource("1_io7es")]
+[node name="PlayerBullet" unique_id=466385270 node_paths=PackedStringArray("animation_player") instance=ExtResource("1_io7es")]
 z_index = 1
 collision_layer = 8
 collision_mask = 64
+animation_player = NodePath("AnimationPlayer")
+damage = 1
 
-[node name="CollisionShape2D" parent="." index="0" unique_id=1399399970]
+[node name="Sprite2D" parent="." index="0" unique_id=1376631923]
+texture = ExtResource("2_yrvfn")
+
+[node name="CollisionShape2D" parent="." index="1" unique_id=1399399970]
 shape = SubResource("CapsuleShape2D_1nhgk")
 debug_color = Color(0.9888764, 0, 0.30229488, 0.41960785)
-
-[node name="Sprite2D" parent="." index="1" unique_id=1376631923]
-texture = ExtResource("2_yrvfn")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="2" unique_id=1923215100]
 libraries/ = SubResource("AnimationLibrary_6nqgy")
