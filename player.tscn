@@ -12,14 +12,16 @@
 [ext_resource type="Texture2D" uid="uid://dl1tyft1wtew8" path="res://Assets/Effect/32x32_Arcane_16.png" id="7_nvl01"]
 [ext_resource type="Script" uid="uid://cj1p0qdeu80na" path="res://ignite_params.gd" id="8_b26j0"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_jhy2k"]
 radius = 5.0990195
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sweqy"]
-radius = 2.0
+radius = 4.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5hoxb"]
-radius = 9.16
+radius = 12.0
 
 [sub_resource type="Resource" id="Resource_b26j0"]
 script = ExtResource("8_b26j0")
@@ -74,7 +76,9 @@ z_index = 1
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_onrkg")
+move_speed = 350.0
 bullet_scene = ExtResource("2_sweqy")
+shot_angles = Array[float]([0.0, 1.0, -1.0])
 clear_bullets_on_death = false
 
 [node name="Ignite" parent="." unique_id=1104348565 instance=ExtResource("3_1jxqw")]
@@ -92,12 +96,13 @@ texture = ExtResource("5_b26j0")
 
 [node name="Sprite2D3" type="Sprite2D" parent="." unique_id=1111090001]
 z_index = 1
-scale = Vector2(0.235, 0.235)
+material = SubResource("ShaderMaterial_elpp1")
+scale = Vector2(0.5, 0.5)
 texture = ExtResource("6_n7ghd")
 
 [node name="Sprite2D2" type="Sprite2D" parent="Sprite2D3" unique_id=316507698]
 z_index = 1
-scale = Vector2(0.65, 0.65)
+scale = Vector2(0.5, 0.5)
 texture = ExtResource("7_nvl01")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=794175035]
@@ -112,7 +117,7 @@ collision_mask = 32
 character = NodePath("..")
 
 [node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=1856668573]
-z_index = 1
+z_index = 2
 position = Vector2(-0.98, 0.15)
 scale = Vector2(0.755, 0.755)
 shape = SubResource("CircleShape2D_sweqy")
@@ -124,7 +129,8 @@ collision_layer = 0
 collision_mask = 32
 
 [node name="GrazeShape" type="CollisionShape2D" parent="GrazeArea" unique_id=1497646487]
-position = Vector2(0, -9)
+z_index = 1
+position = Vector2(0, -3)
 shape = SubResource("CircleShape2D_5hoxb")
 
 [node name="IgniteAura" type="Area2D" parent="." unique_id=1413675136 node_paths=PackedStringArray("visual")]

@@ -382,7 +382,7 @@ script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
-graze_radius_scales = Array[float]([1.5, 1.0, 0.9])
+graze_radius_scales = Array[float]([1.2, 1.0, 0.8])
 
 [node name="StageRunner" type="Node2D" parent="." unique_id=1973239994 node_paths=PackedStringArray("enemy_parent", "parallax_layers")]
 script = ExtResource("2_yintm")
