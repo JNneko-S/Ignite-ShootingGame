@@ -45,6 +45,12 @@ signal score_changed(score : int)
 ## 連鎖が使える、消費したレベルの数
 @export var chain_min_level : int = 5
 
+@export_group("被弾時の補給アイテム")
+## 被弾したとき、自機の位置から散らばるアイテムの数
+@export var hit_item_count : int = 6
+## アイテム1個で増えるゲージの量(Lv1まで20、Lv5まで300)
+@export var hit_item_value : float = 6.0
+
 @export_group("レベルによる能力(Lv0〜Lv5の順)")
 ## 移動速度の倍率。高レベルほど速い
 @export var move_speed_scales : Array[float] = [1.0, 1.05, 1.1, 1.15, 1.2, 1.25]
@@ -145,6 +151,18 @@ func _on_player_damaged() -> void:
 	if dead:
 		death_count += 1
 		player.die() # 発動中なら、効果も止まる
+	else:
+		_scatter_items()
+
+## 被弾の位置から、ゲージの補給アイテムを散らばらせる
+func _scatter_items() -> void:
+	for i in hit_item_count:
+		var item := IgniteItem.new()
+		var angle := TAU * (float(i) + randf() * 0.6) / maxf(hit_item_count, 1)
+		item.setup(player, hit_item_value, Vector2.from_angle(angle) * randf_range(160.0, 340.0))
+		item.collected.connect(ignite.add_value)
+		get_tree().current_scene.add_child(item)
+		item.global_position = player.global_position
 
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:

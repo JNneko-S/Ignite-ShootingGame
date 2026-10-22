@@ -7,7 +7,7 @@
 script = ExtResource("1")
 bullet_scene = ExtResource("1_fbpg5")
 start_delay = 1.0
-shot_count = 10
+shot_count = 20
 pause = 0.1
 bullet_count = 20
 spread_angle = 360.0

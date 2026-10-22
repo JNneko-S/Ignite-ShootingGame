@@ -50,6 +50,16 @@ var graze_radius_scale : float = 1.0
 ## 高速連射の段階(4・5段階目)の、発射間隔の倍率
 @export var power_fast_interval_scale : float = 0.5
 
+@export_group("画面・操作")
+## 自機が動ける範囲の余白(px)。画面の端から、この分だけ内側までしか動けない
+@export var screen_margin : float = 16.0
+## 低速移動中に、当たり判定を表示する
+@export var show_hitbox_on_focus : bool = true
+## Hurtbox の CollisionShape2D が円でないときの、表示する半径
+@export var hitbox_display_radius : float = 3.0
+## 矢印キーを、移動のキーに追加する(WASD は Input Map から外せる)
+@export var add_arrow_keys : bool = true
+
 @export_group("イグナイト入力")
 ## 長押しで「全レベル消費」になるまでの時間(秒)。それより前に離すと、単押し(1レベル消費)
 @export var ignite_hold_time : float = 1.5
@@ -87,6 +97,8 @@ var _invincible_end_msec : int = 0
 var _blink_tween : Tween
 
 ## イグナイトがONか(ONの間、ゲージが減り続け、フレアが残る)
+var _marker : HitboxMarker
+
 var is_igniting : bool = false
 ## ゲージのレベルによる補正(GameManager が設定する)
 var level_move_scale : float = 1.0
@@ -124,6 +136,9 @@ signal shot_stage_changed(stage : int)
 
 func _ready() -> void:
 	add_to_group("player") # 敵の狙い撃ち用
+	if add_arrow_keys:
+		_add_arrow_keys()
+	_create_hitbox_marker()
 	_spawn_position = global_position # 復活位置は、最初に置かれた位置
 	if ignite_aura == null:
 		push_warning("Player: 子に IgniteAura(ignite_aura.gd)が見つかりません。ノード名を IgniteAura にしてください")
@@ -147,6 +162,13 @@ func _physics_process(delta: float) -> void:
 		speed *= focus_speed_multiplier
 	velocity = dir * speed
 	move_and_slide()
+	# 画面の外に出ないようにする
+	var area := get_viewport_rect().size
+	global_position = global_position.clamp(
+		Vector2(screen_margin, screen_margin), area - Vector2(screen_margin, screen_margin))
+	if _marker:
+		var marker_on := show_hitbox_on_focus and is_focusing and _is_alive
+		_marker.alpha = move_toward(_marker.alpha, 1.0 if marker_on else 0.0, delta * 10.0)
 	_shoot(delta)
 
 # ---------------------------------------------------------------- ショット
@@ -382,3 +404,33 @@ func _draw() -> void:
 	if _charge_ratio > 0.0:
 		draw_arc(Vector2.ZERO, charge_ring_radius, -PI / 2.0, -PI / 2.0 + TAU * _charge_ratio,
 			48, Color(1.0, 0.6, 0.2, 0.9), 3.0)
+
+# ---------------------------------------------------------------- 操作・表示の補助
+
+## 移動のアクションに、矢印キーを足す(すでにあれば何もしない)
+func _add_arrow_keys() -> void:
+	var keys := {"UI_Left": KEY_LEFT, "UI_Right": KEY_RIGHT, "UI_Forward": KEY_UP, "UI_Back": KEY_DOWN}
+	for action in keys:
+		if not InputMap.has_action(action):
+			continue
+		var exists := false
+		for event in InputMap.action_get_events(action):
+			if event is InputEventKey and (event.physical_keycode == keys[action] or event.keycode == keys[action]):
+				exists = true
+		if not exists:
+			var key := InputEventKey.new()
+			key.physical_keycode = keys[action]
+			InputMap.action_add_event(action, key)
+
+## 当たり判定の印を作る。大きさと位置は、Hurtbox の円形シェイプに合わせる
+func _create_hitbox_marker() -> void:
+	_marker = HitboxMarker.new()
+	_marker.z_index = 10
+	_marker.radius = hitbox_display_radius
+	var shape_node := get_node_or_null("Hurtbox/CollisionShape2D") as CollisionShape2D
+	if shape_node:
+		var hurtbox := shape_node.get_parent() as Node2D
+		_marker.position = hurtbox.position + shape_node.position
+		if shape_node.shape is CircleShape2D:
+			_marker.radius = maxf((shape_node.shape as CircleShape2D).radius, 2.0)
+	add_child(_marker)

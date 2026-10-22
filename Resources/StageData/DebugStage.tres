@@ -1,0 +1,149 @@
+[gd_resource type="Resource" script_class="StageData" format=3 uid="uid://c87ufivqlbb15"]
+
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="1_offjn"]
+[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="2_dk1d8"]
+[ext_resource type="PackedScene" uid="uid://g4frjt285hub" path="res://GameScene/Enemy/medium.tscn" id="3_2g4ht"]
+[ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="4_8umwo"]
+[ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="5_71sfp"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="6_1yek1"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="7_t638a"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="8_3488h"]
+[ext_resource type="PackedScene" uid="uid://cjd6edxevmr84" path="res://GameScene/Enemy/Boss.tscn" id="9_svt2y"]
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="10_airnb"]
+
+[sub_resource type="Resource" id="Resource_msk85"]
+script = ExtResource("2_dk1d8")
+speed_multiplier = 8.0
+duration = 1.6
+time = 5.0
+
+[sub_resource type="Resource" id="Resource_32fuh"]
+script = ExtResource("5_71sfp")
+target = Vector2(80, 200)
+duration = 1.2
+wait_after = 1.5
+x_trans = 2
+x_ease = 0
+y_trans = 3
+y_ease = 0
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_mv2sh"]
+script = ExtResource("5_71sfp")
+target = Vector2(-700, 260)
+wait_after = 1.5
+x_trans = 1
+y_trans = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_sf26y"]
+script = ExtResource("4_8umwo")
+start_position = Vector2(80, -32)
+steps = Array[ExtResource("5_71sfp")]([SubResource("Resource_32fuh"), SubResource("Resource_mv2sh")])
+metadata/_custom_type_script = "uid://dk7uu30dge1ll"
+
+[sub_resource type="Resource" id="Resource_uegr2"]
+script = ExtResource("7_t638a")
+bullet_scene = ExtResource("8_3488h")
+start_delay = 0.3
+shot_count = 5
+interval = 0.5
+pause = 1.0
+bullet_count = 3
+spread_angle = 30.0
+bullet_speed = 200.0
+bullet_accel = 150.0
+
+[sub_resource type="Resource" id="Resource_v0qhg"]
+script = ExtResource("6_1yek1")
+enemy_scene = ExtResource("3_2g4ht")
+move_pattern = SubResource("Resource_sf26y")
+shot_patterns = Array[ExtResource("7_t638a")]([SubResource("Resource_uegr2")])
+count = 5
+interval = 2.0
+offset_step = Vector2(90, -10)
+
+[sub_resource type="Resource" id="Resource_sq8ho"]
+script = ExtResource("5_71sfp")
+target = Vector2(612, 400)
+duration = 4.0
+x_trans = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_0u1li"]
+script = ExtResource("4_8umwo")
+start_position = Vector2(532, 120)
+steps = Array[ExtResource("5_71sfp")]([SubResource("Resource_sq8ho")])
+metadata/_custom_type_script = "uid://dk7uu30dge1ll"
+
+[sub_resource type="Resource" id="Resource_e0xeq"]
+resource_local_to_scene = true
+script = ExtResource("7_t638a")
+bullet_scene = ExtResource("8_3488h")
+start_delay = 1.0
+shot_count = 3
+interval = 1.0
+pause = 3.0
+bullet_count = 4
+spread_angle = 60.0
+bullet_speed = 100.0
+bullet_accel = 10.0
+
+[sub_resource type="Resource" id="Resource_tvikh"]
+script = ExtResource("6_1yek1")
+enemy_scene = ExtResource("3_2g4ht")
+move_pattern = SubResource("Resource_0u1li")
+shot_patterns = Array[ExtResource("7_t638a")]([SubResource("Resource_e0xeq")])
+count = 5
+interval = 1.0
+
+[sub_resource type="Resource" id="Resource_pi8cl"]
+script = ExtResource("5_71sfp")
+target = Vector2(557, 466)
+duration = 5.0
+x_trans = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_36j3w"]
+script = ExtResource("4_8umwo")
+start_position = Vector2(-89, 120)
+steps = Array[ExtResource("5_71sfp")]([SubResource("Resource_pi8cl")])
+metadata/_custom_type_script = "uid://dk7uu30dge1ll"
+
+[sub_resource type="Resource" id="Resource_unoob"]
+script = ExtResource("6_1yek1")
+enemy_scene = ExtResource("3_2g4ht")
+move_pattern = SubResource("Resource_36j3w")
+
+[sub_resource type="Resource" id="Resource_qiivi"]
+script = ExtResource("2_dk1d8")
+duration = 1.6
+time = 10.0
+
+[sub_resource type="Resource" id="Resource_cv8go"]
+script = ExtResource("5_71sfp")
+target = Vector2(250, 300)
+duration = 2.0
+wait_after = 99999.0
+y_trans = 1
+y_ease = 1
+metadata/_custom_type_script = "uid://e6xjmp17mmgm"
+
+[sub_resource type="Resource" id="Resource_d3hfb"]
+script = ExtResource("4_8umwo")
+start_position = Vector2(250, -100)
+steps = Array[ExtResource("5_71sfp")]([SubResource("Resource_cv8go")])
+metadata/_custom_type_script = "uid://dk7uu30dge1ll"
+
+[sub_resource type="Resource" id="Resource_crwyy"]
+script = ExtResource("6_1yek1")
+enemy_scene = ExtResource("9_svt2y")
+move_pattern = SubResource("Resource_d3hfb")
+tag = "BOSS"
+is_boss = true
+boss_name = "神ナル深機Atlas"
+time = 10.0
+
+[resource]
+script = ExtResource("10_airnb")
+events = Array[ExtResource("1_offjn")]([SubResource("Resource_msk85"), SubResource("Resource_v0qhg"), SubResource("Resource_tvikh"), SubResource("Resource_unoob"), SubResource("Resource_qiivi"), SubResource("Resource_crwyy")])

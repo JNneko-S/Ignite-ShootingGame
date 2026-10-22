@@ -1,3 +1,4 @@
+@tool
 extends Resource
 class_name ShotPattern
 ## 敵の弾幕1種類分の設定。.tres で保存して EnemyShooter に登録する。
@@ -24,7 +25,7 @@ class_name ShotPattern
 ## 弾を広げる角度の合計。360以上なら全方位(リング状)
 @export var spread_angle : float = 0.0
 ## true なら自機に向けて撃つ(base_angle は自機方向からのずれになる)
-@export var aim_at_player : bool = false
+@export var aim_at_player : bool = true
 @export var base_angle : float = 0.0
 ## 1発撃つごとに基準角度を回転させる量。渦巻き弾幕になる
 @export var rotate_per_shot : float = 0.0
@@ -36,4 +37,4 @@ class_name ShotPattern
 @export var bullet_speed : float = 250.0
 ## 加速度(px/秒²)。マイナスで減速
 @export var bullet_accel : float = 0.0
-@export var damage : int = 1.0
+@export var damage : float = 1.0

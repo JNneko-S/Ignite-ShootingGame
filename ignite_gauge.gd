@@ -72,6 +72,11 @@ func consume_levels(count : int) -> int:
 	_update()
 	return n
 
+## ゲージを直接増やす(補給アイテムなど)。グレイズの加算とは別
+func add_value(amount : float) -> void:
+	value = minf(value + amount, max_value())
+	_update()
+
 ## 被弾。レベルを miss_penalty 下げる。下げた結果が0未満なら死亡として true を返す(Lv0で被弾など)
 ## (死亡時のゲージのリセットは、復活時の reset_to_start で行う)
 func on_miss() -> bool:
