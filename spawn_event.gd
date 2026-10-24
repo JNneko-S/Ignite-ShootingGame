@@ -1,3 +1,4 @@
+@tool
 extends StageEvent
 class_name SpawnEvent
 ## 敵を出現させる。同じ敵を count 体、interval 秒おきに出せる(隊列)。

@@ -61,7 +61,8 @@ func _run_step(step : MoveStep) -> void:
 
 func _convert_absolute(pos : Vector2) -> Vector2:
 	if mirror_x:
-		pos.x = get_viewport_rect().size.x - pos.x
+		var area := CameraView.visible_rect(self) # Camera2D に映っている範囲の、左右の中心で反転する
+		pos.x = area.position.x * 2.0 + area.size.x - pos.x
 	return pos + path_offset
 
 func _convert_relative(offset : Vector2) -> Vector2:

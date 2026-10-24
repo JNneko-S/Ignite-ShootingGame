@@ -1,3 +1,4 @@
+@tool
 extends StageEvent
 class_name ScrollSpeedEvent
 ## 背景のスクロール速度を変える(Parallax2D の autoscroll を、倍率で変える)。

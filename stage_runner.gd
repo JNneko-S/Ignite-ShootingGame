@@ -33,6 +33,11 @@ signal boss_spawned(enemy : Enemy, boss_name : String, phase_thresholds : Array[
 @export var debug_start_time : float = 0.0
 @export var debug_log : bool = false
 
+## エディタの「ここから試遊」が書き出す、開始時刻のファイル(読んだら消す)
+const PLAYTEST_FILE : String = "user://stage_playtest.cfg"
+## 書き出してから、この秒数を過ぎた指定は使わない
+const PLAYTEST_EXPIRE : float = 60.0
+
 ## ステージの経過時間(秒)。待機中は進まない。開始前は start_delay 分だけマイナス
 var stage_time : float = 0.0
 var scroll_multiplier : float = 1.0
@@ -52,6 +57,7 @@ var _scroll_tween : Tween
 func _ready() -> void:
 	add_to_group("stage_runner")
 	_collect_parallax()
+	_load_playtest()
 	if autostart:
 		start()
 
@@ -66,12 +72,36 @@ func start() -> void:
 	stage_time = -start_delay
 	if debug_start_time > 0.0:
 		stage_time = debug_start_time
+		var last_scroll : ScrollSpeedEvent = null
 		while _next < _entries.size() and _entries[_next]["time"] < stage_time:
+			if _entries[_next]["event"] is ScrollSpeedEvent:
+				last_scroll = _entries[_next]["event"]
 			_next += 1
+		# 飛ばしたスクロール変更のうち、最後のものだけを即座に反映する
+		if last_scroll and not _parallax.is_empty():
+			set_scroll_speed(last_scroll.speed_multiplier, 0.0)
 	_running = true
 	stage_started.emit()
 	if debug_log:
 		print("[Stage] 開始 %s イベント%d件" % [stage.stage_name, _entries.size()])
+
+## エディタから「ここから試遊」で起動されたときだけ、debug_start_time を上書きする
+func _load_playtest() -> void:
+	if not OS.has_feature("editor") or not FileAccess.file_exists(PLAYTEST_FILE):
+		return
+	var config := ConfigFile.new()
+	var error := config.load(PLAYTEST_FILE)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PLAYTEST_FILE)) # 次の通常起動に影響させない
+	if error != OK:
+		return
+	var written_at : float = config.get_value("playtest", "written_at", 0.0)
+	if Time.get_unix_time_from_system() - written_at > PLAYTEST_EXPIRE:
+		return # 古い指定(試遊ボタンを押したあと、別の方法で起動した)
+	var stage_path : String = config.get_value("playtest", "stage_path", "")
+	if stage and stage_path != "" and stage_path != stage.resource_path:
+		return # 別のステージ用の指定
+	debug_start_time = config.get_value("playtest", "start_time", 0.0)
+	print("[Stage] 試遊: %.1f 秒から開始" % debug_start_time)
 
 ## イベントを1回ごとの実行(SpawnEvent なら1体ごと)に展開して、時間順に並べる
 func _build_entries() -> void:

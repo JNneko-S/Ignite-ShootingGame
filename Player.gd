@@ -162,10 +162,10 @@ func _physics_process(delta: float) -> void:
 		speed *= focus_speed_multiplier
 	velocity = dir * speed
 	move_and_slide()
-	# 画面の外に出ないようにする
-	var area := get_viewport_rect().size
+	# 画面の外に出ないようにする(Camera2D の位置・ズームを考えた、実際に見えている範囲)
+	var area := CameraView.visible_rect(self)
 	global_position = global_position.clamp(
-		Vector2(screen_margin, screen_margin), area - Vector2(screen_margin, screen_margin))
+		area.position + Vector2(screen_margin, screen_margin), area.end - Vector2(screen_margin, screen_margin))
 	if _marker:
 		var marker_on := show_hitbox_on_focus and is_focusing and _is_alive
 		_marker.alpha = move_toward(_marker.alpha, 1.0 if marker_on else 0.0, delta * 10.0)
@@ -241,10 +241,10 @@ func reset_shot_power() -> void:
 	shot_stage = 0
 	shot_stage_changed.emit(shot_stage)
 
-## 画面中央からの距離を 0.0(中央)〜1.0(角)で返す
+## 画面(Camera2D に映っている範囲)の中央からの距離を 0.0(中央)〜1.0(角)で返す
 func _center_distance_ratio(pos : Vector2) -> float:
-	var size := get_viewport_rect().size
-	return clampf(pos.distance_to(size / 2.0) / (size.length() / 2.0), 0.0, 1.0)
+	var area := CameraView.visible_rect(self)
+	return clampf(pos.distance_to(area.get_center()) / (area.size.length() / 2.0), 0.0, 1.0)
 
 # ---------------------------------------------------------------- グレイズ
 

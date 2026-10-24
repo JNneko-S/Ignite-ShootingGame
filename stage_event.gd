@@ -1,3 +1,4 @@
+@tool
 extends Resource
 class_name StageEvent
 ## ステージのタイムラインに並べるイベントの基底クラス。

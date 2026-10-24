@@ -1,3 +1,4 @@
+@tool
 extends StageEvent
 class_name StageSignalEvent
 ## StageRunner の stage_signal を出す。WARNING表示、BGM切り替え、ステージ名の表示など、

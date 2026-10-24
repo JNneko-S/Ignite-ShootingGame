@@ -28,6 +28,13 @@ var _phase : float = 0.0
 var _target : Node2D
 var _retarget_in : float = 0.0
 
+# ---- 弾の動き(ShotPattern の Motion。空なら speed と accel だけで動く) ----
+var _motion : Array[BulletStep] = []
+var _speed_scale : float = 1.0
+var _step_index : int = -1
+var _step_time : float = 0.0
+var _step_from_speed : float = 0.0 # 区間の始めの速さ(倍率をかける前)
+
 func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
 	add_to_group("enemy_bullet") # 被弾時・イグナイト終了時の弾消しの対象
@@ -45,6 +52,16 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	damage = dmg
 	accel = acc
 	rotation = direction.angle() + PI / 2.0
+
+## 撃ったあとの動きを設定する。setup のあとに呼ぶ。
+## speed_scale: 列弾・ばらつきによる速さの倍率(Motion の速度にもかかる)
+func set_motion(motion : Array[BulletStep], speed_scale : float = 1.0) -> void:
+	_motion.assign(motion.filter(func(step : BulletStep) -> bool: return step != null))
+	_speed_scale = speed_scale
+	_step_index = -1
+	if not _motion.is_empty():
+		_step_from_speed = speed / maxf(speed_scale, 0.0001)
+		_begin_step(0)
 
 func is_normal() -> bool:
 	return _state == BulletState.NORMAL
@@ -101,10 +118,41 @@ func _on_area_entered(area : Area2D) -> void:
 func _physics_process(delta : float) -> void:
 	match _state:
 		BulletState.NORMAL:
-			speed = maxf(speed + accel * delta, 0.0)
-			global_position += direction * speed * delta
+			if _motion.is_empty():
+				speed = maxf(speed + accel * delta, 0.0)
+				global_position += direction * speed * delta
+			else:
+				_update_motion(delta)
 		BulletState.IGNITED:
 			_move_ignited(delta)
+
+## Motion の区間を進めて、動かす(ShotMath.motion_table と同じ順番の計算)
+func _update_motion(delta : float) -> void:
+	if _step_index >= _motion.size():
+		global_position += direction * speed * delta # 最後の区間のあとは、まっすぐ飛ぶ
+		return
+	var step := _motion[_step_index]
+	_step_time += delta
+	speed = ShotMath.step_speed(step, _step_from_speed, minf(_step_time, step.duration)) * _speed_scale
+	if step.angular_velocity != 0.0:
+		direction = direction.rotated(deg_to_rad(step.angular_velocity) * delta)
+		rotation = direction.angle() + PI / 2.0
+	global_position += direction * speed * delta
+	# 区間の終わり: 次の区間の向きは、動いたあとの位置で決める
+	if _step_time >= step.duration - 0.0001:
+		_step_from_speed = ShotMath.step_speed(step, _step_from_speed, step.duration)
+		_begin_step(_step_index + 1)
+
+func _begin_step(index : int) -> void:
+	_step_index = index
+	_step_time = 0.0
+	if index >= _motion.size():
+		return
+	var player := get_tree().get_first_node_in_group("player") as Node2D if is_inside_tree() else null
+	var player_position := player.global_position if player else global_position + Vector2.DOWN
+	var heading := ShotMath.turned_heading(_motion[index], direction.angle(), global_position, player_position)
+	direction = Vector2.from_angle(heading)
+	rotation = heading + PI / 2.0
 
 func _move_ignited(delta : float) -> void:
 	_age += delta

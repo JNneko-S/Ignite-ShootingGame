@@ -1,3 +1,4 @@
+@tool
 extends StageEvent
 class_name WaitClearEvent
 ## 指定した敵が全滅するまで、ステージの進行を止める(中ボス・ボス用)。

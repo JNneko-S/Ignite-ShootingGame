@@ -25,6 +25,10 @@ window/size/window_height_override=896
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/stage_editor/plugin.cfg")
+
 [file_customization]
 
 folder_colors={

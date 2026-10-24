@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="6_1yek1"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="7_t638a"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="8_3488h"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="9_dk1d8"]
 [ext_resource type="PackedScene" uid="uid://cjd6edxevmr84" path="res://GameScene/Enemy/Boss.tscn" id="9_svt2y"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="10_airnb"]
 

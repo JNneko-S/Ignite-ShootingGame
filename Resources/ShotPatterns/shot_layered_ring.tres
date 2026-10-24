@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="3"]
+
+[sub_resource type="Resource" id="step_slow"]
+script = ExtResource("2")
+duration = 0.5
+target_speed = 40.0
+
+[sub_resource type="Resource" id="step_fast"]
+script = ExtResource("2")
+duration = 1.0
+target_speed = 180.0
+speed_ease = 0
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("3")
+start_delay = 1.0
+pause = 0.6
+bullet_count = 30
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 6.0
+line_count = 4
+line_speed_ratio = 0.2
+bullet_speed = 110.0
+motion = Array[ExtResource("2")]([SubResource("step_slow"), SubResource("step_fast")])

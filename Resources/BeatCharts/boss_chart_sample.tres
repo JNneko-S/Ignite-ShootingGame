@@ -1,0 +1,118 @@
+[gd_resource type="Resource" script_class="BeatChart" format=3]
+
+[ext_resource type="Script" path="res://Resources/BeatCharts/beat_chart.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/BeatCharts/beat_cue.gd" id="2"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3"]
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="4"]
+[ext_resource type="AudioStream" uid="uid://fefw52g5dr8b" path="res://Assets/audiostock_1544153.mp3" id="5"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/shot_stop_and_aim.tres" id="6"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/shot_layered_ring.tres" id="7"]
+
+[sub_resource type="Resource" id="ring_quarter"]
+resource_name = "4分音符ごとのリング"
+script = ExtResource("3")
+bullet_scene = ExtResource("4")
+timing_unit = 1
+start_delay = 0.0
+interval = 1.0
+pause = 0.0
+bullet_count = 20
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 4.5
+bullet_speed = 130.0
+
+[sub_resource type="Resource" id="aim_eighth"]
+resource_name = "4分ごとの自機狙い3way(表と裏の2つで8分)"
+script = ExtResource("3")
+bullet_scene = ExtResource("4")
+timing_unit = 1
+start_delay = 0.0
+interval = 1.0
+pause = 0.0
+bullet_count = 3
+spread_angle = 24.0
+bullet_speed = 260.0
+
+[sub_resource type="Resource" id="burst_sixteenth"]
+resource_name = "16分の連射 → 2拍休み"
+script = ExtResource("3")
+bullet_scene = ExtResource("4")
+timing_unit = 1
+start_delay = 0.0
+shot_count = 8
+interval = 0.25
+pause = 2.0
+bullet_count = 5
+spread_angle = 60.0
+aim_once_per_burst = true
+bullet_speed = 220.0
+
+[sub_resource type="Resource" id="cue_intro"]
+script = ExtResource("2")
+pattern = SubResource("ring_quarter")
+length_beats = 16.0
+note = "イントロ"
+
+[sub_resource type="Resource" id="cue_a_left"]
+script = ExtResource("2")
+bar = 5
+shooter = "EnemyShooterComponent3"
+pattern = SubResource("aim_eighth")
+note = "Aメロ(表拍)"
+
+[sub_resource type="Resource" id="cue_a_right"]
+script = ExtResource("2")
+bar = 5
+beat = 1.5
+shooter = "EnemyShooterComponent4"
+pattern = SubResource("aim_eighth")
+note = "Aメロ(裏拍)"
+
+[sub_resource type="Resource" id="cue_a_call"]
+script = ExtResource("2")
+bar = 5
+shooter = "EnemyShooterComponent"
+pattern = SubResource("burst_sixteenth")
+note = "掛け合い(左)"
+
+[sub_resource type="Resource" id="cue_a_response"]
+script = ExtResource("2")
+bar = 5
+beat = 3.0
+shooter = "EnemyShooterComponent2"
+pattern = SubResource("burst_sixteenth")
+note = "掛け合い(右)"
+
+[sub_resource type="Resource" id="cue_chorus"]
+script = ExtResource("2")
+bar = 9
+pattern = ExtResource("6")
+note = "サビ"
+
+[sub_resource type="Resource" id="cue_chorus_ring"]
+script = ExtResource("2")
+bar = 11
+shooter = "EnemyShooterComponent3"
+pattern = ExtResource("7")
+length_beats = 8.0
+note = "サビ後半"
+
+[sub_resource type="Resource" id="cue_break"]
+script = ExtResource("2")
+bar = 13
+note = "ブレイク(休み)"
+
+[sub_resource type="Resource" id="cue_build"]
+script = ExtResource("2")
+bar = 14
+pattern = SubResource("burst_sixteenth")
+note = "盛り上げ"
+
+[resource]
+script = ExtResource("1")
+bpm = 150.0
+music = ExtResource("5")
+loop_start_bar = 5
+loop_end_bar = 17
+cues = Array[ExtResource("2")]([SubResource("cue_intro"), SubResource("cue_a_left"), SubResource("cue_a_right"), SubResource("cue_a_call"), SubResource("cue_a_response"), SubResource("cue_chorus"), SubResource("cue_chorus_ring"), SubResource("cue_break"), SubResource("cue_build")])

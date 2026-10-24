@@ -3,6 +3,8 @@ class_name EnemyShooter
 ## 敵に付ける弾発射コンポーネント。ShotPattern を複数登録でき、それぞれ独立して撃つ。
 ## このノードの位置が発射位置(砲口)になるので、敵の子として好きな位置に置く。
 ## 自機への狙い撃ちには、Player が "player" グループに入っている必要がある。
+##
+## ボスに BeatConductor があると、Patterns は使わず、譜面(BeatChart)のとおりに撃つ。
 
 @export var patterns : Array[ShotPattern] = []
 ## ShotPattern 側で弾シーンが未指定のときに使う弾
@@ -14,6 +16,11 @@ class_name EnemyShooter
 ## true なら、発射のたびに使われている値をデバッグ出力に表示する(設定が効いているかの確認用)
 @export var debug_log : bool = false
 
+## stop() で増える。動いている _run_pattern は、これが変わったら止まる
+var _generation : int = 0
+## aim_once_per_burst 用の、パターンごとのバーストの向き(譜面で撃つとき)
+var _burst_aims : Dictionary = {}
+
 func _ready() -> void:
 	if debug_log:
 		print("[EnemyShooter] 開始 node=%s patterns=%d" % [get_path(), patterns.size()])
@@ -21,70 +28,86 @@ func _ready() -> void:
 			print("    start_delay=%.2f shot_count=%d interval=%.2f loop=%s pause=%.2f bullet_count=%d" % [
 				pattern.start_delay, pattern.shot_count, pattern.interval,
 				pattern.loop, pattern.pause, pattern.bullet_count])
+	if _has_conductor():
+		return # 譜面で撃つので、Patterns では撃たない
 	for pattern in patterns:
 		_run_pattern(pattern)
 
+## この敵(シーンのルート)に BeatConductor があるか
+func _has_conductor() -> bool:
+	var root := owner if owner else get_parent()
+	if root == null:
+		return false
+	for node in root.get_children():
+		if node is BeatConductor:
+			return true
+	return false
+
+## Patterns で撃つのを止める(BeatConductor が、譜面で撃つときに呼ぶ)
+func stop() -> void:
+	_generation += 1
+
+## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
+func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
+	var burst := maxi(pattern.shot_count, 1)
+	if shot_index % burst == 0 or not _burst_aims.has(pattern):
+		_burst_aims[pattern] = _aim_angle()
+	if not _can_fire():
+		return
+	_fire(pattern, shot_index, _burst_aims[pattern] if pattern.aim_once_per_burst else _aim_angle())
+
 func _run_pattern(pattern : ShotPattern) -> void:
-	await _wait(pattern.start_delay)
+	var generation := _generation
+	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
+	var clock := MusicClock.find_in(get_tree())
+	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
+	await _wait(pattern.start_delay * unit)
 	var shot_index := 0
-	while true:
+	while generation == _generation:
+		var burst_aim := _aim_angle()
 		for i in maxi(pattern.shot_count, 1):
+			if generation != _generation:
+				return
 			if _can_fire():
-				_fire(pattern, shot_index)
+				_fire(pattern, shot_index, burst_aim if pattern.aim_once_per_burst else _aim_angle())
 				if debug_log:
 					print("[EnemyShooter] t=%.2f node=%s shot=%d interval=%.2f pause=%.2f pattern=%s" % [
 						Time.get_ticks_msec() / 1000.0, get_path(), shot_index, pattern.interval, pattern.pause,
 						pattern.resource_path if pattern.resource_path != "" else "(シーン内に埋め込み)"])
 			shot_index += 1
-			await _wait(pattern.interval)
+			await _wait(pattern.interval * unit)
+			if generation != _generation:
+				return
 		if not pattern.loop:
 			return
-		await _wait(pattern.pause)
+		await _wait(pattern.pause * unit)
 
 func _can_fire() -> bool:
-	return not only_when_on_screen or get_viewport_rect().has_point(global_position)
+	return not only_when_on_screen or CameraView.visible_rect(self).has_point(global_position)
 
-func _fire(pattern : ShotPattern, shot_index : int) -> void:
+func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var scene := pattern.bullet_scene if pattern.bullet_scene else default_bullet_scene
 	if scene == null:
 		push_warning("EnemyShooter: 弾シーンが未設定です")
 		return
-
-	# 基準角度(0 = 真下)
-	var base := Vector2.DOWN.angle()
-	if pattern.aim_at_player:
-		var player := get_tree().get_first_node_in_group("player") as Node2D
-		if player:
-			base = (player.global_position - global_position).angle()
-	base += deg_to_rad(pattern.base_angle + pattern.rotate_per_shot * _rotation_steps(pattern, shot_index))
-
-	var count := maxi(pattern.bullet_count, 1)
-	var is_ring := pattern.spread_angle >= 360.0
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
-
-	for i in count:
-		var offset := 0.0
-		if count > 1:
-			if is_ring:
-				offset = 360.0 * i / count
-			else:
-				offset = -pattern.spread_angle / 2.0 + pattern.spread_angle * i / (count - 1)
-		var angle := base + deg_to_rad(offset)
-
+	# 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する
+	for shot in ShotMath.bullets(pattern, shot_index, aim_angle):
 		var bullet : Node2D = scene.instantiate()
 		parent.add_child(bullet)
 		bullet.z_index = 5
-		bullet.global_position = global_position
+		bullet.global_position = global_position + shot["offset"]
 		if bullet.has_method("setup"):
-			bullet.setup(Vector2.from_angle(angle), pattern.bullet_speed, pattern.damage, pattern.bullet_accel)
+			bullet.setup(Vector2.from_angle(shot["angle"]), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+		if bullet.has_method("set_motion"):
+			bullet.set_motion(pattern.motion, shot["speed_scale"])
 
-## 回転量(発射回数換算)。reverse_every_shots が設定されていれば、行って戻る動きになる
-func _rotation_steps(pattern : ShotPattern, shot_index : int) -> int:
-	var n := pattern.reverse_every_shots
-	if n <= 0:
-		return shot_index
-	var k := shot_index % (n * 2)
-	return k if k < n else n * 2 - k
+## 自機への角度(自機がいなければ真下)
+func _aim_angle() -> float:
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	if player:
+		return (player.global_position - global_position).angle()
+	return Vector2.DOWN.angle()
 
 ## このノードに紐づく Tween で待つ。ノードが消えたときに安全に処理が止まる
 func _wait(seconds : float) -> void:

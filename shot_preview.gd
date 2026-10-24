@@ -10,7 +10,7 @@ class_name ShotPreview
 ##   3. Preview Time を動かすか、Playing をオンにする
 ##   4. Player Position に、自機の位置を入れる(自機狙いの弾の向きに使う)
 ##
-## 計算は EnemyShooter と同じ規則(連射、休止、回転、反転、加速度)。
+## 計算は EnemyShooter / EnemyBullet と同じ規則(連射、休止、回転、反転、列弾、ばらつき、Motion)。共通の計算は ShotMath にある。
 
 @export var pattern : ShotPattern :
 	set(value):
@@ -26,6 +26,8 @@ class_name ShotPreview
 @export var loop_length : float = 10.0
 ## 自機狙いの向きを決めるための、自機の位置(グローバル座標)
 @export var player_position : Vector2 = Vector2(576.0, 560.0)
+## Timing Unit が BEATS のパターンで使うテンポ
+@export var bpm : float = 150.0
 @export var bullet_radius : float = 4.0
 ## 描く弾の上限(多すぎると重くなる)
 @export var max_bullets : int = 4000
@@ -55,9 +57,8 @@ func _process(delta : float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	var screen := Vector2(
-		float(ProjectSettings.get_setting("display/window/size/viewport_width", 1152)),
-		float(ProjectSettings.get_setting("display/window/size/viewport_height", 648)))
+	# Camera2D に映る範囲(ワールド座標)
+	var screen := CameraView.scene_rect(get_tree().edited_scene_root if is_inside_tree() else null)
 	draw_circle(Vector2.ZERO, 6.0, Color(1.0, 0.8, 0.3)) # 砲口
 	var player_local := to_local(player_position)
 	draw_circle(player_local, 5.0, Color(0.4, 0.8, 1.0, 0.8)) # 自機
@@ -66,15 +67,17 @@ func _draw() -> void:
 		return
 
 	var drawn := 0
-	var rect := Rect2(to_local(Vector2.ZERO), screen).grow(80.0)
-	for shot in _shots_until(preview_time):
+	var rect := Rect2(to_local(screen.position), screen.size).grow(80.0)
+	var aim_angle := player_local.angle()
+	var table := ShotMath.motion_table(pattern)
+	for shot in ShotMath.shot_times(pattern, preview_time, 60.0 / maxf(bpm, 1.0)):
 		var age : float = preview_time - shot["time"]
 		if age > BULLET_LIFETIME:
 			continue
-		var travelled := _distance(age)
 		var fade := clampf(1.0 - age / BULLET_LIFETIME, 0.25, 1.0)
-		for angle in shot["angles"]:
-			var point : Vector2 = Vector2.from_angle(angle) * travelled
+		for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle):
+			var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"], age,
+					bullet["offset"], player_local)
 			if not rect.has_point(point):
 				continue
 			draw_circle(point, bullet_radius, Color(0.55, 0.8, 1.0, fade))
@@ -83,63 +86,6 @@ func _draw() -> void:
 				_text(Vector2(12.0, 16.0), "弾が多すぎるため、ここまでを表示(%d発)" % max_bullets, Color(1.0, 0.6, 0.4))
 				return
 	_text(Vector2(12.0, 16.0), "t = %.2f 秒 / 弾 %d発" % [preview_time, drawn], Color.WHITE)
-
-## 時刻 until までに発射された弾を、発射ごとに返す
-func _shots_until(until : float) -> Array[Dictionary]:
-	var shots : Array[Dictionary] = []
-	var t := pattern.start_delay
-	var index := 0
-	var guard := 0
-	while t <= until and guard < 5000:
-		for i in maxi(pattern.shot_count, 1):
-			var fire_time := t + pattern.interval * i
-			if fire_time > until:
-				return shots
-			shots.append({"time": fire_time, "angles": _angles(index)})
-			index += 1
-			guard += 1
-		if not pattern.loop:
-			return shots
-		t += pattern.interval * maxi(pattern.shot_count, 1) + pattern.pause
-		if pattern.interval <= 0.0 and pattern.pause <= 0.0:
-			return shots # 時間が進まない設定で、無限ループしないように
-	return shots
-
-## shot_index 回目の発射で出る、全ての弾の角度(ラジアン)。EnemyShooter._fire と同じ計算
-func _angles(shot_index : int) -> Array[float]:
-	var base := Vector2.DOWN.angle()
-	if pattern.aim_at_player:
-		base = to_local(player_position).angle()
-	base += deg_to_rad(pattern.base_angle + pattern.rotate_per_shot * _rotation_steps(shot_index))
-	var count := maxi(pattern.bullet_count, 1)
-	var is_ring := pattern.spread_angle >= 360.0
-	var result : Array[float] = []
-	for i in count:
-		var offset := 0.0
-		if count > 1:
-			if is_ring:
-				offset = 360.0 * i / count
-			else:
-				offset = -pattern.spread_angle / 2.0 + pattern.spread_angle * i / (count - 1)
-		result.append(base + deg_to_rad(offset))
-	return result
-
-func _rotation_steps(shot_index : int) -> int:
-	var n := pattern.reverse_every_shots
-	if n <= 0:
-		return shot_index
-	var k := shot_index % (n * 2)
-	return k if k < n else n * 2 - k
-
-## 発射から age 秒後の、砲口からの距離(加速度で止まったら、そこで止まる)
-func _distance(age : float) -> float:
-	var v := pattern.bullet_speed
-	var a := pattern.bullet_accel
-	if a < 0.0:
-		var stop := v / -a
-		if age > stop:
-			return v * stop + 0.5 * a * stop * stop
-	return v * age + 0.5 * a * age * age
 
 func _text(at : Vector2, text : String, color : Color) -> void:
 	var font := ThemeDB.fallback_font

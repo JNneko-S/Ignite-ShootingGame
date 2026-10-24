@@ -196,7 +196,7 @@ func _on_ignite_requested(full : bool) -> void:
 func _start_ignite_effect(levels : int) -> void:
 	var max_radius : float = _at_level(burn_max_radius, levels - 1)
 	if max_radius <= 0.0:
-		max_radius = get_viewport_rect().size.length() # 画面全体を覆う半径
+		max_radius = CameraView.visible_rect(self).size.length() # 画面(Camera2D に映っている範囲)全体を覆う半径
 	var final_radius : float = _at_level(burn_final_radius, levels - 1)
 	if final_radius <= 0.0:
 		final_radius = max_radius * 0.5
