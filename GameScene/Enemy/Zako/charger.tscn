@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/enemy-small.png" id="tex"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_charger.tres" id="move"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" uid="uid://xchyfr3avu0m" path="res://Component/Hitbox/Hitbox.gd" id="hitbox_script"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(14, 14)
+
+[sub_resource type="CircleShape2D" id="body_shape"]
+radius = 7.0
+
+[node name="Charger" instance=ExtResource("base")]
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+modulate = Color(1, 0.45, 0.35, 1)
+texture = ExtResource("tex")
+
+[node name="Hurtbox" parent="." index="2" unique_id=1184106570]
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 3
+hp = 3
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+
+[node name="BodyHitbox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("hitbox_script")
+damage = 1
+damage_source_type = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyHitbox"]
+shape = SubResource("body_shape")

@@ -34,6 +34,7 @@ var _speed_scale : float = 1.0
 var _step_index : int = -1
 var _step_time : float = 0.0
 var _step_from_speed : float = 0.0 # 区間の始めの速さ(倍率をかける前)
+var _mirror : bool = false # 左右反転して出た敵の弾(曲がる向き・回す向きが逆)
 
 func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
@@ -55,7 +56,8 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 
 ## 撃ったあとの動きを設定する。setup のあとに呼ぶ。
 ## speed_scale: 列弾・ばらつきによる速さの倍率(Motion の速度にもかかる)
-func set_motion(motion : Array[BulletStep], speed_scale : float = 1.0) -> void:
+func set_motion(motion : Array[BulletStep], speed_scale : float = 1.0, mirror : bool = false) -> void:
+	_mirror = mirror
 	_motion.assign(motion.filter(func(step : BulletStep) -> bool: return step != null))
 	_speed_scale = speed_scale
 	_step_index = -1
@@ -135,7 +137,7 @@ func _update_motion(delta : float) -> void:
 	_step_time += delta
 	speed = ShotMath.step_speed(step, _step_from_speed, minf(_step_time, step.duration)) * _speed_scale
 	if step.angular_velocity != 0.0:
-		direction = direction.rotated(deg_to_rad(step.angular_velocity) * delta)
+		direction = direction.rotated(ShotMath.angular_velocity(step, _mirror) * delta)
 		rotation = direction.angle() + PI / 2.0
 	global_position += direction * speed * delta
 	# 区間の終わり: 次の区間の向きは、動いたあとの位置で決める
@@ -150,7 +152,7 @@ func _begin_step(index : int) -> void:
 		return
 	var player := get_tree().get_first_node_in_group("player") as Node2D if is_inside_tree() else null
 	var player_position := player.global_position if player else global_position + Vector2.DOWN
-	var heading := ShotMath.turned_heading(_motion[index], direction.angle(), global_position, player_position)
+	var heading := ShotMath.turned_heading(_motion[index], direction.angle(), global_position, player_position, _mirror)
 	direction = Vector2.from_angle(heading)
 	rotation = heading + PI / 2.0
 

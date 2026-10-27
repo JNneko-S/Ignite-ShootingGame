@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cr31p6griofpq"]
 
-[ext_resource type="Script" uid="uid://cdwcqv1x6dec7" path="res://enemy.gd" id="1_65f6o"]
+[ext_resource type="Script" uid="uid://cdwcqv1x6dec7" path="res://Enemy.gd" id="1_65f6o"]
 [ext_resource type="Resource" uid="uid://oqs6gtgwa13w" path="res://Resources/MovePatterns/TestEnemy/enemy_pattern_center_curve.tres" id="2_dxnol"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="3_2ly0f"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="5_2fvp3"]
@@ -27,6 +27,10 @@ metadata/_custom_type_script = "uid://c5fpb0pimae7e"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=38672095]
 position = Vector2(0, 6)
 debug_color = Color(0.607722, 0.53875893, 0.11474762, 0.41960785)
+
+[node name="Timer" type="Timer" parent="Hurtbox"]
+wait_time = 0.2
+one_shot = true
 
 [node name="HPComponent" parent="." unique_id=2079593739 instance=ExtResource("5_2fvp3")]
 max_hp = 3

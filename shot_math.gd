@@ -39,10 +39,12 @@ static func time_unit(pattern : ShotPattern, seconds_per_beat : float) -> float:
 
 ## shot_index 回目の発射で出る、全ての弾。
 ## 1発ごとに {"angle": 向き(ラジアン), "speed_scale": 速さの倍率, "offset": 砲口からの出現位置} を返す。
-## aim_angle は、砲口から自機への角度(aim_at_player のときだけ使う)
-static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float) -> Array[Dictionary]:
+## aim_angle は、砲口から自機への角度(aim_at_player のときだけ使う)。
+## mirror なら左右反転する(左右反転して出た敵の弾幕。基準の向きからのずれを、全て逆回りにする)
+static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, mirror : bool = false) -> Array[Dictionary]:
+	var sign := -1.0 if mirror else 1.0
 	var base := aim_angle if pattern.aim_at_player else Vector2.DOWN.angle()
-	base += deg_to_rad(pattern.base_angle + rotation_degrees(pattern, shot_index))
+	base += deg_to_rad(pattern.base_angle + rotation_degrees(pattern, shot_index)) * sign
 	var count := maxi(pattern.bullet_count, 1)
 	var lines := maxi(pattern.line_count, 1)
 	var is_ring := pattern.spread_angle >= 360.0
@@ -56,12 +58,12 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float) 
 			else:
 				spread = -pattern.spread_angle / 2.0 + pattern.spread_angle * i / (count - 1)
 		for line in lines:
-			var angle := base + deg_to_rad(spread)
+			var angle := base + deg_to_rad(spread) * sign
 			var speed_scale := 1.0 + pattern.line_speed_ratio * line
 			if has_random:
 				var rng := RandomNumberGenerator.new()
 				rng.seed = hash([pattern.random_seed, shot_index, i, line])
-				angle += deg_to_rad(rng.randf_range(-pattern.random_angle, pattern.random_angle))
+				angle += deg_to_rad(rng.randf_range(-pattern.random_angle, pattern.random_angle)) * sign
 				speed_scale *= 1.0 + rng.randf_range(-pattern.random_speed_ratio, pattern.random_speed_ratio)
 			result.append({
 				"angle": angle,
@@ -86,16 +88,21 @@ static func rotation_steps(pattern : ShotPattern, shot_index : int) -> int:
 
 # ---------------------------------------------------------------- 弾の動き
 
-## 区間の始めに、向きを変える
-static func turned_heading(step : BulletStep, heading : float, position : Vector2, player : Vector2) -> float:
+## 区間の始めに、向きを変える。mirror なら回す向きを逆にする
+static func turned_heading(step : BulletStep, heading : float, position : Vector2, player : Vector2, mirror : bool = false) -> float:
+	var turn := deg_to_rad(step.turn_angle) * (-1.0 if mirror else 1.0)
 	match step.turn_mode:
 		BulletStep.TurnMode.ADD:
-			return heading + deg_to_rad(step.turn_angle)
+			return heading + turn
 		BulletStep.TurnMode.AIM_PLAYER:
-			return (player - position).angle() + deg_to_rad(step.turn_angle)
+			return (player - position).angle() + turn
 		BulletStep.TurnMode.ABSOLUTE:
-			return Vector2.DOWN.angle() + deg_to_rad(step.turn_angle)
+			return Vector2.DOWN.angle() + turn
 	return heading
+
+## 区間の曲がる速さ(ラジアン/秒)。mirror なら逆回り
+static func angular_velocity(step : BulletStep, mirror : bool = false) -> float:
+	return deg_to_rad(step.angular_velocity) * (-1.0 if mirror else 1.0)
 
 ## 区間の始めから t 秒後の速さ(速さの倍率をかける前)
 static func step_speed(step : BulletStep, from_speed : float, t : float) -> float:
@@ -107,7 +114,8 @@ static func step_speed(step : BulletStep, from_speed : float, t : float) -> floa
 
 ## プレビュー用に、Motion の各区間の軌跡を前もって計算する(ゲームの物理フレームと同じ刻み)。
 ## 区間の始めの向きを 0、速さの倍率を 1 とした、区間内の移動量の表。Motion が空なら空
-static func motion_table(pattern : ShotPattern) -> Array[Dictionary]:
+## mirror なら、曲がる向きを逆にした表になる
+static func motion_table(pattern : ShotPattern, mirror : bool = false) -> Array[Dictionary]:
 	var table : Array[Dictionary] = []
 	var dt := 1.0 / Engine.physics_ticks_per_second
 	var speed := pattern.bullet_speed
@@ -120,7 +128,7 @@ static func motion_table(pattern : ShotPattern) -> Array[Dictionary]:
 		var ticks := ceili(maxf(step.duration, 0.0) / dt - 0.0001)
 		for i in range(1, ticks + 1):
 			var current := step_speed(step, speed, minf(i * dt, step.duration))
-			heading += deg_to_rad(step.angular_velocity) * dt
+			heading += angular_velocity(step, mirror) * dt
 			position += Vector2.from_angle(heading) * current * dt
 			points.append(position)
 		speed = step_speed(step, speed, step.duration)
@@ -130,7 +138,7 @@ static func motion_table(pattern : ShotPattern) -> Array[Dictionary]:
 
 ## 撃ってから age 秒後の弾の位置。origin は弾の出現位置(砲口 + offset)、table は motion_table の結果
 static func bullet_position(pattern : ShotPattern, table : Array[Dictionary], angle : float, speed_scale : float,
-		age : float, origin : Vector2, player : Vector2) -> Vector2:
+		age : float, origin : Vector2, player : Vector2, mirror : bool = false) -> Vector2:
 	if table.is_empty():
 		return origin + Vector2.from_angle(angle) * distance(pattern, age) * speed_scale
 	var dt := 1.0 / Engine.physics_ticks_per_second
@@ -139,7 +147,7 @@ static func bullet_position(pattern : ShotPattern, table : Array[Dictionary], an
 	var remaining := age
 	var speed := pattern.bullet_speed
 	for entry in table:
-		heading = turned_heading(entry["step"], heading, position, player)
+		heading = turned_heading(entry["step"], heading, position, player, mirror)
 		var points : PackedVector2Array = entry["points"]
 		var duration : float = entry["duration"]
 		var f := clampf(minf(remaining, duration) / dt, 0.0, points.size() - 1.0)

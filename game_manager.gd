@@ -46,10 +46,23 @@ signal score_changed(score : int)
 @export var chain_min_level : int = 5
 
 @export_group("被弾時の補給アイテム")
-## 被弾したとき、自機の位置から散らばるアイテムの数
-@export var hit_item_count : int = 6
-## アイテム1個で増えるゲージの量(Lv1まで20、Lv5まで300)
-@export var hit_item_value : float = 6.0
+## 散らばるアイテムのシーン(ルートが IgniteItem)。見た目はこのシーンの Sprite2D で変える
+@export var hit_item_scene : PackedScene = preload("res://GameScene/Item/ignite_item.tscn")
+## 被弾したときのレベル内の進捗(%)のうち、アイテムで取り戻せる割合。
+## 0.5 なら、Lv2 の 80% で被弾 → Lv1 の 0% に下がり、全部拾うと Lv1 の 40% まで戻る
+@export_range(0.0, 1.0, 0.05) var hit_item_recover_rate : float = 0.5
+## 被弾したときのレベルがこれより低いと、アイテムは出ない(2 なら、Lv1 以下で被弾したときは出ない)
+@export_range(0, 5) var hit_item_min_level : int = 2
+## 被弾したときの進捗がこれ以下なら、アイテムは出ない(0 なら、進捗による制限なし)
+@export_range(0.0, 1.0, 0.05) var hit_item_min_progress : float = 0.0
+## アイテム1個あたりの、取り戻せる進捗(0.05 = 5%)。合計をこれで割った数だけ出す
+@export_range(0.01, 1.0, 0.01) var hit_item_progress_each : float = 0.05
+## 一度に出るアイテムの最大数(合計の量は変わらず、1個あたりが増える)
+@export var hit_item_max_count : int = 6
+
+@export_group("復活")
+## 復活してから、敵が弾を撃たない時間(秒)。死んでから復活するまでのあいだも撃たない
+@export var respawn_ceasefire_time : float = 3.0
 
 @export_group("レベルによる能力(Lv0〜Lv5の順)")
 ## 移動速度の倍率。高レベルほど速い
@@ -145,21 +158,35 @@ func _on_player_damaged() -> void:
 	hit_count += 1
 	player.reset_shot_power()
 	var level_before := ignite.level
+	var progress_before := ignite.ratio() # 被弾したときのレベル内の進捗(アイテムの量に使う)
 	var dead := ignite.on_miss()
 	if debug_ignite:
 		print("[Ignite] 被弾 Lv%d → %s" % [level_before, "死亡" if dead else "Lv%d" % ignite.level])
 	if dead:
 		death_count += 1
+		# 復活するまで(と、復活して少しのあいだ)、敵に撃たせない
+		EnemyShooter.hold_fire(player.respawn_delay + respawn_ceasefire_time)
 		player.die() # 発動中なら、効果も止まる
 	else:
-		_scatter_items()
+		_scatter_items(level_before, progress_before)
 
-## 被弾の位置から、ゲージの補給アイテムを散らばらせる
-func _scatter_items() -> void:
-	for i in hit_item_count:
-		var item := IgniteItem.new()
-		var angle := TAU * (float(i) + randf() * 0.6) / maxf(hit_item_count, 1)
-		item.setup(player, hit_item_value, Vector2.from_angle(angle) * randf_range(160.0, 340.0))
+## 被弾の位置から、ゲージの補給アイテムを散らばらせる。
+## 量は「被弾したときの進捗 × hit_item_recover_rate」を、下がったあとのレベルの幅で換算したもの
+func _scatter_items(level_before : int, progress_before : float) -> void:
+	if level_before < hit_item_min_level:
+		return
+	if progress_before <= 0.0 or progress_before <= hit_item_min_progress:
+		return
+	var recover := progress_before * hit_item_recover_rate
+	var span := ignite.threshold(mini(ignite.level + 1, IgniteGauge.MAX_LEVEL)) - ignite.threshold(ignite.level)
+	var total := recover * span
+	var count := clampi(ceili(recover / hit_item_progress_each - 0.0001), 1, maxi(hit_item_max_count, 1))
+	if debug_ignite:
+		print("[Ignite] 補給アイテム %d個 / 合計 %.1f (Lv%d の %.0f%%)" % [count, total, ignite.level, recover * 100.0])
+	for i in count:
+		var item := hit_item_scene.instantiate() as IgniteItem if hit_item_scene else IgniteItem.new()
+		var angle := TAU * (float(i) + randf() * 0.6) / count
+		item.setup(player, total / count, Vector2.from_angle(angle) * randf_range(160.0, 340.0))
 		item.collected.connect(ignite.add_value)
 		get_tree().current_scene.add_child(item)
 		item.global_position = player.global_position
@@ -167,6 +194,9 @@ func _scatter_items() -> void:
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:
 	ignite.reset_to_start()
+	# 復活の瞬間に残っている敵弾を消して、しばらく撃たせない
+	get_tree().call_group("enemy_bullet", "queue_free")
+	EnemyShooter.hold_fire(respawn_ceasefire_time)
 
 func _on_level_changed(_level : int) -> void:
 	_apply_level_stats()

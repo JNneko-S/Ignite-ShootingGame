@@ -1,0 +1,148 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/mine_layer.tscn" id="e_mine_layer"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/firework.tscn" id="e_firework"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/curve_turret.tscn" id="e_curve_turret"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/sniper.tscn" id="e_sniper"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/armored.tscn" id="e_armored"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/charger.tscn" id="e_charger"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/absorber.tscn" id="e_absorber"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
+
+[sub_resource type="Resource" id="ev_0"]
+script = ExtResource("spawn_script")
+time = 1.0
+enemy_scene = ExtResource("e_formation")
+count = 6
+interval = 0.35
+
+[sub_resource type="Resource" id="ev_1"]
+script = ExtResource("spawn_script")
+time = 4.0
+enemy_scene = ExtResource("e_formation")
+count = 6
+interval = 0.35
+mirror_x = true
+
+[sub_resource type="Resource" id="ev_2"]
+script = ExtResource("spawn_script")
+time = 8.0
+enemy_scene = ExtResource("e_firework")
+
+[sub_resource type="Resource" id="ev_3"]
+script = ExtResource("spawn_script")
+time = 12.0
+enemy_scene = ExtResource("e_mine_layer")
+
+[sub_resource type="Resource" id="ev_4"]
+script = ExtResource("spawn_script")
+time = 13.5
+enemy_scene = ExtResource("e_mine_layer")
+mirror_x = true
+offset = Vector2(0, 60)
+
+[sub_resource type="Resource" id="ev_5"]
+script = ExtResource("spawn_script")
+time = 17.0
+enemy_scene = ExtResource("e_sniper")
+count = 2
+interval = 0.0
+offset_step = Vector2(220, 0)
+
+[sub_resource type="Resource" id="ev_6"]
+script = ExtResource("spawn_script")
+time = 21.0
+enemy_scene = ExtResource("e_curve_turret")
+
+[sub_resource type="Resource" id="ev_7"]
+script = ExtResource("spawn_script")
+time = 21.0
+enemy_scene = ExtResource("e_curve_turret")
+mirror_x = true
+
+[sub_resource type="Resource" id="ev_8"]
+script = ExtResource("spawn_script")
+time = 25.0
+enemy_scene = ExtResource("e_firework")
+count = 2
+interval = 0.8
+offset = Vector2(-90, 0)
+offset_step = Vector2(180, 0)
+
+[sub_resource type="Resource" id="ev_9"]
+script = ExtResource("spawn_script")
+time = 29.0
+enemy_scene = ExtResource("e_formation")
+count = 8
+interval = 0.3
+alternate_mirror = true
+
+[sub_resource type="Resource" id="ev_10"]
+script = ExtResource("spawn_script")
+time = 33.0
+enemy_scene = ExtResource("e_armored")
+tag = "armored"
+
+[sub_resource type="Resource" id="ev_11"]
+script = ExtResource("spawn_script")
+time = 34.0
+enemy_scene = ExtResource("e_formation")
+count = 5
+interval = 0.4
+
+[sub_resource type="Resource" id="ev_12"]
+script = ExtResource("spawn_script")
+time = 41.0
+enemy_scene = ExtResource("e_charger")
+count = 4
+interval = 0.6
+offset_step = Vector2(60, 0)
+
+[sub_resource type="Resource" id="ev_13"]
+script = ExtResource("spawn_script")
+time = 45.0
+enemy_scene = ExtResource("e_absorber")
+
+[sub_resource type="Resource" id="ev_14"]
+script = ExtResource("spawn_script")
+time = 49.0
+enemy_scene = ExtResource("e_absorber")
+mirror_x = true
+
+[sub_resource type="Resource" id="ev_15"]
+script = ExtResource("spawn_script")
+time = 50.0
+enemy_scene = ExtResource("e_sniper")
+
+[sub_resource type="Resource" id="ev_16"]
+script = ExtResource("spawn_script")
+time = 55.0
+enemy_scene = ExtResource("e_midboss_split")
+tag = "midboss"
+is_boss = true
+boss_name = "分離砲台"
+boss_phase_thresholds = Array[float]([0.5])
+
+[sub_resource type="Resource" id="ev_wait"]
+script = ExtResource("wait_script")
+time = 57.0
+tag = "midboss"
+timeout = 40.0
+
+[sub_resource type="Resource" id="ev_after"]
+script = ExtResource("spawn_script")
+time = 58.0
+enemy_scene = ExtResource("e_formation")
+count = 6
+interval = 0.3
+alternate_mirror = true
+
+[resource]
+script = ExtResource("stage_script")
+stage_name = "Stage 1 (サンプル)"
+events = Array[ExtResource("event_script")]([SubResource("ev_0"), SubResource("ev_1"), SubResource("ev_2"), SubResource("ev_3"), SubResource("ev_4"), SubResource("ev_5"), SubResource("ev_6"), SubResource("ev_7"), SubResource("ev_8"), SubResource("ev_9"), SubResource("ev_10"), SubResource("ev_11"), SubResource("ev_12"), SubResource("ev_13"), SubResource("ev_14"), SubResource("ev_15"), SubResource("ev_16"), SubResource("ev_wait"), SubResource("ev_after")])

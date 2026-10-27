@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dhhcw6jrongbp"]
+
+[ext_resource type="Script" uid="uid://chfv5upomswnx" path="res://ignite_item.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://di3252q44orec" path="res://Assets/Full Shmup Asset Pack/PowerUps/powerupG_combined_sprite.png" id="2_0qsre"]
+
+[node name="IgniteItem" type="Node2D" unique_id=837305511]
+script = ExtResource("1_item")
+assist_radius = 1.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1649346057]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_0qsre")
+hframes = 5
+frame = 4

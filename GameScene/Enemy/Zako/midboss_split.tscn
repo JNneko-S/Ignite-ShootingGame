@@ -1,0 +1,97 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/enemy-big.png" id="tex"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_midboss.tres" id="move"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_midboss_core.tres" id="pat0"]
+[ext_resource type="Script" path="res://Component/Part/enemy_part.gd" id="part_script"]
+[ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
+[ext_resource type="Texture2D" path="res://Assets/enemy-medium.png" id="pod_tex"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_pod_spiral.tres" id="pod_l"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_pod_spiral_r.tres" id="pod_r"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(28, 24)
+
+[sub_resource type="RectangleShape2D" id="pod_shape"]
+size = Vector2(28, 14)
+
+[node name="MidbossSplit" instance=ExtResource("base")]
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+modulate = Color(0.85, 0.85, 1, 1)
+texture = ExtResource("tex")
+
+[node name="Hurtbox" parent="." index="2" unique_id=1184106570]
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 120
+hp = 120
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+only_when_on_screen = false
+
+[node name="PodLeft" type="Node2D" parent="."]
+position = Vector2(-56, 10)
+script = ExtResource("part_script")
+max_hp = 40
+
+[node name="Sprite2D" type="Sprite2D" parent="PodLeft"]
+texture_filter = 1
+modulate = Color(0.75, 0.9, 1, 1)
+texture = ExtResource("pod_tex")
+hframes = 2
+
+[node name="Hurtbox" type="Area2D" parent="PodLeft"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PodLeft/Hurtbox"]
+shape = SubResource("pod_shape")
+
+[node name="Timer" type="Timer" parent="PodLeft/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="EnemyShooterComponent" parent="PodLeft" instance=ExtResource("shooter_scene")]
+z_index = 2
+patterns = Array[ExtResource("shot_script")]([ExtResource("pod_l")])
+only_when_on_screen = false
+
+[node name="PodRight" type="Node2D" parent="."]
+position = Vector2(56, 10)
+script = ExtResource("part_script")
+max_hp = 40
+
+[node name="Sprite2D" type="Sprite2D" parent="PodRight"]
+texture_filter = 1
+modulate = Color(0.75, 0.9, 1, 1)
+texture = ExtResource("pod_tex")
+hframes = 2
+
+[node name="Hurtbox" type="Area2D" parent="PodRight"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PodRight/Hurtbox"]
+shape = SubResource("pod_shape")
+
+[node name="Timer" type="Timer" parent="PodRight/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="EnemyShooterComponent" parent="PodRight" instance=ExtResource("shooter_scene")]
+z_index = 2
+patterns = Array[ExtResource("shot_script")]([ExtResource("pod_r")])
+only_when_on_screen = false

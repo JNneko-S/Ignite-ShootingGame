@@ -55,6 +55,8 @@ var _stage_length : float = 0.0
 var _scene_cache : Dictionary = {}
 ## ShotPattern ごとの ShotMath.motion_table の結果
 var _motion_cache : Dictionary = {}
+## 自機の位置(CHASE の軌道の計算に使う。描画のたびに更新する)
+var _cached_player : Vector2 = Vector2(240.0, 520.0)
 
 func _ready() -> void:
 	if not Engine.is_editor_hint():
@@ -146,6 +148,7 @@ func _draw() -> void:
 
 	var events := sorted_events()
 	var player := _player_position()
+	_cached_player = player
 	draw_circle(player, 5.0, Color(0.4, 0.8, 1.0, 0.8)) # 自機狙いの基準
 
 	_stage_length = 0.0
@@ -229,12 +232,13 @@ func _draw_bullets(event : SpawnEvent, unit : int, screen : Rect2, player : Vect
 	var seconds_per_beat := _scene_seconds_per_beat()
 	var drawn := 0
 	for shooter in _shooters_for(event):
-		var muzzle_offset : Vector2 = shooter["offset"]
+		var mirror : bool = path["mirror"]
+		var muzzle_offset : Vector2 = shooter["offset_mirrored" if mirror else "offset"]
 		var color : Color = shooter["color"]
 		for pattern in shooter["patterns"]:
 			if pattern == null:
 				continue
-			var table := _motion_table(pattern)
+			var table := _motion_table(pattern, mirror)
 			var burst := maxi(pattern.shot_count, 1)
 			var burst_aim := 0.0
 			for shot in ShotMath.shot_times(pattern, fire_until, seconds_per_beat):
@@ -248,9 +252,9 @@ func _draw_bullets(event : SpawnEvent, unit : int, screen : Rect2, player : Vect
 					continue # EnemyShooter._can_fire と同じ(撃たないが、発射回数は進む)
 				if pattern.aim_once_per_burst:
 					aim_angle = burst_aim
-				for bullet in ShotMath.bullets(pattern, shot_index, aim_angle):
+				for bullet in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
 					var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"],
-							local_time - shot_time, muzzle + bullet["offset"], player)
+							local_time - shot_time, muzzle + bullet["offset"], player, mirror)
 					if not visible_rect.has_point(point):
 						continue # 画面外に出た弾は消える
 					draw_circle(point, bullet_radius, color)
@@ -269,9 +273,10 @@ func _draw_chart_bullets(info : Dictionary, path : Dictionary, local_time : floa
 	for shooter in info["shooters"]:
 		shooters[shooter["name"]] = shooter
 	var drawn := 0
+	var mirror : bool = path["mirror"]
 	for shot in chart.shots_between(info["schedule"], local_time - BULLET_LIFETIME, fire_until):
 		var pattern : ShotPattern = shot["pattern"]
-		var table := _motion_table(pattern)
+		var table := _motion_table(pattern, mirror)
 		var shot_time : float = shot["time"]
 		var names : Array = shooters.keys() if shot["shooter"] == "" else [shot["shooter"]]
 		var excluded : PackedStringArray = shot["except"]
@@ -279,13 +284,13 @@ func _draw_chart_bullets(info : Dictionary, path : Dictionary, local_time : floa
 			if not shooters.has(shooter_name) or excluded.has(shooter_name):
 				continue
 			var shooter : Dictionary = shooters[shooter_name]
-			var muzzle : Vector2 = _path_position(path, shot_time) + shooter["offset"]
+			var muzzle : Vector2 = _path_position(path, shot_time) + shooter["offset_mirrored" if mirror else "offset"]
 			if shooter["only_on_screen"] and not screen_rect.has_point(muzzle):
 				continue
 			var aim_angle := (player - muzzle).angle()
-			for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle):
+			for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle, mirror):
 				var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"],
-						local_time - shot_time, muzzle + bullet["offset"], player)
+						local_time - shot_time, muzzle + bullet["offset"], player, mirror)
 				if not visible_rect.has_point(point):
 					continue
 				draw_circle(point, bullet_radius, shooter["color"])
@@ -322,8 +327,17 @@ func _build_path(event : SpawnEvent, unit : int, screen : Rect2) -> Dictionary:
 
 	var segments : Array = []
 	var elapsed := 0.0
+	var heading := Vector2.DOWN
 	for step in pattern.steps:
 		if step == null:
+			continue
+		if step.mode == MoveStep.Mode.CHASE:
+			var chase := _build_chase(step, cursor, heading)
+			chase["start_time"] = elapsed
+			segments.append(chase)
+			cursor = chase["to"]
+			heading = chase["end_heading"]
+			elapsed += step.duration + step.wait_after
 			continue
 		var target : Vector2
 		if step.relative:
@@ -336,9 +350,29 @@ func _build_path(event : SpawnEvent, unit : int, screen : Rect2) -> Dictionary:
 		segments.append({
 			"start_time": elapsed, "duration": step.duration, "wait": step.wait_after,
 			"from": cursor, "to": target, "step": step})
+		if target != cursor:
+			heading = (target - cursor).normalized()
 		cursor = target
 		elapsed += step.duration + step.wait_after
-	return {"start": start, "segments": segments, "total": elapsed}
+	return {"start": start, "segments": segments, "total": elapsed, "mirror": mirror}
+
+## CHASE の区間を、ゲームの物理フレームの刻みで計算する(Enemy._physics_process と同じ。自機は止まっている前提)
+func _build_chase(step : MoveStep, from : Vector2, heading : Vector2) -> Dictionary:
+	var player := _cached_player
+	if step.chase_face_player:
+		heading = from.direction_to(player)
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	var points := PackedVector2Array([from])
+	var point := from
+	var ticks := ceili(maxf(step.duration, 0.0) / dt - 0.0001)
+	for i in ticks:
+		if step.chase_turn_rate > 0.0:
+			var max_turn := deg_to_rad(step.chase_turn_rate) * dt
+			heading = heading.rotated(clampf(heading.angle_to(point.direction_to(player)), -max_turn, max_turn))
+		point += heading * step.chase_speed * dt
+		points.append(point)
+	return {"duration": step.duration, "wait": step.wait_after, "from": from, "to": point,
+			"step": step, "points": points, "end_heading": heading}
 
 ## Enemy._convert_absolute と同じ(Camera2D に映る範囲の、左右の中心で反転する)
 func _to_screen(point : Vector2, mirror : bool, offset : Vector2, screen : Rect2) -> Vector2:
@@ -348,6 +382,11 @@ func _to_screen(point : Vector2, mirror : bool, offset : Vector2, screen : Rect2
 
 ## 区間の、開始から local 秒後の位置(X と Y で別々のイージング)
 func _segment_position(segment : Dictionary, local : float) -> Vector2:
+	if segment.has("points"): # CHASE
+		var points : PackedVector2Array = segment["points"]
+		var f := clampf(local * Engine.physics_ticks_per_second, 0.0, points.size() - 1.0)
+		var i := mini(int(f), maxi(points.size() - 2, 0))
+		return points[i] if points.size() < 2 else points[i].lerp(points[i + 1], f - i)
 	var step : MoveStep = segment["step"]
 	var from : Vector2 = segment["from"]
 	var to : Vector2 = segment["to"]
@@ -382,10 +421,11 @@ func _shooters_for(event : SpawnEvent) -> Array:
 		replaced.append(copy)
 	return replaced
 
-func _motion_table(pattern : ShotPattern) -> Array[Dictionary]:
-	if not _motion_cache.has(pattern):
-		_motion_cache[pattern] = ShotMath.motion_table(pattern)
-	return _motion_cache[pattern]
+func _motion_table(pattern : ShotPattern, mirror : bool = false) -> Array[Dictionary]:
+	var key := [pattern, mirror]
+	if not _motion_cache.has(key):
+		_motion_cache[key] = ShotMath.motion_table(pattern, mirror)
+	return _motion_cache[key]
 
 ## 敵シーンを一時的に作って、移動パターンと砲口(EnemyShooter)の設定を読む。
 ## エディタでは敵のスクリプトは動かないので、作っても弾を撃ったりはしない
@@ -398,6 +438,8 @@ func _scene_info(scene : PackedScene) -> Dictionary:
 	var root := scene.instantiate()
 	if root:
 		info["pattern"] = root.get("pattern") as MovePattern
+		var mirror_visuals = root.get("mirror_visuals")
+		mirror_visuals = mirror_visuals if mirror_visuals is bool else true
 		var index := 0
 		for node in root.find_children("*", "", true, false):
 			if node.get_script() == BeatConductor:
@@ -412,7 +454,8 @@ func _scene_info(scene : PackedScene) -> Dictionary:
 			var on_screen = node.get("only_when_on_screen")
 			info["shooters"].append({
 				"name": String(node.name),
-				"offset": _offset_in(root, node),
+				"offset": _offset_in(root, node, false),
+				"offset_mirrored": _offset_in(root, node, mirror_visuals),
 				"patterns": patterns,
 				"only_on_screen": on_screen if on_screen is bool else true,
 				"color": Color.from_hsv(fmod(0.55 + index * 0.17, 1.0), 0.45, 1.0, 0.9)})
@@ -421,13 +464,17 @@ func _scene_info(scene : PackedScene) -> Dictionary:
 	_scene_cache[scene] = info
 	return info
 
-## node の位置を、シーンのルートから見た座標にする
-func _offset_in(root : Node, node : Node) -> Vector2:
+## node の位置を、シーンのルートから見た座標にする。
+## mirror なら、Enemy._mirror_children と同じく、ルートの直下のノードの位置を左右反転して計算する
+func _offset_in(root : Node, node : Node, mirror : bool) -> Vector2:
 	var xform := Transform2D.IDENTITY
 	var current := node
 	while current != null and current != root:
 		if current is Node2D:
-			xform = (current as Node2D).transform * xform
+			var local := (current as Node2D).transform
+			if mirror and current.get_parent() == root:
+				local.origin.x = -local.origin.x
+			xform = local * xform
 		current = current.get_parent()
 	return xform.origin
 

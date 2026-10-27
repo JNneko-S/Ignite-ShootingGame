@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/enemy-medium.png" id="tex"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_turret_side.tres" id="move"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_curve_wall.tres" id="pat0"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(30, 14)
+
+[node name="CurveTurret" instance=ExtResource("base")]
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+modulate = Color(0.7, 0.85, 1, 1)
+texture = ExtResource("tex")
+
+[node name="Hurtbox" parent="." index="2" unique_id=1184106570]
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 20
+hp = 20
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])

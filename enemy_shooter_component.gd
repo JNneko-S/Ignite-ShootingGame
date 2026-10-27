@@ -16,6 +16,19 @@ class_name EnemyShooter
 ## true なら、発射のたびに使われている値をデバッグ出力に表示する(設定が効いているかの確認用)
 @export var debug_log : bool = false
 
+## false にすると撃たなくなる(壊れた部位の砲口など)。譜面で撃つときも撃たない
+var enabled : bool = true
+
+## この時刻(Time.get_ticks_msec)まで、全ての敵が撃たない(自機の復活直後など)
+static var _hold_fire_until_msec : int = 0
+
+## 全ての敵を、seconds 秒のあいだ撃たせない。すでにもっと長く止めていれば、そのまま
+static func hold_fire(seconds : float) -> void:
+	_hold_fire_until_msec = maxi(_hold_fire_until_msec, Time.get_ticks_msec() + int(seconds * 1000.0))
+
+static func is_holding_fire() -> bool:
+	return Time.get_ticks_msec() < _hold_fire_until_msec
+
 ## stop() で増える。動いている _run_pattern は、これが変わったら止まる
 var _generation : int = 0
 ## aim_once_per_burst 用の、パターンごとのバーストの向き(譜面で撃つとき)
@@ -83,6 +96,8 @@ func _run_pattern(pattern : ShotPattern) -> void:
 		await _wait(pattern.pause * unit)
 
 func _can_fire() -> bool:
+	if not enabled or is_holding_fire():
+		return false
 	return not only_when_on_screen or CameraView.visible_rect(self).has_point(global_position)
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
@@ -92,7 +107,8 @@ func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 		return
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
 	# 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する
-	for shot in ShotMath.bullets(pattern, shot_index, aim_angle):
+	var mirror := _is_mirrored()
+	for shot in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
 		var bullet : Node2D = scene.instantiate()
 		parent.add_child(bullet)
 		bullet.z_index = 5
@@ -100,7 +116,16 @@ func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 		if bullet.has_method("setup"):
 			bullet.setup(Vector2.from_angle(shot["angle"]), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
 		if bullet.has_method("set_motion"):
-			bullet.set_motion(pattern.motion, shot["speed_scale"])
+			bullet.set_motion(pattern.motion, shot["speed_scale"], mirror)
+
+## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する
+func _is_mirrored() -> bool:
+	var node := get_parent()
+	while node:
+		if node is Enemy:
+			return node.mirror_x
+		node = node.get_parent()
+	return false
 
 ## 自機への角度(自機がいなければ真下)
 func _aim_angle() -> float:
