@@ -25,6 +25,9 @@ var graze_radius_scale : float = 1.0
 ## 通常時(強化なし)の発射角度
 @export var shot_angles : Array[float] = [0.0]
 @export var muzzle_offset : Vector2 = Vector2(0, -16)
+## 撃ったときの効果音と音量(dB)。空なら鳴らさない
+@export var shot_sound : AudioStream = preload("res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3")
+@export var shot_sound_db : float = -24.0
 
 @export_group("ショットの威力(距離減衰)")
 ## 通常ショット1発の基礎ダメージ
@@ -63,14 +66,23 @@ var graze_radius_scale : float = 1.0
 @export var lock_color : Color = Color(1.0, 0.35, 0.3)
 ## ロックするまでの時間の倍率(パワーアップの段階 0, 1, 2, … の順)。段階の数 = 最大の段階 + 1
 @export var lock_time_scales : Array[float] = [1.0, 0.75, 0.55, 0.4]
+## 1体ロックしたときの効果音と音量(dB)
+@export var lock_sound : AudioStream = preload("res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3")
+@export var lock_sound_db : float = -12.0
 
 @export_group("子機(オプション)")
 ## 子機のシーン(ルートが PlayerOption)
 @export var option_scene : PackedScene = preload("res://GameScene/Player/option.tscn")
 ## 子機の最大数
 @export var max_options : int = 4
-## 死んだときに失う子機の数。-1 なら全て
+## 死んだときに失う子機の数。-1 なら全て(Drop Power Ups On Death がオンなら、全て落とす)
 @export var options_lost_on_death : int = -1
+## オンなら、死んだときに、持っていたパワーアップ(子機・ロック速度)を全てアイテムとして落とす。
+## 復活してから拾い直せる
+@export var drop_power_ups_on_death : bool = true
+## 落とすアイテムのシーン
+@export var power_up_option_scene : PackedScene = preload("res://GameScene/Item/power_up_option.tscn")
+@export var power_up_lock_scene : PackedScene = preload("res://GameScene/Item/power_up_lock.tscn")
 
 @export_group("ショット強化(Lv5イグナイトで+1段階。被弾で失う)")
 ## way弾の角度の間隔(度)
@@ -227,6 +239,8 @@ func _shoot(_delta: float) -> void:
 		return
 	var pattern := _shot_pattern()
 	shoot_timer.start(fire_interval * pattern["interval_scale"])
+	if _is_alive:
+		SoundManager.play_channel(&"player_shot", shot_sound, shot_sound_db)
 	_fire_volley(pattern["angles"])
 	# バースト: 同じ弾を、少しずつ遅らせて撃つ
 	for i in range(1, pattern["burst"]):
@@ -301,6 +315,7 @@ func _update_lock(delta : float) -> void:
 			if next == null:
 				break
 			lock_targets.append(next)
+			SoundManager.play_sfx(lock_sound, lock_sound_db, 1.0 + 0.08 * (lock_targets.size() - 1)) # ロックするたびに少し高く
 			_lock_timer -= time_per_lock
 		if lock_targets.size() >= max_count or _nearest_lockable() == null:
 			_lock_timer = minf(_lock_timer, time_per_lock) # 溜めすぎない(空きができたら、すぐ1体ロックできる)
@@ -397,6 +412,29 @@ func lose_options(count : int = -1) -> void:
 	if n > 0:
 		options_changed.emit(options.size())
 
+## 持っているパワーアップを全て、アイテムにして周りに散らばらせる(子機は全て消え、ロック速度は最初に戻る)
+func _drop_power_ups() -> void:
+	var scenes : Array[PackedScene] = []
+	for i in options.size():
+		scenes.append(power_up_option_scene)
+	for i in lock_speed_level:
+		scenes.append(power_up_lock_scene)
+	lose_options(-1)
+	if lock_speed_level > 0:
+		lock_speed_level = 0
+		lock_speed_changed.emit(lock_speed_level)
+	var count := scenes.size()
+	for i in count:
+		if scenes[i] == null:
+			continue
+		var item := scenes[i].instantiate()
+		item.position = global_position
+		# 扇状に、左右へ散らばる(真ん中ほど高く跳ねる)
+		var side := 0.0 if count == 1 else (float(i) / (count - 1)) * 2.0 - 1.0
+		if item is PowerUpItem:
+			item.launch(side * 110.0, 230.0 - absf(side) * 60.0)
+		get_tree().current_scene.add_child.call_deferred(item)
+
 ## 子機も撃つ。ロックしていれば、ロックした敵を順番に分けて追いかける
 func _fire_options() -> void:
 	if options.is_empty():
@@ -477,7 +515,10 @@ func die() -> void:
 	set_igniting(false)
 	_cancel_ignite_hold()
 	reset_shot_power()
-	lose_options(options_lost_on_death)
+	if drop_power_ups_on_death:
+		_drop_power_ups()
+	else:
+		lose_options(options_lost_on_death)
 	if clear_bullets_on_death:
 		get_tree().call_group("enemy_bullet", "queue_free")
 	if lives <= 0:

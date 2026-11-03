@@ -39,6 +39,7 @@ signal collected(kind : Kind)
 
 var _age : float = 0.0
 var _rise : float = 0.0
+var _push_x : float = 0.0 # 横に散らばる勢い(だんだん弱まる)
 var _base_x : float = NAN # 揺れの中心。最初の物理フレームで、今の位置から決める
 var _phase : float = 0.0
 var _done : bool = false
@@ -47,11 +48,16 @@ var _done : bool = false
 
 func _ready() -> void:
 	z_index = 6
-	_rise = pop_speed
+	_rise = maxf(_rise, pop_speed)
 	_phase = randf() * TAU
 	scale = Vector2.ZERO
 	create_tween().tween_property(self, "scale", Vector2.ONE, 0.2)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+## 散らばらせる(add_child の前でも後でもよい)。x は横の速さ、up は上へ跳ねる速さ(px/秒)
+func launch(x : float, up : float) -> void:
+	_push_x = x
+	_rise = up
 
 ## 出す位置を決める(add_child のあとに呼ぶ)
 func place(position_in_world : Vector2) -> void:
@@ -66,7 +72,10 @@ func _physics_process(delta : float) -> void:
 		_base_x = global_position.x
 	# 上へ跳ねてから、ゆっくり落ちる。左右に揺れる
 	_rise = move_toward(_rise, -fall_speed, 260.0 * delta)
+	_base_x += _push_x * delta
+	_push_x = move_toward(_push_x, 0.0, 160.0 * delta)
 	var area := CameraView.visible_rect(self)
+	_base_x = clampf(_base_x, area.position.x + screen_margin, area.end.x - screen_margin)
 	var x := _base_x + sin(_age * TAU * sway_frequency + _phase) * sway_amount
 	x = clampf(x, area.position.x + screen_margin, area.end.x - screen_margin)
 	var y := global_position.y - _rise * delta

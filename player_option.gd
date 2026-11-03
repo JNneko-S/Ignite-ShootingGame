@@ -15,9 +15,11 @@ var slot : int = 0
 @export var focus_slots : Array[Vector2] = [Vector2(-16, -2), Vector2(16, -2), Vector2(-28, 6), Vector2(28, 6)]
 ## 位置へ追いつく速さ(大きいほどぴったり付いてくる)
 @export var follow_sharpness : float = 14.0
+## 子機が撃つ弾のシーン。空なら、自機と同じ弾(Player の Bullet Scene)を使う
+@export var bullet_scene : PackedScene
 ## 弾1発の威力の、自機のショットに対する倍率
 @export var damage_scale : float = 0.6
-## 弾の色
+## 弾の色(自機と同じ弾を使うときだけ掛ける。Bullet Scene を指定したら、そのシーンの見た目のまま)
 @export var shot_color : Color = Color(0.6, 1.0, 0.8)
 ## 回転の速さ(ラジアン/秒)。0 なら回らない
 @export var spin_speed : float = 0.0
@@ -52,15 +54,17 @@ func target_offset() -> Vector2:
 		return Vector2.ZERO
 	return list[slot % list.size()]
 
-## 1発撃つ。target があれば、追いかける弾にする
-func fire(bullet_scene : PackedScene, speed : float, damage : float, target : Node2D = null, turn_rate : float = 720.0) -> void:
-	if bullet_scene == null or not visible:
+## 1発撃つ。target があれば、追いかける弾にする。player_bullet は自機の弾(Bullet Scene が空のときに使う)
+func fire(player_bullet : PackedScene, speed : float, damage : float, target : Node2D = null, turn_rate : float = 720.0) -> void:
+	var scene := bullet_scene if bullet_scene else player_bullet
+	if scene == null or not visible:
 		return
-	var bullet : Bullet = bullet_scene.instantiate()
+	var bullet : Bullet = scene.instantiate()
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = global_position
 	bullet.setup(Vector2.UP, speed, damage * damage_scale, 0)
-	bullet.modulate = shot_color
+	if bullet_scene == null:
+		bullet.modulate = shot_color
 	if target:
 		bullet.set_homing(target, turn_rate)
 

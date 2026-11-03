@@ -3,12 +3,16 @@
 [ext_resource type="Script" uid="uid://cdwcqv1x6dec7" path="res://Enemy.gd" id="1_65f6o"]
 [ext_resource type="Resource" uid="uid://oqs6gtgwa13w" path="res://Resources/MovePatterns/TestEnemy/enemy_pattern_center_curve.tres" id="2_dxnol"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="3_2ly0f"]
+[ext_resource type="AudioStream" uid="uid://cq6dud8jkv8ec" path="res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3" id="3_gop0t"]
+[ext_resource type="AudioStream" uid="uid://b485yg32cvsc5" path="res://Assets/Sounds/Explosive/AS_833267_フィルターが掛かったような爆破音.mp3" id="4_rq5yo"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="5_2fvp3"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="6_ruu38"]
 
 [node name="Enemy" type="CharacterBody2D" unique_id=724143726]
 script = ExtResource("1_65f6o")
 pattern = ExtResource("2_dxnol")
+death_sound = ExtResource("3_gop0t")
+big_death_sound = ExtResource("4_rq5yo")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=430556030]
 z_index = 2

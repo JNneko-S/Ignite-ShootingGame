@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d0ybnbes8i6vj"]
 
 [ext_resource type="PackedScene" uid="uid://bj58mpupaygv8" path="res://GameScene/Common/bullet.tscn" id="1_io7es"]
-[ext_resource type="Texture2D" uid="uid://cohartahshhyt" path="res://Assets/Bullet/Player/P1 Bullet_Yellow.png" id="2_yrvfn"]
+[ext_resource type="Texture2D" uid="uid://dguyek8wgiipd" path="res://Assets/Bullet/Player/P1_Hyper_Bullet.png" id="2_io7es"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1nhgk"]
 radius = 3.0
@@ -51,10 +51,13 @@ z_index = 1
 collision_layer = 8
 collision_mask = 64
 animation_player = NodePath("AnimationPlayer")
+pierce = false
 damage = 1
 
 [node name="Sprite2D" parent="." index="0" unique_id=1376631923]
-texture = ExtResource("2_yrvfn")
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("2_io7es")
+hframes = 2
 
 [node name="CollisionShape2D" parent="." index="1" unique_id=1399399970]
 shape = SubResource("CapsuleShape2D_1nhgk")

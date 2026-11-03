@@ -35,6 +35,9 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 func _on_damage_dealt(_hurtbox : Hurtbox) -> void:
 	damage = 0
 	collision_shape.set_deferred("disabled", true)
+	hide()
+	set_physics_process(false)
+	queue_free()
 
 ## ロックショットにする。相手を追いかけて曲がり、当たったら消える(通り抜けて何度も当たらないように)
 func set_homing(target : Node2D, turn_rate : float) -> void:

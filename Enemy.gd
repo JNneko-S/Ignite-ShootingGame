@@ -32,11 +32,22 @@ signal died(enemy : Enemy)
 ## 連鎖爆発の回数と、かける時間(秒)
 @export var big_death_count : int = 15
 @export var big_death_duration : float = 2.2
+## 倒されたときの効果音と音量(dB)。空なら鳴らさない
+@export var death_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3")
+@export var death_sound_db : float = -15.0
+## 連鎖爆発の最後の、大爆発の効果音(big_death のとき)
+@export var big_death_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3")
+
+@export_group("被弾")
+## 弾が当たったときに光る色(1 より大きいほど明るい)と、元に戻るまでの時間(秒)
+@export var hit_flash_color : Color = Color(2.5, 2.5, 2.5)
+@export var hit_flash_time : float = 0.08
 
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
 
 var _tween : Tween
+var _flash_tween : Tween
 var _is_dead : bool = false
 ## 今の進む向き(CHASE の区間で使う)
 var _heading : Vector2 = Vector2.DOWN
@@ -142,6 +153,16 @@ func _convert_relative(offset : Vector2) -> Vector2:
 
 func _on_hurtbox_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void:
 	hp_component.apply_damage(ceili(damage))
+	if not _is_dead:
+		_flash()
+
+## 弾が当たったときに、一瞬光る(本体の modulate を明るくしてから戻す)
+func _flash() -> void:
+	if _flash_tween:
+		_flash_tween.kill()
+	modulate = hit_flash_color
+	_flash_tween = create_tween()
+	_flash_tween.tween_property(self, "modulate", Color.WHITE, hit_flash_time)
 
 func _die() -> void:
 	if _is_dead:
@@ -156,6 +177,7 @@ func _die() -> void:
 		_play_big_death()
 		return
 	Explosion.spawn(get_tree(), explosion_scene, global_position, explosion_scale)
+	SoundManager.play_sfx(death_sound, death_sound_db)
 	queue_free()
 
 func _drop_item() -> void:
@@ -187,12 +209,14 @@ func _play_big_death() -> void:
 		var scene : PackedScene = Explosion.ALL[i % Explosion.ALL.size()]
 		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
 		Explosion.spawn(tree, scene, global_position + offset, effect_scale)
+		SoundManager.play_sfx(death_sound, death_sound_db - 4.0, randf_range(0.9, 1.1)) # 連鎖の音は少し小さく、高さをばらす
 		_shake(4.0)
 		await tree.create_timer(interval).timeout
 
 	# 大爆発: 中心に大きな爆発と衝撃波、周りに小さな爆発
 	var center := global_position + area.get_center()
 	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, big_scale)
+	SoundManager.play_sfx(big_death_sound, death_sound_db)
 	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
 	for i in 8:
 		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * area.size.length() * 0.25, big_scale * 0.5)
