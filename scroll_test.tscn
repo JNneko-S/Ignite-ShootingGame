@@ -8,12 +8,12 @@
 [ext_resource type="Script" uid="uid://c7pvbus1k2x0h" path="res://stage_runner.gd" id="2_yintm"]
 [ext_resource type="Texture2D" uid="uid://plwrfeyaxsw8" path="res://Assets/2_Industrial_Tileset_1_Background.png" id="3_hqgk5"]
 [ext_resource type="Script" uid="uid://ce41j8w4twusb" path="res://lives_label.gd" id="3_n7bgm"]
-[ext_resource type="Resource" uid="uid://c87ufivqlbb15" path="res://Resources/StageData/DebugStage.tres" id="3_spej0"]
 [ext_resource type="PackedScene" uid="uid://ul2o805ej4sw" path="res://player.tscn" id="4_nr4bh"]
 [ext_resource type="Script" uid="uid://b7vmnigxshh4w" path="res://shot_preview.gd" id="4_yintm"]
-[ext_resource type="Resource" uid="uid://dxn8rh0juqjqd" path="res://Resources/ShotPatterns/shot_ring.tres" id="5_qiivi"]
 [ext_resource type="Script" uid="uid://ccjsjd622wml3" path="res://boss_gauge.gd" id="14_0u1li"]
 [ext_resource type="AudioStream" uid="uid://fefw52g5dr8b" path="res://Assets/audiostock_1544153.mp3" id="19_msk85"]
+[ext_resource type="Resource" uid="uid://beiarkvgmkkj1" path="res://Resources/StageData/Stage1GrazeRush.tres" id="s1_graze_rush"]
+[ext_resource type="Script" uid="uid://cb6bovy2xer6r" path="res://warning_display.gd" id="warning_display"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -242,17 +242,17 @@ graze_radius_scales = Array[float]([1.2, 1.0, 0.8])
 [node name="Node2D" type="Node2D" parent="." unique_id=740174183]
 z_index = 1
 script = ExtResource("2_nxg43")
-stage = ExtResource("3_spej0")
+stage = ExtResource("s1_graze_rush")
+preview_time = 119.33907694735062
 
 [node name="Node2D2" type="Node2D" parent="." unique_id=1021682187]
 z_index = 1
 script = ExtResource("4_yintm")
-pattern = ExtResource("5_qiivi")
 preview_time = 7.700187333333314
 
 [node name="StageRunner" type="Node2D" parent="." unique_id=1973239994 node_paths=PackedStringArray("enemy_parent", "parallax_layers")]
 script = ExtResource("2_yintm")
-stage = ExtResource("3_spej0")
+stage = ExtResource("s1_graze_rush")
 enemy_parent = NodePath("../Enemys")
 parallax_layers = [NodePath("../Parallax2D"), NodePath("../Parallax2D2"), NodePath("../Parallax2D3")]
 
@@ -291,6 +291,9 @@ offset_right = 462.0
 offset_bottom = 31.0
 text = "残機:1"
 script = ExtResource("3_n7bgm")
+
+[node name="WarningDisplay" type="CanvasLayer" parent="UI" unique_id=1400875786]
+script = ExtResource("warning_display")
 
 [node name="Parallax2D" type="Parallax2D" parent="." unique_id=692685510]
 repeat_size = Vector2(0, 595.51)

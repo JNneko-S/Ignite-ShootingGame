@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bmu1224q486v3"]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="3"]
+
+[sub_resource type="Resource" id="step_0"]
+script = ExtResource("2")
+duration = 2.5
+change_speed = false
+angular_velocity = -45.0
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("3")
+start_delay = 0.9
+interval = 0.32
+pause = 0.0
+bullet_count = 2
+spread_angle = 24.0
+aim_at_player = false
+base_angle = 90.0
+angle_wave_amplitude = 30.0
+angle_wave_shots = 18
+bullet_speed = 110.0
+motion = Array[ExtResource("2")]([SubResource("step_0")])

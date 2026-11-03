@@ -223,7 +223,7 @@ func _fire_volley(angles : Array) -> void:
 			var speed := shot_speed
 			if shot_inherit_forward_speed:
 				speed += maxf(velocity.dot(direction), 0.0) # 弾の向きに進んでいる速度だけ足す
-			bullet.setup(direction, speed, shot_damage * power * level_power_scale, 0)
+			bullet.setup(direction, speed, roundi(shot_damage * power * level_power_scale), 0) # 切り捨てだと 0 ダメージになるので四捨五入
 			if tint_shot_by_power:
 				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
 

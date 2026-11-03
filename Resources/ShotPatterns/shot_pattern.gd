@@ -9,7 +9,15 @@ enum TimingUnit {
 	BEATS,   ## タイミングを拍で数える(BGM に合わせるボス戦。BeatChart のテンポを使う)
 }
 
-## null のときは EnemyShooter の default_bullet_scene を使う
+## null のときは EnemyShooter の default_bullet_scene を使う。
+## 弾の見た目は、弾の性質で選ぶ(上から順に当てはまるものを使う):
+##   砲台弾 E_medium_flamy … その場に居座る砲台・部位が撃つ弾(タレット、吸収砲台、中ボスの砲台)
+##   重弾   E_Massive_Red_Orange_Yellow … 装甲の敵が撃つ、遅くて大きい弾
+##   置き弾 E_Pink_Medium … 止まる・漂う弾(機雷、空中で止まってから落ちる弾)
+##   狙い弾 E_Lines_Yellow … 自機を狙う弾(単発・連射・3way・バースト)
+##   雨弾   E_Bermuda … 真下に落とすだけの弾
+##   拡散弾 E_Blue_Cian … 全方位・花火のように広がる弾
+## 速い弾ほどアニメはゆっくり、遅い弾ほど速くすると見やすい
 @export var bullet_scene : PackedScene
 
 @export_group("タイミング")

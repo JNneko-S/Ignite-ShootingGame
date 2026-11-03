@@ -28,13 +28,13 @@ metadata/_custom_type_script = "uid://c5fpb0pimae7e"
 position = Vector2(0, 6)
 debug_color = Color(0.607722, 0.53875893, 0.11474762, 0.41960785)
 
-[node name="Timer" type="Timer" parent="Hurtbox"]
+[node name="Timer" type="Timer" parent="Hurtbox" unique_id=1582242807]
 wait_time = 0.2
 one_shot = true
 
 [node name="HPComponent" parent="." unique_id=2079593739 instance=ExtResource("5_2fvp3")]
-max_hp = 3
-hp = 3
+max_hp = 15
+hp = 15
 
 [node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("6_ruu38")]
 z_index = 2

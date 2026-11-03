@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="BeatChart" format=3]
+[gd_resource type="Resource" script_class="BeatChart" format=3 uid="uid://dn52em16a8pvc"]
 
-[ext_resource type="Script" path="res://Resources/BeatCharts/beat_chart.gd" id="1"]
-[ext_resource type="Script" path="res://Resources/BeatCharts/beat_cue.gd" id="2"]
-[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3"]
+[ext_resource type="Script" uid="uid://dswb1vf03hbgm" path="res://Resources/BeatCharts/beat_chart.gd" id="1"]
+[ext_resource type="Script" uid="uid://dybw64vwxcsfv" path="res://Resources/BeatCharts/beat_cue.gd" id="2"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="3_3ebb6"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="4"]
 [ext_resource type="AudioStream" uid="uid://fefw52g5dr8b" path="res://Assets/audiostock_1544153.mp3" id="5"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/shot_stop_and_aim.tres" id="6"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/shot_layered_ring.tres" id="7"]
+[ext_resource type="Resource" uid="uid://ercg0jfdp8yh" path="res://Resources/ShotPatterns/shot_stop_and_aim.tres" id="6"]
+[ext_resource type="Resource" uid="uid://bpars8u0b8sg0" path="res://Resources/ShotPatterns/shot_layered_ring.tres" id="7"]
 
 [sub_resource type="Resource" id="ring_quarter"]
 resource_name = "4分音符ごとのリング"
@@ -22,6 +23,12 @@ aim_at_player = false
 rotate_per_shot = 4.5
 bullet_speed = 130.0
 
+[sub_resource type="Resource" id="cue_intro"]
+script = ExtResource("2")
+pattern = SubResource("ring_quarter")
+length_beats = 16.0
+note = "イントロ"
+
 [sub_resource type="Resource" id="aim_eighth"]
 resource_name = "4分ごとの自機狙い3way(表と裏の2つで8分)"
 script = ExtResource("3")
@@ -33,26 +40,6 @@ pause = 0.0
 bullet_count = 3
 spread_angle = 24.0
 bullet_speed = 260.0
-
-[sub_resource type="Resource" id="burst_sixteenth"]
-resource_name = "16分の連射 → 2拍休み"
-script = ExtResource("3")
-bullet_scene = ExtResource("4")
-timing_unit = 1
-start_delay = 0.0
-shot_count = 8
-interval = 0.25
-pause = 2.0
-bullet_count = 5
-spread_angle = 60.0
-aim_once_per_burst = true
-bullet_speed = 220.0
-
-[sub_resource type="Resource" id="cue_intro"]
-script = ExtResource("2")
-pattern = SubResource("ring_quarter")
-length_beats = 16.0
-note = "イントロ"
 
 [sub_resource type="Resource" id="cue_a_left"]
 script = ExtResource("2")
@@ -68,6 +55,20 @@ beat = 1.5
 shooter = "EnemyShooterComponent4"
 pattern = SubResource("aim_eighth")
 note = "Aメロ(裏拍)"
+
+[sub_resource type="Resource" id="burst_sixteenth"]
+resource_name = "16分の連射 → 2拍休み"
+script = ExtResource("3")
+bullet_scene = ExtResource("4")
+timing_unit = 1
+start_delay = 0.0
+shot_count = 8
+interval = 0.25
+pause = 2.0
+bullet_count = 5
+spread_angle = 60.0
+aim_once_per_burst = true
+bullet_speed = 220.0
 
 [sub_resource type="Resource" id="cue_a_call"]
 script = ExtResource("2")
@@ -111,7 +112,6 @@ note = "盛り上げ"
 
 [resource]
 script = ExtResource("1")
-bpm = 150.0
 music = ExtResource("5")
 loop_start_bar = 5
 loop_end_bar = 17

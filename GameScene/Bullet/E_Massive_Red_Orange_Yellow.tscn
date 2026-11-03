@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://bbf2gojgvpe26"]
+
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="1_vt465"]
+[ext_resource type="Texture2D" uid="uid://d1jg88xxdyg7m" path="res://Assets/Full Shmup Asset Pack/Bullet Pack/Bullet Pack/Massive_Red_Orange_Yellow.png" id="2_je46p"]
+
+[sub_resource type="Animation" id="Animation_vt465"]
+resource_name = "Anim"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.20000002, 0.3, 0.40000004, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_je46p"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_je46p"]
+_data = {
+&"Anim": SubResource("Animation_vt465"),
+&"RESET": SubResource("Animation_je46p")
+}
+
+[node name="enemy_bullet" unique_id=466385270 instance=ExtResource("1_vt465")]
+
+[node name="Sprite2D" parent="." index="0" unique_id=1376631923]
+scale = Vector2(1, 1)
+texture = ExtResource("2_je46p")
+hframes = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="2" unique_id=1233157118]
+libraries/ = SubResource("AnimationLibrary_je46p")
+autoplay = &"Anim"

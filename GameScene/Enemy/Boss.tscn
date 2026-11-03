@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_8f7qq"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="3_d3hfb"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="4_d3hfb"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="7_efmfp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pa34p"]
 radius = 18.0
@@ -12,70 +13,157 @@ radius = 18.0
 [sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_d3hfb"]
 points = PackedVector2Array(-133, -80, -183, 261, -299, 90, -308, -73, -326, -260, 331, -265, 332, -231, 326, -158, 310, -70, 291, 89, 182, 261, 132, -71, 4, 236)
 
-[sub_resource type="Resource" id="Resource_8f7qq"]
-script = ExtResource("3_8f7qq")
-bullet_scene = ExtResource("4_d3hfb")
-start_delay = 1.0
-shot_count = 25
-interval = 0.5
-pause = 16.0
-bullet_count = 8
-spread_angle = 50.0
-aim_at_player = true
-rotate_per_shot = 8.0
-reverse_every_shots = 5
-bullet_speed = 100.0
-bullet_accel = 10.0
-
-[sub_resource type="Resource" id="Resource_d3hfb"]
-resource_local_to_scene = true
-script = ExtResource("3_8f7qq")
-bullet_scene = ExtResource("4_d3hfb")
-start_delay = 16.0
-shot_count = 10
-interval = 2.0
-pause = 10.0
-bullet_count = 5
-spread_angle = 150.0
-bullet_speed = 150.0
-bullet_accel = 10.0
+[sub_resource type="Resource" id="step_0"]
+script = ExtResource("7_efmfp")
+duration = 2.0
+change_speed = false
+angular_velocity = 30.0
 
 [sub_resource type="Resource" id="Resource_cv8go"]
 script = ExtResource("3_8f7qq")
 bullet_scene = ExtResource("4_d3hfb")
-start_delay = 27.0
-shot_count = 12
-pause = 20.0
-bullet_count = 18
+start_delay = 1.5
+interval = 0.09
+pause = 3.0
+bullet_count = 3
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 11.0
+bullet_speed = 140.0
+motion = Array[ExtResource("7_efmfp")]([SubResource("step_0")])
+
+[sub_resource type="Resource" id="Resource_bdtfj"]
+script = ExtResource("7_efmfp")
+duration = 0.5
+target_speed = 50.0
+
+[sub_resource type="Resource" id="step_1"]
+script = ExtResource("7_efmfp")
+duration = 1.2
+target_speed = 170.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="Resource_efmfp"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 2.0
+shot_count = 3
+interval = 0.15
+loop = false
+pause = 3.0
+bullet_count = 32
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 5.6
+line_count = 2
+line_speed_ratio = 0.35
+bullet_speed = 140.0
+motion = Array[ExtResource("7_efmfp")]([SubResource("Resource_bdtfj"), SubResource("step_1")])
+
+[sub_resource type="Resource" id="Resource_f0hy3"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 0.0
+loop = false
+pause = 3.0
+bullet_count = 12
+spread_angle = 360.0
+line_count = 2
+line_speed_ratio = 0.25
+bullet_speed = 190.0
+
+[sub_resource type="Resource" id="Resource_31gem"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 1.0
+shot_count = 20
+pause = 3.0
+bullet_count = 20
 spread_angle = 360.0
 rotate_per_shot = 3.0
 bullet_speed = 180.0
 
-[sub_resource type="Resource" id="Resource_bdtfj"]
-script = ExtResource("3_8f7qq")
-bullet_scene = ExtResource("4_d3hfb")
-start_delay = 10.0
-shot_count = 72
-pause = 15.0
-bullet_count = 5
-spread_angle = 360.0
-rotate_per_shot = 10.0
-reverse_every_shots = 36
-bullet_speed = 150.0
-bullet_accel = 50.0
-
-[sub_resource type="Resource" id="Resource_efmfp"]
+[sub_resource type="Resource" id="Resource_vp5yq"]
 resource_local_to_scene = true
 script = ExtResource("3_8f7qq")
 bullet_scene = ExtResource("4_d3hfb")
-start_delay = 0.0
-shot_count = 8
-interval = 2.0
-pause = 20.0
+start_delay = 1.0
+interval = 1.0
+pause = 3.0
 bullet_count = 4
-spread_angle = 80.0
-aim_at_player = true
-bullet_speed = 150.0
+spread_angle = 60.0
+bullet_speed = 100.0
+bullet_accel = 10.0
+
+[sub_resource type="Resource" id="Resource_uuuhh"]
+script = ExtResource("7_efmfp")
+duration = 2.0
+change_speed = false
+angular_velocity = -30.0
+
+[sub_resource type="Resource" id="Resource_tdcr8"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 1.5
+interval = 0.09
+pause = 3.0
+bullet_count = 3
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = -11.0
+bullet_speed = 140.0
+motion = Array[ExtResource("7_efmfp")]([SubResource("Resource_uuuhh")])
+
+[sub_resource type="Resource" id="Resource_8jmd4"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 2.0
+shot_count = 3
+interval = 0.15
+loop = false
+pause = 3.0
+bullet_count = 32
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 5.6
+line_count = 2
+line_speed_ratio = 0.35
+bullet_speed = 140.0
+motion = Array[ExtResource("7_efmfp")]([SubResource("Resource_bdtfj"), SubResource("step_1")])
+
+[sub_resource type="Resource" id="Resource_oi2jw"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 0.0
+loop = false
+pause = 6.0
+bullet_count = 12
+spread_angle = 360.0
+line_count = 2
+line_speed_ratio = 0.25
+bullet_speed = 100.0
+
+[sub_resource type="Resource" id="Resource_ecc58"]
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 1.0
+shot_count = 20
+pause = 3.0
+bullet_count = 20
+spread_angle = 360.0
+rotate_per_shot = 3.0
+bullet_speed = 180.0
+
+[sub_resource type="Resource" id="Resource_ffp71"]
+resource_local_to_scene = true
+script = ExtResource("3_8f7qq")
+bullet_scene = ExtResource("4_d3hfb")
+start_delay = 1.0
+interval = 1.0
+pause = 3.0
+bullet_count = 4
+spread_angle = 60.0
+bullet_speed = 100.0
 bullet_accel = 10.0
 
 [node name="Enemy" unique_id=724143726 instance=ExtResource("1_sfvom")]
@@ -109,22 +197,9 @@ hp = 1500
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 z_index = 5
 position = Vector2(-181, -50.99997)
-patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_8f7qq"), SubResource("Resource_d3hfb"), SubResource("Resource_cv8go")])
+patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_cv8go"), SubResource("Resource_efmfp"), SubResource("Resource_f0hy3"), SubResource("Resource_31gem"), SubResource("Resource_vp5yq")])
 
-[node name="EnemyShooterComponent2" parent="." index="5" unique_id=400705068 instance=ExtResource("3_d3hfb")]
+[node name="EnemyShooterComponent2" parent="." index="5" unique_id=929172956 instance=ExtResource("3_d3hfb")]
 z_index = 5
-position = Vector2(180, -51)
-patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_8f7qq"), SubResource("Resource_d3hfb"), SubResource("Resource_cv8go")])
-default_bullet_scene = ExtResource("4_d3hfb")
-only_when_on_screen = false
-debug_log = true
-
-[node name="EnemyShooterComponent3" parent="." index="6" unique_id=286301762 instance=ExtResource("3_d3hfb")]
-z_index = 5
-position = Vector2(-51, -98)
-patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_bdtfj"), SubResource("Resource_efmfp")])
-
-[node name="EnemyShooterComponent4" parent="." index="7" unique_id=1091567525 instance=ExtResource("3_d3hfb")]
-z_index = 5
-position = Vector2(51, -98)
-patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_bdtfj"), SubResource("Resource_efmfp")])
+position = Vector2(180, -50.99997)
+patterns = Array[ExtResource("3_8f7qq")]([SubResource("Resource_tdcr8"), SubResource("Resource_8jmd4"), SubResource("Resource_oi2jw"), SubResource("Resource_ecc58"), SubResource("Resource_ffp71")])

@@ -60,6 +60,15 @@ func _has_conductor() -> bool:
 func stop() -> void:
 	_generation += 1
 
+## 撃っている弾幕を止めて、new_patterns に切り替える(ボスの段階の切り替えなど)
+func set_patterns(new_patterns : Array[ShotPattern]) -> void:
+	stop()
+	patterns = new_patterns
+	if _has_conductor():
+		return
+	for pattern in patterns:
+		_run_pattern(pattern)
+
 ## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
 func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
 	var burst := maxi(pattern.shot_count, 1)

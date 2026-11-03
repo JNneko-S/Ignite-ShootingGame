@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bpars8u0b8sg0"]
 
-[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
-[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="3"]
 
 [sub_resource type="Resource" id="step_slow"]
@@ -11,7 +11,6 @@ target_speed = 40.0
 
 [sub_resource type="Resource" id="step_fast"]
 script = ExtResource("2")
-duration = 1.0
 target_speed = 180.0
 speed_ease = 0
 

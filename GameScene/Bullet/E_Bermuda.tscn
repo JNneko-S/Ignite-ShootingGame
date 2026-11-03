@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://c7s461oab2s80"]
+
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="1_q05fu"]
+[ext_resource type="Texture2D" uid="uid://bo6vls23qopq1" path="res://Assets/Full Shmup Asset Pack/Bullet Pack/Bullet Pack/Bermuda_Medium.png" id="2_wjt43"]
+
+[sub_resource type="Animation" id="Animation_uky0p"]
+resource_name = "Animation"
+length = 0.5
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.20000002, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4]
+}
+
+[sub_resource type="Animation" id="Animation_gtxxd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_63fhv"]
+_data = {
+&"Animation": SubResource("Animation_uky0p"),
+&"RESET": SubResource("Animation_gtxxd")
+}
+
+[node name="enemy_bullet" unique_id=466385270 instance=ExtResource("1_q05fu")]
+
+[node name="Sprite2D" parent="." index="0" unique_id=1376631923]
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_wjt43")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="2" unique_id=1963125813]
+libraries/ = SubResource("AnimationLibrary_63fhv")
+autoplay = &"Animation"

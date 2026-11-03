@@ -169,6 +169,14 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 			hp.hp = event.hp_override
 	if event.tag != "":
 		enemy.add_to_group(_tag_group(event.tag)) # 待機イベントが見つけるための印
+	if event.is_boss:
+		enemy.big_death = true # 連鎖爆発 → 大爆発してから消える
+	if not event.phases.is_empty():
+		var controller := BossPhaseController.new()
+		controller.name = "BossPhaseController"
+		controller.setup(enemy.get_node("HPComponent"), event.phases)
+		controller.apply_first(enemy)
+		enemy.add_child(controller)
 
 	var parent : Node = enemy_parent if enemy_parent else get_tree().current_scene
 	parent.add_child(enemy)

@@ -23,6 +23,9 @@ class_name SpawnEvent
 @export var boss_name : String = ""
 ## フェーズの目印にするHPの割合。例: [0.66, 0.33] なら、HPが2/3と1/3を切ったときに目印を割る
 @export var boss_phase_thresholds : Array[float] = []
+## HPの割合で切り替える弾幕(HPの多い順に並べる)。空なら切り替えない。
+## 設定すると、Shot Patterns の代わりに、最初の段階の弾幕を使う
+@export var phases : Array[BossPhase] = []
 
 @export_group("数と並べ方")
 @export var count : int = 1

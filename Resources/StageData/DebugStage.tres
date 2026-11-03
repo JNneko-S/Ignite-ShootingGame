@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="1_offjn"]
 [ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="2_dk1d8"]
-[ext_resource type="PackedScene" uid="uid://g4frjt285hub" path="res://GameScene/Enemy/medium.tscn" id="3_2g4ht"]
+[ext_resource type="PackedScene" uid="uid://i131tu5hvwxs" path="res://GameScene/Enemy/Zako/armored.tscn" id="3_8umwo"]
 [ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="4_8umwo"]
 [ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="5_71sfp"]
 [ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="6_1yek1"]
@@ -10,7 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="8_3488h"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="9_dk1d8"]
 [ext_resource type="PackedScene" uid="uid://cjd6edxevmr84" path="res://GameScene/Enemy/Boss.tscn" id="9_svt2y"]
+[ext_resource type="PackedScene" uid="uid://dc0yogfaxm6ds" path="res://GameScene/Enemy/Zako/charger.tscn" id="10_71sfp"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="10_airnb"]
+[ext_resource type="PackedScene" uid="uid://bdgkopm2s363s" path="res://GameScene/Enemy/Zako/sniper.tscn" id="11_1yek1"]
 
 [sub_resource type="Resource" id="Resource_msk85"]
 script = ExtResource("2_dk1d8")
@@ -57,7 +59,7 @@ bullet_accel = 150.0
 
 [sub_resource type="Resource" id="Resource_v0qhg"]
 script = ExtResource("6_1yek1")
-enemy_scene = ExtResource("3_2g4ht")
+enemy_scene = ExtResource("3_8umwo")
 move_pattern = SubResource("Resource_sf26y")
 shot_patterns = Array[ExtResource("7_t638a")]([SubResource("Resource_uegr2")])
 count = 5
@@ -92,7 +94,7 @@ bullet_accel = 10.0
 
 [sub_resource type="Resource" id="Resource_tvikh"]
 script = ExtResource("6_1yek1")
-enemy_scene = ExtResource("3_2g4ht")
+enemy_scene = ExtResource("10_71sfp")
 move_pattern = SubResource("Resource_0u1li")
 shot_patterns = Array[ExtResource("7_t638a")]([SubResource("Resource_e0xeq")])
 count = 5
@@ -113,7 +115,7 @@ metadata/_custom_type_script = "uid://dk7uu30dge1ll"
 
 [sub_resource type="Resource" id="Resource_unoob"]
 script = ExtResource("6_1yek1")
-enemy_scene = ExtResource("3_2g4ht")
+enemy_scene = ExtResource("11_1yek1")
 move_pattern = SubResource("Resource_36j3w")
 
 [sub_resource type="Resource" id="Resource_qiivi"]

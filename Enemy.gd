@@ -15,6 +15,18 @@ signal died(enemy : Enemy)
 ## true なら、mirror_x のとき、見た目と子ノードの位置も左右反転する(砲口が左右逆になる)
 @export var mirror_visuals : bool = true
 
+@export_group("撃破")
+## 倒されたときに、その場に出す爆発。空なら爆発しない
+@export var explosion_scene : PackedScene = Explosion.ZAKO
+@export var explosion_scale : float = 1.0
+## true なら、倒されたときに連鎖爆発 → 大爆発してから消える(ボス用。StageRunner が is_boss の敵をオンにする)
+@export var big_death : bool = false
+## 連鎖爆発を出す範囲(この敵の位置からのずれ)。大きさが 0 なら、Sprite2D の見た目の範囲を使う
+@export var big_death_area : Rect2 = Rect2()
+## 連鎖爆発の回数と、かける時間(秒)
+@export var big_death_count : int = 15
+@export var big_death_duration : float = 2.2
+
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
 
@@ -131,5 +143,69 @@ func _die() -> void:
 	_is_dead = true
 	if _tween:
 		_tween.kill()
+	_chase_step = null
 	died.emit(self)
+	if big_death:
+		_play_big_death()
+		return
+	Explosion.spawn(get_tree(), explosion_scene, global_position, explosion_scale)
 	queue_free()
+
+## ボスの撃破: 撃つのをやめ、全ての爆発エフェクトを順番に体中で起こしてから、大爆発して消える
+func _play_big_death() -> void:
+	for node in find_children("*", "", true, false):
+		if node is EnemyShooter:
+			node.enabled = false
+			node.stop()
+	hurtbox.set_deferred("monitoring", false)
+	hurtbox.set_deferred("monitorable", false)
+	get_tree().call_group("enemy_bullet", "burn") # 画面の敵弾は燃えて消える
+
+	var tree := get_tree()
+	var area := _death_area()
+	# 大爆発の大きさは、見た目の大きさに合わせる(中ボスは小さめ、ボスは大きめ)
+	var big_scale := clampf(area.size.length() / 90.0, 2.0, 6.0)
+	var interval := big_death_duration / maxi(big_death_count, 1)
+	for i in big_death_count:
+		var offset := area.position + Vector2(randf() * area.size.x, randf() * area.size.y)
+		var scene : PackedScene = Explosion.ALL[i % Explosion.ALL.size()]
+		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
+		Explosion.spawn(tree, scene, global_position + offset, effect_scale)
+		_shake(4.0)
+		await tree.create_timer(interval).timeout
+
+	# 大爆発: 中心に大きな爆発と衝撃波、周りに小さな爆発
+	var center := global_position + area.get_center()
+	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, big_scale)
+	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
+	for i in 8:
+		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * area.size.length() * 0.25, big_scale * 0.5)
+	_shake(12.0)
+	var fade := create_tween()
+	fade.tween_property(self, "modulate", Color(3.0, 3.0, 3.0, 1.0), 0.08)
+	fade.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.35)
+	await fade.finished
+	queue_free()
+
+## 連鎖爆発の範囲。big_death_area が空なら、子の Sprite2D の見た目を全部囲む範囲
+func _death_area() -> Rect2:
+	if big_death_area.has_area():
+		return big_death_area
+	var area := Rect2()
+	var first := true
+	for child in get_children():
+		if child is Sprite2D:
+			var rect : Rect2 = child.get_rect()
+			rect = Rect2(child.position + rect.position * child.scale, rect.size * child.scale)
+			area = rect if first else area.merge(rect)
+			first = false
+	return area if not first else Rect2(-24, -24, 48, 48)
+
+func _shake(strength : float) -> void:
+	for child in get_children():
+		if child is Sprite2D:
+			var base : Vector2 = child.get_meta("shake_base", child.position)
+			child.set_meta("shake_base", base)
+			var shake := create_tween()
+			shake.tween_property(child, "position", base + Vector2(randf_range(-1, 1), randf_range(-1, 1)) * strength, 0.04)
+			shake.tween_property(child, "position", base, 0.06)

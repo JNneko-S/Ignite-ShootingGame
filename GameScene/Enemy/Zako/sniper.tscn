@@ -1,31 +1,29 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bdgkopm2s363s"]
 
+[ext_resource type="Texture2D" uid="uid://8xmykrwc7p64" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/CI_0.png" id="3_kysf3"]
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
-[ext_resource type="Texture2D" path="res://Assets/enemy-small.png" id="tex"]
-[ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_sniper.tres" id="move"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" uid="uid://hpw3r0e566ir" path="res://Resources/MovePatterns/Enemies/move_sniper.tres" id="move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_sniper.tres" id="pat0"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
-size = Vector2(14, 14)
+size = Vector2(14, 22)
 
-[node name="Sniper" instance=ExtResource("base")]
+[node name="Sniper" unique_id=1116709428 instance=ExtResource("base")]
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
 texture_filter = 1
-modulate = Color(1, 0.6, 0.6, 1)
-texture = ExtResource("tex")
+texture = ExtResource("3_kysf3")
+hframes = 1
 
-[node name="Hurtbox" parent="." index="2" unique_id=1184106570]
-
-[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
-position = Vector2(0, 0)
+[node name="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="0" unique_id=38672095]
+position = Vector2(0, 4)
 shape = SubResource("hurt_shape")
 
 [node name="HPComponent" parent="." index="3" unique_id=2079593739]
-max_hp = 6
-hp = 6
+max_hp = 30
+hp = 30
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
