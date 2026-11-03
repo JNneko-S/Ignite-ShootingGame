@@ -12,6 +12,7 @@
 size = Vector2(30, 14)
 
 [node name="Absorber" instance=ExtResource("base")]
+scale = Vector2(2, 2)
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
@@ -36,4 +37,5 @@ patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
 z_index = 1
 script = ExtResource("absorb_script")
 counter_pattern = ExtResource("counter")
+radius = 30.0
 shooter = NodePath("../EnemyShooterComponent")

@@ -19,6 +19,7 @@ size = Vector2(28, 24)
 size = Vector2(28, 14)
 
 [node name="MidbossSplit" instance=ExtResource("base")]
+scale = Vector2(2, 2)
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

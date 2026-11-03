@@ -42,6 +42,26 @@ var graze_radius_scale : float = 1.0
 @export var shot_color_low : Color = Color(0.6, 0.75, 1.0)
 @export var shot_color_high : Color = Color(1.0, 1.0, 1.0)
 
+@export_group("ロックショット(低速移動中に撃つ)")
+## オンなら、UI_Focus(Shift)を押しながら撃つと、ロックした敵を追いかける弾になる
+@export var lock_shot_enabled : bool = true
+## ロックできる距離(px)
+@export var lock_range : float = 360.0
+## ロックできる範囲の、真上からの角度(度)。70 なら前方の ±70°
+@export var lock_cone_deg : float = 70.0
+## 1体ロックするのにかかる時間(秒)。近い敵から順にロックする
+@export var lock_time : float = 0.12
+## 同時にロックできる数(ショット強化の段階 0〜5 の順)
+@export var lock_max_targets : Array[int] = [2, 2, 3, 3, 4, 4]
+## ロックショットの、1発あたりの威力の倍率(必ず当たるので、通常より少し弱くする)
+@export var lock_damage_scale : float = 0.8
+## ロックショットの曲がる速さ(度/秒)
+@export var lock_turn_rate : float = 720.0
+## ロックしていないときの、低速移動中のショットの広がりの倍率(0.3 なら、通常の 30% の幅に絞る)
+@export var focus_spread_scale : float = 0.3
+## 照準の色
+@export var lock_color : Color = Color(1.0, 0.35, 0.3)
+
 @export_group("ショット強化(Lv5イグナイトで+1段階。被弾で失う)")
 ## way弾の角度の間隔(度)
 @export var power_spread_deg : float = 8.0
@@ -107,6 +127,11 @@ var level_power_scale : float = 1.0
 ## 現在のショット強化の段階(0〜5)
 var shot_stage : int = 0
 
+## ロックしている敵(近い順)。低速移動をやめると外れる
+var lock_targets : Array[Node2D] = []
+var _lock_timer : float = 0.0
+var _reticle : LockOnReticle
+
 ## イグナイトを発動できる状態か(Lv1以上で、発動中でない)。GameManager が毎フレーム設定する
 var ignite_available : bool = false
 enum HoldState { IDLE, HOLDING, DONE }
@@ -139,6 +164,9 @@ func _ready() -> void:
 	if add_arrow_keys:
 		_add_arrow_keys()
 	_create_hitbox_marker()
+	_reticle = LockOnReticle.new()
+	_reticle.color = lock_color
+	add_child(_reticle)
 	_spawn_position = global_position # 復活位置は、最初に置かれた位置
 	if ignite_aura == null:
 		push_warning("Player: 子に IgniteAura(ignite_aura.gd)が見つかりません。ノード名を IgniteAura にしてください")
@@ -169,6 +197,7 @@ func _physics_process(delta: float) -> void:
 	if _marker:
 		var marker_on := show_hitbox_on_focus and is_focusing and _is_alive
 		_marker.alpha = move_toward(_marker.alpha, 1.0 if marker_on else 0.0, delta * 10.0)
+	_update_lock(delta)
 	_shoot(delta)
 
 # ---------------------------------------------------------------- ショット
@@ -212,6 +241,12 @@ func _way_angles(count : int) -> Array[float]:
 func _fire_volley(angles : Array) -> void:
 	if not _is_alive:
 		return
+	if _is_lock_shooting():
+		if not lock_targets.is_empty():
+			_fire_lock_volley()
+			return
+		# ロックしていなければ、前方に絞ったショット
+		angles = angles.map(func(a : float) -> float: return a * focus_spread_scale)
 	for angle_deg in angles:
 		var bullet : Bullet = bullet_scene.instantiate()
 		get_tree().current_scene.add_child(bullet)
@@ -226,6 +261,75 @@ func _fire_volley(angles : Array) -> void:
 			bullet.setup(direction, speed, shot_damage * power * level_power_scale, 0)
 			if tint_shot_by_power:
 				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
+
+# ---------------------------------------------------------------- ロックショット
+
+func _is_lock_shooting() -> bool:
+	return lock_shot_enabled and is_focusing
+
+## 低速移動中、前方の扇の中の敵を、近い順に1体ずつロックしていく
+func _update_lock(delta : float) -> void:
+	lock_targets.assign(lock_targets.filter(func(t : Node2D) -> bool: return _can_keep_lock(t)))
+	if not _is_lock_shooting() or not _is_alive:
+		lock_targets.clear()
+		_lock_timer = lock_time # Shift を押した瞬間に、1体目はすぐロックする
+	else:
+		var max_count : int = lock_max_targets[clampi(shot_stage, 0, lock_max_targets.size() - 1)] if not lock_max_targets.is_empty() else 1
+		_lock_timer += delta
+		while _lock_timer >= lock_time and lock_targets.size() < max_count:
+			var next := _nearest_lockable()
+			if next == null:
+				break
+			lock_targets.append(next)
+			_lock_timer -= lock_time
+		if lock_targets.size() >= max_count or _nearest_lockable() == null:
+			_lock_timer = minf(_lock_timer, lock_time) # 溜めすぎない(空きができたら、すぐ1体ロックできる)
+	if _reticle:
+		_reticle.targets = lock_targets
+
+func _nearest_lockable() -> Node2D:
+	var best : Node2D = null
+	var best_distance := INF
+	for node in get_tree().get_nodes_in_group("enemy"):
+		var enemy := node as Node2D
+		if enemy == null or lock_targets.has(enemy) or not _in_lock_area(enemy, lock_range):
+			continue
+		var d := global_position.distance_squared_to(enemy.global_position)
+		if d < best_distance:
+			best_distance = d
+			best = enemy
+	return best
+
+## ロックできる場所にいるか(画面内で、前方の扇の中、距離が range 以内)
+func _in_lock_area(enemy : Node2D, max_range : float) -> bool:
+	if not CameraView.visible_rect(self).has_point(enemy.global_position):
+		return false
+	var to_enemy := enemy.global_position - global_position
+	if to_enemy.length() > max_range:
+		return false
+	return absf(Vector2.UP.angle_to(to_enemy)) <= deg_to_rad(lock_cone_deg)
+
+## 一度ロックした敵は、少し離れても(扇の外でも)、画面内にいる間は外さない
+func _can_keep_lock(enemy : Node2D) -> bool:
+	if not is_instance_valid(enemy) or not enemy.is_inside_tree() or enemy.is_queued_for_deletion():
+		return false
+	return CameraView.visible_rect(self).has_point(enemy.global_position) 			and global_position.distance_to(enemy.global_position) <= lock_range * 1.3
+
+## ロックした敵に、1体1発ずつ追いかける弾を撃つ(左右に少し開いて出て、弧を描いて向かう)
+func _fire_lock_volley() -> void:
+	var count := lock_targets.size()
+	for i in count:
+		var target := lock_targets[i]
+		var bullet : Bullet = bullet_scene.instantiate()
+		get_tree().current_scene.add_child(bullet)
+		bullet.global_position = global_position + muzzle_offset
+		var spread := (i - (count - 1) / 2.0) * 25.0
+		var direction := Vector2.UP.rotated(deg_to_rad(spread))
+		var t := _center_distance_ratio(bullet.global_position)
+		var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
+		bullet.setup(direction, shot_speed, shot_damage * power * level_power_scale * lock_damage_scale, 0)
+		bullet.set_homing(target, lock_turn_rate)
+		bullet.modulate = lock_color.lerp(Color.WHITE, 0.4)
 
 ## ショットを1段階強化する(最大5段階)
 func power_up_shot() -> void:

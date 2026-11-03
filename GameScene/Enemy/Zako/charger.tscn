@@ -13,6 +13,7 @@ size = Vector2(14, 14)
 radius = 7.0
 
 [node name="Charger" instance=ExtResource("base")]
+scale = Vector2(2, 2)
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
