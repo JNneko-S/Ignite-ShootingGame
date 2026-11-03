@@ -11,7 +11,7 @@ class_name IgniteParams
 
 @export_group("ダメージ")
 ## 反射弾1発あたりのダメージ(距離減衰は受けない。直接触れた弾も連鎖弾も同じ)
-@export var base_damage : float = 3.0
+@export var base_damage : float = 30.0
 
 @export_group("軌道")
 ## 反射弾の速度(px/秒)

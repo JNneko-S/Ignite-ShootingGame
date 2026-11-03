@@ -37,8 +37,8 @@ wait_time = 0.2
 one_shot = true
 
 [node name="HPComponent" parent="." unique_id=2079593739 instance=ExtResource("5_2fvp3")]
-max_hp = 15
-hp = 15
+max_hp = 150
+hp = 150
 
 [node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("6_ruu38")]
 z_index = 2

@@ -34,8 +34,8 @@ position = Vector2(0, -9)
 shape = SubResource("hurt_shape")
 
 [node name="HPComponent" parent="." index="3" unique_id=2079593739]
-max_hp = 120
-hp = 120
+max_hp = 1200
+hp = 1200
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])

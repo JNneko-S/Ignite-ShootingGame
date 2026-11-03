@@ -30,8 +30,8 @@ var graze_radius_scale : float = 1.0
 @export var shot_sound_db : float = -24.0
 
 @export_group("ショットの威力")
-## 通常ショット1発の基礎ダメージ
-@export var shot_damage : float = 1.0
+## 通常ショット1発の基礎ダメージ(整数に丸められても倍率の差が残るよう、ダメージと体力は10倍の単位で扱う)
+@export var shot_damage : float = 10.0
 ## 威力の倍率(どこから撃っても同じ)
 @export var shot_power : float = 1.2
 ## ショットの弾速(px/秒)。自機の移動速度(Lv5で約375)より十分速くすること

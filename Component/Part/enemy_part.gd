@@ -10,7 +10,7 @@ class_name EnemyPart
 
 signal destroyed(part : EnemyPart)
 
-@export var max_hp : int = 40
+@export var max_hp : int = 400
 ## 部位が受けたダメージのうち、この割合を本体(Enemy の HPComponent)にも与える
 @export_range(0.0, 1.0, 0.05) var damage_to_body : float = 0.25
 
