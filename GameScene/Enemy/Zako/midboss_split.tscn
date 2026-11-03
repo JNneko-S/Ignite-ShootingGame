@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://d03d5hh87wr7y" path="res://Resources/ShotPatterns/Enemies/shot_pod_spiral_r.tres" id="pod_r"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(176, 70)
@@ -18,6 +19,7 @@ size = Vector2(176, 70)
 size = Vector2(28, 14)
 
 [node name="MidbossSplit" unique_id=1536801244 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

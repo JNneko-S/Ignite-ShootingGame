@@ -15,6 +15,12 @@ signal died(enemy : Enemy)
 ## true なら、mirror_x のとき、見た目と子ノードの位置も左右反転する(砲口が左右逆になる)
 @export var mirror_visuals : bool = true
 
+@export_group("ドロップ")
+## 倒したときに出すアイテム(パワーアップアイテムなど)。空なら出さない
+@export var drop_item_scene : PackedScene
+## アイテムを出す確率(0〜1)
+@export_range(0.0, 1.0, 0.05) var drop_chance : float = 1.0
+
 @export_group("撃破")
 ## 倒されたときに、その場に出す爆発。空なら爆発しない
 @export var explosion_scene : PackedScene = Explosion.ZAKO
@@ -145,11 +151,21 @@ func _die() -> void:
 		_tween.kill()
 	_chase_step = null
 	died.emit(self)
+	_drop_item()
 	if big_death:
 		_play_big_death()
 		return
 	Explosion.spawn(get_tree(), explosion_scene, global_position, explosion_scale)
 	queue_free()
+
+func _drop_item() -> void:
+	if drop_item_scene == null or randf() > drop_chance:
+		return
+	var item := drop_item_scene.instantiate()
+	var at := global_position # 自分は先に消えるので、位置を覚えておく
+	if item is Node2D:
+		item.position = at # シーンの直下に足すので、位置 = 画面(ワールド)の座標
+	get_tree().current_scene.add_child.call_deferred(item) # 物理の処理中に倒されることがあるので、後で足す
 
 ## ボスの撃破: 撃つのをやめ、全ての爆発エフェクトを順番に体中で起こしてから、大爆発して消える
 func _play_big_death() -> void:

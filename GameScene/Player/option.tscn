@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://player_option.gd" id="1_option"]
+[ext_resource type="Texture2D" uid="uid://cu2irin6o2dku" path="res://Assets/Full Shmup Asset Pack/Old Player Ship/New_P1_L&R_Option.png" id="2_tex"]
+
+[node name="Option" type="Node2D"]
+script = ExtResource("1_option")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_tex")
+hframes = 4

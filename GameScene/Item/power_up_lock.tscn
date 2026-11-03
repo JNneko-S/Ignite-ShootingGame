@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://power_up_item.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://b8uscky67hhyf" path="res://Assets/Full Shmup Asset Pack/PowerUps/powerupD_combined_sprite.png" id="2_tex"]
+
+[node name="PowerUpLock" type="Node2D"]
+script = ExtResource("1_item")
+kind = 1
+frame_rate = 10.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_tex")
+hframes = 5

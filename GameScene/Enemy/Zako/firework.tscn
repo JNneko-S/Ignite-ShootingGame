@@ -5,11 +5,13 @@
 [ext_resource type="Resource" uid="uid://cbhh5uf13xhnn" path="res://Resources/MovePatterns/Enemies/move_firework.tres" id="move"]
 [ext_resource type="Resource" uid="uid://bk17fun4c4c2e" path="res://Resources/ShotPatterns/Enemies/shot_firework.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(30, 20)
 
 [node name="Firework" unique_id=1760303644 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

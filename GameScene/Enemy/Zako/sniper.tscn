@@ -5,11 +5,14 @@
 [ext_resource type="Resource" uid="uid://hpw3r0e566ir" path="res://Resources/MovePatterns/Enemies/move_sniper.tres" id="move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_sniper.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_lock.tscn" id="drop"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(14, 22)
 
 [node name="Sniper" unique_id=1116709428 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
+drop_chance = 0.5
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

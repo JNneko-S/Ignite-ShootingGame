@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://1awt2yu5u4mx" path="res://Resources/MovePatterns/Enemies/move_absorber.tres" id="move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_absorber_bait.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_lock.tscn" id="drop"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8ukym"]
 
@@ -14,6 +15,7 @@
 size = Vector2(68, 22)
 
 [node name="Absorber" unique_id=1699295446 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

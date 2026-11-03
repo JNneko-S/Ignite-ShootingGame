@@ -6,11 +6,13 @@
 [ext_resource type="Resource" uid="uid://cmw4h3temwlgf" path="res://Resources/MovePatterns/Enemies/move_armored.tres" id="move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_armored_fan.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(30, 30)
 
 [node name="Armored" unique_id=565500938 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

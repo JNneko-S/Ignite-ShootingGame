@@ -476,6 +476,10 @@ func _offset_in(root : Node, node : Node, mirror : bool) -> Vector2:
 				local.origin.x = -local.origin.x
 			xform = local * xform
 		current = current.get_parent()
+	if root is Node2D:
+		var root_xform := (root as Node2D).transform # ルートの拡大(敵の大きさ)も、砲口の位置にかける
+		root_xform.origin = Vector2.ZERO
+		return root_xform * xform.origin
 	return xform.origin
 
 ## 編集中のシーンにある MusicClock のテンポ(Timing Unit が BEATS のパターン用)。なければ 120 BPM
