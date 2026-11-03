@@ -335,6 +335,10 @@ graze_radius = 15.0
 focus_graze_multiplier = 0.9
 shot_power_at_center = 1.5
 shot_color_high = Color(1, 0.34901962, 0.33333334, 1)
+lock_time = 0.3
+lock_max_targets = Array[int]([2, 2, 3, 3, 4, 5])
+lock_turn_rate = 500.0
+focus_spread_scale = 0.2
 respawn_delay = 1.0
 clear_bullets_on_death = true
 

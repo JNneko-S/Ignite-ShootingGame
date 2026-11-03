@@ -44,6 +44,10 @@ signal score_changed(score : int)
 @export var ignite_durations : Array[float] = [1.0, 2.0, 3.0, 4.0, 5.0]
 ## 連鎖が使える、消費したレベルの数
 @export var chain_min_level : int = 5
+## 効果が時間切れで終わったあとの無敵時間(秒)。死亡で終わったときは付かない
+@export var post_ignite_invincible_time : float = 1.0
+## 画面演出のシーン(衝撃波・ヒットストップ・画面のふちの光)。空なら演出なし
+@export var screen_effect_scene : PackedScene = preload("res://GameScene/Effect/ignite_screen_effect.tscn")
 
 @export_group("被弾時の補給アイテム")
 ## 散らばるアイテムのシーン(ルートが IgniteItem)。見た目はこのシーンの Sprite2D で変える
@@ -95,6 +99,7 @@ var death_count : int = 0
 var full_use_count : int = 0
 
 var _ignite_time_left : float = 0.0
+var _screen_effect : IgniteScreenEffect
 
 func _ready() -> void:
 	if player == null:
@@ -106,6 +111,10 @@ func _ready() -> void:
 	ignite.density_bonus = density_bonus
 	ignite.level_changed.connect(_on_level_changed)
 	ignite.configure(_by_difficulty(start_levels), _by_difficulty(miss_penalties))
+
+	if screen_effect_scene:
+		_screen_effect = screen_effect_scene.instantiate() as IgniteScreenEffect
+		add_child(_screen_effect)
 
 	if ui:
 		ui.bind(ignite)
@@ -240,6 +249,8 @@ func _start_ignite_effect(levels : int) -> void:
 	player.set_igniting(true)
 	if player.ignite_aura:
 		player.ignite_aura.apply_level(levels, max_radius, final_radius, duration)
+	if _screen_effect:
+		_screen_effect.start(player.global_position, max_radius, duration)
 
 ## 効果の開始・終了。終了(時間切れ、または死亡)で、焼却範囲とフレアを止める
 func _on_ignite_toggled(on : bool) -> void:
@@ -249,6 +260,10 @@ func _on_ignite_toggled(on : bool) -> void:
 	EnemyBullet.set_chain_allowed(false)
 	if player.ignite_aura:
 		player.ignite_aura.stop()
+	if _screen_effect:
+		_screen_effect.stop()
+	if player._is_alive:
+		player.start_invincibility(post_ignite_invincible_time) # 終わった直後に、弾に当たらないように
 	if debug_ignite:
 		print("[Ignite] 終了")
 

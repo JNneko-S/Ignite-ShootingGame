@@ -300,6 +300,10 @@ func _fire_volley(angles : Array) -> void:
 func _is_lock_shooting() -> bool:
 	return lock_shot_enabled and is_focusing
 
+## ロックオン中か(低速移動中に、敵を1体以上ロックしている)。子機のフォーメーションの切り替えに使う
+func is_locking_on() -> bool:
+	return _is_lock_shooting() and not lock_targets.is_empty()
+
 ## 低速移動中、前方の扇の中の敵を、近い順に1体ずつロックしていく
 func _update_lock(delta : float) -> void:
 	lock_targets.assign(lock_targets.filter(func(t : Node2D) -> bool: return _can_keep_lock(t)))
@@ -439,7 +443,7 @@ func _drop_power_ups() -> void:
 func _fire_options() -> void:
 	if options.is_empty():
 		return
-	var locking := _is_lock_shooting() and not lock_targets.is_empty()
+	var locking := is_locking_on()
 	var power := lerpf(shot_power_at_center, shot_power_at_edge, _center_distance_ratio(global_position))
 	var damage := shot_damage * power * level_power_scale * (lock_damage_scale if locking else 1.0)
 	for i in options.size():

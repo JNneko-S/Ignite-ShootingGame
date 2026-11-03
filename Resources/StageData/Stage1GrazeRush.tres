@@ -6,13 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://bw7h5h6wbmv5y" path="res://GameScene/Enemy/Zako/firework.tscn" id="e_firework"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
 [ext_resource type="PackedScene" uid="uid://dcaufucsn0tn5" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/mine_layer.tscn" id="e_mine_layer"]
 [ext_resource type="PackedScene" uid="uid://bdgkopm2s363s" path="res://GameScene/Enemy/Zako/sniper.tscn" id="e_sniper"]
 [ext_resource type="Resource" uid="uid://d30fgjov0kkm7" path="res://Resources/MovePatterns/Stage1/m1_boss_enter.tres" id="m_boss_enter"]
 [ext_resource type="Resource" uid="uid://bk5oq6gb6334b" path="res://Resources/MovePatterns/Stage1/m1_comb.tres" id="m_comb"]
 [ext_resource type="Resource" uid="uid://bedee88dp0hsf" path="res://Resources/MovePatterns/Stage1/m1_comb_sway.tres" id="m_comb_sway"]
 [ext_resource type="Resource" uid="uid://kk3ui4ge1hx8" path="res://Resources/MovePatterns/Stage1/m1_edge_hold.tres" id="m_edge_hold"]
-[ext_resource type="Resource" uid="uid://b4t0aqovkxv0o" path="res://Resources/MovePatterns/Enemies/move_mine_pass.tres" id="m_mine_pass"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_pass_swoop.tres" id="m_mine_pass"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_pop_cross.tres" id="m_pop_cross"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_pop_dip.tres" id="m_pop_dip"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_pop_rain.tres" id="m_pop_rain"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_pop_snake.tres" id="m_pop_snake"]
 [ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="phase_script"]
 [ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
@@ -34,8 +37,10 @@
 [ext_resource type="Resource" uid="uid://dl3t6wf2j2m8q" path="res://Resources/ShotPatterns/Stage1/s1_boss_washer.tres" id="s_boss_washer"]
 [ext_resource type="Resource" uid="uid://bfnibpkbr3c0o" path="res://Resources/ShotPatterns/Stage1/s1_burst3.tres" id="s_burst3"]
 [ext_resource type="Resource" uid="uid://b43t386rwq201" path="res://Resources/ShotPatterns/Stage1/s1_drop.tres" id="s_drop"]
-[ext_resource type="Resource" uid="uid://b1thibovhsld2" path="res://Resources/ShotPatterns/Stage1/s1_hang.tres" id="s_hang"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_pop_3way.tres" id="s_pop_3way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_pop_aim.tres" id="s_pop_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_pop_aim_slow.tres" id="s_pop_aim_slow"]
 [ext_resource type="Resource" uid="uid://k0vfinxhv8xk" path="res://Resources/ShotPatterns/Stage1/s1_rain.tres" id="s_rain"]
 [ext_resource type="Resource" uid="uid://bmu1224q486v3" path="res://Resources/ShotPatterns/Stage1/s1_turret_curve.tres" id="s_turret_curve"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
@@ -44,6 +49,402 @@
 script = ExtResource("scroll_script")
 speed_multiplier = 1.6
 duration = 2.0
+
+[sub_resource type="Resource" id="pop_00_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 2.0
+
+[sub_resource type="Resource" id="pop_01_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 3.2
+
+[sub_resource type="Resource" id="pop_02_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 6.2
+
+[sub_resource type="Resource" id="pop_03_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 8.0
+
+[sub_resource type="Resource" id="pop_04_dip"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_dip")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 7
+interval = 0.05
+offset_step = Vector2(54, 0)
+time = 11.5
+
+[sub_resource type="Resource" id="pop_05_cross"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_cross")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 16
+interval = 0.22
+alternate_mirror = true
+time = 16.0
+
+[sub_resource type="Resource" id="pop_06_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 18.5
+
+[sub_resource type="Resource" id="pop_07_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 19.5
+
+[sub_resource type="Resource" id="pop_08_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 20.5
+
+[sub_resource type="Resource" id="pop_09_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 26.0
+
+[sub_resource type="Resource" id="pop_10_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 26.6
+
+[sub_resource type="Resource" id="pop_11_dip"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_dip")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 7
+interval = 0.05
+offset_step = Vector2(54, 0)
+time = 31.0
+
+[sub_resource type="Resource" id="pop_12_cross"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_cross")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 16
+interval = 0.22
+alternate_mirror = true
+time = 38.5
+
+[sub_resource type="Resource" id="pop_13_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 40.0
+
+[sub_resource type="Resource" id="pop_14_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 41.0
+
+[sub_resource type="Resource" id="pop_15_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 42.0
+
+[sub_resource type="Resource" id="pop_16_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 46.0
+
+[sub_resource type="Resource" id="pop_17_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 46.5
+
+[sub_resource type="Resource" id="pop_18_dip"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_dip")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim_slow")])
+hp_override = 3
+count = 7
+interval = 0.05
+offset_step = Vector2(54, 0)
+time = 51.0
+
+[sub_resource type="Resource" id="pop_19_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 60.0
+
+[sub_resource type="Resource" id="pop_20_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 61.0
+
+[sub_resource type="Resource" id="pop_21_cross"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_cross")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 16
+interval = 0.22
+alternate_mirror = true
+time = 65.0
+
+[sub_resource type="Resource" id="pop_22_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 68.5
+
+[sub_resource type="Resource" id="pop_23_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 69.0
+
+[sub_resource type="Resource" id="pop_24_dip"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_dip")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 7
+interval = 0.05
+offset_step = Vector2(54, 0)
+time = 72.5
+
+[sub_resource type="Resource" id="pop_25_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 79.0
+
+[sub_resource type="Resource" id="pop_26_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 80.0
+
+[sub_resource type="Resource" id="pop_27_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 89.0
+
+[sub_resource type="Resource" id="pop_28_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 89.5
+
+[sub_resource type="Resource" id="pop_29_cross"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_cross")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 16
+interval = 0.22
+alternate_mirror = true
+time = 92.0
+
+[sub_resource type="Resource" id="pop_30_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 100.0
+
+[sub_resource type="Resource" id="pop_31_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
+hp_override = 3
+count = 7
+interval = 0.0
+offset = Vector2(26, 0)
+offset_step = Vector2(52, 0)
+time = 101.0
+
+[sub_resource type="Resource" id="pop_32_rain"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_rain")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 8
+interval = 0.0
+offset_step = Vector2(52, 0)
+time = 102.0
+
+[sub_resource type="Resource" id="pop_33_dip"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_dip")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim_slow")])
+hp_override = 3
+count = 7
+interval = 0.05
+offset_step = Vector2(54, 0)
+time = 104.5
+
+[sub_resource type="Resource" id="pop_34_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+time = 106.0
+
+[sub_resource type="Resource" id="pop_35_snake"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_pop_snake")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
+hp_override = 3
+count = 14
+interval = 0.16
+mirror_x = true
+time = 106.5
 
 [sub_resource type="Resource" id="s1_open_1"]
 script = ExtResource("spawn_script")
@@ -229,31 +630,6 @@ interval = 1.5
 alternate_mirror = true
 time = 37.0
 
-[sub_resource type="Resource" id="s4_hang_l"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_mine_layer")
-move_pattern = ExtResource("m_mine_pass")
-shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_hang")])
-hp_override = 14
-count = 6
-interval = 0.4
-offset = Vector2(0, -20)
-offset_step = Vector2(0, 20)
-time = 43.0
-
-[sub_resource type="Resource" id="s4_hang_r"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_mine_layer")
-move_pattern = ExtResource("m_mine_pass")
-shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_hang")])
-hp_override = 14
-count = 6
-interval = 0.4
-offset = Vector2(0, -60)
-offset_step = Vector2(0, 20)
-mirror_x = true
-time = 44.0
-
 [sub_resource type="Resource" id="s4_swarm"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -357,31 +733,6 @@ offset = Vector2(-90, 0)
 offset_step = Vector2(30, 0)
 alternate_mirror = true
 time = 80.0
-
-[sub_resource type="Resource" id="s5_hang_l"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_mine_layer")
-move_pattern = ExtResource("m_mine_pass")
-shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_hang")])
-hp_override = 14
-count = 5
-interval = 0.45
-offset = Vector2(0, -20)
-offset_step = Vector2(0, 20)
-time = 75.0
-
-[sub_resource type="Resource" id="s5_hang_r"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_mine_layer")
-move_pattern = ExtResource("m_mine_pass")
-shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_hang")])
-hp_override = 14
-count = 5
-interval = 0.45
-offset = Vector2(0, -60)
-offset_step = Vector2(0, 20)
-mirror_x = true
-time = 76.0
 
 [sub_resource type="Resource" id="s5_bloom"]
 script = ExtResource("spawn_script")
@@ -567,4 +918,4 @@ time = 126.0
 [resource]
 script = ExtResource("stage_script")
 stage_name = "Stage 1 グレイズラッシュ"
-events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("s1_open_1"), SubResource("s1_pass_1"), SubResource("s1_open_2"), SubResource("s1_burst_1"), SubResource("s1_pass_2"), SubResource("s1_open_3"), SubResource("s2_comb"), SubResource("s2_swarm"), SubResource("s2_bloom"), SubResource("s2_burst"), SubResource("s3_stream_1"), SubResource("s3_pass"), SubResource("s3_stream_2"), SubResource("s3_swarm"), SubResource("s3_edge_l"), SubResource("s3_edge_r"), SubResource("s3_stream_3"), SubResource("s4_hang_l"), SubResource("s4_hang_r"), SubResource("s4_swarm"), SubResource("s4_bloom"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("s5_swarm_1"), SubResource("s5_pass_1"), SubResource("s5_sway"), SubResource("s5_swarm_2"), SubResource("s5_burst"), SubResource("s5_hang_l"), SubResource("s5_hang_r"), SubResource("s5_bloom"), SubResource("s5_pass_2"), SubResource("s5_turret_l"), SubResource("s5_turret_r"), SubResource("s5_swarm_3"), SubResource("s6_edge_l"), SubResource("s6_edge_r"), SubResource("s6_sway"), SubResource("s7_swarm_1"), SubResource("s7_burst"), SubResource("s7_swarm_2"), SubResource("s7_pass"), SubResource("s7_swarm_3"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss")])
+events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("pop_00_rain"), SubResource("pop_01_rain"), SubResource("pop_02_snake"), SubResource("pop_03_snake"), SubResource("pop_04_dip"), SubResource("pop_05_cross"), SubResource("pop_06_rain"), SubResource("pop_07_rain"), SubResource("pop_08_rain"), SubResource("pop_09_snake"), SubResource("pop_10_snake"), SubResource("pop_11_dip"), SubResource("pop_12_cross"), SubResource("pop_13_rain"), SubResource("pop_14_rain"), SubResource("pop_15_rain"), SubResource("pop_16_snake"), SubResource("pop_17_snake"), SubResource("pop_18_dip"), SubResource("pop_19_rain"), SubResource("pop_20_rain"), SubResource("pop_21_cross"), SubResource("pop_22_snake"), SubResource("pop_23_snake"), SubResource("pop_24_dip"), SubResource("pop_25_rain"), SubResource("pop_26_rain"), SubResource("pop_27_snake"), SubResource("pop_28_snake"), SubResource("pop_29_cross"), SubResource("pop_30_rain"), SubResource("pop_31_rain"), SubResource("pop_32_rain"), SubResource("pop_33_dip"), SubResource("pop_34_snake"), SubResource("pop_35_snake"), SubResource("s1_open_1"), SubResource("s1_pass_1"), SubResource("s1_open_2"), SubResource("s1_burst_1"), SubResource("s1_pass_2"), SubResource("s1_open_3"), SubResource("s2_comb"), SubResource("s2_swarm"), SubResource("s2_bloom"), SubResource("s2_burst"), SubResource("s3_stream_1"), SubResource("s3_pass"), SubResource("s3_stream_2"), SubResource("s3_swarm"), SubResource("s3_edge_l"), SubResource("s3_edge_r"), SubResource("s3_stream_3"), SubResource("s4_swarm"), SubResource("s4_bloom"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("s5_swarm_1"), SubResource("s5_pass_1"), SubResource("s5_sway"), SubResource("s5_swarm_2"), SubResource("s5_burst"), SubResource("s5_bloom"), SubResource("s5_pass_2"), SubResource("s5_turret_l"), SubResource("s5_turret_r"), SubResource("s5_swarm_3"), SubResource("s6_edge_l"), SubResource("s6_edge_r"), SubResource("s6_sway"), SubResource("s7_swarm_1"), SubResource("s7_burst"), SubResource("s7_swarm_2"), SubResource("s7_pass"), SubResource("s7_swarm_3"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss")])
