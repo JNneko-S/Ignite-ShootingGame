@@ -29,21 +29,17 @@ var graze_radius_scale : float = 1.0
 @export var shot_sound : AudioStream = preload("res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3")
 @export var shot_sound_db : float = -24.0
 
-@export_group("ショットの威力(距離減衰)")
+@export_group("ショットの威力")
 ## 通常ショット1発の基礎ダメージ
 @export var shot_damage : float = 1.0
-## 画面中央から撃ったときの威力倍率
-@export var shot_power_at_center : float = 1.2
-## 画面の端から撃ったときの威力倍率
-@export var shot_power_at_edge : float = 0.85
+## 威力の倍率(どこから撃っても同じ)
+@export var shot_power : float = 1.2
 ## ショットの弾速(px/秒)。自機の移動速度(Lv5で約375)より十分速くすること
 @export var shot_speed : float = 900.0
 ## true なら、前進している速度の分だけ弾速を足す。縦に動いても、弾の間隔が一定になり、重ならない
 @export var shot_inherit_forward_speed : bool = true
-## 威力に応じて弾の色を変える(弾の見た目に掛け合わせる)
-@export var tint_shot_by_power : bool = true
-@export var shot_color_low : Color = Color(0.6, 0.75, 1.0)
-@export var shot_color_high : Color = Color(1.0, 1.0, 1.0)
+## 弾の色(弾の見た目に掛け合わせる。白ならそのまま)
+@export var shot_color : Color = Color(1.0, 1.0, 1.0)
 
 @export_group("ロックショット(低速移動中に撃つ)")
 ## オンなら、UI_Focus(Shift)を押しながら撃つと、ロックした敵を追いかける弾になる
@@ -286,14 +282,11 @@ func _fire_volley(angles : Array) -> void:
 		bullet.global_position = global_position + muzzle_offset
 		var direction := Vector2.UP.rotated(deg_to_rad(angle_deg))
 		if bullet.has_method("setup"):
-			var t := _center_distance_ratio(bullet.global_position)
-			var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
 			var speed := shot_speed
 			if shot_inherit_forward_speed:
 				speed += maxf(velocity.dot(direction), 0.0) # 弾の向きに進んでいる速度だけ足す
-			bullet.setup(direction, speed, roundi(shot_damage * power * level_power_scale), 0) # 切り捨てだと 0 ダメージになるので四捨五入
-			if tint_shot_by_power:
-				bullet.modulate = shot_color_high.lerp(shot_color_low, t)
+			bullet.setup(direction, speed, roundi(shot_damage * shot_power * level_power_scale), 0) # 切り捨てだと 0 ダメージになるので四捨五入
+			bullet.modulate = shot_color
 
 # ---------------------------------------------------------------- ロックショット
 
@@ -364,9 +357,7 @@ func _fire_lock_volley() -> void:
 		bullet.global_position = global_position + muzzle_offset
 		var spread := (i - (count - 1) / 2.0) * 25.0
 		var direction := Vector2.UP.rotated(deg_to_rad(spread))
-		var t := _center_distance_ratio(bullet.global_position)
-		var power := lerpf(shot_power_at_center, shot_power_at_edge, t)
-		bullet.setup(direction, shot_speed, shot_damage * power * level_power_scale * lock_damage_scale, 0)
+		bullet.setup(direction, shot_speed, shot_damage * shot_power * level_power_scale * lock_damage_scale, 0)
 		bullet.set_homing(target, lock_turn_rate)
 		bullet.modulate = lock_color.lerp(Color.WHITE, 0.4)
 
@@ -444,8 +435,7 @@ func _fire_options() -> void:
 	if options.is_empty():
 		return
 	var locking := is_locking_on()
-	var power := lerpf(shot_power_at_center, shot_power_at_edge, _center_distance_ratio(global_position))
-	var damage := shot_damage * power * level_power_scale * (lock_damage_scale if locking else 1.0)
+	var damage := shot_damage * shot_power * level_power_scale * (lock_damage_scale if locking else 1.0)
 	for i in options.size():
 		var target : Node2D = lock_targets[i % lock_targets.size()] if locking else null
 		options[i].fire(bullet_scene, shot_speed, damage, target, lock_turn_rate)
@@ -464,10 +454,6 @@ func reset_shot_power() -> void:
 	shot_stage = 0
 	shot_stage_changed.emit(shot_stage)
 
-## 画面(Camera2D に映っている範囲)の中央からの距離を 0.0(中央)〜1.0(角)で返す
-func _center_distance_ratio(pos : Vector2) -> float:
-	var area := CameraView.visible_rect(self)
-	return clampf(pos.distance_to(area.get_center()) / (area.size.length() / 2.0), 0.0, 1.0)
 
 # ---------------------------------------------------------------- グレイズ
 
