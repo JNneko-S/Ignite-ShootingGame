@@ -211,7 +211,10 @@ func _update_wait(delta : float) -> void:
 # ---------------------------------------------------------------- スクロール・演出
 
 func _collect_parallax() -> void:
-	_parallax = parallax_layers.duplicate()
+	_parallax.clear()
+	for layer in parallax_layers:
+		if layer: # 消したノードの空欄は飛ばす
+			_parallax.append(layer)
 	if _parallax.is_empty():
 		var root := get_tree().current_scene if get_tree().current_scene else owner
 		if root:

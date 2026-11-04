@@ -49,11 +49,10 @@ z_index = 1
 script = ExtResource("4_yintm")
 preview_time = 7.700187333333314
 
-[node name="StageRunner" type="Node2D" parent="." unique_id=1973239994 node_paths=PackedStringArray("enemy_parent", "parallax_layers")]
+[node name="StageRunner" type="Node2D" parent="." unique_id=1973239994 node_paths=PackedStringArray("enemy_parent")]
 script = ExtResource("2_yintm")
 stage = ExtResource("s1_graze_rush")
 enemy_parent = NodePath("../Enemys")
-parallax_layers = [NodePath(""), NodePath(""), NodePath("")]
 
 [node name="Enemys" type="Node2D" parent="." unique_id=1210740945]
 
@@ -109,8 +108,9 @@ script = ExtResource("warning_display")
 
 [node name="BackgroundSway" type="Node" parent="." unique_id=418265093 node_paths=PackedStringArray("targets")]
 script = ExtResource("bg_sway")
-targets = [NodePath(""), NodePath(""), NodePath("")]
-depth_scales = Array[float]([0.4, 0.8, 1.0])
+targets = [NodePath("../Scroller/Sprite2D"), NodePath("../Scroller/Sprite2D2")]
+depth_scales = Array[float]([0.7, 1.0])
+sway_distance = 40.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1832352645]
 position = Vector2(240, 304)
