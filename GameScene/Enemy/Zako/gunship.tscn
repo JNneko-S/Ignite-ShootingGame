@@ -1,0 +1,144 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" uid="uid://cyjrigcsy0xdq" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/Body.png" id="tex_body"]
+[ext_resource type="Texture2D" uid="uid://bfguvctc6drqj" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/LGun.png" id="tex_lgun"]
+[ext_resource type="Texture2D" uid="uid://bf1yclpq1xvlj" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/RGun.png" id="tex_rgun"]
+[ext_resource type="Texture2D" uid="uid://cdr8hjd04ikow" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/Thruster1.png" id="tex_t1"]
+[ext_resource type="Texture2D" uid="uid://dc5g6308y7glo" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/Thruster2.png" id="tex_t2"]
+[ext_resource type="Texture2D" uid="uid://dptq4lnxbi43w" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/Thruster3.png" id="tex_t3"]
+[ext_resource type="Texture2D" uid="uid://4eub2tvsky6u" path="res://Assets/Full Shmup Asset Pack/Mid Size Enm Ship/Thruster4.png" id="tex_t4"]
+[ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
+[ext_resource type="Script" uid="uid://bucp0ao8udq4" path="res://Component/Part/enemy_part.gd" id="part_script"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_gunship_3way_l.tres" id="pat_l"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_gunship_3way_r.tres" id="pat_r"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_gunship.tres" id="move"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
+
+[sub_resource type="SpriteFrames" id="thrust_frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_t1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_t3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_t4")
+}],
+"loop": true,
+"name": &"default",
+"speed": 14.0
+}]
+
+[sub_resource type="RectangleShape2D" id="core_shape"]
+size = Vector2(22, 88)
+
+[sub_resource type="RectangleShape2D" id="wing_shape"]
+size = Vector2(100, 26)
+
+[sub_resource type="RectangleShape2D" id="pod_shape"]
+size = Vector2(28, 36)
+
+[node name="Gunship" unique_id=1772052941 instance=ExtResource("base")]
+drop_item_scene = ExtResource("drop")
+drop_chance = 0.5
+explosion_scale = 2.0
+big_death = true
+big_death_count = 6
+big_death_duration = 0.9
+big_death_burn_bullets = false
+big_death_drift = Vector2(0, 40)
+big_death_shake_scale = 0.5
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("tex_body")
+offset = Vector2(3, 0)
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 2)
+shape = SubResource("core_shape")
+
+[node name="WingShape" type="CollisionShape2D" parent="Hurtbox" index="2" unique_id=1059321840]
+position = Vector2(0, -30)
+shape = SubResource("wing_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 1200
+hp = 1200
+
+[node name="Thruster" type="AnimatedSprite2D" parent="." index="5" unique_id=1312790644]
+z_index = 1
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("thrust_frames")
+autoplay = "default"
+offset = Vector2(3, 0)
+
+[node name="GunLeft" type="Node2D" parent="." index="6" unique_id=1880214772]
+position = Vector2(-25.5, 22.5)
+script = ExtResource("part_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="GunLeft" index="0" unique_id=1630047185]
+z_index = 2
+texture_filter = 1
+position = Vector2(25.5, -22.5)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("tex_lgun")
+offset = Vector2(3, 0)
+
+[node name="Hurtbox" type="Area2D" parent="GunLeft" index="1" unique_id=1149937020]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GunLeft/Hurtbox" index="0" unique_id=1418519334]
+shape = SubResource("pod_shape")
+
+[node name="Timer" type="Timer" parent="GunLeft/Hurtbox" index="1" unique_id=1846623091]
+wait_time = 0.2
+one_shot = true
+
+[node name="EnemyShooterComponent" parent="GunLeft" index="2" unique_id=1925740631 instance=ExtResource("shooter_scene")]
+z_index = 2
+position = Vector2(0, 20)
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_l")])
+
+[node name="GunRight" type="Node2D" parent="." index="7" unique_id=1407394566]
+position = Vector2(25.5, 22)
+script = ExtResource("part_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="GunRight" index="0" unique_id=1188925706]
+z_index = 2
+texture_filter = 1
+position = Vector2(-25.5, -22)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("tex_rgun")
+offset = Vector2(3, 0)
+
+[node name="Hurtbox" type="Area2D" parent="GunRight" index="1" unique_id=1735417213]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GunRight/Hurtbox" index="0" unique_id=1255698012]
+shape = SubResource("pod_shape")
+
+[node name="Timer" type="Timer" parent="GunRight/Hurtbox" index="1" unique_id=1617006325]
+wait_time = 0.2
+one_shot = true
+
+[node name="EnemyShooterComponent" parent="GunRight" index="2" unique_id=1361843090 instance=ExtResource("shooter_scene")]
+z_index = 2
+position = Vector2(0, 20)
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_r")])

@@ -25,13 +25,20 @@ signal died(enemy : Enemy)
 ## 倒されたときに、その場に出す爆発。空なら爆発しない
 @export var explosion_scene : PackedScene = Explosion.ZAKO
 @export var explosion_scale : float = 1.0
-## true なら、倒されたときに連鎖爆発 → 大爆発してから消える(ボス用。StageRunner が is_boss の敵をオンにする)
+## true なら、倒されたときに連鎖爆発 → 大爆発してから消える。
+## ボスは StageRunner が is_boss の敵をオンにする。中型機はシーンでオンにして、回数・時間を短めにする
 @export var big_death : bool = false
 ## 連鎖爆発を出す範囲(この敵の位置からのずれ)。大きさが 0 なら、Sprite2D の見た目の範囲を使う
 @export var big_death_area : Rect2 = Rect2()
 ## 連鎖爆発の回数と、かける時間(秒)
 @export var big_death_count : int = 15
 @export var big_death_duration : float = 2.2
+## true なら、連鎖爆発の始めに画面の敵弾を燃やして消す(ボス用)。中型機はオフにして、弾は残す
+@export var big_death_burn_bullets : bool = true
+## 連鎖爆発のあいだに、この距離(px)だけ流されていく(力尽きて落ちていく感じ)。0 ならその場で爆発
+@export var big_death_drift : Vector2 = Vector2.ZERO
+## 揺れの強さの倍率(中型機は小さめにする)
+@export var big_death_shake_scale : float = 1.0
 ## 倒されたときの効果音と音量(dB)。空なら鳴らさない
 @export var death_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3")
 @export var death_sound_db : float = -15.0
@@ -195,9 +202,18 @@ func _play_big_death() -> void:
 		if node is EnemyShooter:
 			node.enabled = false
 			node.stop()
-	hurtbox.set_deferred("monitoring", false)
-	hurtbox.set_deferred("monitorable", false)
-	get_tree().call_group("enemy_bullet", "burn") # 画面の敵弾は燃えて消える
+	# 部位(EnemyPart)の当たり判定も含めて、もう当たらないようにする
+	for node in find_children("*", "Area2D", true, false):
+		if node is Hurtbox:
+			node.set_deferred("monitoring", false)
+			node.set_deferred("monitorable", false)
+	if big_death_burn_bullets:
+		get_tree().call_group("enemy_bullet", "burn") # 画面の敵弾は燃えて消える
+	if big_death_drift != Vector2.ZERO:
+		# 力尽きて、連鎖爆発のあいだ流されていく
+		var drift := create_tween()
+		drift.tween_property(self, "position", position + big_death_drift, big_death_duration)\
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 	var tree := get_tree()
 	var area := _death_area()
@@ -210,7 +226,7 @@ func _play_big_death() -> void:
 		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
 		Explosion.spawn(tree, scene, global_position + offset, effect_scale)
 		SoundManager.play_sfx(death_sound, death_sound_db - 4.0, randf_range(0.9, 1.1)) # 連鎖の音は少し小さく、高さをばらす
-		_shake(4.0)
+		_shake(4.0 * big_death_shake_scale)
 		await tree.create_timer(interval).timeout
 
 	# 大爆発: 中心に大きな爆発と衝撃波、周りに小さな爆発
@@ -220,7 +236,7 @@ func _play_big_death() -> void:
 	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
 	for i in 8:
 		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * area.size.length() * 0.25, big_scale * 0.5)
-	_shake(12.0)
+	_shake(12.0 * big_death_shake_scale)
 	var fade := create_tween()
 	fade.tween_property(self, "modulate", Color(3.0, 3.0, 3.0, 1.0), 0.08)
 	fade.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.35)
