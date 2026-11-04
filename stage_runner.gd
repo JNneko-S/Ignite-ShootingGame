@@ -8,6 +8,7 @@ class_name StageRunner
 ##   3. 実行すると、start_delay 秒後からタイムラインが進む
 ##
 ## 背景のスクロールは、シーン内の Parallax2D を自動で探して、autoscroll を倍率で変える。
+## BackgroundScroller は scroll_multiplier を読んで、同じ倍率で進む。
 
 signal stage_started
 ## タイムラインが最後まで終わり、画面から敵がいなくなったときに出る
@@ -78,7 +79,7 @@ func start() -> void:
 				last_scroll = _entries[_next]["event"]
 			_next += 1
 		# 飛ばしたスクロール変更のうち、最後のものだけを即座に反映する
-		if last_scroll and not _parallax.is_empty():
+		if last_scroll:
 			set_scroll_speed(last_scroll.speed_multiplier, 0.0)
 	_running = true
 	stage_started.emit()
@@ -222,9 +223,9 @@ func _collect_parallax() -> void:
 
 ## スクロール速度を、元の速度の multiplier 倍にする(duration 秒かけて変える)
 func set_scroll_speed(multiplier : float, duration : float) -> void:
-	if _parallax.is_empty():
-		push_warning("StageRunner: スクロールする Parallax2D が見つかりません")
-		return
+	# BackgroundScroller は scroll_multiplier を毎フレーム読むので、Parallax2D がなくても倍率は変える
+	if _parallax.is_empty() and get_tree().get_nodes_in_group("background_scroller").is_empty():
+		push_warning("StageRunner: スクロールする Parallax2D / BackgroundScroller が見つかりません")
 	if _scroll_tween:
 		_scroll_tween.kill()
 	if duration <= 0.0:
