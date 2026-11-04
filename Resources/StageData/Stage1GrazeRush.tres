@@ -5,9 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://k67ebdq26l1a" path="res://GameScene/Enemy/Zako/curve_turret.tscn" id="e_curve_turret"]
 [ext_resource type="PackedScene" uid="uid://bw7h5h6wbmv5y" path="res://GameScene/Enemy/Zako/firework.tscn" id="e_firework"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="e_gunship"]
 [ext_resource type="PackedScene" uid="uid://dcaufucsn0tn5" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
 [ext_resource type="PackedScene" uid="uid://bdgkopm2s363s" path="res://GameScene/Enemy/Zako/sniper.tscn" id="e_sniper"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="e_gunship"]
 [ext_resource type="Resource" uid="uid://d30fgjov0kkm7" path="res://Resources/MovePatterns/Stage1/m1_boss_enter.tres" id="m_boss_enter"]
 [ext_resource type="Resource" uid="uid://bk5oq6gb6334b" path="res://Resources/MovePatterns/Stage1/m1_comb.tres" id="m_comb"]
 [ext_resource type="Resource" uid="uid://bedee88dp0hsf" path="res://Resources/MovePatterns/Stage1/m1_comb_sway.tres" id="m_comb_sway"]
@@ -946,7 +946,6 @@ time = 93.0
 
 [sub_resource type="Resource" id="rest_1_slow"]
 script = ExtResource("scroll_script")
-speed_multiplier = 1.0
 duration = 1.5
 time = 42.5
 

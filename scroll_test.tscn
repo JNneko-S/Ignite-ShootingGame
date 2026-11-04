@@ -58,6 +58,7 @@ enemy_parent = NodePath("../Enemys")
 
 [node name="Scroller" type="Node2D" parent="." unique_id=944740712]
 script = ExtResource("6_spej0")
+scroll_speed = 30.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Scroller" unique_id=731957679]
 position = Vector2(242, -2722.0002)
