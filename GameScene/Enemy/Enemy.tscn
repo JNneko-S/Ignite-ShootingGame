@@ -12,6 +12,7 @@
 script = ExtResource("1_65f6o")
 pattern = ExtResource("2_dxnol")
 death_sound = ExtResource("3_gop0t")
+death_sound_db = -20.0
 big_death_sound = ExtResource("4_rq5yo")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=430556030]

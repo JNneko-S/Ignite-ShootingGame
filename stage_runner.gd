@@ -172,6 +172,8 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.add_to_group(_tag_group(event.tag)) # 待機イベントが見つけるための印
 	if event.is_boss:
 		enemy.big_death = true # 連鎖爆発 → 大爆発してから消える
+	if event.boss_time_bonus:
+		enemy.boss_reach_time = stage_time # スタートからボス到達までの時間(待機イベントの時間は含まない)
 	if not event.phases.is_empty():
 		var controller := BossPhaseController.new()
 		controller.name = "BossPhaseController"
@@ -185,6 +187,27 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		boss_spawned.emit(enemy, event.boss_name, event.boss_phase_thresholds)
 	if debug_log:
 		print("[Stage] t=%.1f 出現 %s #%d" % [stage_time, enemy.name, unit_index])
+
+## 背景のオブジェクトを、画面の上の端のすぐ外に出す(PropEvent)
+func spawn_prop(event : PropEvent) -> void:
+	if event.scene == null:
+		return
+	var root := get_tree().current_scene
+	var parent : Node2D = root.get_node_or_null(event.parent_path) as Node2D if root else null
+	if parent == null:
+		push_warning("StageRunner: PropEvent の親 %s が見つかりません (t=%.1f)" % [event.parent_path, event.time])
+		parent = root as Node2D
+		if parent == null:
+			return
+	var top := CameraView.visible_rect(parent).position.y
+	var top_local := parent.to_local(Vector2(0.0, top)).y
+	for i in maxi(event.count, 1):
+		var prop := event.scene.instantiate() as Node2D
+		parent.add_child(prop)
+		# 1両の高さの半分くらい、画面の外から出す
+		prop.position = Vector2(event.local_x, top_local - event.spacing * 0.6 - event.spacing * i)
+	if debug_log:
+		print("[Stage] t=%.1f 背景オブジェクト x%d" % [stage_time, event.count])
 
 func _tag_group(tag : String) -> String:
 	return "stage_" + tag

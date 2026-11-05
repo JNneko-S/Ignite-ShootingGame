@@ -10,6 +10,8 @@
 size = Vector2(32, 42)
 
 [node name="CurveTurret" unique_id=99560607 instance=ExtResource("base")]
+score_value = 400
+ignite_kill_bonus = 1000
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

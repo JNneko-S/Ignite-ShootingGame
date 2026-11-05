@@ -91,6 +91,10 @@ func _find_visual() -> IgniteVisual:
 func is_active() -> bool:
 	return _active
 
+## 今の焼却範囲の半径(px)。効果中でなければ 0
+func current_radius() -> float:
+	return _radius if _active else 0.0
+
 ## ON中のレベルに合わせて効果を整える。
 ## まだ出ていなければ、最大半径まで広がってから縮む。出ていれば、新しい半径へ縮める
 func apply_level(level : int, max_radius : float, final_radius : float, duration : float = 0.0) -> void:

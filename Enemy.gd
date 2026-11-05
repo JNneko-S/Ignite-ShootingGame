@@ -50,6 +50,22 @@ signal died(enemy : Enemy)
 @export var hit_flash_color : Color = Color(2.5, 2.5, 2.5)
 @export var hit_flash_time : float = 0.08
 
+@export_group("スコア")
+## 倒したときの基本点(雑魚 100 / 中型 300 / 砲台 400 / 中ボス 1000)。
+## ボスの時間ボーナスは、SpawnEvent の Boss Time Bonus で使う(そのときはこの値を使わない)
+@export var score_value : int = 100
+## 0 より大きければ、イグナイトの発動中に倒したときに、さらにこの点のアイテムを落とす(イグナイト倍率が掛かる)
+@export var ignite_kill_bonus : int = 0
+## そのボーナスを、何個のアイテムに分けて落とすか
+@export var ignite_kill_bonus_items : int = 6
+
+## 最後に当たったのが反射弾か(反射弾で倒すと点が増える)
+var killed_by_reflect : bool = false
+## 0 以上なら、ボスの時間ボーナスで点を決める。StageRunner が出現したときのステージの時間を入れる
+var boss_reach_time : float = -1.0
+## 出現してからの時間(秒)。ボス戦の時間に使う
+var alive_time : float = 0.0
+
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
 
@@ -127,6 +143,8 @@ func _run_chase(step : MoveStep) -> void:
 	await _wait_after(step)
 
 func _physics_process(delta : float) -> void:
+	if not _is_dead:
+		alive_time += delta
 	if _chase_step == null or _is_dead:
 		return
 	var step := _chase_step
@@ -159,6 +177,9 @@ func _convert_relative(offset : Vector2) -> Vector2:
 	return offset
 
 func _on_hurtbox_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void:
+	if _is_dead:
+		return
+	killed_by_reflect = hurtbox.current_area is EnemyBullet # 反射弾は EnemyBullet のまま当たる
 	hp_component.apply_damage(ceili(damage))
 	if not _is_dead:
 		_flash()
@@ -179,6 +200,7 @@ func _die() -> void:
 		_tween.kill()
 	_chase_step = null
 	died.emit(self)
+	get_tree().call_group("score_system", "on_enemy_killed", self)
 	_drop_item()
 	if big_death:
 		_play_big_death()

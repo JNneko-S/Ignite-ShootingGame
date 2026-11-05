@@ -83,14 +83,19 @@ signal score_changed(score : int)
 @export var end_b_optional_required : int = 2
 
 @export_group("スコア")
-## 焼却した弾1発あたりの点数
-@export var score_per_burned_bullet : int = 10
+## 点数の計算をする ScoreSystem。未設定なら "score_system" グループから探す(なければスコアなし)
+@export var score_system : ScoreSystem
 
 ## true なら、発動・被弾の結果を出力する
 @export var debug_ignite : bool = false
 
 var ignite : IgniteGauge = IgniteGauge.new()
+## 今のスコア(ScoreSystem の値を写したもの)
 var score : int = 0
+## 今の発動で消費したレベルの数(発動中でなければ 0)。スコアの倍率に使う
+var ignite_level_in_use : int = 0
+## 発動した回数(単押しも長押しも数える)。ステージクリアのボーナスに使う
+var ignite_activation_count : int = 0
 ## 被弾した回数(死亡に至らなかったものも含む)
 var hit_count : int = 0
 ## 死亡した回数(ノーデスの判定用)
@@ -106,6 +111,10 @@ func _ready() -> void:
 		player = get_tree().get_first_node_in_group("player") as Player
 	if ui == null:
 		ui = get_node_or_null("UI") as IgniteUI
+	if score_system == null:
+		score_system = get_tree().get_first_node_in_group("score_system") as ScoreSystem
+	if score_system:
+		score_system.score_changed.connect(_on_score_changed)
 
 	ignite.graze_per_level = graze_per_level
 	ignite.density_bonus = density_bonus
@@ -171,6 +180,8 @@ func _on_player_damaged() -> void:
 	var dead := ignite.on_miss()
 	if debug_ignite:
 		print("[Ignite] 被弾 Lv%d → %s" % [level_before, "死亡" if dead else "Lv%d" % ignite.level])
+	if score_system:
+		score_system.on_player_hit(dead) # 被弾で倍率が下がる。撃墜なら倍率がなくなる
 	if dead:
 		death_count += 1
 		# 復活するまで(と、復活して少しのあいだ)、敵に撃たせない
@@ -245,6 +256,8 @@ func _start_ignite_effect(levels : int) -> void:
 			levels, ignite.level, max_radius, final_radius, duration])
 
 	_ignite_time_left = duration
+	ignite_level_in_use = levels
+	ignite_activation_count += 1
 	EnemyBullet.set_chain_allowed(levels >= chain_min_level)
 	player.set_igniting(true)
 	if player.ignite_aura:
@@ -257,6 +270,7 @@ func _on_ignite_toggled(on : bool) -> void:
 	if on:
 		return
 	_ignite_time_left = 0.0
+	ignite_level_in_use = 0
 	EnemyBullet.set_chain_allowed(false)
 	if player.ignite_aura:
 		player.ignite_aura.stop()
@@ -267,13 +281,18 @@ func _on_ignite_toggled(on : bool) -> void:
 	if debug_ignite:
 		print("[Ignite] 終了")
 
-func _on_bullet_burned(_bullet_position : Vector2) -> void:
-	add_score(score_per_burned_bullet)
+## 焼いた弾は、その場でスコアアイテムになる(点数は ScoreSystem が決める)
+func _on_bullet_burned(bullet_position : Vector2) -> void:
+	if score_system:
+		score_system.spawn_burn_item(bullet_position, ignite_level_in_use)
 
+## 点数を足す(倍率なし)
 func add_score(amount : int) -> void:
-	if amount <= 0:
-		return
-	score += amount
+	if score_system:
+		score_system.add_points(amount)
+
+func _on_score_changed(value : int) -> void:
+	score = value
 	score_changed.emit(score)
 
 # ---------------------------------------------------------------- ストーリー連動

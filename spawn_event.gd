@@ -26,6 +26,9 @@ class_name SpawnEvent
 ## HPの割合で切り替える弾幕(HPの多い順に並べる)。空なら切り替えない。
 ## 設定すると、Shot Patterns の代わりに、最初の段階の弾幕を使う
 @export var phases : Array[BossPhase] = []
+## オンにすると、倒したときの点を「ボスの時間ボーナス」にする(ScoreSystem の Boss Bonus を参照)。
+## ステージの最後のボスでオンにする。中ボスはオフのまま(敵シーンの Score Value を使う)
+@export var boss_time_bonus : bool = false
 
 @export_group("数と並べ方")
 @export var count : int = 1

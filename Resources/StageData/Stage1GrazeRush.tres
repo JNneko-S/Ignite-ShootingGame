@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="StageData" format=3 uid="uid://beiarkvgmkkj1"]
 
+[ext_resource type="PackedScene" path="res://GameScene/Prop/ignite_target.tscn" id="45_vix8p"]
 [ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
 [ext_resource type="PackedScene" uid="uid://cjd6edxevmr84" path="res://GameScene/Enemy/Boss.tscn" id="e_boss"]
 [ext_resource type="PackedScene" uid="uid://k67ebdq26l1a" path="res://GameScene/Enemy/Zako/curve_turret.tscn" id="e_curve_turret"]
@@ -18,6 +19,7 @@
 [ext_resource type="Resource" uid="uid://bm7mb3nk0ttdv" path="res://Resources/MovePatterns/Stage1/m1_pop_rain.tres" id="m_pop_rain"]
 [ext_resource type="Resource" uid="uid://ioikgmq4j2fn" path="res://Resources/MovePatterns/Stage1/m1_pop_snake.tres" id="m_pop_snake"]
 [ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="phase_script"]
+[ext_resource type="Script" uid="uid://dt7u5fluwbohj" path="res://prop_event.gd" id="prop_script"]
 [ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 [ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
@@ -661,7 +663,6 @@ time = 54.0
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_midboss_split")
 shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_mb_spiral"), ExtResource("s_aim_single")])
-hp_override = 2500
 tag = "midboss"
 is_boss = true
 boss_name = "分離砲台"
@@ -903,12 +904,12 @@ boss_modulate = Color(1, 0.5, 0.45, 1)
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_boss")
 move_pattern = ExtResource("m_boss_enter")
-hp_override = 20000
 tag = "boss"
 is_boss = true
 boss_name = "神ナル深機Atlas"
 boss_phase_thresholds = Array[float]([0.7, 0.4])
 phases = Array[ExtResource("phase_script")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
+boss_time_bonus = true
 time = 125.0
 
 [sub_resource type="Resource" id="wait_boss"]
@@ -967,7 +968,24 @@ speed_multiplier = 1.8
 duration = 1.5
 time = 78.0
 
+[sub_resource type="Resource" id="prop_train_1"]
+script = ExtResource("prop_script")
+count = 3
+time = 37.0
+
+[sub_resource type="Resource" id="prop_train_2"]
+script = ExtResource("prop_script")
+local_x = 42.0
+count = 2
+time = 66.0
+
+[sub_resource type="Resource" id="prop_train_3"]
+script = ExtResource("prop_script")
+local_x = -28.0
+count = 3
+time = 92.0
+
 [resource]
 script = ExtResource("stage_script")
 stage_name = "Stage 1 グレイズラッシュ"
-events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("pop_00_rain"), SubResource("pop_01_rain"), SubResource("pop_02_snake"), SubResource("pop_03_snake"), SubResource("pop_04_dip"), SubResource("pop_05_cross"), SubResource("pop_06_rain"), SubResource("pop_07_rain"), SubResource("pop_08_rain"), SubResource("pop_09_snake"), SubResource("pop_10_snake"), SubResource("pop_11_dip"), SubResource("pop_12_cross"), SubResource("pop_13_rain"), SubResource("pop_14_rain"), SubResource("pop_15_rain"), SubResource("pop_16_snake"), SubResource("pop_17_snake"), SubResource("pop_18_dip"), SubResource("pop_19_rain"), SubResource("pop_20_rain"), SubResource("pop_21_cross"), SubResource("pop_22_snake"), SubResource("pop_23_snake"), SubResource("pop_24_dip"), SubResource("pop_25_rain"), SubResource("pop_26_rain"), SubResource("pop_27_snake"), SubResource("pop_28_snake"), SubResource("pop_29_cross"), SubResource("pop_30_rain"), SubResource("pop_31_rain"), SubResource("pop_32_rain"), SubResource("pop_33_dip"), SubResource("pop_34_snake"), SubResource("pop_35_snake"), SubResource("s1_open_1"), SubResource("s1_pass_1"), SubResource("s1_open_2"), SubResource("s1_burst_1"), SubResource("s1_pass_2"), SubResource("s1_open_3"), SubResource("s2_comb"), SubResource("s2_swarm"), SubResource("s2_bloom"), SubResource("s2_burst"), SubResource("s3_stream_1"), SubResource("s3_pass"), SubResource("s3_stream_2"), SubResource("s3_swarm"), SubResource("s3_edge_l"), SubResource("s3_edge_r"), SubResource("s3_stream_3"), SubResource("s4_swarm"), SubResource("s4_bloom"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("s5_swarm_1"), SubResource("s5_pass_1"), SubResource("s5_sway"), SubResource("s5_swarm_2"), SubResource("s5_burst"), SubResource("s5_bloom"), SubResource("s5_pass_2"), SubResource("s5_turret_l"), SubResource("s5_turret_r"), SubResource("s5_swarm_3"), SubResource("s6_edge_l"), SubResource("s6_edge_r"), SubResource("s6_sway"), SubResource("s7_swarm_1"), SubResource("s7_burst"), SubResource("s7_swarm_2"), SubResource("s7_pass"), SubResource("s7_swarm_3"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss"), SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("rest_1_slow"), SubResource("rest_1_resume"), SubResource("rest_2_slow"), SubResource("rest_2_resume")])
+events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("pop_00_rain"), SubResource("pop_01_rain"), SubResource("pop_02_snake"), SubResource("pop_03_snake"), SubResource("pop_04_dip"), SubResource("pop_05_cross"), SubResource("pop_06_rain"), SubResource("pop_07_rain"), SubResource("pop_08_rain"), SubResource("pop_09_snake"), SubResource("pop_10_snake"), SubResource("pop_11_dip"), SubResource("pop_12_cross"), SubResource("pop_13_rain"), SubResource("pop_14_rain"), SubResource("pop_15_rain"), SubResource("pop_16_snake"), SubResource("pop_17_snake"), SubResource("pop_18_dip"), SubResource("pop_19_rain"), SubResource("pop_20_rain"), SubResource("pop_21_cross"), SubResource("pop_22_snake"), SubResource("pop_23_snake"), SubResource("pop_24_dip"), SubResource("pop_25_rain"), SubResource("pop_26_rain"), SubResource("pop_27_snake"), SubResource("pop_28_snake"), SubResource("pop_29_cross"), SubResource("pop_30_rain"), SubResource("pop_31_rain"), SubResource("pop_32_rain"), SubResource("pop_33_dip"), SubResource("pop_34_snake"), SubResource("pop_35_snake"), SubResource("s1_open_1"), SubResource("s1_pass_1"), SubResource("s1_open_2"), SubResource("s1_burst_1"), SubResource("s1_pass_2"), SubResource("s1_open_3"), SubResource("s2_comb"), SubResource("s2_swarm"), SubResource("s2_bloom"), SubResource("s2_burst"), SubResource("s3_stream_1"), SubResource("s3_pass"), SubResource("s3_stream_2"), SubResource("s3_swarm"), SubResource("s3_edge_l"), SubResource("s3_edge_r"), SubResource("s3_stream_3"), SubResource("s4_swarm"), SubResource("s4_bloom"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("s5_swarm_1"), SubResource("s5_pass_1"), SubResource("s5_sway"), SubResource("s5_swarm_2"), SubResource("s5_burst"), SubResource("s5_bloom"), SubResource("s5_pass_2"), SubResource("s5_turret_l"), SubResource("s5_turret_r"), SubResource("s5_swarm_3"), SubResource("s6_edge_l"), SubResource("s6_edge_r"), SubResource("s6_sway"), SubResource("s7_swarm_1"), SubResource("s7_burst"), SubResource("s7_swarm_2"), SubResource("s7_pass"), SubResource("s7_swarm_3"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss"), SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("rest_1_slow"), SubResource("rest_1_resume"), SubResource("rest_2_slow"), SubResource("rest_2_resume"), SubResource("prop_train_1"), SubResource("prop_train_2"), SubResource("prop_train_3")])

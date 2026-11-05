@@ -7,7 +7,9 @@ class_name Player
 @export_range(0.05, 1.0, 0.05) var focus_speed_multiplier : float = 0.4
 
 @export_group("グレイズ")
-## 通常時のグレイズ判定の半径(px)。大きいほどグレイズしやすい
+## 通常時のグレイズ判定の半径(px)。大きいほどグレイズしやすい。
+## GrazeArea/GrazeShape の円の大きさは、ゲーム中はこの値 × 難易度の倍率(GameManager の Graze Radius Scales)で毎フレーム上書きされる。
+## 円を直接変えても効かないので、ここを変える
 @export var graze_radius : float = 24.0
 ## 低速移動中のグレイズ半径の倍率(1.0で変化なし)
 @export var focus_graze_multiplier : float = 1.0
@@ -126,7 +128,8 @@ const MAX_SHOT_STAGE : int = 5
 
 var graze_count : int = 0
 var is_focusing : bool = false
-var _grazed_hitboxes : Dictionary = {}
+## グレイズ済みの弾に付ける印
+const GRAZED_META : StringName = &"grazed"
 
 var _spawn_position : Vector2
 var _is_alive : bool = true
@@ -169,6 +172,8 @@ signal grazed(total : int)
 ## グレイズした瞬間に出る。演出(GrazeEffect)やゲージ側はこれを受け取る。
 ## bullet_position: 掠めた弾の位置 / density: その時 GrazeArea 内にある弾の数(密度の目安)
 signal graze_hit(bullet_position : Vector2, density : int)
+## グレイズした弾そのもの(スコアの「かなり近い」判定に使う)
+signal grazed_bullet(bullet : Area2D)
 ## 被弾したときに出る(無敵中・死亡中は出ない)。ゲージ(体力)の減少はこれを受けて行う
 signal damaged
 ## 残機が変化したときに出る(UI用)
@@ -470,16 +475,18 @@ func _on_graze_area_area_entered(area: Area2D) -> void:
 	if is_invincible():
 		return
 	if area is Hitbox and area.damage_source_type == Hitbox.DamageSourceType.Enemy:
-		if _grazed_hitboxes.has(area):
+		# 同じ弾は1回しかグレイズできない(出入りを繰り返して稼げないように、弾に印を付ける)
+		if area.has_meta(GRAZED_META):
 			return
-		_grazed_hitboxes[area] = true
+		area.set_meta(GRAZED_META, true)
 		graze_count += 1
 		grazed.emit(graze_count)
 		graze_hit.emit(area.global_position, graze_area.get_overlapping_areas().size())
+		grazed_bullet.emit(area)
 		graze_effect.emitting = true
 
-func _on_graze_area_area_exited(area: Area2D) -> void:
-	_grazed_hitboxes.erase(area)
+func _on_graze_area_area_exited(_area: Area2D) -> void:
+	pass
 
 # ---------------------------------------------------------------- 被弾・死亡・復活
 

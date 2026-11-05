@@ -47,6 +47,8 @@ size = Vector2(100, 26)
 size = Vector2(28, 36)
 
 [node name="Gunship" unique_id=1772052941 instance=ExtResource("base")]
+score_value = 300
+ignite_kill_bonus = 2000
 drop_item_scene = ExtResource("drop")
 drop_chance = 0.5
 explosion_scale = 2.0
