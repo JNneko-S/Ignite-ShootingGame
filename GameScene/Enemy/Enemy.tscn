@@ -1,5 +1,9 @@
 [gd_scene format=3 uid="uid://cr31p6griofpq"]
 
+[ext_resource type="Script" uid="uid://bgiqecqao1imy" path="res://Component/HitFlash/hit_flash.gd" id="c_flash"]
+[ext_resource type="Script" uid="uid://bv8ag61eo8a7e" path="res://Component/Death/death_explosion.gd" id="c_death"]
+[ext_resource type="Script" uid="uid://chsim8q8oui2h" path="res://Component/Drop/item_drop.gd" id="c_drop"]
+[ext_resource type="Script" uid="uid://bn2081srrxexg" path="res://Component/Score/score_reward.gd" id="c_score"]
 [ext_resource type="Script" uid="uid://cdwcqv1x6dec7" path="res://Enemy.gd" id="1_65f6o"]
 [ext_resource type="Resource" uid="uid://oqs6gtgwa13w" path="res://Resources/MovePatterns/TestEnemy/enemy_pattern_center_curve.tres" id="2_dxnol"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="3_2ly0f"]
@@ -11,9 +15,6 @@
 [node name="Enemy" type="CharacterBody2D" unique_id=724143726]
 script = ExtResource("1_65f6o")
 pattern = ExtResource("2_dxnol")
-death_sound = ExtResource("3_gop0t")
-death_sound_db = -20.0
-big_death_sound = ExtResource("4_rq5yo")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=430556030]
 z_index = 2
@@ -43,3 +44,18 @@ hp = 150
 
 [node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("6_ruu38")]
 z_index = 2
+
+[node name="HitFlash" type="Node" parent="." unique_id=301000001]
+script = ExtResource("c_flash")
+
+[node name="DeathExplosion" type="Node" parent="." unique_id=301000002]
+script = ExtResource("c_death")
+sound = ExtResource("3_gop0t")
+sound_db = -20.0
+big_sound = ExtResource("4_rq5yo")
+
+[node name="ItemDrop" type="Node" parent="." unique_id=301000003]
+script = ExtResource("c_drop")
+
+[node name="ScoreReward" type="Node" parent="." unique_id=301000004]
+script = ExtResource("c_score")

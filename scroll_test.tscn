@@ -10,17 +10,17 @@
 [ext_resource type="Texture2D" uid="uid://53vdxebofh7" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Lower_Layer.png" id="6_kku2p"]
 [ext_resource type="Script" uid="uid://cy01axe4ckhws" path="res://background_scroller.gd" id="6_spej0"]
 [ext_resource type="Texture2D" uid="uid://bpmwsg86hpo15" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Top_Layer.png" id="7_nxg43"]
-[ext_resource type="Script" uid="uid://ccjsjd622wml3" path="res://boss_gauge.gd" id="14_0u1li"]
+[ext_resource type="PackedScene" path="res://GameScene/UI/boss_gauge.tscn" id="14_0u1li"]
 [ext_resource type="AudioStream" uid="uid://jnyb4kaq1bts" path="res://Assets/Sounds/Music/AS_1502052_テンション爆上げハイスピードハードEDM.mp3" id="18_e0xeq"]
 [ext_resource type="AudioStream" uid="uid://dd5s0ag01bsmm" path="res://Assets/Sounds/Music/AS_971747_疾走感溢れる高速テクノ.mp3" id="bgm_stage"]
 [ext_resource type="Script" uid="uid://b3ktyv1grf8rc" path="res://background_sway.gd" id="bg_sway"]
+[ext_resource type="Script" uid="uid://bwysosabdx413" path="res://hud_fader.gd" id="hud_fader"]
 [ext_resource type="Resource" uid="uid://beiarkvgmkkj1" path="res://Resources/StageData/Stage1GrazeRush.tres" id="s1_graze_rush"]
+[ext_resource type="Script" uid="uid://8cpjmeybdx1k" path="res://score_system.gd" id="score_system"]
+[ext_resource type="PackedScene" path="res://GameScene/UI/score_ui.tscn" id="score_ui"]
 [ext_resource type="Script" uid="uid://betsud25wihtg" path="res://stage_bgm.gd" id="stage_bgm"]
-[ext_resource type="Script" uid="uid://bieibi1kvr8kt" path="res://stage_intro.gd" id="stage_intro"]
-[ext_resource type="Script" uid="uid://cb6bovy2xer6r" path="res://warning_display.gd" id="warning_display"]
-[ext_resource type="Script" path="res://score_system.gd" id="score_system"]
-[ext_resource type="Script" path="res://score_ui.gd" id="score_ui"]
-[ext_resource type="Script" path="res://hud_fader.gd" id="hud_fader"]
+[ext_resource type="PackedScene" path="res://GameScene/Intro/stage_intro.tscn" id="stage_intro"]
+[ext_resource type="PackedScene" path="res://GameScene/UI/warning_display.tscn" id="warning_display"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
 bg_color = Color(0, 0, 0, 0.24700001)
@@ -65,11 +65,14 @@ enemy_parent = NodePath("../Enemys")
 
 [node name="Scroller" type="Node2D" parent="." unique_id=944740712]
 script = ExtResource("6_spej0")
-scroll_speed = 30.0
 
-[node name="Sprite2D" type="Sprite2D" parent="Scroller" unique_id=731957679]
-position = Vector2(242, -2722.0002)
+[node name="Sprite2D3" type="Sprite2D" parent="Scroller" unique_id=1652895685]
+position = Vector2(242, -9402.591)
 scale = Vector2(2.6, 2.6)
+texture = ExtResource("6_kku2p")
+
+[node name="Sprite2D" type="Sprite2D" parent="Scroller/Sprite2D3" unique_id=731957679]
+position = Vector2(0, 2569.458)
 texture = ExtResource("6_kku2p")
 
 [node name="Sprite2D2" type="Sprite2D" parent="Scroller" unique_id=574165957]
@@ -84,9 +87,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_n7bgm")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=380880432 node_paths=PackedStringArray("stage_runner")]
-script = ExtResource("14_0u1li")
-stage_runner = NodePath("../../StageRunner")
+[node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=380880432]
 
 [node name="ProgressBar" type="ProgressBar" parent="UI/CanvasLayer" unique_id=2113409768]
 offset_left = 24.0
@@ -111,12 +112,15 @@ offset_bottom = 31.0
 text = "残機:1"
 script = ExtResource("3_n7bgm")
 
-[node name="WarningDisplay" type="CanvasLayer" parent="UI" unique_id=1400875786]
-script = ExtResource("warning_display")
+[node name="WarningDisplay" parent="UI" unique_id=1400875786 instance=ExtResource("warning_display")]
+
+[node name="BossGauge" parent="UI" unique_id=380880433 instance=ExtResource("14_0u1li")]
+
+[node name="ScoreUI" parent="UI" unique_id=2018386161 instance=ExtResource("score_ui")]
 
 [node name="BackgroundSway" type="Node" parent="." unique_id=418265093 node_paths=PackedStringArray("targets")]
 script = ExtResource("bg_sway")
-targets = [NodePath("../Scroller/Sprite2D"), NodePath("../Scroller/Sprite2D2")]
+targets = [NodePath("../Scroller/Sprite2D3/Sprite2D"), NodePath("../Scroller/Sprite2D2")]
 depth_scales = Array[float]([0.7, 1.0])
 sway_distance = 40.0
 
@@ -124,12 +128,11 @@ sway_distance = 40.0
 position = Vector2(240, 304)
 zoom = Vector2(0.75, 0.75)
 
-[node name="StageIntro" type="Node2D" parent="." unique_id=875853486]
-script = ExtResource("stage_intro")
+[node name="StageIntro" parent="." unique_id=875853486 instance=ExtResource("stage_intro")]
+cloud_coverage = 8.0
 
 [node name="Player" parent="." unique_id=1981584153 instance=ExtResource("4_nr4bh")]
 position = Vector2(240, 552)
-move_speed = 200.0
 shot_power = 1.5
 shot_color = Color(1, 0.34901962, 0.33333334, 1)
 lock_time = 0.3
@@ -149,15 +152,9 @@ stage_runner = NodePath("../StageRunner")
 stage_music = ExtResource("bgm_stage")
 boss_music = ExtResource("18_e0xeq")
 
-[node name="ScoreSystem" type="Node" parent="."]
+[node name="ScoreSystem" type="Node" parent="." unique_id=1659386178]
 script = ExtResource("score_system")
 
-[node name="ScoreUI" type="CanvasLayer" parent="UI"]
-script = ExtResource("score_ui")
-
-[node name="HudFader" type="Node" parent="." node_paths=PackedStringArray("layers")]
+[node name="HudFader" type="Node" parent="." unique_id=938386772 node_paths=PackedStringArray("layers")]
 script = ExtResource("hud_fader")
-layers = [NodePath("../UI/CanvasLayer")]
-
-[editable path="Player/Ignite"]
-[editable path="Player/Hurtbox"]
+layers = [NodePath("../UI/CanvasLayer"), NodePath("../UI/BossGauge")]

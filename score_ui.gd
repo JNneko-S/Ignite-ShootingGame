@@ -1,6 +1,7 @@
 extends CanvasLayer
 class_name ScoreUI
-## スコアの表示。ScoreSystem の値を、画面の右上に出す(見た目はコードで作る)。
+## スコアの表示。シーン(GameScene/UI/score_ui.tscn)を置いて使う。ScoreSystem の値を、画面の右上に出す。
+## 見た目(文字の大きさ・位置)は、シーンの中で変える。リザルトの行だけは、出すときにコードで作る。
 ##   HI      ハイスコア
 ##   SCORE   今のスコア(増えるときは数字が回って追いつく)
 ##   ×1.45  グレイズ倍率。イグナイトの発動中は、その倍率も並べて出す
@@ -18,24 +19,30 @@ const COLOR_HI := Color(1.0, 0.85, 0.45)
 const COLOR_MULT := Color(0.55, 0.95, 1.0)
 const COLOR_IGNITE := Color(1.0, 0.55, 0.2)
 
-var _root : Control
-var _hi_label : Label
-var _score_label : Label
-var _mult_label : Label
-var _chain_label : Label
-var _extend_label : Label
-var _result : VBoxContainer
+@onready var _root : Control = $Root
+@onready var _hi_label : Label = $Root/HiLabel
+@onready var _score_label : Label = $Root/ScoreLabel
+@onready var _mult_label : Label = $Root/MultLabel
+@onready var _chain_label : Label = $Root/ChainLabel
+@onready var _extend_label : Label = $Root/ExtendLabel
+@onready var _result : VBoxContainer = $Root/Result
+@onready var _burn_label : Label = $BurnLayer/BurnLabel # 半透明にならないよう、別のレイヤーに置く
+## 「238 BURN!」を、自機のこの位置(画面のpx)に出す
+@export var burn_label_offset : Vector2 = Vector2(0, -56)
 
 var _target : int = 0
 var _shown : float = 0.0
 var _mult_tween : Tween
+var _burn_tween : Tween
+var _burn_fade : Tween
+var _player : Node2D
 
 func _enter_tree() -> void:
 	add_to_group("hud")
 
 func _ready() -> void:
-	layer = 15
-	_build()
+	_extend_label.visible = false
+	_result.visible = false
 	_connect.call_deferred()
 
 func _connect() -> void:
@@ -50,6 +57,9 @@ func _connect() -> void:
 	score_system.extended.connect(_on_extended)
 	score_system.stage_bonus.connect(_on_stage_bonus)
 	score_system.item_chain_changed.connect(_on_item_chain_changed)
+	score_system.burn_count_changed.connect(_on_burn_count_changed)
+	score_system.burn_finished.connect(_on_burn_finished)
+	_player = get_tree().get_first_node_in_group("player") as Node2D
 	_on_item_chain_changed(0, 1.0)
 	_on_score_changed(score_system.score)
 	_shown = _target
@@ -57,6 +67,7 @@ func _connect() -> void:
 	_on_multiplier_changed(score_system.graze_multiplier, score_system.current_ignite_multiplier())
 
 func _process(delta : float) -> void:
+	_follow_player()
 	if _shown < _target:
 		var gap := float(_target) - _shown
 		_shown = minf(_shown + maxf(gap * minf(roll_speed * delta, 1.0), 1.0), float(_target))
@@ -65,46 +76,7 @@ func _process(delta : float) -> void:
 func _format(value : int) -> String:
 	return str(value).pad_zeros(digits)
 
-# ---------------------------------------------------------------- 組み立て
-
-func _build() -> void:
-	var viewport_size := get_viewport().get_visible_rect().size
-	_root = Control.new()
-	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.size = viewport_size
-	add_child(_root)
-
-	_hi_label = _label(10, COLOR_HI, HORIZONTAL_ALIGNMENT_RIGHT)
-	_hi_label.position = Vector2(viewport_size.x - 140.0, 2.0)
-	_hi_label.size = Vector2(134.0, 12.0)
-
-	_score_label = _label(16, COLOR_TEXT, HORIZONTAL_ALIGNMENT_RIGHT)
-	_score_label.position = Vector2(viewport_size.x - 140.0, 13.0)
-	_score_label.size = Vector2(134.0, 18.0)
-
-	_mult_label = _label(11, COLOR_MULT, HORIZONTAL_ALIGNMENT_RIGHT)
-	_mult_label.position = Vector2(viewport_size.x - 140.0, 32.0)
-	_mult_label.size = Vector2(134.0, 14.0)
-	_mult_label.pivot_offset = Vector2(134.0, 7.0)
-
-	_chain_label = _label(11, COLOR_HI, HORIZONTAL_ALIGNMENT_RIGHT)
-	_chain_label.position = Vector2(viewport_size.x - 140.0, 45.0)
-	_chain_label.size = Vector2(134.0, 14.0)
-	_chain_label.pivot_offset = Vector2(134.0, 7.0)
-
-	_extend_label = _label(24, Color(0.6, 1.0, 0.6), HORIZONTAL_ALIGNMENT_CENTER)
-	_extend_label.text = "EXTEND!"
-	_extend_label.position = Vector2(0.0, viewport_size.y * 0.4)
-	_extend_label.size = Vector2(viewport_size.x, 30.0)
-	_extend_label.visible = false
-
-	_result = VBoxContainer.new()
-	_result.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_result.position = Vector2(viewport_size.x * 0.15, viewport_size.y * 0.3)
-	_result.size = Vector2(viewport_size.x * 0.7, 0.0)
-	_result.add_theme_constant_override("separation", 4)
-	_result.visible = false
-	_root.add_child(_result)
+# ---------------------------------------------------------------- リザルトの行
 
 func _label(font_size : int, color : Color, align : HorizontalAlignment, parent : Control = null) -> Label:
 	var label := Label.new()
@@ -197,3 +169,48 @@ func _row(name_text : String, value : int, color : Color) -> Control:
 	var value_label := _label(13, color, HORIZONTAL_ALIGNMENT_RIGHT, row)
 	value_label.text = str(value)
 	return row
+
+# ---------------------------------------------------------------- 焼いた弾の数
+
+## 「238 BURN!」を、自機の少し上に出し続ける
+func _follow_player() -> void:
+	if not _burn_label.visible or not is_instance_valid(_player):
+		return
+	var at := _player.get_global_transform_with_canvas().origin + burn_label_offset
+	var screen := get_viewport().get_visible_rect().size
+	var pos := at - _burn_label.size * 0.5
+	# 画面の端で切れないよう、内側に収める
+	pos.x = clampf(pos.x, 4.0, screen.x - _burn_label.size.x - 4.0)
+	pos.y = clampf(pos.y, 4.0, screen.y - _burn_label.size.y - 4.0)
+	_burn_label.position = pos
+
+func _on_burn_count_changed(count : int) -> void:
+	if _burn_fade:
+		_burn_fade.kill()
+	_burn_label.visible = true
+	_burn_label.modulate.a = 1.0
+	_burn_label.text = "%d BURN!" % count
+	_follow_player()
+	# 数が増えるたびに、少し弾む
+	if _burn_tween:
+		_burn_tween.kill()
+	_burn_label.scale = Vector2(1.25, 1.25)
+	_burn_tween = create_tween()
+	_burn_tween.tween_property(_burn_label, "scale", Vector2.ONE, 0.12)
+
+## 発動が終わったら、最終の数を大きく見せてから消す
+func _on_burn_finished(count : int) -> void:
+	if count <= 0:
+		_burn_label.visible = false
+		return
+	_burn_label.text = "%d BURN!" % count
+	if _burn_tween:
+		_burn_tween.kill()
+	if _burn_fade:
+		_burn_fade.kill()
+	_burn_fade = create_tween()
+	_burn_fade.tween_property(_burn_label, "scale", Vector2(1.5, 1.5), 0.1)
+	_burn_fade.tween_property(_burn_label, "scale", Vector2.ONE, 0.2)
+	_burn_fade.tween_interval(0.8)
+	_burn_fade.tween_property(_burn_label, "modulate:a", 0.0, 0.4)
+	_burn_fade.tween_callback(func() -> void: _burn_label.visible = false)

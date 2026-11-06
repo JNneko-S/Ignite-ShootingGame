@@ -15,7 +15,7 @@
 size = Vector2(68, 22)
 
 [node name="Absorber" unique_id=1699295446 instance=ExtResource("base")]
-drop_item_scene = ExtResource("drop")
+scale = Vector2(1.3, 1.3)
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
@@ -42,3 +42,6 @@ z_index = 1
 script = ExtResource("absorb_script")
 counter_pattern = ExtResource("counter")
 shooter = NodePath("../EnemyShooterComponent")
+
+[node name="ItemDrop" parent="." unique_id=301000003]
+item_scene = ExtResource("drop")

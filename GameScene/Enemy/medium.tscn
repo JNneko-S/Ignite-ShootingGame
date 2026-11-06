@@ -9,7 +9,6 @@
 size = Vector2(32, 20)
 
 [node name="Medium" unique_id=724143726 instance=ExtResource("1_jc5v3")]
-score_value = 300
 scale = Vector2(2, 2)
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
@@ -22,3 +21,6 @@ shape = SubResource("CircleShape2D_2fvp3")
 z_index = 2
 position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_ruu38")
+
+[node name="ScoreReward" parent="." unique_id=301000004]
+score_value = 300

@@ -1,0 +1,121 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cjaxo01whges0" path="res://warp_gate.gd" id="script"]
+[ext_resource type="Shader" path="res://Shaders/warp_gate.gdshader" id="1_qg0wr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mjjc3"]
+resource_local_to_scene = true
+shader = ExtResource("1_qg0wr")
+shader_parameter/open = 0.0
+shader_parameter/squash = 0.55
+shader_parameter/ring_color = Color(0.55, 0.9, 1, 1)
+shader_parameter/core_color = Color(0.35, 0.2, 0.9, 1)
+shader_parameter/deep_color = null
+shader_parameter/spin = null
+shader_parameter/pixel_size = null
+shader_parameter/rect_size = Vector2(312, 312)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_t3die"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_qsqml"]
+offsets = PackedFloat32Array(0, 1, 0.35)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0.8)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hqv0h"]
+gradient = SubResource("Gradient_qsqml")
+width = 10
+height = 10
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_1hnkn"]
+offsets = PackedFloat32Array(0, 1, 0.15, 0.7)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0.8)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_4tcx7"]
+gradient = SubResource("Gradient_1hnkn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w2ucr"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 169.0
+emission_ring_inner_radius = 143.65
+emission_ring_cone_angle = 90.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -256.0
+radial_accel_max = -192.0
+tangential_accel_min = 64.0
+tangential_accel_max = 112.0
+scale_min = 0.5
+color = Color(0.55, 0.9, 1, 1)
+color_ramp = SubResource("GradientTexture1D_4tcx7")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_jtps3"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_tip6y"]
+offsets = PackedFloat32Array(0, 1, 0.35)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0.8)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ekpam"]
+gradient = SubResource("Gradient_tip6y")
+width = 10
+height = 10
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_mxdg6"]
+offsets = PackedFloat32Array(0, 1, 0.15, 0.7)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0.8)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_l44ll"]
+gradient = SubResource("Gradient_mxdg6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gqrer"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 26.0
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = 192.0
+initial_velocity_max = 448.0
+gravity = Vector3(0, 0, 0)
+damping_min = 256.0
+damping_max = 384.0
+scale_min = 0.5
+color = Color(0.55, 0.9, 1, 1)
+color_ramp = SubResource("GradientTexture1D_l44ll")
+
+[node name="WarpGate" type="Node2D" unique_id=1914577980]
+script = ExtResource("script")
+
+[node name="Surface" type="ColorRect" parent="." unique_id=1950942218]
+material = SubResource("ShaderMaterial_mjjc3")
+offset_left = -156.0
+offset_top = -156.0
+offset_right = 156.0
+offset_bottom = 156.0
+mouse_filter = 2
+
+[node name="Gather" type="GPUParticles2D" parent="." unique_id=1467956772]
+material = SubResource("CanvasItemMaterial_t3die")
+emitting = false
+amount = 48
+texture = SubResource("GradientTexture2D_hqv0h")
+lifetime = 0.9
+process_material = SubResource("ParticleProcessMaterial_w2ucr")
+
+[node name="Burst" type="GPUParticles2D" parent="." unique_id=1351937961]
+material = SubResource("CanvasItemMaterial_jtps3")
+emitting = false
+amount = 40
+texture = SubResource("GradientTexture2D_ekpam")
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_gqrer")

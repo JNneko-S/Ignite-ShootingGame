@@ -3,6 +3,7 @@ class_name Enemy
 ## MovePattern に沿って動く敵。HPComponent と Hurtbox で被ダメージ・死亡を処理する。
 ##
 ## 必要な子ノード: HPComponent / Hurtbox (Hurtbox直下に CollisionShape2D と CoolDown という名前のTimer)
+## 部品(任意): HitFlash(被弾で光る) / DeathExplosion(撃破の爆発) / ItemDrop(ドロップ、いくつでも) / ScoreReward(点数)
 
 signal died(enemy : Enemy)
 
@@ -15,62 +16,20 @@ signal died(enemy : Enemy)
 ## true なら、mirror_x のとき、見た目と子ノードの位置も左右反転する(砲口が左右逆になる)
 @export var mirror_visuals : bool = true
 
-@export_group("ドロップ")
-## 倒したときに出すアイテム(パワーアップアイテムなど)。空なら出さない
-@export var drop_item_scene : PackedScene
-## アイテムを出す確率(0〜1)
-@export_range(0.0, 1.0, 0.05) var drop_chance : float = 1.0
-
-@export_group("撃破")
-## 倒されたときに、その場に出す爆発。空なら爆発しない
-@export var explosion_scene : PackedScene = Explosion.ZAKO
-@export var explosion_scale : float = 1.0
-## true なら、倒されたときに連鎖爆発 → 大爆発してから消える。
-## ボスは StageRunner が is_boss の敵をオンにする。中型機はシーンでオンにして、回数・時間を短めにする
-@export var big_death : bool = false
-## 連鎖爆発を出す範囲(この敵の位置からのずれ)。大きさが 0 なら、Sprite2D の見た目の範囲を使う
-@export var big_death_area : Rect2 = Rect2()
-## 連鎖爆発の回数と、かける時間(秒)
-@export var big_death_count : int = 15
-@export var big_death_duration : float = 2.2
-## true なら、連鎖爆発の始めに画面の敵弾を燃やして消す(ボス用)。中型機はオフにして、弾は残す
-@export var big_death_burn_bullets : bool = true
-## 連鎖爆発のあいだに、この距離(px)だけ流されていく(力尽きて落ちていく感じ)。0 ならその場で爆発
-@export var big_death_drift : Vector2 = Vector2.ZERO
-## 揺れの強さの倍率(中型機は小さめにする)
-@export var big_death_shake_scale : float = 1.0
-## 倒されたときの効果音と音量(dB)。空なら鳴らさない
-@export var death_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3")
-@export var death_sound_db : float = -15.0
-## 連鎖爆発の最後の、大爆発の効果音(big_death のとき)
-@export var big_death_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3")
-
-@export_group("被弾")
-## 弾が当たったときに光る色(1 より大きいほど明るい)と、元に戻るまでの時間(秒)
-@export var hit_flash_color : Color = Color(2.5, 2.5, 2.5)
-@export var hit_flash_time : float = 0.08
-
-@export_group("スコア")
-## 倒したときの基本点(雑魚 100 / 中型 300 / 砲台 400 / 中ボス 1000)。
-## ボスの時間ボーナスは、SpawnEvent の Boss Time Bonus で使う(そのときはこの値を使わない)
-@export var score_value : int = 100
-## 0 より大きければ、イグナイトの発動中に倒したときに、さらにこの点のアイテムを落とす(イグナイト倍率が掛かる)
-@export var ignite_kill_bonus : int = 0
-## そのボーナスを、何個のアイテムに分けて落とすか
-@export var ignite_kill_bonus_items : int = 6
-
 ## 最後に当たったのが反射弾か(反射弾で倒すと点が増える)
 var killed_by_reflect : bool = false
 ## 0 以上なら、ボスの時間ボーナスで点を決める。StageRunner が出現したときのステージの時間を入れる
 var boss_reach_time : float = -1.0
 ## 出現してからの時間(秒)。ボス戦の時間に使う
 var alive_time : float = 0.0
+## 近づいて撃って倒したか(倒された瞬間に ScoreSystem が決める)。爆発が豪華になり、点が増える
+var close_kill : bool = false
 
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
+@onready var _hit_flash : HitFlash = _find_hit_flash()
 
 var _tween : Tween
-var _flash_tween : Tween
 var _is_dead : bool = false
 ## 今の進む向き(CHASE の区間で使う)
 var _heading : Vector2 = Vector2.DOWN
@@ -181,17 +140,10 @@ func _on_hurtbox_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO)
 		return
 	killed_by_reflect = hurtbox.current_area is EnemyBullet # 反射弾は EnemyBullet のまま当たる
 	hp_component.apply_damage(ceili(damage))
-	if not _is_dead:
-		_flash()
+	if not _is_dead and _hit_flash:
+		_hit_flash.flash()
 
-## 弾が当たったときに、一瞬光る(本体の modulate を明るくしてから戻す)
-func _flash() -> void:
-	if _flash_tween:
-		_flash_tween.kill()
-	modulate = hit_flash_color
-	_flash_tween = create_tween()
-	_flash_tween.tween_property(self, "modulate", Color.WHITE, hit_flash_time)
-
+## 倒された: 点数(ScoreSystem)・ドロップ(ItemDrop)・爆発(DeathExplosion)は、子の部品が受け持つ
 func _die() -> void:
 	if _is_dead:
 		return
@@ -199,91 +151,21 @@ func _die() -> void:
 	if _tween:
 		_tween.kill()
 	_chase_step = null
+	if _hit_flash:
+		_hit_flash.stop()
+	var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
+	if score_system:
+		close_kill = score_system.is_close_kill(self)
 	died.emit(self)
 	get_tree().call_group("score_system", "on_enemy_killed", self)
-	_drop_item()
-	if big_death:
-		_play_big_death()
-		return
-	Explosion.spawn(get_tree(), explosion_scene, global_position, explosion_scale)
-	SoundManager.play_sfx(death_sound, death_sound_db)
+	ItemDrop.drop_all(self, global_position)
+	var death := DeathExplosion.of(self)
+	if death:
+		await death.play()
 	queue_free()
 
-func _drop_item() -> void:
-	if drop_item_scene == null or randf() > drop_chance:
-		return
-	var item := drop_item_scene.instantiate()
-	var at := global_position # 自分は先に消えるので、位置を覚えておく
-	if item is Node2D:
-		item.position = at # シーンの直下に足すので、位置 = 画面(ワールド)の座標
-	get_tree().current_scene.add_child.call_deferred(item) # 物理の処理中に倒されることがあるので、後で足す
-
-## ボスの撃破: 撃つのをやめ、全ての爆発エフェクトを順番に体中で起こしてから、大爆発して消える
-func _play_big_death() -> void:
-	for node in find_children("*", "", true, false):
-		if node is EnemyShooter:
-			node.enabled = false
-			node.stop()
-	# 部位(EnemyPart)の当たり判定も含めて、もう当たらないようにする
-	for node in find_children("*", "Area2D", true, false):
-		if node is Hurtbox:
-			node.set_deferred("monitoring", false)
-			node.set_deferred("monitorable", false)
-	if big_death_burn_bullets:
-		get_tree().call_group("enemy_bullet", "burn") # 画面の敵弾は燃えて消える
-	if big_death_drift != Vector2.ZERO:
-		# 力尽きて、連鎖爆発のあいだ流されていく
-		var drift := create_tween()
-		drift.tween_property(self, "position", position + big_death_drift, big_death_duration)\
-			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-
-	var tree := get_tree()
-	var area := _death_area()
-	# 大爆発の大きさは、見た目の大きさに合わせる(中ボスは小さめ、ボスは大きめ)
-	var big_scale := clampf(area.size.length() / 90.0, 2.0, 6.0)
-	var interval := big_death_duration / maxi(big_death_count, 1)
-	for i in big_death_count:
-		var offset := area.position + Vector2(randf() * area.size.x, randf() * area.size.y)
-		var scene : PackedScene = Explosion.ALL[i % Explosion.ALL.size()]
-		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
-		Explosion.spawn(tree, scene, global_position + offset, effect_scale)
-		SoundManager.play_sfx(death_sound, death_sound_db - 4.0, randf_range(0.9, 1.1)) # 連鎖の音は少し小さく、高さをばらす
-		_shake(4.0 * big_death_shake_scale)
-		await tree.create_timer(interval).timeout
-
-	# 大爆発: 中心に大きな爆発と衝撃波、周りに小さな爆発
-	var center := global_position + area.get_center()
-	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, big_scale)
-	SoundManager.play_sfx(big_death_sound, death_sound_db)
-	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
-	for i in 8:
-		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * area.size.length() * 0.25, big_scale * 0.5)
-	_shake(12.0 * big_death_shake_scale)
-	var fade := create_tween()
-	fade.tween_property(self, "modulate", Color(3.0, 3.0, 3.0, 1.0), 0.08)
-	fade.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.35)
-	await fade.finished
-	queue_free()
-
-## 連鎖爆発の範囲。big_death_area が空なら、子の Sprite2D の見た目を全部囲む範囲
-func _death_area() -> Rect2:
-	if big_death_area.has_area():
-		return big_death_area
-	var area := Rect2()
-	var first := true
+func _find_hit_flash() -> HitFlash:
 	for child in get_children():
-		if child is Sprite2D:
-			var rect : Rect2 = child.get_rect()
-			rect = Rect2(child.position + rect.position * child.scale, rect.size * child.scale)
-			area = rect if first else area.merge(rect)
-			first = false
-	return area if not first else Rect2(-24, -24, 48, 48)
-
-func _shake(strength : float) -> void:
-	for child in get_children():
-		if child is Sprite2D:
-			var base : Vector2 = child.get_meta("shake_base", child.position)
-			child.set_meta("shake_base", base)
-			var shake := create_tween()
-			shake.tween_property(child, "position", base + Vector2(randf_range(-1, 1), randf_range(-1, 1)) * strength, 0.04)
-			shake.tween_property(child, "position", base, 0.06)
+		if child is HitFlash:
+			return child
+	return null

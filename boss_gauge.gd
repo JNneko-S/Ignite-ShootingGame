@@ -1,7 +1,7 @@
 extends CanvasLayer
 class_name BossGauge
-## ボスのHPゲージ。ステージのシーンに置いて、このスクリプトをアタッチするだけで使える
-## (表示は全てコードで作る。シーンに子ノードは不要)。
+## ボスのHPゲージ。シーン(GameScene/UI/boss_gauge.tscn)をステージのシーンに置いて使う。
+## 見た目(色・位置・大きさ)は、シーンの中で変える。バーの幅と高さは Root/Back の大きさで決まる。Root は普段は非表示。
 ##
 ## 使い方:
 ##   ・SpawnEvent の is_boss をオンにすると、StageRunner の合図で、自動でボスに繋がる
@@ -17,27 +17,23 @@ class_name BossGauge
 ## 目印(縦線)を割ったときに出る。0 から数える。弾幕の切り替えなどに使える
 signal phase_changed(index : int)
 
-const BAR_WIDTH : float = 260.0
-const BAR_HEIGHT : float = 14.0
-const TOP_MARGIN : float = 80.0
 ## HPの割合がこれ以下になると、バーが脈打つ
 const LOW_HP_RATIO : float = 0.3
 
-const COLOR_MAIN : Color = Color(0.92, 0.18, 0.12)
-const COLOR_DAMAGE : Color = Color(1.0, 0.82, 0.35)
-const COLOR_BACK : Color = Color(0.07, 0.05, 0.05, 0.85)
-const COLOR_FRAME : Color = Color(1.0, 1.0, 1.0, 0.85)
 
 ## 未設定なら、"stage_runner" グループから探す
 @export var stage_runner : StageRunner
 
-var _root : Control
+@onready var _root : Control = $Root
+@onready var _damage_bar : ColorRect = $Root/DamageBar
+@onready var _main_bar : ColorRect = $Root/MainBar
+@onready var _flash : ColorRect = $Root/Flash
+@onready var _pulse : ColorRect = $Root/Pulse
+@onready var _name_label : Label = $Root/NameLabel
+## ゲージの元の位置と大きさ(シーンの Root と Back で決まる)
 var _root_base : Vector2
-var _damage_bar : ColorRect
-var _main_bar : ColorRect
-var _flash : ColorRect
-var _pulse : ColorRect
-var _name_label : Label
+var _bar_width : float = 260.0
+var _bar_height : float = 14.0
 var _ticks : Array[ColorRect] = []
 
 var _hp : HPComponent
@@ -61,9 +57,11 @@ var _pulse_tween : Tween
 var _outro_tween : Tween
 
 func _ready() -> void:
-	layer = 20
-	_build()
 	_root.visible = false
+	_root_base = _root.position
+	var back := $Root/Back as ColorRect
+	_bar_width = back.size.x
+	_bar_height = back.size.y
 	_connect_runner.call_deferred() # 全ノードの準備が終わってから探す
 
 func _connect_runner() -> void:
@@ -77,30 +75,6 @@ func _on_boss_spawned(enemy : Enemy, boss_name : String, thresholds : Array[floa
 	bind(enemy.hp_component, boss_name, thresholds, enemy)
 
 # ---------------------------------------------------------------- 組み立て
-
-func _build() -> void:
-	var viewport_size := get_viewport().get_visible_rect().size
-	_root = Control.new()
-	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root_base = Vector2((viewport_size.x - BAR_WIDTH) / 2.0, TOP_MARGIN)
-	_root.position = _root_base
-	_root.size = Vector2(BAR_WIDTH, BAR_HEIGHT)
-	add_child(_root)
-
-	_rect(COLOR_FRAME, Vector2(-3.0, -3.0), Vector2(BAR_WIDTH + 6.0, BAR_HEIGHT + 6.0))
-	_rect(COLOR_BACK, Vector2.ZERO, Vector2(BAR_WIDTH, BAR_HEIGHT))
-	_damage_bar = _rect(COLOR_DAMAGE, Vector2.ZERO, Vector2(0.0, BAR_HEIGHT))
-	_main_bar = _rect(COLOR_MAIN, Vector2.ZERO, Vector2(0.0, BAR_HEIGHT))
-	_pulse = _rect(Color(1.0, 0.4, 0.4, 0.0), Vector2.ZERO, Vector2(0.0, BAR_HEIGHT))
-	_flash = _rect(Color(1.0, 1.0, 1.0, 0.0), Vector2.ZERO, Vector2(0.0, BAR_HEIGHT))
-
-	_name_label = Label.new()
-	_name_label.position = Vector2(0.0, -32.0)
-	_name_label.add_theme_font_size_override("font_size", 18)
-	_name_label.add_theme_color_override("font_outline_color", Color.BLACK)
-	_name_label.add_theme_constant_override("outline_size", 4)
-	_name_label.pivot_offset = Vector2(0.0, 14.0)
-	_root.add_child(_name_label)
 
 func _rect(color : Color, pos : Vector2, rect_size : Vector2) -> ColorRect:
 	var rect := ColorRect.new()
@@ -117,7 +91,7 @@ func _make_ticks() -> void:
 	_ticks.clear()
 	for t in _thresholds:
 		_ticks.append(_rect(Color(1.0, 1.0, 1.0, 0.95),
-			Vector2(BAR_WIDTH * t - 1.0, -3.0), Vector2(2.0, BAR_HEIGHT + 6.0)))
+			Vector2(_bar_width * t - 1.0, -3.0), Vector2(2.0, _bar_height + 6.0)))
 		_root.move_child(_name_label, -1)
 
 # ---------------------------------------------------------------- 接続
@@ -168,14 +142,14 @@ func _kill(tween : Tween) -> void:
 
 func _set_main(ratio : float) -> void:
 	_main_ratio = ratio
-	var width := BAR_WIDTH * ratio
+	var width := _bar_width * ratio
 	_main_bar.size.x = width
 	_pulse.size.x = width
 	_flash.size.x = width
 
 func _set_damage(ratio : float) -> void:
 	_damage_ratio = ratio
-	_damage_bar.size.x = BAR_WIDTH * ratio
+	_damage_bar.size.x = _bar_width * ratio
 
 # ---------------------------------------------------------------- 出現
 

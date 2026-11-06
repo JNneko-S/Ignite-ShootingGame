@@ -69,6 +69,13 @@ func start(at : Vector2, radius : float, duration : float) -> void:
 	_edge_strength = 1.0
 	_hitstop()
 
+## 効果時間が延びたとき。残り時間を time_left(秒)に合わせる
+func extend_to(time_left : float) -> void:
+	if not _active:
+		return
+	_time_left = time_left
+	_duration = maxf(_duration, _time_left)
+
 ## 終了(時間切れ・死亡)。光を消す
 func stop() -> void:
 	if not _active:

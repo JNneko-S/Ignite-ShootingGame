@@ -46,6 +46,10 @@ signal score_changed(score : int)
 @export var chain_min_level : int = 5
 ## 効果が時間切れで終わったあとの無敵時間(秒)。死亡で終わったときは付かない
 @export var post_ignite_invincible_time : float = 1.0
+## 焼いた弾1発ごとに、効果の残り時間をこれだけ延ばす(秒)。焼くほど、イグナイトの消費が遅くなる
+@export var burn_extend_time : float = 0.02
+## 1回の発動で延ばせる時間の上限(元の効果時間に対する割合。1.0 なら最大で2倍の長さ)
+@export var burn_extend_max_ratio : float = 1.0
 ## 画面演出のシーン(衝撃波・ヒットストップ・画面のふちの光)。空なら演出なし
 @export var screen_effect_scene : PackedScene = preload("res://GameScene/Effect/ignite_screen_effect.tscn")
 
@@ -104,6 +108,10 @@ var death_count : int = 0
 var full_use_count : int = 0
 
 var _ignite_time_left : float = 0.0
+## 今の発動で、まだ延ばせる時間(秒)
+var _extend_left : float = 0.0
+## このフレームで延びたか(演出の残り時間を、1フレームに1回だけ合わせ直す)
+var _extended : bool = false
 var _screen_effect : IgniteScreenEffect
 
 func _ready() -> void:
@@ -157,6 +165,9 @@ func _physics_process(delta : float) -> void:
 		return
 	# 発動の効果時間を数える。終わったら効果を止める
 	if player.is_igniting and _ignite_time_left > 0.0:
+		if _extended:
+			_extended = false
+			_apply_extension()
 		_ignite_time_left -= delta
 		if _ignite_time_left <= 0.0:
 			player.set_igniting(false) # → _on_ignite_toggled(false) で効果が止まる
@@ -256,8 +267,12 @@ func _start_ignite_effect(levels : int) -> void:
 			levels, ignite.level, max_radius, final_radius, duration])
 
 	_ignite_time_left = duration
+	_extend_left = duration * burn_extend_max_ratio
+	_extended = false
 	ignite_level_in_use = levels
 	ignite_activation_count += 1
+	if score_system:
+		score_system.begin_burn() # 焼いた弾の数を、0 から数え直す
 	EnemyBullet.set_chain_allowed(levels >= chain_min_level)
 	player.set_igniting(true)
 	if player.ignite_aura:
@@ -270,7 +285,10 @@ func _on_ignite_toggled(on : bool) -> void:
 	if on:
 		return
 	_ignite_time_left = 0.0
+	_extend_left = 0.0
 	ignite_level_in_use = 0
+	if score_system:
+		score_system.end_burn() # 「238 BURN!」の表示を締める
 	EnemyBullet.set_chain_allowed(false)
 	if player.ignite_aura:
 		player.ignite_aura.stop()
@@ -281,10 +299,23 @@ func _on_ignite_toggled(on : bool) -> void:
 	if debug_ignite:
 		print("[Ignite] 終了")
 
-## 焼いた弾は、その場でスコアアイテムになる(点数は ScoreSystem が決める)
+## 焼いた弾は、その場でスコアアイテムになる(点数は ScoreSystem が決める)。
+## 発動中なら、焼いた分だけ効果の残り時間が延びる(イグナイトの消費が遅くなる)
 func _on_bullet_burned(bullet_position : Vector2) -> void:
 	if score_system:
 		score_system.spawn_burn_item(bullet_position, ignite_level_in_use)
+	if player.is_igniting and _extend_left > 0.0:
+		var add := minf(burn_extend_time, _extend_left)
+		_extend_left -= add
+		_ignite_time_left += add
+		_extended = true
+
+## 延びた残り時間に、画面のふちの光とオーラの点滅(終わり際の合図)を合わせ直す
+func _apply_extension() -> void:
+	if _screen_effect:
+		_screen_effect.extend_to(_ignite_time_left)
+	if player.ignite_aura and player.ignite_aura.visual:
+		player.ignite_aura.visual.reschedule_blink(_ignite_time_left)
 
 ## 点数を足す(倍率なし)
 func add_score(amount : int) -> void:

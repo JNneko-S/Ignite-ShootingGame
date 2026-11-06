@@ -51,6 +51,8 @@ var _unlock_levels : Array[int] = []
 var _base_scales : Array[Vector2] = []
 var _base_rotations : Array[float] = []
 var _active : Array[bool] = [false, false, false]
+## 終わり際の点滅(効果時間が延びたら組み直す)
+var _blink_tween : Tween
 var _pulse : Array[float] = [0.0, 0.0, 0.0]
 
 var _scale_factor : float = 1.0 # 元のスケールに掛ける倍率(効果範囲に合わせて決まる)
@@ -160,6 +162,14 @@ func _start_pulse(i : int, amount : float) -> void:
 func _set_pulse(value : float, i : int) -> void:
 	_pulse[i] = value
 
+## 効果時間が延びたとき。終わり際の点滅を、残り time_left 秒に合わせて組み直す
+func reschedule_blink(time_left : float) -> void:
+	if _blink_tween:
+		_blink_tween.kill()
+	if _layers[0]:
+		_layers[0].modulate.a = 1.0
+	_start_blink(time_left)
+
 ## 点滅: 終了の blink_time 秒前から、だんだん速く点滅する
 func _start_blink(duration : float) -> void:
 	if blink_time <= 0.0 or _layers[0] == null or not _active[0]:
@@ -168,6 +178,7 @@ func _start_blink(duration : float) -> void:
 	if length <= 0.0:
 		return
 	var t := _track(create_tween())
+	_blink_tween = t
 	t.tween_interval(maxf(duration - blink_time, 0.0))
 	t.tween_method(_set_blink.bind(length), 0.0, length, length)\
 		.set_trans(Tween.TRANS_LINEAR)

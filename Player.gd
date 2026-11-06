@@ -6,22 +6,21 @@ class_name Player
 ## 低速移動(UI_Focus を押している間)の速度倍率
 @export_range(0.05, 1.0, 0.05) var focus_speed_multiplier : float = 0.4
 
-@export_group("グレイズ")
-## 通常時のグレイズ判定の半径(px)。大きいほどグレイズしやすい。
-## GrazeArea/GrazeShape の円の大きさは、ゲーム中はこの値 × 難易度の倍率(GameManager の Graze Radius Scales)で毎フレーム上書きされる。
-## 円を直接変えても効かないので、ここを変える
-@export var graze_radius : float = 24.0
-## 低速移動中のグレイズ半径の倍率(1.0で変化なし)
-@export var focus_graze_multiplier : float = 1.0
-## 難易度などによる、グレイズ半径の倍率(GameManager が設定する)
-var graze_radius_scale : float = 1.0
+## 難易度などによる、グレイズ半径の倍率(GameManager が設定する)。
+## グレイズの半径そのものは、子の GrazeArea(GrazeDetector)の Radius で変える
+var graze_radius_scale : float = 1.0:
+	set(value):
+		graze_radius_scale = value
+		if graze_area:
+			graze_area.radius_scale = value
 
 @export_group("攻撃")
 @export var bullet_scene : PackedScene
 ## 発射間隔(秒)。ShootTimer の wait_time に反映される
 @export var fire_interval : float = 0.1
 
-@onready var graze_area: Area2D = $GrazeArea
+@onready var graze_area: GrazeDetector = $GrazeArea
+@onready var invincibility: Invincibility = $Invincibility
 @onready var graze_shape: CollisionShape2D = $GrazeArea/GrazeShape
 @onready var shoot_timer: Timer = $ShootTimer
 ## 通常時(強化なし)の発射角度
@@ -128,14 +127,9 @@ const MAX_SHOT_STAGE : int = 5
 
 var graze_count : int = 0
 var is_focusing : bool = false
-## グレイズ済みの弾に付ける印
-const GRAZED_META : StringName = &"grazed"
 
 var _spawn_position : Vector2
 var _is_alive : bool = true
-var _invincible : bool = false
-var _invincible_end_msec : int = 0
-var _blink_tween : Tween
 
 ## イグナイトがONか(ONの間、ゲージが減り続け、フレアが残る)
 var _marker : HitboxMarker
@@ -204,14 +198,14 @@ func _ready() -> void:
 	if not InputMap.has_action("UI_Ignite"):
 		push_warning("Player: Input Map に UI_Ignite が登録されていないため、イグナイトは発動できません")
 	shoot_timer.wait_time = fire_interval
-	# シェイプがシーン内で共有されないよう複製してから半径を変更する
-	graze_shape.shape = graze_shape.shape.duplicate()
-	_update_graze_radius()
+	graze_area.radius_scale = graze_radius_scale
+	graze_area.grazed.connect(_on_grazed)
 
 func _physics_process(delta: float) -> void:
 	# UI_Focus が InputMap に未登録でもエラーにならないようにしている
 	is_focusing = InputMap.has_action("UI_Focus") and Input.is_action_pressed("UI_Focus")
-	_update_graze_radius()
+	graze_area.focusing = is_focusing
+	graze_area.active = not is_invincible() # 無敵中(復活直後・イグナイト後)と、死亡中はグレイズしない
 
 	_update_ignite_input(delta)
 
@@ -462,38 +456,20 @@ func reset_shot_power() -> void:
 
 # ---------------------------------------------------------------- グレイズ
 
-func _update_graze_radius() -> void:
-	var radius := graze_radius * graze_radius_scale
-	if is_focusing:
-		radius *= focus_graze_multiplier
-	var circle := graze_shape.shape as CircleShape2D
-	if circle and not is_equal_approx(circle.radius, radius):
-		circle.radius = radius
-
-func _on_graze_area_area_entered(area: Area2D) -> void:
-	# 無敵中(復活直後・イグナイト後)と、死亡中はグレイズしない
-	if is_invincible():
-		return
-	if area is Hitbox and area.damage_source_type == Hitbox.DamageSourceType.Enemy:
-		# 同じ弾は1回しかグレイズできない(出入りを繰り返して稼げないように、弾に印を付ける)
-		if area.has_meta(GRAZED_META):
-			return
-		area.set_meta(GRAZED_META, true)
-		graze_count += 1
-		grazed.emit(graze_count)
-		graze_hit.emit(area.global_position, graze_area.get_overlapping_areas().size())
-		grazed_bullet.emit(area)
-		graze_effect.emitting = true
-
-func _on_graze_area_area_exited(_area: Area2D) -> void:
-	pass
+## GrazeArea(GrazeDetector)が、敵弾をグレイズしたとき
+func _on_grazed(bullet : Area2D, density : int) -> void:
+	graze_count += 1
+	grazed.emit(graze_count)
+	graze_hit.emit(bullet.global_position, density)
+	grazed_bullet.emit(bullet)
+	graze_effect.emitting = true
 
 # ---------------------------------------------------------------- 被弾・死亡・復活
 
 ## 被弾。レベル(体力)を減らすかどうかは、damaged を受けた側(GameManager)が決める
 func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	# 無敵中・死亡中は被弾を無視する
-	if _invincible or not _is_alive:
+	if is_invincible():
 		return
 	damaged.emit()
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
@@ -543,30 +519,13 @@ func _respawn() -> void:
 	start_invincibility(respawn_invincible_time)
 	respawned.emit()
 
-## 無敵にする(点滅する)。すでに無敵で、残りがこれより長ければ何もしない
+## 無敵にする(点滅する)。Invincibility 部品に任せる
 func start_invincibility(seconds: float) -> void:
-	if seconds <= 0.0:
-		return
-	var end_msec := Time.get_ticks_msec() + int(seconds * 1000.0)
-	if _invincible and end_msec <= _invincible_end_msec:
-		return
-	_invincible = true
-	_invincible_end_msec = end_msec
-	if _blink_tween:
-		_blink_tween.kill()
-	_blink_tween = create_tween()
-	_blink_tween.set_loops(maxi(int(seconds / 0.2), 1)) # 0.2秒で1回点滅
-	_blink_tween.tween_property(self, "modulate:a", 0.3, 0.1)
-	_blink_tween.tween_property(self, "modulate:a", 1.0, 0.1)
-	_blink_tween.finished.connect(_end_invincibility)
-
-func _end_invincibility() -> void:
-	_invincible = false
-	modulate.a = 1.0
+	invincibility.start(seconds)
 
 ## 無敵状態か(死亡中・無敵時間中のどれか)
 func is_invincible() -> bool:
-	return not _is_alive or _invincible
+	return not _is_alive or invincibility.is_active()
 
 ## 残機を増やす(1UPアイテムなどから呼ぶ)
 func add_life(amount: int = 1) -> void:

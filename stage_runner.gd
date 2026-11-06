@@ -171,7 +171,9 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 	if event.tag != "":
 		enemy.add_to_group(_tag_group(event.tag)) # 待機イベントが見つけるための印
 	if event.is_boss:
-		enemy.big_death = true # 連鎖爆発 → 大爆発してから消える
+		var death := DeathExplosion.of(enemy)
+		if death:
+			death.big = true # 連鎖爆発 → 大爆発してから消える
 	if event.boss_time_bonus:
 		enemy.boss_reach_time = stage_time # スタートからボス到達までの時間(待機イベントの時間は含まない)
 	if not event.phases.is_empty():

@@ -11,7 +11,7 @@
 size = Vector2(30, 20)
 
 [node name="Firework" unique_id=1760303644 instance=ExtResource("base")]
-drop_item_scene = ExtResource("drop")
+scale = Vector2(1.3, 1.3)
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
@@ -30,3 +30,6 @@ hp = 200
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+
+[node name="ItemDrop" parent="." unique_id=301000003]
+item_scene = ExtResource("drop")

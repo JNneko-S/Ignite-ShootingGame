@@ -4,7 +4,8 @@ class_name ScoreItem
 ## 敵を倒したとき・弾を焼いたとき・背景のオブジェクトを壊したときに出る。
 ##
 ## 動き: その場で少し弾けたあと、下へ落ちていく。自機が触れるか、近くを通ると吸い寄せられて拾える。
-##       イグナイトの発動中は、画面中のアイテムが自機へ吸い寄せられる。
+##       イグナイトの発動中は、焼いた弾の数だけ吸い寄せの範囲が広がる。
+##       イグナイトを発動した瞬間に出ているアイテムは、距離に関係なく全部吸い寄せられる(1回だけ)。
 ##       画面の下へ落としてしまうと missed が出る(ScoreSystem はアイテムの連続取得を途切れさせる)。
 ## 点数: value(出たときに決まる)× 拾ったときの連続取得の倍率。ScoreSystem が計算する。
 ##
@@ -30,7 +31,7 @@ signal missed(item : ScoreItem)
 @export_group("拾う")
 ## 自機との距離がこれ以下になったら拾う(px)
 @export var pickup_radius : float = 16.0
-## 自機がこの距離まで近づくと、吸い寄せられ始める(px)
+## 自機がこの距離まで近づくと、吸い寄せられ始める(px)。ScoreSystem から出たときは、ScoreSystem の値を使う
 @export var magnet_radius : float = 44.0
 ## 出てから吸い寄せられるようになるまでの時間(秒)
 @export var attract_delay : float = 0.2
@@ -42,12 +43,16 @@ signal missed(item : ScoreItem)
 var value : int = 10
 ## 弾を焼いて出たアイテムか(イグナイトの発動中は、自動で吸い寄せられる)
 var from_burn : bool = false
+## 出したときに ScoreSystem が入れる(吸い寄せの範囲を聞く)
+var score_system : ScoreSystem
 var _player : Player
 var _velocity : Vector2
 var _age : float = 0.0
 var _speed : float = 0.0
 var _attracting : bool = false
 var _done : bool = false
+## true なら、距離に関係なく自機へ吸い寄せられる(イグナイト発動時の全回収)
+var _forced : bool = false
 
 @onready var _sprite : Sprite2D = $Sprite2D
 
@@ -59,6 +64,7 @@ func setup(player : Player, points : int, spread : float = 1.0) -> void:
 
 func _ready() -> void:
 	z_index = 5
+	add_to_group("score_item")
 	_sprite.hframes = maxi(hframes, 1)
 	_sprite.frame = randi() % _sprite.hframes
 
@@ -68,7 +74,7 @@ func _physics_process(delta : float) -> void:
 	_age += delta
 	_sprite.frame = int(_age / frame_time) % _sprite.hframes
 
-	if not _attracting and _age >= attract_delay and _should_attract():
+	if not _attracting and (_forced or (_age >= attract_delay and _should_attract())) and _can_pick():
 		_attracting = true
 		_speed = maxf(_velocity.length(), 120.0)
 	if _attracting and _can_pick():
@@ -99,13 +105,12 @@ func _move_to_player(delta : float) -> void:
 	_velocity = _velocity.lerp(to_player.normalized() * _speed, minf(10.0 * delta, 1.0))
 	global_position += _velocity * delta
 
-## 吸い寄せられる条件: 自機の近く、またはイグナイトの発動中
+## 吸い寄せられる条件: 自機の近く。イグナイトの発動中は、焼いた弾の数だけ範囲が広がる(ScoreSystem が決める)
 func _should_attract() -> bool:
 	if not _can_pick():
 		return false
-	if _player.is_igniting:
-		return true
-	return global_position.distance_to(_player.global_position) <= magnet_radius
+	var radius := score_system.current_magnet_radius() if is_instance_valid(score_system) else magnet_radius
+	return global_position.distance_to(_player.global_position) <= radius
 
 ## 自機が生きていて、見えているときだけ拾える(復活待ちのあいだは落ちていく)
 func _can_pick() -> bool:
@@ -115,3 +120,7 @@ func _collect() -> void:
 	_done = true
 	collected.emit(self)
 	queue_free()
+
+## 距離に関係なく、自機へ吸い寄せる(イグナイト発動時の全回収)。自機がいないあいだは、出てくるまで待つ
+func collect_now() -> void:
+	_forced = true

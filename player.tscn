@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://khde6xp7pdu" path="res://ignite_aura.gd" id="7_dw050"]
 [ext_resource type="Texture2D" uid="uid://dl1tyft1wtew8" path="res://Assets/Effect/32x32_Arcane_16.png" id="7_nvl01"]
 [ext_resource type="Script" uid="uid://cj1p0qdeu80na" path="res://ignite_params.gd" id="8_b26j0"]
+[ext_resource type="Script" uid="uid://rfvrrp2uytpk" path="res://Component/Graze/graze_detector.gd" id="c_graze"]
+[ext_resource type="Script" uid="uid://f3mid0nwuvbs" path="res://Component/Invincibility/invincibility.gd" id="c_invincible"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
 
@@ -76,8 +78,6 @@ z_index = 1
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_onrkg")
-move_speed = 400.0
-graze_radius = 30.0
 bullet_scene = ExtResource("2_sweqy")
 shot_angles = Array[float]([0.0, 3.0, -3.0])
 shot_sound_db = -22.0
@@ -132,6 +132,8 @@ debug_color = Color(0.5988643, 0.54440135, 3.85046e-07, 0.41960785)
 position = Vector2(0, 3)
 collision_layer = 0
 collision_mask = 32
+script = ExtResource("c_graze")
+radius = 30.0
 
 [node name="GrazeShape" type="CollisionShape2D" parent="GrazeArea" unique_id=1497646487]
 z_index = 1
@@ -160,10 +162,11 @@ autoplay = &"Idle"
 
 [node name="GrazeEffect" parent="." unique_id=634594498 instance=ExtResource("6_2hs0m")]
 
+[node name="Invincibility" type="Node" parent="." unique_id=301000010]
+script = ExtResource("c_invincible")
+
 [connection signal="is_dead" from="HPComponent" to="." method="_on_hp_component_is_dead"]
 [connection signal="recieved_damage" from="Hurtbox" to="." method="_on_hurtbox_recieved_damage"]
-[connection signal="area_entered" from="GrazeArea" to="." method="_on_graze_area_area_entered"]
-[connection signal="area_exited" from="GrazeArea" to="." method="_on_graze_area_area_exited"]
 
 [editable path="Ignite"]
 [editable path="Hurtbox"]
