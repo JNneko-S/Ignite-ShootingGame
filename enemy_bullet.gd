@@ -36,6 +36,11 @@ var _step_time : float = 0.0
 var _step_from_speed : float = 0.0 # 区間の始めの速さ(倍率をかける前)
 var _mirror : bool = false # 左右反転して出た敵の弾(曲がる向き・回す向きが逆)
 
+# ---- 分裂(ShotPattern の Split。割れたら、Split Pattern の弾になって消える) ----
+var _split_pattern : ShotPattern # 割れる設定を持つパターン(この弾を撃ったパターン)
+var _split_in : float = -1.0 # 割れるまでの残り秒数。マイナスなら割れない
+var _split_depth : int = 0
+
 func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
 	add_to_group("enemy_bullet") # 被弾時・イグナイト終了時の弾消しの対象
@@ -64,6 +69,54 @@ func set_motion(motion : Array[BulletStep], speed_scale : float = 1.0, mirror : 
 	if not _motion.is_empty():
 		_step_from_speed = speed / maxf(speed_scale, 0.0001)
 		_begin_step(0)
+
+## 割れる設定を入れる。pattern は、この弾を撃ったパターン。depth は何回割れてできた弾か
+func set_split(pattern : ShotPattern, mirror : bool = false, depth : int = 0) -> void:
+	_split_depth = depth
+	_mirror = mirror
+	if ShotMath.splits(pattern, depth):
+		_split_pattern = pattern
+		_split_in = pattern.split_time
+	else:
+		_split_pattern = null
+		_split_in = -1.0
+
+## 割れて、Split Pattern の弾を出し、自分は消える
+func _split() -> void:
+	_split_in = -1.0
+	var parent := get_parent()
+	var child := _split_pattern.split_pattern
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	var aim := (player.global_position - global_position).angle() if player else Vector2.DOWN.angle()
+	var fallback : PackedScene = load(scene_file_path) if scene_file_path != "" else null
+	EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror,
+			ShotMath.split_turn(_split_pattern, direction.angle()), _split_depth + 1)
+	# 割れた場所が一瞬光る
+	if parent:
+		var flash := Sprite2D.new()
+		var sprite := _find_sprite()
+		if sprite:
+			flash.texture = sprite.texture
+			flash.hframes = sprite.hframes
+			flash.vframes = sprite.vframes
+			flash.frame = sprite.frame
+			flash.rotation = global_rotation
+			flash.scale = global_scale * 1.5
+			flash.z_index = z_index
+			flash.modulate = Color(2.0, 2.0, 2.0, 0.9)
+			parent.add_child(flash)
+			flash.global_position = global_position
+			var tween := flash.create_tween().set_parallel(true)
+			tween.tween_property(flash, "scale", flash.scale * 2.0, 0.15)
+			tween.tween_property(flash, "modulate:a", 0.0, 0.15)
+			tween.chain().tween_callback(flash.queue_free)
+	queue_free()
+
+func _find_sprite() -> Sprite2D:
+	for node in find_children("*", "", true, false):
+		if node is Sprite2D:
+			return node
+	return null
 
 func is_normal() -> bool:
 	return _state == BulletState.NORMAL
@@ -120,6 +173,11 @@ func _on_area_entered(area : Area2D) -> void:
 func _physics_process(delta : float) -> void:
 	match _state:
 		BulletState.NORMAL:
+			if _split_in >= 0.0:
+				_split_in -= delta
+				if _split_in <= 0.0:
+					_split()
+					return
 			if _motion.is_empty():
 				speed = maxf(speed + accel * delta, 0.0)
 				global_position += direction * speed * delta

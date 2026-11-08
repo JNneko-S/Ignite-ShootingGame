@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_small.tscn" id="base"]
+
+[node name="TankSquad" unique_id=1012010970 instance=ExtResource("base")]
+
+[node name="GroundUnit" parent="." unique_id=1302102035]
+drive_speed = 55.0
+drive_time = 1.6
+fire_only_when_stopped = true
+fire_jitter = 0.15

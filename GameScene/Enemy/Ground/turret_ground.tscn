@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" path="res://Component/Ground/ground_unit.gd" id="ground"]
+[ext_resource type="Script" path="res://Component/Ground/turret_aim.gd" id="aim"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_turret_burst.tres" id="pat0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Turret_base_0.png" id="body0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Turret_head.png" id="head"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(20, 20)
+
+[node name="TurretGround" unique_id=1777652994 instance=ExtResource("base")]
+scale = Vector2(1.6, 1.6)
+pattern = null
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+z_index = 0
+texture_filter = 1
+texture = ExtResource("body0")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 100
+hp = 100
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+z_index = 0
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+
+[node name="ScoreReward" parent="." index="8" unique_id=301000004]
+score_value = 300
+
+[node name="Turret" type="Sprite2D" parent="." unique_id=1099975904]
+texture_filter = 1
+texture = ExtResource("head")
+
+[node name="GroundUnit" type="Node" parent="." unique_id=1070302523 node_paths=PackedStringArray("body")]
+script = ExtResource("ground")
+body = NodePath("../Sprite2D")
+
+[node name="TurretAim" type="Node" parent="." unique_id=1190580830 node_paths=PackedStringArray("turret", "muzzle")]
+script = ExtResource("aim")
+turret = NodePath("../Turret")
+muzzle = NodePath("../EnemyShooterComponent")
+turn_speed = 90.0
+barrel_length = 14.0

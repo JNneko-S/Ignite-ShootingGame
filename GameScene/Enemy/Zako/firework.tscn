@@ -6,6 +6,7 @@
 [ext_resource type="Resource" uid="uid://bk17fun4c4c2e" path="res://Resources/ShotPatterns/Enemies/shot_firework.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 [ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
+[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(30, 20)
@@ -33,3 +34,6 @@ patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
 
 [node name="ItemDrop" parent="." unique_id=301000003]
 item_scene = ExtResource("drop")
+
+[node name="MotionTilt" type="Node" parent="." unique_id=947876999]
+script = ExtResource("motion_tilt")

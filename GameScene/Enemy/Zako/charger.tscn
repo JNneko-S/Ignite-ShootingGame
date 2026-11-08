@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
 [ext_resource type="Script" uid="uid://xchyfr3avu0m" path="res://Component/Hitbox/Hitbox.gd" id="hitbox_script"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_charger.tres" id="move"]
+[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(14, 14)
@@ -34,3 +35,8 @@ damage = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BodyHitbox" index="0" unique_id=1426227794]
 shape = SubResource("body_shape")
+
+[node name="MotionTilt" type="Node" parent="." unique_id=1863673106]
+script = ExtResource("motion_tilt")
+face_mode = 2
+bank_per_turn = 30.0

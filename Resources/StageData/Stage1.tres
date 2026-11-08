@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="StageData" format=3 uid="uid://dlndovxbp52rs"]
+
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="3_ml2wj"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="4_cvfoo"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="5_lejhg"]
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
+
+[sub_resource type="Resource" id="scroll_start"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.6
+duration = 2.0
+
+[sub_resource type="Resource" id="Resource_i0pjy"]
+script = ExtResource("4_cvfoo")
+formation_bonus = null
+
+[resource]
+script = ExtResource("stage_script")
+events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("Resource_i0pjy")])

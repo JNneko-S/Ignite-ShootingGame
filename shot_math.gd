@@ -171,3 +171,39 @@ static func distance(pattern : ShotPattern, age : float) -> float:
 		if age > stop:
 			return v * stop + 0.5 * a * stop * stop
 	return v * age + 0.5 * a * age * age
+
+# ---------------------------------------------------------------- 分裂
+
+## 分裂は何段階まで(割れた弾がまた割れる回数の上限。弾が増えすぎないように)
+const MAX_SPLIT_DEPTH : int = 3
+
+## pattern の弾が、この深さで割れるか
+static func splits(pattern : ShotPattern, depth : int = 0) -> bool:
+	return pattern.split_pattern != null and pattern.split_time > 0.0 and depth < MAX_SPLIT_DEPTH
+
+## 割れた弾幕を、どれだけ回すか(ラジアン)。heading は割れる前の弾の進む向き
+static func split_turn(pattern : ShotPattern, heading : float) -> float:
+	if pattern.split_follow_direction and not pattern.split_pattern.aim_at_player:
+		return heading - Vector2.DOWN.angle()
+	return 0.0
+
+## プレビュー用。撃ってから age 秒後の、弾(割れていれば、割れた弾の全部)の位置。
+## 引数は bullet_position と同じ
+static func split_positions(pattern : ShotPattern, table : Array[Dictionary], angle : float, speed_scale : float,
+		age : float, origin : Vector2, player : Vector2, mirror : bool = false, depth : int = 0) -> PackedVector2Array:
+	if not splits(pattern, depth) or age < pattern.split_time:
+		return PackedVector2Array([bullet_position(pattern, table, angle, speed_scale, age, origin, player, mirror)])
+	# 割れる瞬間の位置と、進む向き(少し前の位置との差)
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	var at := bullet_position(pattern, table, angle, speed_scale, pattern.split_time, origin, player, mirror)
+	var before := bullet_position(pattern, table, angle, speed_scale, maxf(pattern.split_time - dt, 0.0), origin, player, mirror)
+	var heading := (at - before).angle() if at != before else angle
+	var child := pattern.split_pattern
+	var turn := split_turn(pattern, heading)
+	var child_table := motion_table(child, mirror)
+	var result := PackedVector2Array()
+	for bullet in bullets(child, 0, (player - at).angle(), mirror):
+		var offset : Vector2 = bullet["offset"]
+		result.append_array(split_positions(child, child_table, bullet["angle"] + turn, bullet["speed_scale"],
+				age - pattern.split_time, at + offset.rotated(turn), player, mirror, depth + 1))
+	return result

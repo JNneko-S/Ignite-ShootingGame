@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="seed"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Lines_Yellow.tscn" id="leaf"]
+
+[sub_resource type="Resource" id="leaf"]
+script = ExtResource("1")
+bullet_scene = ExtResource("leaf")
+bullet_count = 2
+spread_angle = 34.0
+aim_at_player = false
+bullet_speed = 175.0
+
+[sub_resource type="Resource" id="branch"]
+script = ExtResource("1")
+bullet_scene = ExtResource("seed")
+bullet_count = 3
+spread_angle = 50.0
+aim_at_player = false
+bullet_speed = 130.0
+split_time = 0.6
+split_pattern = SubResource("leaf")
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("seed")
+start_delay = 1.0
+shot_count = 3
+interval = 0.35
+pause = 2.2
+bullet_count = 5
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 13.0
+bullet_speed = 110.0
+split_time = 0.8
+split_pattern = SubResource("branch")

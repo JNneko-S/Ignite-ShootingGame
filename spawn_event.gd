@@ -42,6 +42,9 @@ class_name SpawnEvent
 @export var mirror_x : bool = false
 ## true なら、1体おきに左右反転する(左右対称のペアになる)
 @export var alternate_mirror : bool = false
+## 隊列を1体残らず倒したときのボーナス点(0 ならなし)。最後に倒した場所に「全滅 +点」と出る。
+## 1体でも画面の外へ逃げたら出ない(Count が 2 以上のときだけ)
+@export var formation_bonus : int = 0
 
 func unit_count() -> int:
 	return maxi(count, 1)

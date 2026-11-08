@@ -11,6 +11,9 @@ enum TimingUnit {
 
 ## null のときは EnemyShooter の default_bullet_scene を使う。
 ## 弾の見た目は、弾の性質で選ぶ(上から順に当てはまるものを使う):
+##   分裂弾 E_Spiky_Split … あとで割れる弾(Split Pattern がある)。割れたあとの弾は、その性質で選ぶ
+##   撃ち返し E_Purple_Revenge … RevengeShooter が撃つ弾
+##   曲がる弾 E_Green_Curve … 弾の動きで曲がる弾(Angular Velocity がある)。頭が進む向きを向く
 ##   砲台弾 E_medium_flamy … その場に居座る砲台・部位が撃つ弾(タレット、吸収砲台、中ボスの砲台)
 ##   重弾   E_Massive_Red_Orange_Yellow … 装甲の敵が撃つ、遅くて大きい弾
 ##   置き弾 E_Pink_Medium … 止まる・漂う弾(機雷、空中で止まってから落ちる弾)
@@ -84,3 +87,13 @@ enum TimingUnit {
 ## 撃ったあとの動きを、区間ごとに並べる(速度のイージング、向きの変更、曲がり)。
 ## 空なら、Bullet Speed と Bullet Accel だけで動く
 @export var motion : Array[BulletStep] = []
+
+@export_group("分裂")
+## 撃ってからこの秒数で、弾が割れて Split Pattern の弾になる。0 なら割れない
+@export var split_time : float = 0.0
+## 割れたあとの弾幕。使うのは「弾の並べ方」「列弾」「ばらつき」「弾の性質」「弾の動き」と、その「分裂」(割れた弾がまた割れる。3段階まで)。
+## タイミングは使わない(割れた瞬間に1回だけ出る)。弾シーンが空なら、割れる前の弾と同じ見た目になる
+@export var split_pattern : ShotPattern
+## オンなら、割れた弾幕の向きの基準を、割れる前の弾の進む向きにする(Split Pattern の Aim At Player がオフのとき)。
+## オフなら、基準は真下。Aim At Player がオンなら、割れた場所から自機を狙う
+@export var split_follow_direction : bool = true

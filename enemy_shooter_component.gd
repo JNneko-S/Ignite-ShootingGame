@@ -110,22 +110,33 @@ func _can_fire() -> bool:
 	return not only_when_on_screen or CameraView.visible_rect(self).has_point(global_position)
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
-	var scene := pattern.bullet_scene if pattern.bullet_scene else default_bullet_scene
+	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
+	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored())
+
+## pattern の shot_index 発目の弾を、origin から出す。EnemyShooter・分裂弾・撃ち返し弾(RevengeShooter)が使う。
+## 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する。
+## fallback_scene: pattern に弾シーンがないときの弾 / turn: 全ての弾の向きを、この角度(ラジアン)だけ回す(分裂弾用)
+## split_depth: 何回割れてできた弾か(分裂弾の段階の上限に使う)
+static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, origin : Vector2,
+		parent : Node, fallback_scene : PackedScene, mirror : bool = false, turn : float = 0.0, split_depth : int = 0) -> void:
+	var scene := pattern.bullet_scene if pattern.bullet_scene else fallback_scene
 	if scene == null:
 		push_warning("EnemyShooter: 弾シーンが未設定です")
 		return
-	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
-	# 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する
-	var mirror := _is_mirrored()
+	if parent == null:
+		return
 	for shot in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
 		var bullet : Node2D = scene.instantiate()
 		parent.add_child(bullet)
 		bullet.z_index = 5
-		bullet.global_position = global_position + shot["offset"]
+		var offset : Vector2 = shot["offset"]
+		bullet.global_position = origin + offset.rotated(turn)
 		if bullet.has_method("setup"):
-			bullet.setup(Vector2.from_angle(shot["angle"]), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+			bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
 		if bullet.has_method("set_motion"):
 			bullet.set_motion(pattern.motion, shot["speed_scale"], mirror)
+		if bullet.has_method("set_split"):
+			bullet.set_split(pattern, mirror, split_depth)
 
 ## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する
 func _is_mirrored() -> bool:

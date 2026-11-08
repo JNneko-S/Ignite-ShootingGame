@@ -76,15 +76,15 @@ func _draw() -> void:
 			continue
 		var fade := clampf(1.0 - age / BULLET_LIFETIME, 0.25, 1.0)
 		for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle):
-			var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"], age,
-					bullet["offset"], player_local)
-			if not rect.has_point(point):
-				continue
-			draw_circle(point, bullet_radius, Color(0.55, 0.8, 1.0, fade))
-			drawn += 1
-			if drawn >= max_bullets:
-				_text(Vector2(12.0, 16.0), "弾が多すぎるため、ここまでを表示(%d発)" % max_bullets, Color(1.0, 0.6, 0.4))
-				return
+			for point in ShotMath.split_positions(pattern, table, bullet["angle"], bullet["speed_scale"], age,
+					bullet["offset"], player_local):
+				if not rect.has_point(point):
+					continue
+				draw_circle(point, bullet_radius, Color(0.55, 0.8, 1.0, fade))
+				drawn += 1
+				if drawn >= max_bullets:
+					_text(Vector2(12.0, 16.0), "弾が多すぎるため、ここまでを表示(%d発)" % max_bullets, Color(1.0, 0.6, 0.4))
+					return
 	_text(Vector2(12.0, 16.0), "t = %.2f 秒 / 弾 %d発" % [preview_time, drawn], Color.WHITE)
 
 func _text(at : Vector2, text : String, color : Color) -> void:

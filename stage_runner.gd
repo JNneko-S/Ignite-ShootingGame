@@ -54,6 +54,8 @@ var _wait_elapsed : float = 0.0
 var _parallax : Array[Parallax2D] = []
 var _base_autoscroll : Array[Vector2] = []
 var _scroll_tween : Tween
+## 全滅ボーナスを数えている隊列(SpawnEvent → {total, gone, killed, last})
+var _formations : Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("stage_runner")
@@ -67,6 +69,7 @@ func start() -> void:
 		push_warning("StageRunner: Stage(StageData)が設定されていません")
 		return
 	_build_entries()
+	_formations.clear()
 	_next = 0
 	_finished = false
 	_waiting = false
@@ -184,11 +187,42 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.add_child(controller)
 
 	var parent : Node = enemy_parent if enemy_parent else get_tree().current_scene
+	if GroundUnit.is_ground(enemy):
+		# 地上の敵は、地面と屋根のあいだの層に出す(建物の下をくぐる)
+		var layer := get_tree().get_first_node_in_group("ground_layer")
+		if layer:
+			parent = layer
 	parent.add_child(enemy)
+	_track_formation(event, enemy)
 	if event.is_boss:
 		boss_spawned.emit(enemy, event.boss_name, event.boss_phase_thresholds)
 	if debug_log:
 		print("[Stage] t=%.1f 出現 %s #%d" % [stage_time, enemy.name, unit_index])
+
+## 全滅ボーナス: 隊列の全員がいなくなったときに、全員倒されていればボーナス
+func _track_formation(event : SpawnEvent, enemy : Enemy) -> void:
+	if event.formation_bonus <= 0 or event.unit_count() < 2:
+		return
+	if not _formations.has(event):
+		_formations[event] = {"total": event.unit_count(), "gone": 0, "killed": 0, "last": Vector2.ZERO}
+	var record : Dictionary = _formations[event]
+	enemy.died.connect(func(dead : Enemy) -> void:
+		record["killed"] += 1
+		record["last"] = dead.global_position)
+	enemy.tree_exited.connect(func() -> void:
+		record["gone"] += 1
+		if record["gone"] >= record["total"]:
+			_formations.erase(event)
+			if record["killed"] >= record["total"]:
+				_award_formation_bonus(event.formation_bonus, record["last"]))
+
+func _award_formation_bonus(points : int, at : Vector2) -> void:
+	var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
+	if score_system:
+		score_system.add_points(points, at)
+	FloatingText.spawn(get_tree(), at, "全滅 +%d" % points)
+	if debug_log:
+		print("[Stage] t=%.1f 全滅ボーナス %d" % [stage_time, points])
 
 ## 背景のオブジェクトを、画面の上の端のすぐ外に出す(PropEvent)
 func spawn_prop(event : PropEvent) -> void:

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="big"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="ring"]
+
+[sub_resource type="Resource" id="slow"]
+script = ExtResource("2")
+duration = 0.9
+target_speed = 25.0
+
+[sub_resource type="Resource" id="ring"]
+script = ExtResource("1")
+bullet_scene = ExtResource("ring")
+bullet_count = 14
+spread_angle = 360.0
+aim_at_player = false
+bullet_speed = 90.0
+bullet_accel = 45.0
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("big")
+start_delay = 1.0
+pause = 2.4
+bullet_speed = 170.0
+motion = Array[ExtResource("2")]([SubResource("slow")])
+split_time = 1.0
+split_pattern = SubResource("ring")
+split_follow_direction = false

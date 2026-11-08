@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" path="res://Component/Ground/ground_unit.gd" id="ground"]
+[ext_resource type="Script" path="res://Component/Ground/turret_aim.gd" id="aim"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_tank_aim.tres" id="pat0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Tank1_1.png" id="body0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/tank1_2.png" id="body1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Tank1_head.png" id="head"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/tank1_body_rip1.png" id="wreck"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(24, 28)
+
+[node name="TankSmall" unique_id=1071477686 instance=ExtResource("base")]
+scale = Vector2(1.4, 1.4)
+pattern = null
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+z_index = 0
+texture_filter = 1
+texture = ExtResource("body0")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 60
+hp = 60
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+z_index = 0
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+
+[node name="ScoreReward" parent="." index="8" unique_id=301000004]
+score_value = 200
+
+[node name="Turret" type="Sprite2D" parent="." unique_id=1959167398]
+texture_filter = 1
+texture = ExtResource("head")
+
+[node name="GroundUnit" type="Node" parent="." unique_id=1302102035 node_paths=PackedStringArray("body")]
+script = ExtResource("ground")
+body = NodePath("../Sprite2D")
+drive_speed = 45.0
+drive_textures = Array[Texture2D]([ExtResource("body0"), ExtResource("body1")])
+wreck_texture = ExtResource("wreck")
+
+[node name="TurretAim" type="Node" parent="." unique_id=1940099285 node_paths=PackedStringArray("turret", "muzzle")]
+script = ExtResource("aim")
+turret = NodePath("../Turret")
+muzzle = NodePath("../EnemyShooterComponent")
+turn_speed = 150.0
+barrel_length = 16.0

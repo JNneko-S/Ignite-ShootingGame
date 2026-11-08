@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://deissdtnp1j7b" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn50.png" id="8_yellow"]
 [ext_resource type="Texture2D" uid="uid://jnykjdo2n7n1" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn51.png" id="9_yellow_broken"]
 
-[node name="IgniteTarget" type="Node2D"]
+[node name="IgniteTarget" type="Node2D" groups=["ground_obstacle"]]
 script = ExtResource("1_script")
 intact_textures = Array[Texture2D]([ExtResource("2_green"), ExtResource("4_blue"), ExtResource("6_red"), ExtResource("8_yellow")])
 broken_textures = Array[Texture2D]([ExtResource("3_green_broken"), ExtResource("5_blue_broken"), ExtResource("7_red_broken"), ExtResource("9_yellow_broken")])

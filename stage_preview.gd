@@ -253,14 +253,14 @@ func _draw_bullets(event : SpawnEvent, unit : int, screen : Rect2, player : Vect
 				if pattern.aim_once_per_burst:
 					aim_angle = burst_aim
 				for bullet in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
-					var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"],
-							local_time - shot_time, muzzle + bullet["offset"], player, mirror)
-					if not visible_rect.has_point(point):
-						continue # 画面外に出た弾は消える
-					draw_circle(point, bullet_radius, color)
-					drawn += 1
-					if drawn >= budget:
-						return drawn
+					for point in ShotMath.split_positions(pattern, table, bullet["angle"], bullet["speed_scale"],
+							local_time - shot_time, muzzle + bullet["offset"], player, mirror):
+						if not visible_rect.has_point(point):
+							continue # 画面外に出た弾は消える
+						draw_circle(point, bullet_radius, color)
+						drawn += 1
+						if drawn >= budget:
+							return drawn
 	return drawn
 
 ## 譜面(BeatChart)で撃つ敵の弾。時刻は、出現からの秒数 = 譜面の時刻
@@ -289,14 +289,14 @@ func _draw_chart_bullets(info : Dictionary, path : Dictionary, local_time : floa
 				continue
 			var aim_angle := (player - muzzle).angle()
 			for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle, mirror):
-				var point := ShotMath.bullet_position(pattern, table, bullet["angle"], bullet["speed_scale"],
-						local_time - shot_time, muzzle + bullet["offset"], player, mirror)
-				if not visible_rect.has_point(point):
-					continue
-				draw_circle(point, bullet_radius, shooter["color"])
-				drawn += 1
-				if drawn >= budget:
-					return drawn
+				for point in ShotMath.split_positions(pattern, table, bullet["angle"], bullet["speed_scale"],
+						local_time - shot_time, muzzle + bullet["offset"], player, mirror):
+					if not visible_rect.has_point(point):
+						continue
+					draw_circle(point, bullet_radius, shooter["color"])
+					drawn += 1
+					if drawn >= budget:
+						return drawn
 	return drawn
 
 func _draw_event_list(events : Array[StageEvent], screen : Rect2) -> void:

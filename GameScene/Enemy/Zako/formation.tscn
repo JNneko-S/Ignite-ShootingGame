@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://s6p6adi4os6n" path="res://Resources/MovePatterns/Enemies/move_formation_sweep.tres" id="move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_formation_aim.tres" id="pat0"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(52, 18)
@@ -24,3 +25,6 @@ shape = SubResource("hurt_shape")
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+
+[node name="MotionTilt" type="Node" parent="." unique_id=795425564]
+script = ExtResource("motion_tilt")
