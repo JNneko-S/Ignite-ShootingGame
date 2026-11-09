@@ -9,8 +9,9 @@ const WAVE : PackedScene = preload("res://GameScene/Effect/boss_expolsion.tscn")
 ## 全ての爆発エフェクト(ボスの連鎖爆発で順番に使う)
 const ALL : Array[PackedScene] = [ZAKO, EXPLOSIVE, WAVE]
 
-## フィールド(背景)の上、敵・敵弾・自機の下に出す。背景と同じ 0 だが、背景より後にシーンへ足すので、背景の上に描かれる
-const Z_INDEX : int = 0
+## フィールド(背景)と地上の敵(戦車など z 1)の上、空の敵(z 2)・敵弾(z 5)の下に出す。
+## 地上の敵と同じ 1 だが、あとからシーンに足すので、その上に描かれる
+const Z_INDEX : int = 1
 
 ## scene を position に出して再生する。parent が null なら現在のシーンの直下に出す
 static func spawn(tree : SceneTree, scene : PackedScene, position : Vector2, scale : float = 1.0, parent : Node = null) -> Node2D:

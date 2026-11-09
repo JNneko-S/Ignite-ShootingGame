@@ -1,25 +1,49 @@
 extends Node
 class_name BossPhaseController
-## ボスのHPを見て、BossPhase の段階ごとに弾幕を切り替える。
-## StageRunner が、Phases を設定した SpawnEvent の敵に、子ノードとして自動で付ける。
+## ボスのHPを見て、段階(BossPhase)を切り替える。
+##
+## 置き方は2通り:
+##   ・ボスのシーンに、このノードを置いて Phases を設定する(おすすめ)。
+##     砲口ごとの弾幕は、各 EnemyShooter の Phases に入れる
+##   ・ステージの SpawnEvent の Phases を設定すると、StageRunner が自動で付ける(シーンに置いていないとき)
+##
+## 段階が変わると: 画面の敵弾を消し(Clear Bullets)、各砲口を その段階の弾幕に切り替え、ボスが光ってから その段階の色になる。
+## 砲口の弾幕: EnemyShooter に Phases があれば、その段階のもの。なければ BossPhase の Patterns(全ての砲口に同じもの)
 
 signal phase_started(index : int)
 
-var phases : Array[BossPhase] = []
+## 段階。HPの多い順(第一形態が最初、Hp Ratio 1.0)に並べる
+@export var phases : Array[BossPhase] = []
+
 var _hp : HPComponent
 var _index : int = 0
 
+func _ready() -> void:
+	if _hp == null:
+		var boss := get_parent()
+		if boss:
+			_hp = boss.get_node_or_null("HPComponent") as HPComponent
+		if _hp:
+			_hp.hp_changed.connect(_on_hp_changed)
+
+## StageRunner が SpawnEvent の Phases から付けるときに使う(ツリーに入る前に呼ぶ)
 func setup(hp : HPComponent, boss_phases : Array[BossPhase]) -> void:
 	_hp = hp
 	phases = boss_phases
 	_hp.hp_changed.connect(_on_hp_changed)
 
-## 最初の段階の弾幕を、砲口に入れる(敵がツリーに入る前に呼ぶと、そのまま撃ち始める)
+## 最初の段階の弾幕を、砲口に入れる(敵がツリーに入る前に呼ぶと、そのまま撃ち始める)。
+## Phases を持つ砲口は、自分で第一形態の弾幕を使うので、何もしない
 func apply_first(enemy : Node) -> void:
 	if phases.is_empty():
 		return
 	for shooter in _shooters(enemy):
-		shooter.patterns = phases[0].patterns
+		if not shooter.has_phases():
+			shooter.patterns = phases[0].patterns
+
+## 今の段階(0 = 第一形態)
+func current_phase() -> int:
+	return _index
 
 func _on_hp_changed() -> void:
 	if _hp.max_hp <= 0:
@@ -37,9 +61,12 @@ func _start_phase(index : int) -> void:
 	var phase := phases[index]
 	if phase.clear_bullets:
 		get_tree().call_group("enemy_bullet", "queue_free")
-	var boss := owner if owner else get_parent()
+	var boss := get_parent()
 	for shooter in _shooters(boss):
-		shooter.set_patterns(phase.patterns)
+		if shooter.has_phases():
+			shooter.set_phase(index)
+		else:
+			shooter.set_patterns(phase.patterns)
 	# 白く光ってから、この段階の色になる
 	var tween := create_tween()
 	tween.tween_property(boss, "modulate", Color(2.0, 2.0, 2.0), 0.08)

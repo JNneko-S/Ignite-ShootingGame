@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="StageData" format=3 uid="uid://beiarkvgmkkj1"]
 
+[ext_resource type="PackedScene" uid="uid://dro6tqpru25cy" path="res://GameScene/Enemy/BOSS_TANK.tscn" id="32_vix8p"]
 [ext_resource type="PackedScene" path="res://GameScene/Prop/ignite_target.tscn" id="45_vix8p"]
 [ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
-[ext_resource type="PackedScene" uid="uid://cjd6edxevmr84" path="res://GameScene/Enemy/Boss.tscn" id="e_boss"]
 [ext_resource type="PackedScene" uid="uid://k67ebdq26l1a" path="res://GameScene/Enemy/Zako/curve_turret.tscn" id="e_curve_turret"]
 [ext_resource type="PackedScene" uid="uid://bw7h5h6wbmv5y" path="res://GameScene/Enemy/Zako/firework.tscn" id="e_firework"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
@@ -28,16 +28,6 @@
 [ext_resource type="Resource" uid="uid://baqit7ar6353j" path="res://Resources/ShotPatterns/Stage1/s1_aim_single.tres" id="s_aim_single"]
 [ext_resource type="Resource" uid="uid://dv5u3772i726d" path="res://Resources/ShotPatterns/Stage1/s1_aim_stream.tres" id="s_aim_stream"]
 [ext_resource type="Resource" uid="uid://dtsryg3t8tmlk" path="res://Resources/ShotPatterns/Stage1/s1_bloom.tres" id="s_bloom"]
-[ext_resource type="Resource" uid="uid://d0g1l0jkhuqh4" path="res://Resources/ShotPatterns/Stage1/s1_boss_burst.tres" id="s_boss_burst"]
-[ext_resource type="Resource" uid="uid://cvvk4aqtyllya" path="res://Resources/ShotPatterns/Stage1/s1_boss_converge.tres" id="s_boss_converge"]
-[ext_resource type="Resource" uid="uid://b0gqtucbx8o5p" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge.tres" id="s_boss_rage_converge"]
-[ext_resource type="Resource" uid="uid://cnkbqd46uwh7o" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_ring_l.tres" id="s_boss_rage_ring_l"]
-[ext_resource type="Resource" uid="uid://27ve4rmyu56a" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_ring_r.tres" id="s_boss_rage_ring_r"]
-[ext_resource type="Resource" uid="uid://cc8d5362vbu2j" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_spray.tres" id="s_boss_rage_spray"]
-[ext_resource type="Resource" uid="uid://cft088xygy16b" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_washer.tres" id="s_boss_rage_washer"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_spray.tres" id="s_boss_spray"]
-[ext_resource type="Resource" uid="uid://njsipir86g5h" path="res://Resources/ShotPatterns/Stage1/s1_boss_stop_aim.tres" id="s_boss_stop_aim"]
-[ext_resource type="Resource" uid="uid://dl3t6wf2j2m8q" path="res://Resources/ShotPatterns/Stage1/s1_boss_washer.tres" id="s_boss_washer"]
 [ext_resource type="Resource" uid="uid://bfnibpkbr3c0o" path="res://Resources/ShotPatterns/Stage1/s1_burst3.tres" id="s_burst3"]
 [ext_resource type="Resource" uid="uid://b43t386rwq201" path="res://Resources/ShotPatterns/Stage1/s1_drop.tres" id="s_drop"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
@@ -885,30 +875,14 @@ script = ExtResource("signal_script")
 signal_name = "warning"
 time = 122.0
 
-[sub_resource type="Resource" id="boss_phase_1"]
-script = ExtResource("phase_script")
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_boss_washer"), ExtResource("s_aim_single"), ExtResource("s_boss_spray"), ExtResource("s_boss_converge")])
-
-[sub_resource type="Resource" id="boss_phase_2"]
-script = ExtResource("phase_script")
-hp_ratio = 0.7
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_boss_stop_aim"), ExtResource("s_boss_burst"), ExtResource("s_boss_spray"), ExtResource("s_boss_converge")])
-
-[sub_resource type="Resource" id="boss_phase_3"]
-script = ExtResource("phase_script")
-hp_ratio = 0.4
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_boss_rage_washer"), ExtResource("s_boss_rage_ring_l"), ExtResource("s_boss_rage_ring_r"), ExtResource("s_boss_rage_spray"), ExtResource("s_boss_rage_converge")])
-boss_modulate = Color(1, 0.5, 0.45, 1)
-
 [sub_resource type="Resource" id="boss"]
 script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_boss")
+enemy_scene = ExtResource("32_vix8p")
 move_pattern = ExtResource("m_boss_enter")
 tag = "boss"
 is_boss = true
-boss_name = "神ナル深機Atlas"
+boss_name = "ボス"
 boss_phase_thresholds = Array[float]([0.7, 0.4])
-phases = Array[ExtResource("phase_script")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
 boss_time_bonus = true
 time = 125.0
 

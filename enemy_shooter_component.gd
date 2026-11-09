@@ -6,8 +6,17 @@ class_name EnemyShooter
 ##
 ## ボスに BeatConductor があると、Patterns は使わず、譜面(BeatChart)のとおりに撃つ。
 
+## 撃った瞬間に出る(砲台の反動アニメーションなどに使う)
+signal fired
+
 @export var patterns : Array[ShotPattern] = []
-## ShotPattern 側で弾シーンが未指定のときに使う弾
+## 順番に撃つ弾幕。1つ撃ち終わったら(Pause だけ待って)次へ進み、最後まで行ったら最初に戻る。
+## Patterns(同時に撃つ)と一緒に使える。ボスの攻撃の組み立てに使う
+@export var sequence : Array[ShotPattern] = []
+## ボスの段階ごとの弾幕(第一形態から順に並べる)。設定すると Patterns / Sequence の代わりにこちらを使い、
+## ボスの段階が変わる(BossPhaseController)と、その段階の弾幕に切り替わる。段階の数より少なければ、最後のものを使い続ける
+@export var phases : Array[ShooterPhase] = []
+## ShotPattern 側で弾シーンが未指定のときに使う弾(弾幕側に指定があれば、そちらが優先)
 @export var default_bullet_scene : PackedScene
 ## 弾の生成先。未設定なら現在のシーン直下
 @export var bullet_parent : Node
@@ -35,6 +44,9 @@ var _generation : int = 0
 var _burst_aims : Dictionary = {}
 
 func _ready() -> void:
+	if not phases.is_empty() and phases[0]:
+		patterns = phases[0].patterns
+		sequence = phases[0].sequence
 	if debug_log:
 		print("[EnemyShooter] 開始 node=%s patterns=%d" % [get_path(), patterns.size()])
 		for pattern in patterns:
@@ -45,6 +57,7 @@ func _ready() -> void:
 		return # 譜面で撃つので、Patterns では撃たない
 	for pattern in patterns:
 		_run_pattern(pattern)
+	_run_sequence()
 
 ## この敵(シーンのルート)に BeatConductor があるか
 func _has_conductor() -> bool:
@@ -60,14 +73,58 @@ func _has_conductor() -> bool:
 func stop() -> void:
 	_generation += 1
 
-## 撃っている弾幕を止めて、new_patterns に切り替える(ボスの段階の切り替えなど)
-func set_patterns(new_patterns : Array[ShotPattern]) -> void:
+## 撃っている弾幕を止めて、new_patterns(同時に撃つ)と new_sequence(順番に撃つ)に切り替える(ボスの段階の切り替えなど)
+func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPattern] = []) -> void:
 	stop()
 	patterns = new_patterns
+	sequence = new_sequence
 	if _has_conductor():
 		return
 	for pattern in patterns:
 		_run_pattern(pattern)
+	_run_sequence()
+
+## Phases を持っているか(持っていれば、ボスの段階の切り替えで set_phase が呼ばれる)
+func has_phases() -> bool:
+	return not phases.is_empty()
+
+## Phases の index 番目(0 = 第一形態)の弾幕に切り替える。足りなければ最後のもの
+func set_phase(index : int) -> void:
+	if phases.is_empty():
+		return
+	var phase := phases[clampi(index, 0, phases.size() - 1)]
+	if phase == null:
+		set_patterns([], [])
+		return
+	set_patterns(phase.patterns, phase.sequence)
+
+## sequence の弾幕を、1つずつ順番に撃つ(最後まで行ったら最初に戻る)
+func _run_sequence() -> void:
+	if sequence.is_empty():
+		return
+	var generation := _generation
+	var index := 0
+	while generation == _generation and not sequence.is_empty():
+		await _run_once(sequence[index % sequence.size()], generation)
+		index += 1
+		if is_inside_tree():
+			await get_tree().process_frame # 時間のかからない弾幕だけでも、止まらないように
+
+## pattern を1回分(Start Delay → Shot Count 発 → Pause)だけ撃つ。Loop は見ない
+func _run_once(pattern : ShotPattern, generation : int) -> void:
+	var clock := MusicClock.find_in(get_tree())
+	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
+	await _wait(pattern.start_delay * unit)
+	var burst_aim := _aim_angle()
+	for i in maxi(pattern.shot_count, 1):
+		if generation != _generation:
+			return
+		if _can_fire():
+			_fire(pattern, i, burst_aim if pattern.aim_once_per_burst else _aim_angle())
+		await _wait(pattern.interval * unit)
+	if generation != _generation:
+		return
+	await _wait(pattern.pause * unit)
 
 ## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
 func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
@@ -112,6 +169,7 @@ func _can_fire() -> bool:
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
 	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored())
+	fired.emit()
 
 ## pattern の shot_index 発目の弾を、origin から出す。EnemyShooter・分裂弾・撃ち返し弾(RevengeShooter)が使う。
 ## 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する。

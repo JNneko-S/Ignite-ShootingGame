@@ -1,5 +1,18 @@
 [gd_scene format=3 uid="uid://dro6tqpru25cy"]
 
+[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" uid="uid://dpma0ny2n4du0" path="res://Resources/ShotPatterns/Boss/Tank/Shot.tres" id="t_shot"]
+[ext_resource type="Resource" uid="uid://ba7h4uf1jak66" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine.tres" id="t_washer"]
+[ext_resource type="Resource" uid="uid://beuvsx7wl8bqw" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike.tres" id="t_circle"]
+[ext_resource type="Resource" uid="uid://bi2uxpq3bsahf" path="res://Resources/ShotPatterns/Boss/Tank/FireWork.tres" id="t_firework"]
+[ext_resource type="Resource" uid="uid://5mhy16g3o0br" path="res://Resources/ShotPatterns/Boss/Tank/FireWorkEasy.tres" id="t_firework_easy"]
+[ext_resource type="Resource" uid="uid://c74agcbn334yb" path="res://Resources/ShotPatterns/Boss/Tank/SubShot.tres" id="t_sub"]
+[ext_resource type="Resource" uid="uid://cjpjkmf1ehatj" path="res://Resources/ShotPatterns/Boss/Tank/SubShot2.tres" id="t_sub2"]
+[ext_resource type="Resource" uid="uid://cvvk4aqtyllya" path="res://Resources/ShotPatterns/Stage1/s1_boss_converge.tres" id="s_converge"]
+[ext_resource type="Resource" uid="uid://b0gqtucbx8o5p" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge.tres" id="s_rage_converge"]
 [ext_resource type="Texture2D" uid="uid://b02kojahk51jq" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Wheels_strip4.png" id="1_xstfq"]
 [ext_resource type="Texture2D" uid="uid://5d3cvuu4pylh" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_strip4.png" id="2_7ermy"]
 [ext_resource type="Texture2D" uid="uid://b6uflatai842f" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_L.png" id="3_pflla"]
@@ -9,6 +22,120 @@
 [ext_resource type="Texture2D" uid="uid://ct2qufltuw4ix" path="res://Assets/Full Shmup Asset Pack/Tank Boss/SidePart_L_strip4.png" id="7_y8cc8"]
 [ext_resource type="Texture2D" uid="uid://covkpy2kbg2e5" path="res://Assets/Full Shmup Asset Pack/Tank Boss/SidePart_R_strip4.png" id="8_yoavu"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="9_euyg5"]
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
+[ext_resource type="Script" uid="uid://bucp0ao8udq4" path="res://Component/Part/enemy_part.gd" id="part"]
+[ext_resource type="Script" uid="uid://xfs58eu5fmdl" path="res://Component/Turret/turret.gd" id="turret"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(65, 80)
+
+[sub_resource type="RectangleShape2D" id="hull_shape"]
+size = Vector2(93, 280)
+
+[sub_resource type="RectangleShape2D" id="top_body_shape"]
+size = Vector2(25.428572, 40)
+
+[sub_resource type="Animation" id="main_fire"]
+resource_name = "Fire"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cannon:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(0, -5), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Cannon:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.12),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1.8, 1.6, 1.3, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="main_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cannon:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Cannon:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="main_lib"]
+_data = {
+&"Fire": SubResource("main_fire"),
+&"RESET": SubResource("main_reset")
+}
+
+[sub_resource type="Animation" id="mini_fire"]
+resource_name = "Fire"
+length = 0.12
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.12),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(0, -2), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="mini_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="mini_lib"]
+_data = {
+&"Fire": SubResource("mini_fire"),
+&"RESET": SubResource("mini_reset")
+}
+
+[sub_resource type="RectangleShape2D" id="mini_part_shape"]
+size = Vector2(14, 14)
 
 [sub_resource type="Animation" id="Animation_31aup"]
 resource_name = "Idle"
@@ -164,81 +291,262 @@ _data = {
 &"RESET": SubResource("Animation_rh64e")
 }
 
-[node name="Tank" type="Node2D" unique_id=922862165]
+[sub_resource type="Resource" id="main_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
 
-[node name="VisualRoot" type="Node2D" parent="." unique_id=1849540776]
-scale = Vector2(1.5, 1.5)
+[sub_resource type="Resource" id="main_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_circle"), ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
 
-[node name="Wheel" type="Sprite2D" parent="VisualRoot" unique_id=110740713]
+[sub_resource type="Resource" id="main_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtResource("t_shot"), ExtResource("t_circle"), ExtResource("t_washer")])
+
+[sub_resource type="Resource" id="left_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
+
+[sub_resource type="Resource" id="left_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="right_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="right_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
+
+[sub_resource type="Resource" id="side_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="boss_phase_1"]
+script = ExtResource("boss_phase")
+
+[sub_resource type="Resource" id="boss_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.7
+
+[sub_resource type="Resource" id="boss_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.4
+boss_modulate = Color(1, 0.5, 0.45, 1)
+
+[node name="BossTank" unique_id=922862165 instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+visible = false
+
+[node name="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="0" unique_id=38672095]
+position = Vector2(0, -107)
+shape = SubResource("hurt_shape")
+
+[node name="HullShape" type="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="2" unique_id=301000230]
+position = Vector2(0, 5)
+shape = SubResource("hull_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 30000
+hp = 30000
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+position = Vector2(-1, -1)
+phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
+
+[node name="DeathExplosion" parent="." index="6" unique_id=301000002]
+area = Rect2(-128, -163, 257, 327)
+
+[node name="VisualRoot" type="Node2D" parent="." index="9" unique_id=1849540776]
+z_index = 1
+scale = Vector2(3.5, 3.5)
+
+[node name="Wheel" type="Sprite2D" parent="VisualRoot" index="0" unique_id=110740713]
 position = Vector2(-21, -29)
 texture = ExtResource("1_xstfq")
 hframes = 6
 vframes = 2
 
-[node name="Wheel2" type="Sprite2D" parent="VisualRoot" unique_id=1510656820]
+[node name="Wheel2" type="Sprite2D" parent="VisualRoot" index="1" unique_id=1510656820]
 position = Vector2(20, -28)
 texture = ExtResource("1_xstfq")
 hframes = 6
 vframes = 2
 frame = 1
 
-[node name="Wheel3" type="Sprite2D" parent="VisualRoot" unique_id=1191164382]
+[node name="Wheel3" type="Sprite2D" parent="VisualRoot" index="2" unique_id=1191164382]
 position = Vector2(-14, 22)
 texture = ExtResource("1_xstfq")
 hframes = 6
 vframes = 2
 frame = 11
 
-[node name="Wheel4" type="Sprite2D" parent="VisualRoot" unique_id=1085937224]
+[node name="Wheel4" type="Sprite2D" parent="VisualRoot" index="3" unique_id=1085937224]
 position = Vector2(12, 22)
 texture = ExtResource("1_xstfq")
 hframes = 6
 vframes = 2
 frame = 8
 
-[node name="Body" type="Sprite2D" parent="VisualRoot" unique_id=1644706280]
+[node name="Body" type="Sprite2D" parent="VisualRoot" index="4" unique_id=1644706280]
 texture = ExtResource("2_7ermy")
 hframes = 4
 
-[node name="TopBodyL" type="Sprite2D" parent="VisualRoot" unique_id=1258787908]
+[node name="TopBodyLPart" type="Node2D" parent="VisualRoot" index="5" unique_id=301000241]
 position = Vector2(-22.5, -15.5)
+script = ExtResource("part")
+max_hp = 4000
+breakable_from_phase = 1
+damage_to_body = 0.5
+break_score = 5000
+break_items = 8
+
+[node name="TopBodyL" type="Sprite2D" parent="VisualRoot/TopBodyLPart" index="0" unique_id=1258787908]
 texture = ExtResource("3_pflla")
 
-[node name="TopBodyR" type="Sprite2D" parent="VisualRoot" unique_id=335270207]
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/TopBodyLPart" index="1" unique_id=301000242]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/TopBodyLPart/Hurtbox" index="0" unique_id=301000243]
+position = Vector2(-1.3571434, -0.21428585)
+scale = Vector2(0.99999994, 0.99999994)
+shape = SubResource("top_body_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/TopBodyLPart/Hurtbox" index="1" unique_id=301000244]
+wait_time = 0.2
+one_shot = true
+
+[node name="TopBodyRPart" type="Node2D" parent="VisualRoot" index="6" unique_id=301000251]
 position = Vector2(25, -16)
+script = ExtResource("part")
+max_hp = 4000
+breakable_from_phase = 1
+damage_to_body = 0.5
+break_score = 5000
+break_items = 8
+
+[node name="TopBodyR" type="Sprite2D" parent="VisualRoot/TopBodyRPart" index="0" unique_id=335270207]
 texture = ExtResource("4_40li8")
 
-[node name="Cannon" type="Node2D" parent="VisualRoot" unique_id=296842130]
-position = Vector2(0, -22.666668)
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/TopBodyRPart" index="1" unique_id=301000252]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
 
-[node name="Cannon" type="Sprite2D" parent="VisualRoot/Cannon" unique_id=326430166]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/TopBodyRPart/Hurtbox" index="0" unique_id=301000253]
+shape = SubResource("top_body_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/TopBodyRPart/Hurtbox" index="1" unique_id=301000254]
+wait_time = 0.2
+one_shot = true
+
+[node name="Cannon" type="Node2D" parent="VisualRoot" index="7" unique_id=296842130 node_paths=PackedStringArray("shooter")]
+position = Vector2(0, -22.666668)
+script = ExtResource("turret")
+shooter = NodePath("../../EnemyShooterComponent")
+max_angle = 60.0
+
+[node name="Cannon" type="Sprite2D" parent="VisualRoot/Cannon" index="0" unique_id=326430166]
 position = Vector2(0, 6.666668)
 texture = ExtResource("5_cx68f")
 
-[node name="MiniCannonL" type="Sprite2D" parent="VisualRoot" unique_id=373099704]
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Cannon" index="1" unique_id=301000101]
+position = Vector2(-0.57142854, 22.380953)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Cannon" index="2" unique_id=301000102]
+libraries/ = SubResource("main_lib")
+
+[node name="MiniCannonLPart" type="Node2D" parent="VisualRoot" index="8" unique_id=301000211 node_paths=PackedStringArray("shooters")]
 position = Vector2(-22, -34)
-texture = ExtResource("6_k0bdp")
+script = ExtResource("part")
+max_hp = 5000
+damage_to_body = 0.5
+shooters = [NodePath("../../EnemyShooterComponent2")]
+break_score = 3000
 
-[node name="MiniCannonR" type="Sprite2D" parent="VisualRoot" unique_id=242511410]
+[node name="MiniCannonL" type="Sprite2D" parent="VisualRoot/MiniCannonLPart" index="0" unique_id=373099704 node_paths=PackedStringArray("shooter")]
+texture = ExtResource("6_k0bdp")
+script = ExtResource("turret")
+shooter = NodePath("../../../EnemyShooterComponent2")
+aim_at_player = false
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/MiniCannonLPart/MiniCannonL" index="0" unique_id=301000103]
+position = Vector2(-0.5, 3.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/MiniCannonLPart/MiniCannonL" index="1" unique_id=301000104]
+libraries/ = SubResource("mini_lib")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/MiniCannonLPart" index="1" unique_id=301000212]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/MiniCannonLPart/Hurtbox" index="0" unique_id=301000213]
+shape = SubResource("mini_part_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/MiniCannonLPart/Hurtbox" index="1" unique_id=301000214]
+wait_time = 0.2
+one_shot = true
+
+[node name="MiniCannonRPart" type="Node2D" parent="VisualRoot" index="9" unique_id=301000221 node_paths=PackedStringArray("shooters")]
 position = Vector2(20, -34)
-texture = ExtResource("6_k0bdp")
+script = ExtResource("part")
+max_hp = 5000
+damage_to_body = 0.5
+shooters = [NodePath("../../EnemyShooterComponent3")]
+break_score = 3000
 
-[node name="SidePart" type="Sprite2D" parent="VisualRoot" unique_id=601863902]
+[node name="MiniCannonR" type="Sprite2D" parent="VisualRoot/MiniCannonRPart" index="0" unique_id=242511410 node_paths=PackedStringArray("shooter")]
+texture = ExtResource("6_k0bdp")
+script = ExtResource("turret")
+shooter = NodePath("../../../EnemyShooterComponent3")
+aim_at_player = false
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/MiniCannonRPart/MiniCannonR" index="0" unique_id=301000105]
+position = Vector2(0, 3.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/MiniCannonRPart/MiniCannonR" index="1" unique_id=301000106]
+libraries/ = SubResource("mini_lib")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/MiniCannonRPart" index="1" unique_id=301000222]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/MiniCannonRPart/Hurtbox" index="0" unique_id=301000223]
+shape = SubResource("mini_part_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/MiniCannonRPart/Hurtbox" index="1" unique_id=301000224]
+wait_time = 0.2
+one_shot = true
+
+[node name="SidePart" type="Sprite2D" parent="VisualRoot" index="10" unique_id=601863902]
 position = Vector2(-30, 12)
 texture = ExtResource("7_y8cc8")
 
-[node name="SidePart2" type="Sprite2D" parent="VisualRoot" unique_id=1362508504]
+[node name="SidePart2" type="Sprite2D" parent="VisualRoot" index="11" unique_id=1362508504]
 position = Vector2(31, 12)
 texture = ExtResource("8_yoavu")
 
-[node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("9_euyg5")]
-position = Vector2(-1, -1)
-
-[node name="EnemyShooterComponent2" parent="." unique_id=2117316622 instance=ExtResource("9_euyg5")]
+[node name="EnemyShooterComponent2" parent="." index="10" unique_id=2117316622 instance=ExtResource("9_euyg5")]
 position = Vector2(-33, -49)
+phases = Array[ExtResource("shooter_phase")]([SubResource("left_p1"), SubResource("left_p2"), SubResource("side_p3")])
 
-[node name="EnemyShooterComponent3" parent="." unique_id=1006558765 instance=ExtResource("9_euyg5")]
+[node name="EnemyShooterComponent3" parent="." index="11" unique_id=1006558765 instance=ExtResource("9_euyg5")]
 position = Vector2(30, -49)
+phases = Array[ExtResource("shooter_phase")]([SubResource("right_p1"), SubResource("right_p2"), SubResource("side_p3")])
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1918571424]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12" unique_id=1918571424]
 libraries/ = SubResource("AnimationLibrary_rgo3p")
+autoplay = &"Move"
+
+[node name="BossPhaseController" type="Node" parent="." unique_id=301000300]
+script = ExtResource("phase_controller")
+phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])

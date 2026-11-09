@@ -11,8 +11,8 @@
 [ext_resource type="Script" uid="uid://cy01axe4ckhws" path="res://background_scroller.gd" id="6_spej0"]
 [ext_resource type="Texture2D" uid="uid://bpmwsg86hpo15" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Top_Layer.png" id="7_nxg43"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/boss_gauge.tscn" id="14_0u1li"]
-[ext_resource type="AudioStream" uid="uid://jnyb4kaq1bts" path="res://Assets/Sounds/Music/AS_1502052_テンション爆上げハイスピードハードEDM.mp3" id="18_e0xeq"]
-[ext_resource type="AudioStream" uid="uid://dd5s0ag01bsmm" path="res://Assets/Sounds/Music/AS_971747_疾走感溢れる高速テクノ.mp3" id="bgm_stage"]
+[ext_resource type="AudioStream" uid="uid://dk506wt1c7udi" path="res://Assets/Sounds/Music/AS_114335_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="19_sf26y"]
+[ext_resource type="AudioStream" uid="uid://dmef5q8lbeq61" path="res://Assets/Sounds/Music/AS_111999_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="19_v0qhg"]
 [ext_resource type="Script" uid="uid://b3ktyv1grf8rc" path="res://background_sway.gd" id="bg_sway"]
 [ext_resource type="Script" uid="uid://bwysosabdx413" path="res://hud_fader.gd" id="hud_fader"]
 [ext_resource type="Resource" uid="uid://beiarkvgmkkj1" path="res://Resources/StageData/Stage1GrazeRush.tres" id="s1_graze_rush"]
@@ -148,11 +148,11 @@ clear_bullets_on_death = true
 position = Vector2(557, 466)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1308156288 node_paths=PackedStringArray("stage_runner")]
-volume_db = -16.0
+volume_db = -18.0
 script = ExtResource("stage_bgm")
 stage_runner = NodePath("../StageRunner")
-stage_music = ExtResource("bgm_stage")
-boss_music = ExtResource("18_e0xeq")
+stage_music = ExtResource("19_sf26y")
+boss_music = ExtResource("19_v0qhg")
 
 [node name="ScoreSystem" type="Node" parent="." unique_id=1659386178]
 script = ExtResource("score_system")
