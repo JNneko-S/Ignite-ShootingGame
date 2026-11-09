@@ -14,7 +14,6 @@ duration = 2.0
 
 [sub_resource type="Resource" id="Resource_i0pjy"]
 script = ExtResource("4_cvfoo")
-formation_bonus = null
 
 [resource]
 script = ExtResource("stage_script")

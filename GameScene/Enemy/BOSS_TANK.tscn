@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://dro6tqpru25cy"]
+
+[ext_resource type="Texture2D" uid="uid://b02kojahk51jq" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Wheels_strip4.png" id="1_xstfq"]
+[ext_resource type="Texture2D" uid="uid://5d3cvuu4pylh" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_strip4.png" id="2_7ermy"]
+[ext_resource type="Texture2D" uid="uid://b6uflatai842f" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_L.png" id="3_pflla"]
+[ext_resource type="Texture2D" uid="uid://do0mm2kt4ve2g" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_R.png" id="4_40li8"]
+[ext_resource type="Texture2D" uid="uid://bkguqagmhm44v" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Head.png" id="5_cx68f"]
+[ext_resource type="Texture2D" uid="uid://wbtpgwqbgxu1" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Lil_Cannon_L&R.png" id="6_k0bdp"]
+[ext_resource type="Texture2D" uid="uid://ct2qufltuw4ix" path="res://Assets/Full Shmup Asset Pack/Tank Boss/SidePart_L_strip4.png" id="7_y8cc8"]
+[ext_resource type="Texture2D" uid="uid://covkpy2kbg2e5" path="res://Assets/Full Shmup Asset Pack/Tank Boss/SidePart_R_strip4.png" id="8_yoavu"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="9_euyg5"]
+
+[sub_resource type="Animation" id="Animation_31aup"]
+resource_name = "Idle"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_vooe4"]
+resource_name = "Move"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 0, 1, 2, 3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/Wheel:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 2, 0, 2, 0, 2, 0, 2]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/Wheel2:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 3, 1, 3, 1, 3, 1, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/Wheel3:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [9, 11, 9, 11, 9, 11, 9, 11]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VisualRoot/Wheel4:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.70000005),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [8, 10, 8, 10, 8, 10, 8, 10]
+}
+
+[sub_resource type="Animation" id="Animation_rh64e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/Wheel:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/Wheel2:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/Wheel3:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [11]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VisualRoot/Wheel4:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rgo3p"]
+_data = {
+&"Idle": SubResource("Animation_31aup"),
+&"Move": SubResource("Animation_vooe4"),
+&"RESET": SubResource("Animation_rh64e")
+}
+
+[node name="Tank" type="Node2D" unique_id=922862165]
+
+[node name="VisualRoot" type="Node2D" parent="." unique_id=1849540776]
+scale = Vector2(1.5, 1.5)
+
+[node name="Wheel" type="Sprite2D" parent="VisualRoot" unique_id=110740713]
+position = Vector2(-21, -29)
+texture = ExtResource("1_xstfq")
+hframes = 6
+vframes = 2
+
+[node name="Wheel2" type="Sprite2D" parent="VisualRoot" unique_id=1510656820]
+position = Vector2(20, -28)
+texture = ExtResource("1_xstfq")
+hframes = 6
+vframes = 2
+frame = 1
+
+[node name="Wheel3" type="Sprite2D" parent="VisualRoot" unique_id=1191164382]
+position = Vector2(-14, 22)
+texture = ExtResource("1_xstfq")
+hframes = 6
+vframes = 2
+frame = 11
+
+[node name="Wheel4" type="Sprite2D" parent="VisualRoot" unique_id=1085937224]
+position = Vector2(12, 22)
+texture = ExtResource("1_xstfq")
+hframes = 6
+vframes = 2
+frame = 8
+
+[node name="Body" type="Sprite2D" parent="VisualRoot" unique_id=1644706280]
+texture = ExtResource("2_7ermy")
+hframes = 4
+
+[node name="TopBodyL" type="Sprite2D" parent="VisualRoot" unique_id=1258787908]
+position = Vector2(-22.5, -15.5)
+texture = ExtResource("3_pflla")
+
+[node name="TopBodyR" type="Sprite2D" parent="VisualRoot" unique_id=335270207]
+position = Vector2(25, -16)
+texture = ExtResource("4_40li8")
+
+[node name="Cannon" type="Node2D" parent="VisualRoot" unique_id=296842130]
+position = Vector2(0, -22.666668)
+
+[node name="Cannon" type="Sprite2D" parent="VisualRoot/Cannon" unique_id=326430166]
+position = Vector2(0, 6.666668)
+texture = ExtResource("5_cx68f")
+
+[node name="MiniCannonL" type="Sprite2D" parent="VisualRoot" unique_id=373099704]
+position = Vector2(-22, -34)
+texture = ExtResource("6_k0bdp")
+
+[node name="MiniCannonR" type="Sprite2D" parent="VisualRoot" unique_id=242511410]
+position = Vector2(20, -34)
+texture = ExtResource("6_k0bdp")
+
+[node name="SidePart" type="Sprite2D" parent="VisualRoot" unique_id=601863902]
+position = Vector2(-30, 12)
+texture = ExtResource("7_y8cc8")
+
+[node name="SidePart2" type="Sprite2D" parent="VisualRoot" unique_id=1362508504]
+position = Vector2(31, 12)
+texture = ExtResource("8_yoavu")
+
+[node name="EnemyShooterComponent" parent="." unique_id=140393654 instance=ExtResource("9_euyg5")]
+position = Vector2(-1, -1)
+
+[node name="EnemyShooterComponent2" parent="." unique_id=2117316622 instance=ExtResource("9_euyg5")]
+position = Vector2(-33, -49)
+
+[node name="EnemyShooterComponent3" parent="." unique_id=1006558765 instance=ExtResource("9_euyg5")]
+position = Vector2(30, -49)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1918571424]
+libraries/ = SubResource("AnimationLibrary_rgo3p")

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://ba7h4uf1jak66"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_gm14f"]
+[ext_resource type="PackedScene" uid="uid://vf0xvk3jcld8" path="res://GameScene/Bullet/tank_boss_bullet.tscn" id="1_o0fgd"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_o0fgd"]
+
+[sub_resource type="Resource" id="Resource_w401m"]
+script = ExtResource("1_gm14f")
+duration = 0.5
+target_speed = 100.0
+speed_trans = 8
+speed_ease = 0
+metadata/_custom_type_script = "uid://bh3bd44efapvd"
+
+[sub_resource type="Resource" id="Resource_sxhjn"]
+script = ExtResource("1_gm14f")
+target_speed = 200.0
+speed_trans = 5
+angular_velocity = 20.0
+metadata/_custom_type_script = "uid://bh3bd44efapvd"
+
+[resource]
+script = ExtResource("2_o0fgd")
+bullet_scene = ExtResource("1_o0fgd")
+shot_count = 36
+loop = false
+bullet_count = 2
+spread_angle = 3.0
+rotate_per_shot = 12.0
+rotate_accel = 0.5
+angle_wave_amplitude = 5.5649999999999995
+angle_wave_shots = 10
+bullet_speed = 60.0
+motion = Array[ExtResource("1_gm14f")]([SubResource("Resource_w401m"), SubResource("Resource_sxhjn")])
+metadata/_custom_type_script = "uid://ct8u3n22w477n"
