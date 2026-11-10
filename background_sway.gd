@@ -7,6 +7,7 @@ class_name BackgroundSway
 ##   シーンに置き、Targets にずらしたい背景(Parallax2D / BackgroundScroller / Sprite2D など)を入れる。
 ##   Depth Scales で層ごとの動く量を変えると、奥の層ほど動かない「奥行き」が出る。
 ##
+## 地上の敵は SwayFollow(敵の子に置く部品)で、このずれについてくる。
 ## Parallax2D は scroll_offset を、それ以外の Node2D は position.x を動かす
 ## (縦のスクロールなど、ほかのスクリプトが動かしている分とは打ち消し合わない)。
 
@@ -32,6 +33,7 @@ var current_offset : float = 0.0
 var _applied : Array[float] = []
 
 func _ready() -> void:
+	add_to_group("background_sway") # SwayFollow(地上の敵)が、ずれの量を読みに来る
 	_applied.resize(targets.size())
 	_applied.fill(0.0)
 

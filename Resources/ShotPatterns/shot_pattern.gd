@@ -10,16 +10,20 @@ enum TimingUnit {
 }
 
 ## null のときは EnemyShooter の default_bullet_scene を使う。
-## 弾の見た目は、弾の性質で選ぶ(上から順に当てはまるものを使う):
-##   分裂弾 E_Spiky_Split … あとで割れる弾(Split Pattern がある)。割れたあとの弾は、その性質で選ぶ
-##   撃ち返し E_Purple_Revenge … RevengeShooter が撃つ弾
-##   曲がる弾 E_Green_Curve … 弾の動きで曲がる弾(Angular Velocity がある)。頭が進む向きを向く
-##   砲台弾 E_medium_flamy … その場に居座る砲台・部位が撃つ弾(タレット、吸収砲台、中ボスの砲台)
-##   重弾   E_Massive_Red_Orange_Yellow … 装甲の敵が撃つ、遅くて大きい弾
-##   置き弾 E_Pink_Medium … 止まる・漂う弾(機雷、空中で止まってから落ちる弾)
-##   狙い弾 E_Lines_Yellow … 自機を狙う弾(単発・連射・3way・バースト)
-##   雨弾   E_Bermuda … 真下に落とすだけの弾
-##   拡散弾 E_Blue_Cian … 全方位・花火のように広がる弾
+## 弾の見た目は、誰が撃つかではなく、弾の動き(性質)で選ぶ。ボスも同じルールに従う。
+## 上から順に見て、最初に当てはまるものを使う:
+##    1. 分裂弾   E_Spiky_Split         … あとで割れる(Split Pattern と Split Time がある)。割れたあとの弾は、その性質で選び直す
+##    2. 撃ち返し E_Purple_Revenge      … RevengeShooter が撃つ弾
+##    3. 大玉     E_Massive_Light_Green … イグナイトの狙いどころ(引きつけて焼くと得する弾)。動きに関係なく、これを使う
+##    4. 止まる弾 E_Pink_Medium         … 動きの途中で止まる・漂う(Target Speed が 20 以下になる段階がある)
+##    5. 減速弾   E_Indigo_Slow         … 遅くなるが止まらない(Target Speed が 8 割未満に下がる / Bullet Accel が負)
+##    6. 曲がる弾 E_Green_Curve         … 曲がる(Angular Velocity がある)
+##    7. 狙い弾   E_Magenta_Aim         … 自機を狙う(Aim At Player がオンで、広がり 60 度以下、回転しない)。
+##                                         いちばん見えないと困る弾なので、加速していてもこちら(ボスの狙い弾も同じ)
+##    8. 加速弾   E_medium_flamy        … 速くなる(Bullet Accel が正 / Target Speed が 1.2 倍より上がる)
+##    9. 雨弾     E_Bermuda             … 真下へ落とすだけ(狙わない・真下・広がりなし・回転しない)
+##   10. 拡散弾   E_Blue_Cian           … 全方位・扇・回転・ばらつき(見せかけの弾)
+##   11. 通常弾   E_Red_Normal          … どれにも当てはまらない弾
 ## 速い弾ほどアニメはゆっくり、遅い弾ほど速くすると見やすい
 @export var bullet_scene : PackedScene
 
@@ -37,6 +41,10 @@ enum TimingUnit {
 @export var loop : bool = true
 ## バースト間の待ち時間(秒)
 @export var pause : float = 1.5
+## 撃つこの秒数前から、弾の飛ぶ向きに予告線を出す(いつも秒で数える)。0 なら出さない。
+## 予告線は撃つ瞬間まで自機を追い、撃つ向きと同じになる。
+## 撃つ前の待ち(Start Delay / Pause)がこれより短いときは、予告のぶんだけ長く待つ
+@export var warning_time : float = 0.0
 
 @export_group("弾の並べ方")
 ## 1回の発射で出す弾の数

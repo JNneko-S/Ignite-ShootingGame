@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://5mhy16g3o0br"]
 
-[ext_resource type="PackedScene" uid="uid://vf0xvk3jcld8" path="res://GameScene/Bullet/tank_boss_bullet.tscn" id="1_28rle"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="1_28rle"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_hvfil"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_22d6h"]
 
@@ -14,9 +14,9 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_22d6h")
 bullet_scene = ExtResource("1_28rle")
-shot_count = 2
+shot_count = 3
 loop = false
-bullet_count = 10
+bullet_count = 12
 spread_angle = 360.0
 aim_at_player = false
 rotate_per_shot = 2.0
@@ -24,6 +24,6 @@ reverse_every_shots = 3
 rotate_accel = 0.1
 line_count = 2
 line_speed_ratio = -0.445
-bullet_speed = 100.0
+bullet_speed = 200.0
 motion = Array[ExtResource("2_hvfil")]([SubResource("Resource_1lgkx")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

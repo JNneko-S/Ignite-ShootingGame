@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c74agcbn334yb"]
 
-[ext_resource type="PackedScene" uid="uid://vf0xvk3jcld8" path="res://GameScene/Bullet/tank_boss_bullet.tscn" id="1_3tong"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_3tong"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3cyk5"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_uf758"]
 

@@ -3,15 +3,21 @@
 [ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="1"]
 [ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="2"]
 
-[sub_resource type="Resource" id="step_0"]
+[sub_resource type="Resource" id="step_charge"]
+script = ExtResource("2")
+target = Vector2(240, 280)
+wait_after = 0.25
+y_trans = 3
+y_ease = 1
+
+[sub_resource type="Resource" id="step_back"]
 script = ExtResource("2")
 target = Vector2(240, 170)
-duration = 2.5
+duration = 2.2
 wait_after = 99999.0
 y_trans = 1
-y_ease = 1
 
 [resource]
 script = ExtResource("1")
-start_position = Vector2(240, -100)
-steps = Array[ExtResource("2")]([SubResource("step_0")])
+start_position = Vector2(240, -260)
+steps = Array[ExtResource("2")]([SubResource("step_charge"), SubResource("step_back")])

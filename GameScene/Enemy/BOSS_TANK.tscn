@@ -1,20 +1,11 @@
 [gd_scene format=3 uid="uid://dro6tqpru25cy"]
 
-[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="shooter_phase"]
-[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
-[ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
-[ext_resource type="Resource" uid="uid://dpma0ny2n4du0" path="res://Resources/ShotPatterns/Boss/Tank/Shot.tres" id="t_shot"]
-[ext_resource type="Resource" uid="uid://ba7h4uf1jak66" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine.tres" id="t_washer"]
-[ext_resource type="Resource" uid="uid://beuvsx7wl8bqw" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike.tres" id="t_circle"]
-[ext_resource type="Resource" uid="uid://bi2uxpq3bsahf" path="res://Resources/ShotPatterns/Boss/Tank/FireWork.tres" id="t_firework"]
-[ext_resource type="Resource" uid="uid://5mhy16g3o0br" path="res://Resources/ShotPatterns/Boss/Tank/FireWorkEasy.tres" id="t_firework_easy"]
-[ext_resource type="Resource" uid="uid://c74agcbn334yb" path="res://Resources/ShotPatterns/Boss/Tank/SubShot.tres" id="t_sub"]
-[ext_resource type="Resource" uid="uid://cjpjkmf1ehatj" path="res://Resources/ShotPatterns/Boss/Tank/SubShot2.tres" id="t_sub2"]
-[ext_resource type="Resource" uid="uid://cvvk4aqtyllya" path="res://Resources/ShotPatterns/Stage1/s1_boss_converge.tres" id="s_converge"]
-[ext_resource type="Resource" uid="uid://b0gqtucbx8o5p" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge.tres" id="s_rage_converge"]
+[ext_resource type="Script" uid="uid://cevf4t82eolb4" path="res://Component/Boss/tank_mover.gd" id="tank_mover"]
+[ext_resource type="Script" uid="uid://bl0npb77xq02" path="res://Component/Sway/sway_follow.gd" id="sway_follow"]
+[ext_resource type="Script" uid="uid://bcedow6ffc4e5" path="res://Component/Boss/entrance_blast.gd" id="entrance_blast"]
 [ext_resource type="Texture2D" uid="uid://b02kojahk51jq" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Wheels_strip4.png" id="1_xstfq"]
 [ext_resource type="Texture2D" uid="uid://5d3cvuu4pylh" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_strip4.png" id="2_7ermy"]
+[ext_resource type="Script" uid="uid://b7vmnigxshh4w" path="res://shot_preview.gd" id="2_ept2u"]
 [ext_resource type="Texture2D" uid="uid://b6uflatai842f" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_L.png" id="3_pflla"]
 [ext_resource type="Texture2D" uid="uid://do0mm2kt4ve2g" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_R.png" id="4_40li8"]
 [ext_resource type="Texture2D" uid="uid://bkguqagmhm44v" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Head.png" id="5_cx68f"]
@@ -23,15 +14,43 @@
 [ext_resource type="Texture2D" uid="uid://covkpy2kbg2e5" path="res://Assets/Full Shmup Asset Pack/Tank Boss/SidePart_R_strip4.png" id="8_yoavu"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="9_euyg5"]
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
 [ext_resource type="Script" uid="uid://bucp0ao8udq4" path="res://Component/Part/enemy_part.gd" id="part"]
+[ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
+[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" uid="uid://cvvk4aqtyllya" path="res://Resources/ShotPatterns/Stage1/s1_boss_converge.tres" id="s_converge"]
+[ext_resource type="Resource" uid="uid://b0gqtucbx8o5p" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge.tres" id="s_rage_converge"]
 [ext_resource type="Script" uid="uid://xfs58eu5fmdl" path="res://Component/Turret/turret.gd" id="turret"]
+[ext_resource type="Resource" uid="uid://beuvsx7wl8bqw" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike.tres" id="t_circle"]
+[ext_resource type="Resource" uid="uid://bi2uxpq3bsahf" path="res://Resources/ShotPatterns/Boss/Tank/FireWork.tres" id="t_firework"]
+[ext_resource type="Resource" uid="uid://5mhy16g3o0br" path="res://Resources/ShotPatterns/Boss/Tank/FireWorkEasy.tres" id="t_firework_easy"]
+[ext_resource type="Resource" uid="uid://dpma0ny2n4du0" path="res://Resources/ShotPatterns/Boss/Tank/Shot.tres" id="t_shot"]
+[ext_resource type="Resource" uid="uid://c74agcbn334yb" path="res://Resources/ShotPatterns/Boss/Tank/SubShot.tres" id="t_sub"]
+[ext_resource type="Resource" uid="uid://cjpjkmf1ehatj" path="res://Resources/ShotPatterns/Boss/Tank/SubShot2.tres" id="t_sub2"]
+[ext_resource type="Resource" uid="uid://ba7h4uf1jak66" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine.tres" id="t_washer"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(65, 80)
 
 [sub_resource type="RectangleShape2D" id="hull_shape"]
 size = Vector2(93, 280)
+
+[sub_resource type="Resource" id="main_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
+
+[sub_resource type="Resource" id="main_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_circle"), ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
+
+[sub_resource type="Resource" id="main_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtResource("t_shot"), ExtResource("t_circle"), ExtResource("t_washer")])
 
 [sub_resource type="RectangleShape2D" id="top_body_shape"]
 size = Vector2(25.428572, 40)
@@ -136,6 +155,26 @@ _data = {
 
 [sub_resource type="RectangleShape2D" id="mini_part_shape"]
 size = Vector2(14, 14)
+
+[sub_resource type="Resource" id="left_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
+
+[sub_resource type="Resource" id="left_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="side_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="right_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+
+[sub_resource type="Resource" id="right_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
 
 [sub_resource type="Animation" id="Animation_31aup"]
 resource_name = "Idle"
@@ -291,41 +330,6 @@ _data = {
 &"RESET": SubResource("Animation_rh64e")
 }
 
-[sub_resource type="Resource" id="main_p1"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
-
-[sub_resource type="Resource" id="main_p2"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("t_circle"), ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
-
-[sub_resource type="Resource" id="main_p3"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtResource("t_shot"), ExtResource("t_circle"), ExtResource("t_washer")])
-
-[sub_resource type="Resource" id="left_p1"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
-
-[sub_resource type="Resource" id="left_p2"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
-
-[sub_resource type="Resource" id="right_p1"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
-
-[sub_resource type="Resource" id="right_p2"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
-
-[sub_resource type="Resource" id="side_p3"]
-script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
-
 [sub_resource type="Resource" id="boss_phase_1"]
 script = ExtResource("boss_phase")
 
@@ -401,8 +405,8 @@ hframes = 4
 position = Vector2(-22.5, -15.5)
 script = ExtResource("part")
 max_hp = 4000
-breakable_from_phase = 1
 damage_to_body = 0.5
+breakable_from_phase = 1
 break_score = 5000
 break_items = 8
 
@@ -427,8 +431,8 @@ one_shot = true
 position = Vector2(25, -16)
 script = ExtResource("part")
 max_hp = 4000
-breakable_from_phase = 1
 damage_to_body = 0.5
+breakable_from_phase = 1
 break_score = 5000
 break_items = 8
 
@@ -547,6 +551,22 @@ phases = Array[ExtResource("shooter_phase")]([SubResource("right_p1"), SubResour
 libraries/ = SubResource("AnimationLibrary_rgo3p")
 autoplay = &"Move"
 
-[node name="BossPhaseController" type="Node" parent="." unique_id=301000300]
+[node name="BossPhaseController" type="Node" parent="." index="13" unique_id=301000300]
 script = ExtResource("phase_controller")
 phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
+
+[node name="Node2D" type="Node2D" parent="." index="14" unique_id=727170561]
+z_index = 3
+script = ExtResource("2_ept2u")
+pattern = ExtResource("t_washer")
+preview_time = 2.251353222222223
+playing = true
+
+[node name="SwayFollow" type="Node" parent="." unique_id=301000310]
+script = ExtResource("sway_follow")
+
+[node name="EntranceBlast" type="Node" parent="." unique_id=301000311]
+script = ExtResource("entrance_blast")
+
+[node name="TankMover" type="Node" parent="." unique_id=301000312]
+script = ExtResource("tank_mover")

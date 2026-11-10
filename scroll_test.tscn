@@ -10,9 +10,10 @@
 [ext_resource type="Texture2D" uid="uid://53vdxebofh7" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Lower_Layer.png" id="6_kku2p"]
 [ext_resource type="Script" uid="uid://cy01axe4ckhws" path="res://background_scroller.gd" id="6_spej0"]
 [ext_resource type="Texture2D" uid="uid://bpmwsg86hpo15" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Top_Layer.png" id="7_nxg43"]
+[ext_resource type="Texture2D" uid="uid://cx4gd465fu883" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Loop this at the end.png" id="7_sf26y"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/boss_gauge.tscn" id="14_0u1li"]
-[ext_resource type="AudioStream" uid="uid://dk506wt1c7udi" path="res://Assets/Sounds/Music/AS_114335_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="19_sf26y"]
-[ext_resource type="AudioStream" uid="uid://dmef5q8lbeq61" path="res://Assets/Sounds/Music/AS_111999_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="19_v0qhg"]
+[ext_resource type="AudioStream" uid="uid://ce7p8gonc583" path="res://Assets/Sounds/Music/AS_1240332_勇壮なプログレッシブブレイクス.mp3" id="19_sf26y"]
+[ext_resource type="AudioStream" uid="uid://dhj4htoqrenf0" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="20_32fuh"]
 [ext_resource type="Script" uid="uid://b3ktyv1grf8rc" path="res://background_sway.gd" id="bg_sway"]
 [ext_resource type="Script" uid="uid://bwysosabdx413" path="res://hud_fader.gd" id="hud_fader"]
 [ext_resource type="Resource" uid="uid://beiarkvgmkkj1" path="res://Resources/StageData/Stage1GrazeRush.tres" id="s1_graze_rush"]
@@ -48,7 +49,7 @@ graze_radius_scales = Array[float]([1.2, 1.0, 0.8])
 z_index = 1
 script = ExtResource("2_nxg43")
 stage = ExtResource("s1_graze_rush")
-preview_time = 119.33907694735062
+preview_time = 120.02101346505316
 
 [node name="Node2D2" type="Node2D" parent="." unique_id=1021682187]
 z_index = 1
@@ -63,8 +64,15 @@ enemy_parent = NodePath("../Enemys")
 
 [node name="Enemys" type="Node2D" parent="." unique_id=1210740945]
 
-[node name="Scroller" type="Node2D" parent="." unique_id=944740712]
+[node name="Scroller" type="Node2D" parent="." unique_id=944740712 node_paths=PackedStringArray("loop_sprite")]
 script = ExtResource("6_spej0")
+loop_sprite = NodePath("LoopThisAtTheEnd")
+
+[node name="LoopThisAtTheEnd" type="Sprite2D" parent="Scroller" unique_id=395927672]
+texture_repeat = 2
+position = Vector2(242, -12861)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("7_sf26y")
 
 [node name="Sprite2D3" type="Sprite2D" parent="Scroller" unique_id=1652895685]
 position = Vector2(242, -9402.591)
@@ -122,8 +130,8 @@ script = ExtResource("3_n7bgm")
 
 [node name="BackgroundSway" type="Node" parent="." unique_id=418265093 node_paths=PackedStringArray("targets")]
 script = ExtResource("bg_sway")
-targets = [NodePath("../Scroller/Sprite2D3"), NodePath("../Scroller/Sprite2D2")]
-depth_scales = Array[float]([0.7, 1.0])
+targets = [NodePath("../Scroller/Sprite2D3"), NodePath("../Scroller/Sprite2D2"), NodePath("../Scroller/LoopThisAtTheEnd")]
+depth_scales = Array[float]([0.7, 1.0, 0.7])
 sway_distance = 40.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1832352645]
@@ -152,7 +160,7 @@ volume_db = -18.0
 script = ExtResource("stage_bgm")
 stage_runner = NodePath("../StageRunner")
 stage_music = ExtResource("19_sf26y")
-boss_music = ExtResource("19_v0qhg")
+boss_music = ExtResource("20_32fuh")
 
 [node name="ScoreSystem" type="Node" parent="." unique_id=1659386178]
 script = ExtResource("score_system")

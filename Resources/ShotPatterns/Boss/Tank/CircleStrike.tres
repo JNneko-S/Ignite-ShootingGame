@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://beuvsx7wl8bqw"]
 
-[ext_resource type="PackedScene" uid="uid://vf0xvk3jcld8" path="res://GameScene/Bullet/tank_boss_bullet.tscn" id="1_yhnfg"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_pink"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_eqnhq"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_7oibl"]
 
@@ -21,7 +21,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 
 [resource]
 script = ExtResource("3_7oibl")
-bullet_scene = ExtResource("1_yhnfg")
+bullet_scene = ExtResource("1_pink")
 shot_count = 10
 loop = false
 pause = 5.0

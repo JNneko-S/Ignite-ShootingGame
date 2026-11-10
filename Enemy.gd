@@ -24,6 +24,11 @@ var boss_reach_time : float = -1.0
 var alive_time : float = 0.0
 ## 近づいて撃って倒したか(倒された瞬間に ScoreSystem が決める)。爆発が豪華になり、点が増える
 var close_kill : bool = false
+## 移動パターンの位置に足すずれ(SwayFollow が、背景の横揺れに合わせて入れる)。
+## 移動パターンで動いている途中でも、このずれは保たれる
+var sway_offset : Vector2 = Vector2.ZERO
+## 今、位置に足してあるずれ
+var _applied_sway : Vector2 = Vector2.ZERO
 
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
@@ -60,7 +65,7 @@ func _mirror_children() -> void:
 
 func _run_pattern() -> void:
 	if pattern.override_start_position:
-		global_position = _convert_absolute(pattern.start_position)
+		global_position = _convert_absolute(pattern.start_position) + _applied_sway
 	for step in pattern.steps:
 		await _run_step(step)
 		if _is_dead:
@@ -72,18 +77,18 @@ func _run_step(step : MoveStep) -> void:
 	if step.mode == MoveStep.Mode.CHASE:
 		await _run_chase(step)
 		return
-	var start := global_position
+	var start := global_position - _applied_sway # 移動パターンの上の位置(横揺れのずれを除く)
 	var target : Vector2
 	if step.relative:
-		target = global_position + _convert_relative(step.target)
+		target = start + _convert_relative(step.target)
 	else:
 		target = _convert_absolute(step.target)
 
-	# XとYを同時に、別々のイージングで動かす → カーブになる
+	# XとYを同時に、別々のイージングで動かす → カーブになる。横揺れのずれは、毎フレーム足し直す
 	_tween = create_tween().set_parallel(true)
-	_tween.tween_property(self, "global_position:x", target.x, step.duration)\
+	_tween.tween_method(func(x : float) -> void: global_position.x = x + _applied_sway.x, start.x, target.x, step.duration)\
 		.set_trans(step.x_trans).set_ease(step.x_ease)
-	_tween.tween_property(self, "global_position:y", target.y, step.duration)\
+	_tween.tween_method(func(y : float) -> void: global_position.y = y + _applied_sway.y, start.y, target.y, step.duration)\
 		.set_trans(step.y_trans).set_ease(step.y_ease)
 	await _tween.finished
 	if target != start:
@@ -104,6 +109,10 @@ func _run_chase(step : MoveStep) -> void:
 func _physics_process(delta : float) -> void:
 	if not _is_dead:
 		alive_time += delta
+	# 横揺れのずれが変わった分だけ、位置をずらす(移動パターンの途中でも、待っている間でも)
+	if sway_offset != _applied_sway:
+		global_position += sway_offset - _applied_sway
+		_applied_sway = sway_offset
 	if _chase_step == null or _is_dead:
 		return
 	var step := _chase_step

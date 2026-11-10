@@ -114,7 +114,7 @@ func _run_sequence() -> void:
 func _run_once(pattern : ShotPattern, generation : int) -> void:
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
-	await _wait(pattern.start_delay * unit)
+	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
 	var burst_aim := _aim_angle()
 	for i in maxi(pattern.shot_count, 1):
 		if generation != _generation:
@@ -140,7 +140,7 @@ func _run_pattern(pattern : ShotPattern) -> void:
 	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
-	await _wait(pattern.start_delay * unit)
+	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
 	var shot_index := 0
 	while generation == _generation:
 		var burst_aim := _aim_angle()
@@ -159,7 +159,7 @@ func _run_pattern(pattern : ShotPattern) -> void:
 				return
 		if not pattern.loop:
 			return
-		await _wait(pattern.pause * unit)
+		await _wait_with_warning(pattern, pattern.pause * unit, generation)
 
 func _can_fire() -> bool:
 	if not enabled or is_holding_fire():
@@ -211,6 +211,23 @@ func _aim_angle() -> float:
 	if player:
 		return (player.global_position - global_position).angle()
 	return Vector2.DOWN.angle()
+
+## 撃つ前の seconds 秒を待つ。pattern に Warning Time があれば、待ちの最後の Warning Time 秒に予告線を出す。
+## 待ちが Warning Time より短ければ、予告のぶんだけ長く待つ
+func _wait_with_warning(pattern : ShotPattern, seconds : float, generation : int) -> void:
+	var warn := pattern.warning_time
+	if warn <= 0.0:
+		await _wait(seconds)
+		return
+	await _wait(maxf(seconds - warn, 0.0))
+	if generation != _generation or not is_inside_tree():
+		return
+	var line := AimWarning.new()
+	line.setup(self, pattern, generation, warn)
+	add_child(line)
+	await _wait(warn)
+	if is_instance_valid(line):
+		line.queue_free()
 
 ## このノードに紐づく Tween で待つ。ノードが消えたときに安全に処理が止まる
 func _wait(seconds : float) -> void:

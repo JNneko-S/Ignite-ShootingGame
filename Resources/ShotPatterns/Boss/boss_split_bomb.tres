@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="4_u6gbo"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="big"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="ring"]
 
 [sub_resource type="Resource" id="slow"]
 script = ExtResource("2")
@@ -12,7 +12,7 @@ target_speed = 25.0
 
 [sub_resource type="Resource" id="ring"]
 script = ExtResource("1")
-bullet_scene = ExtResource("ring")
+bullet_scene = ExtResource("4_u6gbo")
 bullet_count = 14
 spread_angle = 360.0
 aim_at_player = false

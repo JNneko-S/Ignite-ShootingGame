@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bqui2ffqwjf00"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_a1agy"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="3"]
 
 [sub_resource type="Resource" id="step_0"]
 script = ExtResource("2")
@@ -23,7 +23,7 @@ speed_ease = 0
 
 [resource]
 script = ExtResource("1")
-bullet_scene = ExtResource("3")
+bullet_scene = ExtResource("1_a1agy")
 start_delay = 4.0
 pause = 2.2
 bullet_count = 20

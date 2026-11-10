@@ -23,6 +23,9 @@ signal reached_top
 @export var stop_ease_distance : float = 80.0
 ## true なら、開始時に背景の下の端をカメラの下端にそろえる
 @export var align_bottom_on_start : bool = true
+## 設定すると、上の端に着いても止まらず、この絵(子の Sprite2D。背景の上の端に置いておく)を上へ繰り返し並べて、
+## スクロールを続ける(ボス戦で、地面が流れ続けるように)。絵のテクスチャは縦につながる絵にする
+@export var loop_sprite : Sprite2D
 
 @export_group("背景の範囲")
 ## true なら、子の Sprite2D / TileMapLayer から背景の上下の端を求める
@@ -40,6 +43,11 @@ var _start_y : float = 0.0
 var _end_y : float = 0.0
 var _initialized : bool = false
 var _runner : StageRunner
+## 上の端を過ぎて、繰り返しの絵で流れ続けているか
+var _looping : bool = false
+## 繰り返しの絵の、下の端(このノードから見た y)と、1枚の大きさ(テクスチャの px)
+var _loop_bottom : float = 0.0
+var _loop_tile : Vector2 = Vector2.ONE
 
 func _ready() -> void:
 	add_to_group("background_scroller")
@@ -47,6 +55,11 @@ func _ready() -> void:
 func _process(delta : float) -> void:
 	if not _initialized:
 		_initialize() # カメラの位置が決まってから測るため、最初のフレームで行う
+		return
+	if _looping:
+		# 上の端を過ぎたあとは、繰り返す絵を上へ足しながら、流れ続ける
+		position.y += scroll_speed * (_runner.scroll_multiplier if _runner else 1.0) * delta
+		_update_loop()
 		return
 	if is_at_top:
 		return
@@ -58,7 +71,7 @@ func _process(delta : float) -> void:
 		var multiplier := _runner.scroll_multiplier if _runner else 1.0
 		var remaining := _end_y - position.y
 		var speed := scroll_speed * multiplier
-		if stop_ease_distance > 0.0:
+		if stop_ease_distance > 0.0 and loop_sprite == null: # 繰り返すときは、止まらないので減速しない
 			speed *= clampf(remaining / stop_ease_distance, 0.1, 1.0)
 		position.y = minf(position.y + speed * delta, _end_y)
 		progress = _progress_of(position.y)
@@ -68,6 +81,34 @@ func _process(delta : float) -> void:
 		progress = 1.0
 		is_at_top = true
 		reached_top.emit()
+		if loop_sprite:
+			_start_loop()
+
+## 繰り返しの準備: 絵の下の端(背景の上の端とのつなぎ目)を固定して、上へ伸ばせるようにする
+func _start_loop() -> void:
+	_looping = true
+	var s := loop_sprite
+	var tex_size := s.texture.get_size()
+	var rect := s.get_rect() # 今の見た目の範囲(絵のローカル座標)
+	_loop_bottom = s.position.y + rect.end.y * s.scale.y
+	var left := s.position.x + rect.position.x * s.scale.x
+	s.centered = false
+	s.offset = Vector2.ZERO
+	s.region_enabled = true
+	s.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	s.position.x = left
+	_loop_tile = tex_size
+	_update_loop()
+
+## 絵を、つなぎ目からカメラの上の端の少し上まで、1枚分ずつ伸ばす(下の端は動かさない)
+func _update_loop() -> void:
+	var s := loop_sprite
+	var view := CameraView.visible_rect(self)
+	var top_local := (global_transform.affine_inverse() * view.position).y - _loop_tile.y * s.scale.y
+	var tiles := maxi(ceili((_loop_bottom - top_local) / (_loop_tile.y * s.scale.y)), 1)
+	var height := tiles * _loop_tile.y
+	s.region_rect = Rect2(0.0, _loop_tile.y - height, _loop_tile.x, height) # 下の段が、もとの絵の位置になる
+	s.position.y = _loop_bottom - height * s.scale.y
 
 ## 今の位置を記録しなおす(背景の中身やカメラを途中で変えたときに呼ぶ)
 func _initialize() -> void:

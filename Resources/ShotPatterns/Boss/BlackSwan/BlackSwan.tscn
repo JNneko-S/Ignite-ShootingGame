@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://di60y0bpnpn6b"]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="1_3v7c8"]
+[ext_resource type="Texture2D" uid="uid://7a60wnm5bufm" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Body_engine_strip6.png" id="2_m6wyt"]
+[ext_resource type="Texture2D" uid="uid://8c1q0ocqcen5" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Body_strip6.png" id="3_k084q"]
+[ext_resource type="Texture2D" uid="uid://bdshwkv2mgb5s" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Wings_engines_strip6.png" id="4_6di3i"]
+[ext_resource type="Texture2D" uid="uid://bxd5or2geer8u" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Wings_engines_cannons_strip6.png" id="5_1jycq"]
+[ext_resource type="Texture2D" uid="uid://dg62jtqfqtbaj" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Wings_strip6.png" id="6_y34wv"]
+[ext_resource type="Texture2D" uid="uid://c1kw0iqx47s28" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Wings_turrets.png" id="7_xjkgf"]
+[ext_resource type="Script" uid="uid://b7vmnigxshh4w" path="res://shot_preview.gd" id="8_b25eq"]
+[ext_resource type="Resource" uid="uid://dtpjbusws2fnp" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot.tres" id="9_40gf8"]
+[ext_resource type="Script" path="res://Component/Boss/afterburner_dive.gd" id="afterburner_dive"]
+[ext_resource type="Script" path="res://Component/Hitbox/contact_hitbox.gd" id="contact_hitbox"]
+
+[sub_resource type="RectangleShape2D" id="ram_body"]
+size = Vector2(140, 400)
+
+[node name="Enemy" unique_id=724143726 instance=ExtResource("1_3v7c8")]
+position = Vector2(234, 51)
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_m6wyt")
+hframes = 6
+
+[node name="Sprite2D2" type="Sprite2D" parent="." index="1" unique_id=751307480]
+z_index = 2
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("3_k084q")
+hframes = 6
+
+[node name="Sprite2D4" type="Sprite2D" parent="." index="2" unique_id=1264692013]
+z_index = 2
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("4_6di3i")
+hframes = 6
+
+[node name="Sprite2D3" type="Sprite2D" parent="." index="3" unique_id=1551978376]
+z_index = 2
+scale = Vector2(2.4999998, 2.4999998)
+texture = ExtResource("5_1jycq")
+hframes = 6
+frame = 5
+
+[node name="Sprite2D5" type="Sprite2D" parent="." index="4" unique_id=675889779]
+z_index = 2
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("6_y34wv")
+hframes = 6
+
+[node name="Sprite2D6" type="Sprite2D" parent="." index="5" unique_id=818101113]
+z_index = 2
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("7_xjkgf")
+
+[node name="Node2D" type="Node2D" parent="." index="14" unique_id=1666471861]
+z_index = 6
+position = Vector2(-203, -26)
+script = ExtResource("8_b25eq")
+pattern = ExtResource("9_40gf8")
+preview_time = 3.6377724444445008
+playing = true
+loop_length = 8.0
+
+[node name="EngineL" type="Marker2D" parent="Sprite2D4" index="0" unique_id=401000001]
+position = Vector2(-41, 86)
+
+[node name="EngineR" type="Marker2D" parent="Sprite2D4" index="1" unique_id=401000002]
+position = Vector2(41, 86)
+
+[node name="AfterburnerDive" type="Node" parent="." index="15" unique_id=401000003 node_paths=PackedStringArray("engines", "ram_hitbox")]
+script = ExtResource("afterburner_dive")
+engines = [NodePath("../Sprite2D4/EngineL"), NodePath("../Sprite2D4/EngineR")]
+ram_hitbox = NodePath("../RamHitbox")
+
+[node name="RamHitbox" type="Area2D" parent="." index="16" unique_id=401000004]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("contact_hitbox")
+damage = 1
+damage_source_type = 2
+start_active = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RamHitbox" index="0" unique_id=401000005]
+position = Vector2(0, 25)
+shape = SubResource("ram_body")
+

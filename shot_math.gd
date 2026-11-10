@@ -17,7 +17,8 @@ static func shot_times(pattern : ShotPattern, until : float, seconds_per_beat : 
 	var shots : Array[Dictionary] = []
 	var unit := time_unit(pattern, seconds_per_beat)
 	var interval := pattern.interval * unit
-	var t := pattern.start_delay * unit
+	# 予告線(Warning Time)より待ちが短いと、ゲームでは予告のぶん長く待つので、それに合わせる
+	var t := maxf(pattern.start_delay * unit, pattern.warning_time)
 	var index := 0
 	while t <= until + 0.000001 and index < MAX_SHOTS:
 		for i in maxi(pattern.shot_count, 1):
@@ -28,7 +29,7 @@ static func shot_times(pattern : ShotPattern, until : float, seconds_per_beat : 
 			index += 1
 		if not pattern.loop:
 			return shots
-		t += interval * maxi(pattern.shot_count, 1) + pattern.pause * unit
+		t += interval * maxi(pattern.shot_count, 1) + maxf(pattern.pause * unit, pattern.warning_time)
 		if pattern.interval <= 0.0 and pattern.pause <= 0.0:
 			return shots # 時間が進まない設定で、無限ループしないように
 	return shots
