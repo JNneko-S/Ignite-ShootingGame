@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ul2o805ej4sw"]
+[gd_scene format=3 uid="uid://ctusdf1x37n0w"]
 
 [ext_resource type="Script" uid="uid://cgku0362dxnou" path="res://Player.gd" id="1_onrkg"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="2_i3pqv"]
@@ -13,6 +13,9 @@
 [ext_resource type="Script" uid="uid://cj1p0qdeu80na" path="res://ignite_params.gd" id="8_b26j0"]
 [ext_resource type="Script" uid="uid://rfvrrp2uytpk" path="res://Component/Graze/graze_detector.gd" id="c_graze"]
 [ext_resource type="Script" uid="uid://f3mid0nwuvbs" path="res://Component/Invincibility/invincibility.gd" id="c_invincible"]
+[ext_resource type="AudioStream" uid="uid://bngd7crvsq5h5" path="res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3" id="snd_shot"]
+[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="snd_lock"]
+[ext_resource type="AudioStream" uid="uid://dv225hu0xeqco" path="res://Assets/Sounds/Graze/AS_151526_シャッ（ライターを使って火を付ける）.mp3" id="snd_graze"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
 
@@ -73,14 +76,16 @@ _data = {
 &"RESET": SubResource("Animation_2hs0m")
 }
 
-[node name="Player" type="CharacterBody2D" unique_id=1981584153]
+[node name="Player" type="CharacterBody2D" unique_id=1981584153 node_paths=PackedStringArray("shot_sound", "lock_sound", "graze_sound")]
 z_index = 1
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_onrkg")
 bullet_scene = ExtResource("2_sweqy")
 shot_angles = Array[float]([0.0, 3.0, -3.0])
-shot_sound_db = -22.0
+shot_sound = NodePath("ShotSound")
+lock_sound = NodePath("LockSound")
+graze_sound = NodePath("GrazeSound")
 shot_power = 1.3
 ignite_hold_time = 1.0
 charge_ring_radius = 30.0
@@ -164,6 +169,18 @@ autoplay = &"Idle"
 
 [node name="Invincibility" type="Node" parent="." unique_id=301000010]
 script = ExtResource("c_invincible")
+
+[node name="ShotSound" type="AudioStreamPlayer" parent="." unique_id=501000011]
+stream = ExtResource("snd_shot")
+volume_db = -22.0
+
+[node name="LockSound" type="AudioStreamPlayer" parent="." unique_id=501000012]
+stream = ExtResource("snd_lock")
+volume_db = -12.0
+
+[node name="GrazeSound" type="AudioStreamPlayer" parent="." unique_id=501000013]
+stream = ExtResource("snd_graze")
+volume_db = -12.0
 
 [connection signal="is_dead" from="HPComponent" to="." method="_on_hp_component_is_dead"]
 [connection signal="recieved_damage" from="Hurtbox" to="." method="_on_hurtbox_recieved_damage"]

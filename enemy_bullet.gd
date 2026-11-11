@@ -45,7 +45,7 @@ func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
 	add_to_group("enemy_bullet") # 被弾時・イグナイト終了時の弾消しの対象
 	# 当たったら消える(自機に当たっても、反射弾が敵に当たっても)
-	damage_dealt.connect(func(_hurtbox : Hurtbox) -> void: queue_free())
+	damage_dealt.connect(_on_damage_dealt)
 	area_entered.connect(_on_area_entered)
 	# 画面外に出たら消える
 	var notifier := VisibleOnScreenNotifier2D.new()
@@ -117,6 +117,16 @@ func _find_sprite() -> Sprite2D:
 		if node is Sprite2D:
 			return node
 	return null
+
+## 当たった: 消える。反射弾が敵に当たったときは、その場にスコアが出る(ScoreSystem.on_reflect_hit)
+func _on_damage_dealt(_hurtbox : Hurtbox) -> void:
+	if is_queued_for_deletion():
+		return # 同じフレームに2つの敵に当たっても、スコアは1回
+	if _state == BulletState.IGNITED:
+		var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
+		if score_system:
+			score_system.on_reflect_hit(global_position)
+	queue_free()
 
 func is_normal() -> bool:
 	return _state == BulletState.NORMAL

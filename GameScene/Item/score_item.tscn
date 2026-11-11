@@ -1,13 +1,21 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://score_item.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dhfusvq4oqof0" path="res://Assets/Full Shmup Asset Pack/Score/scoreQ_sprite.png" id="2_coin"]
+[ext_resource type="Texture2D" uid="uid://dhfusvq4oqof0" path="res://Assets/Full Shmup Asset Pack/Score/scoreQ_sprite.png" id="2_sprite"]
+[ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="3_sound"]
 
-[node name="ScoreItem" type="Node2D"]
+[node name="ScoreItem" type="Node2D" node_paths=PackedStringArray("pickup_sound")]
 script = ExtResource("1_script")
+kind = 0
+pickup_sound = NodePath("PickupSound")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 scale = Vector2(1.6, 1.6)
-texture = ExtResource("2_coin")
+texture = ExtResource("2_sprite")
 hframes = 4
+
+[node name="PickupSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_sound")
+volume_db = -14.0
+pitch_scale = 1.0

@@ -9,9 +9,8 @@ class_name DeathExplosion
 ## その場に出す爆発。空なら爆発しない
 @export var explosion_scene : PackedScene = Explosion.ZAKO
 @export var explosion_scale : float = 1.0
-## 効果音と音量(dB)。空なら鳴らさない
-@export var sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3")
-@export var sound_db : float = -15.0
+## 効果音(シーンに置いた AudioStreamPlayer。音量・高さはノードで決める)。空なら鳴らさない
+@export var sound : AudioStreamPlayer
 
 @export_group("連鎖爆発 → 大爆発")
 ## オンなら、連鎖爆発 → 大爆発してから終わる。ボスは StageRunner が is_boss の敵をオンにする
@@ -27,8 +26,8 @@ class_name DeathExplosion
 @export var drift : Vector2 = Vector2.ZERO
 ## 揺れの強さの倍率(中型機は小さめにする)
 @export var shake_scale : float = 1.0
-## 大爆発の効果音
-@export var big_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3")
+## 大爆発の効果音(AudioStreamPlayer)
+@export var big_sound : AudioStreamPlayer
 
 @export_group("近距離撃破")
 ## 持ち主の close_kill がオンのとき(近づいて撃って倒したとき)、爆発が少し大きくなり、
@@ -61,13 +60,13 @@ func play() -> void:
 	var close : bool = body.get("close_kill") == true
 	if close and randf() < _chain_chance():
 		Explosion.random_chain(get_tree(), body.global_position, close_chain_size,
-			close_chain_interval, close_chain_scale, sound, sound_db - 6.0)
+			close_chain_interval, close_chain_scale, sound, -6.0)
 	if not big:
 		if explosion_scene:
 			var effect_scale := explosion_scale * (close_scale_boost if close else 1.0) # 近距離撃破は、いつも少し大きめ
 			Explosion.spawn(get_tree(), explosion_scene, body.global_position, effect_scale)
 		if sound:
-			SoundManager.play_sfx(sound, sound_db)
+			SoundManager.play(sound)
 		return
 	await _play_big(body)
 
@@ -92,7 +91,7 @@ func _play_big(body : Node2D) -> void:
 		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
 		Explosion.spawn(tree, scene, body.global_position + offset, effect_scale)
 		if sound:
-			SoundManager.play_sfx(sound, sound_db - 4.0, randf_range(0.9, 1.1)) # 連鎖の音は少し小さく、高さをばらす
+			SoundManager.play(sound, randf_range(0.9, 1.1), -4.0) # 連鎖の音は少し小さく、高さをばらす
 		SpriteShake.shake(body, 4.0 * shake_scale)
 		await tree.create_timer(interval).timeout
 
@@ -100,7 +99,7 @@ func _play_big(body : Node2D) -> void:
 	var center := body.global_position + rect.get_center()
 	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, big_scale)
 	if big_sound:
-		SoundManager.play_sfx(big_sound, sound_db)
+		SoundManager.play(big_sound)
 	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
 	for i in 8:
 		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * rect.size.length() * 0.25, big_scale * 0.5)

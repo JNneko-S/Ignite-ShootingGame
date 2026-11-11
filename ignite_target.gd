@@ -25,8 +25,8 @@ class_name IgniteTarget
 @export var glow_color : Color = Color(1.35, 1.1, 0.85)
 @export var glow_period : float = 1.2
 @export var explosion_scale : float = 1.4
-@export var break_sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3")
-@export var break_sound_db : float = -12.0
+## 壊れたときの効果音(シーンに置いた AudioStreamPlayer)
+@export var break_sound : AudioStreamPlayer
 
 var _broken : bool = false
 var _variant : int = 0
@@ -66,7 +66,7 @@ func _break() -> void:
 		_sprite.texture = broken_textures[_variant]
 	Explosion.spawn(get_tree(), Explosion.EXPLOSIVE, global_position, explosion_scale)
 	if break_sound:
-		SoundManager.play_sfx(break_sound, break_sound_db)
+		SoundManager.play(break_sound)
 	var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
 	if score_system:
 		score_system.spawn_items(global_position, item_total, item_count, 1.5)

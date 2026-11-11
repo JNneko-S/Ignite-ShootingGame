@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c7y3eee2a2abp"]
 
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_cross"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_rkxgm"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_sioga"]
 
 [resource]
 script = ExtResource("2_sioga")
-shot_count = 100
+bullet_scene = ExtResource("b_cross")
+shot_count = 60
 interval = 0.05
 loop = false
 bullet_count = 6

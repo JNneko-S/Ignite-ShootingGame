@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://ignite_target.gd" id="1_script"]
+[ext_resource type="AudioStream" uid="uid://drqvi48px8sp1" path="res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3" id="snd_break"]
 [ext_resource type="Texture2D" uid="uid://dekn5u2mhxkkp" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn21.png" id="2_green"]
 [ext_resource type="Texture2D" uid="uid://btsqjr1lwnk27" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn20.png" id="3_green_broken"]
 [ext_resource type="Texture2D" uid="uid://31v5p6mrv8lv" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn30.png" id="4_blue"]
@@ -10,11 +11,16 @@
 [ext_resource type="Texture2D" uid="uid://deissdtnp1j7b" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn50.png" id="8_yellow"]
 [ext_resource type="Texture2D" uid="uid://jnykjdo2n7n1" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn51.png" id="9_yellow_broken"]
 
-[node name="IgniteTarget" type="Node2D" groups=["ground_obstacle"]]
+[node name="IgniteTarget" type="Node2D" groups=["ground_obstacle"] node_paths=PackedStringArray("break_sound")]
 script = ExtResource("1_script")
+break_sound = NodePath("BreakSound")
 intact_textures = Array[Texture2D]([ExtResource("2_green"), ExtResource("4_blue"), ExtResource("6_red"), ExtResource("8_yellow")])
 broken_textures = Array[Texture2D]([ExtResource("3_green_broken"), ExtResource("5_blue_broken"), ExtResource("7_red_broken"), ExtResource("9_yellow_broken")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 texture = ExtResource("2_green")
+
+[node name="BreakSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("snd_break")
+volume_db = -12.0

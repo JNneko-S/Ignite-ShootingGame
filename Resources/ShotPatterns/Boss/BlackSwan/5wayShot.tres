@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dtpjbusws2fnp"]
 
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_56ley"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_01ax5"]
 
@@ -13,6 +14,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 
 [resource]
 script = ExtResource("2_01ax5")
+bullet_scene = ExtResource("b_curve")
 start_delay = 1.0
 shot_count = 4
 interval = 1.5

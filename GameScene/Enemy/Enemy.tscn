@@ -1,16 +1,16 @@
 [gd_scene format=3 uid="uid://cr31p6griofpq"]
 
-[ext_resource type="Script" uid="uid://bgiqecqao1imy" path="res://Component/HitFlash/hit_flash.gd" id="c_flash"]
-[ext_resource type="Script" uid="uid://bv8ag61eo8a7e" path="res://Component/Death/death_explosion.gd" id="c_death"]
-[ext_resource type="Script" uid="uid://chsim8q8oui2h" path="res://Component/Drop/item_drop.gd" id="c_drop"]
-[ext_resource type="Script" uid="uid://bn2081srrxexg" path="res://Component/Score/score_reward.gd" id="c_score"]
 [ext_resource type="Script" uid="uid://cdwcqv1x6dec7" path="res://Enemy.gd" id="1_65f6o"]
 [ext_resource type="Resource" uid="uid://oqs6gtgwa13w" path="res://Resources/MovePatterns/TestEnemy/enemy_pattern_center_curve.tres" id="2_dxnol"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="3_2ly0f"]
-[ext_resource type="AudioStream" uid="uid://cq6dud8jkv8ec" path="res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3" id="3_gop0t"]
 [ext_resource type="AudioStream" uid="uid://b485yg32cvsc5" path="res://Assets/Sounds/Explosive/AS_833267_フィルターが掛かったような爆破音.mp3" id="4_rq5yo"]
 [ext_resource type="PackedScene" uid="uid://11552kg7s1wm" path="res://Component/HP/hp_component.tscn" id="5_2fvp3"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="6_ruu38"]
+[ext_resource type="AudioStream" uid="uid://difae074m7ntk" path="res://Assets/Sounds/Explosive/AS_8381_ドカーンという爆発音.mp3" id="8_uqpy0"]
+[ext_resource type="Script" uid="uid://bv8ag61eo8a7e" path="res://Component/Death/death_explosion.gd" id="c_death"]
+[ext_resource type="Script" uid="uid://chsim8q8oui2h" path="res://Component/Drop/item_drop.gd" id="c_drop"]
+[ext_resource type="Script" uid="uid://bgiqecqao1imy" path="res://Component/HitFlash/hit_flash.gd" id="c_flash"]
+[ext_resource type="Script" uid="uid://bn2081srrxexg" path="res://Component/Score/score_reward.gd" id="c_score"]
 
 [node name="Enemy" type="CharacterBody2D" unique_id=724143726]
 script = ExtResource("1_65f6o")
@@ -48,11 +48,18 @@ z_index = 2
 [node name="HitFlash" type="Node" parent="." unique_id=301000001]
 script = ExtResource("c_flash")
 
-[node name="DeathExplosion" type="Node" parent="." unique_id=301000002]
+[node name="DeathExplosion" type="Node" parent="." unique_id=301000002 node_paths=PackedStringArray("sound", "big_sound")]
 script = ExtResource("c_death")
-sound = ExtResource("3_gop0t")
-sound_db = -20.0
-big_sound = ExtResource("4_rq5yo")
+sound = NodePath("DeathSound")
+big_sound = NodePath("BigDeathSound")
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="DeathExplosion" unique_id=501000001]
+stream = ExtResource("8_uqpy0")
+volume_db = -18.0
+
+[node name="BigDeathSound" type="AudioStreamPlayer" parent="DeathExplosion" unique_id=501000002]
+stream = ExtResource("4_rq5yo")
+volume_db = -18.0
 
 [node name="ItemDrop" type="Node" parent="." unique_id=301000003]
 script = ExtResource("c_drop")

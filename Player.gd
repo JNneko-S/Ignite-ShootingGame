@@ -26,9 +26,12 @@ var graze_radius_scale : float = 1.0:
 ## 通常時(強化なし)の発射角度
 @export var shot_angles : Array[float] = [0.0]
 @export var muzzle_offset : Vector2 = Vector2(0, -16)
-## 撃ったときの効果音と音量(dB)。空なら鳴らさない
-@export var shot_sound : AudioStream = preload("res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3")
-@export var shot_sound_db : float = -24.0
+## 撃ったときの効果音(シーンに置いた AudioStreamPlayer)。空なら鳴らさない
+@export var shot_sound : AudioStreamPlayer
+## グレイズしたときの効果音(AudioStreamPlayer)。空なら鳴らさない
+@export var graze_sound : AudioStreamPlayer
+## グレイズの音を鳴らす最短の間隔(秒)。一度にたくさんグレイズしても、鳴りすぎないように
+@export var graze_sound_interval : float = 0.06
 
 @export_group("ショットの威力")
 ## 通常ショット1発の基礎ダメージ(整数に丸められても倍率の差が残るよう、ダメージと体力は10倍の単位で扱う)
@@ -63,9 +66,8 @@ var graze_radius_scale : float = 1.0:
 @export var lock_color : Color = Color(1.0, 0.35, 0.3)
 ## ロックするまでの時間の倍率(パワーアップの段階 0, 1, 2, … の順)。段階の数 = 最大の段階 + 1
 @export var lock_time_scales : Array[float] = [1.0, 0.75, 0.55, 0.4]
-## 1体ロックしたときの効果音と音量(dB)
-@export var lock_sound : AudioStream = preload("res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3")
-@export var lock_sound_db : float = -12.0
+## 1体ロックしたときの効果音(AudioStreamPlayer)
+@export var lock_sound : AudioStreamPlayer
 
 @export_group("子機(オプション)")
 ## 子機のシーン(ルートが PlayerOption)
@@ -126,6 +128,8 @@ var graze_radius_scale : float = 1.0:
 const MAX_SHOT_STAGE : int = 5
 
 var graze_count : int = 0
+## 最後にグレイズの音を鳴らした時刻(ミリ秒)
+var _last_graze_sound_msec : int = -100000
 var is_focusing : bool = false
 
 var _spawn_position : Vector2
@@ -235,7 +239,7 @@ func _shoot(_delta: float) -> void:
 	var pattern := _shot_pattern()
 	shoot_timer.start(fire_interval * pattern["interval_scale"])
 	if _is_alive:
-		SoundManager.play_channel(&"player_shot", shot_sound, shot_sound_db)
+		SoundManager.play_on_channel(&"player_shot", shot_sound)
 	_fire_volley(pattern["angles"])
 	# バースト: 同じ弾を、少しずつ遅らせて撃つ
 	for i in range(1, pattern["burst"]):
@@ -311,7 +315,7 @@ func _update_lock(delta : float) -> void:
 			if next == null:
 				break
 			lock_targets.append(next)
-			SoundManager.play_sfx(lock_sound, lock_sound_db, 1.0 + 0.08 * (lock_targets.size() - 1)) # ロックするたびに少し高く
+			SoundManager.play(lock_sound, 1.0 + 0.08 * (lock_targets.size() - 1)) # ロックするたびに少し高く
 			_lock_timer -= time_per_lock
 		if lock_targets.size() >= max_count or _nearest_lockable() == null:
 			_lock_timer = minf(_lock_timer, time_per_lock) # 溜めすぎない(空きができたら、すぐ1体ロックできる)
@@ -463,6 +467,10 @@ func _on_grazed(bullet : Area2D, density : int) -> void:
 	graze_hit.emit(bullet.global_position, density)
 	grazed_bullet.emit(bullet)
 	graze_effect.emitting = true
+	var now := Time.get_ticks_msec()
+	if now - _last_graze_sound_msec >= int(graze_sound_interval * 1000.0):
+		_last_graze_sound_msec = now
+		SoundManager.play_on_channel(&"player_graze", graze_sound, randf_range(0.95, 1.05)) # 高さを少しばらして、続けて鳴っても単調にしない
 
 # ---------------------------------------------------------------- 被弾・死亡・復活
 

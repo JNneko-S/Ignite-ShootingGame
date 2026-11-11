@@ -14,6 +14,8 @@ signal phase_started(index : int)
 
 ## 段階。HPの多い順(第一形態が最初、Hp Ratio 1.0)に並べる
 @export var phases : Array[BossPhase] = []
+## false なら、段階が変わっても砲口の弾幕を切り替えない(ボスのステートが、今の段階を見て撃たせるとき)
+@export var switch_shooters : bool = true
 
 var _hp : HPComponent
 var _index : int = 0
@@ -62,7 +64,7 @@ func _start_phase(index : int) -> void:
 	if phase.clear_bullets:
 		get_tree().call_group("enemy_bullet", "queue_free")
 	var boss := get_parent()
-	for shooter in _shooters(boss):
+	for shooter in (_shooters(boss) if switch_shooters else []):
 		if shooter.has_phases():
 			shooter.set_phase(index)
 		else:

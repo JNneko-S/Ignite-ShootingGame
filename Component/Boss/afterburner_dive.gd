@@ -27,6 +27,8 @@ enum Feint {
 ## 体当たりの当たり(ContactHitbox)。突っ込んでいる間だけ当たる
 @export var ram_hitbox : ContactHitbox
 ## 出現してから、最初にこの技を使うまでの時間(秒)
+## false なら、自分では技を始めない(ボスのステート BossDiveState が perform() を呼ぶ)
+@export var auto_run : bool = true
 @export var start_delay : float = 8.0
 ## 次にこの技を使うまでの時間(秒、上がりきってから数える)。0 なら1回だけ
 @export var repeat_interval : float = 18.0
@@ -36,6 +38,11 @@ enum Feint {
 @export_group("動き")
 ## 一番下まで下がったときの、ボスの位置(画面の下の端から、上へ何 px か)
 @export var bottom_offset : float = 70.0
+## 機体の下の端の目印(Marker2D)。設定すると Bottom Offset の代わりに、この目印が画面の下の端に来るところで止まる。
+## 絵(Sprite2D)の子に置けば、絵の大きさを変えても止まる位置がずれない
+@export var tail_marker : Node2D
+## 目印を、画面の下の端からさらに下へ出す量(px)
+@export var tail_overhang : float = 4.0
 ## 突っ込む前に、上へ身構える距離(px)と時間(秒)
 @export var windup_distance : float = 16.0
 @export var windup_time : float = 0.45
@@ -74,8 +81,8 @@ enum Feint {
 @export var flame_width : float = 46.0
 ## 点火のときの画面の揺れ(px)
 @export var shake_strength : float = 6.0
-@export var sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3")
-@export var sound_db : float = -6.0
+## 点火の効果音(シーンに置いた AudioStreamPlayer)
+@export var sound : AudioStreamPlayer
 
 var _enemy : Enemy
 var _flames : Array[AfterburnerFlame] = []
@@ -115,21 +122,28 @@ func _process(delta : float) -> void:
 			_camera.offset = _camera_base
 
 func _run() -> void:
+	if not auto_run:
+		return # ボスのステート(BossDiveState)が perform() を呼ぶ
 	await _wait(start_delay)
 	while _alive():
 		if not _phase_ok():
 			await _wait(1.0)
 			continue
-		var feint := _pick_feint()
-		var attacked := await _dive(feint)
-		if not attacked:
-			# 見せかけだった: 少しあとで、本当に突っ込む
-			await _wait(back_off_retry)
-			if _alive():
-				await _dive(-1)
+		await perform()
 		if repeat_interval <= 0.0:
 			return
 		await _wait(repeat_interval)
+
+## 技を1回する(フェイントの見せかけのときは、少しあとで本当に突っ込むまで)。終わるまで await できる
+func perform() -> void:
+	if not _alive():
+		return
+	var attacked := await _dive(_pick_feint())
+	if not attacked:
+		# 見せかけだった: 少しあとで、本当に突っ込む
+		await _wait(back_off_retry)
+		if _alive():
+			await _dive(-1)
 
 ## フェイントを選ぶ。入れないときは -1
 func _pick_feint() -> int:
@@ -144,6 +158,8 @@ func _dive(feint : int) -> bool:
 	var home := _pos
 	var view := CameraView.visible_rect(_enemy)
 	var bottom := Vector2(home.x, view.end.y - bottom_offset)
+	if is_instance_valid(tail_marker):
+		bottom.y = view.end.y + tail_overhang - (tail_marker.global_position.y - _enemy.global_position.y)
 	# 身構える(少し上へ)
 	await _move(home + Vector2(0.0, -windup_distance), windup_time, Tween.TRANS_SINE, Tween.EASE_OUT)
 	if not _alive():
@@ -205,7 +221,7 @@ func _dive(feint : int) -> bool:
 ## 点火: 音と揺れ、炎が小さくちらつく
 func _ignite() -> void:
 	if sound:
-		SoundManager.play_sfx(sound, sound_db)
+		SoundManager.play(sound)
 	_start_shake()
 	var tween := _enemy.create_tween()
 	tween.tween_method(_set_power, 0.0, 0.3, ignite_time * 0.4)
@@ -253,6 +269,8 @@ func _stop_shooters() -> Array[EnemyShooter]:
 
 ## 今の段階の弾幕で、また撃ち始める
 func _resume_shooters(shooters : Array[EnemyShooter]) -> void:
+	if not auto_run:
+		return # 撃たせるのはボスのステートに任せる
 	if not _alive():
 		return
 	var controller := _controller()

@@ -24,6 +24,11 @@ signal fired
 @export var only_when_on_screen : bool = true
 ## true なら、発射のたびに使われている値をデバッグ出力に表示する(設定が効いているかの確認用)
 @export var debug_log : bool = false
+## false なら、出現しても自分では撃ち始めない(ボスのステートなど、外から set_patterns / set_phase で撃たせる)
+@export var autostart : bool = true
+
+## 全ての弾の向きを、この角度(度)だけ回す。正で左回り(画面の左へ)。ボスのステートが、弾幕の向きを振るのに使う
+var turn_degrees : float = 0.0
 
 ## false にすると撃たなくなる(壊れた部位の砲口など)。譜面で撃つときも撃たない
 var enabled : bool = true
@@ -53,6 +58,8 @@ func _ready() -> void:
 			print("    start_delay=%.2f shot_count=%d interval=%.2f loop=%s pause=%.2f bullet_count=%d" % [
 				pattern.start_delay, pattern.shot_count, pattern.interval,
 				pattern.loop, pattern.pause, pattern.bullet_count])
+	if not autostart:
+		return # 外から撃たせる
 	if _has_conductor():
 		return # 譜面で撃つので、Patterns では撃たない
 	for pattern in patterns:
@@ -168,7 +175,7 @@ func _can_fire() -> bool:
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
-	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored())
+	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored(), deg_to_rad(turn_degrees))
 	fired.emit()
 
 ## pattern の shot_index 発目の弾を、origin から出す。EnemyShooter・分裂弾・撃ち返し弾(RevengeShooter)が使う。

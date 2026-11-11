@@ -17,8 +17,8 @@ class_name EntranceBlast
 ## 画面の揺れの強さ(px)と時間(秒)。0 なら揺らさない
 @export var shake_strength : float = 10.0
 @export var shake_time : float = 1.2
-@export var sound : AudioStream = preload("res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3")
-@export var sound_db : float = -8.0
+## 爆発の効果音(シーンに置いた AudioStreamPlayer)
+@export var sound : AudioStreamPlayer
 ## 出現してから、この時間(秒)は撃たない。勢いよく前に出てくるあいだは撃たず、下がり始めてから撃ち始める
 @export var hold_fire_time : float = 1.25
 
@@ -62,7 +62,7 @@ func _play() -> void:
 	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, main_scale)
 	Explosion.spawn(tree, Explosion.WAVE, center, main_scale * 0.8)
 	if sound:
-		SoundManager.play_sfx(sound, sound_db)
+		SoundManager.play(sound)
 	_shake(tree)
 	# 上の端に沿って、左右へ広がるように爆発が続く(どのノードにも紐づかない Tween で進める)
 	var tween := tree.create_tween()

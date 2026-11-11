@@ -7,13 +7,23 @@ class_name ScoreItem
 ##       イグナイトの発動中は、焼いた弾の数だけ吸い寄せの範囲が広がる。
 ##       イグナイトを発動した瞬間に出ているアイテムは、距離に関係なく全部吸い寄せられる(1回だけ)。
 ##       画面の下へ落としてしまうと missed が出る(ScoreSystem はアイテムの連続取得を途切れさせる)。
+##       焼いた弾・反射弾が敵に当たって出たアイテムは、数秒その場にとどまってから、自動で自機へ吸い寄せられる(hold)。
 ## 点数: value(出たときに決まる)× 拾ったときの連続取得の倍率。ScoreSystem が計算する。
 ##
-## 見た目: どのアイテムも同じ。シーンの Sprite2D(横に hframes コマ並んだシート)のコマを順に流す。
+## 種類(Kind): 小(雑魚) / 中(アイテムを落とす敵) / 大(中ボス、ボス) / 勲章(ボス)。種類ごとにシーンがある:
+##   score_item.tscn / score_item_medium.tscn / score_item_large.tscn / score_medal.tscn
+## 見た目: シーンの Sprite2D(横に hframes コマ並んだシート)のコマを順に流す。
 ## 大きさは Sprite2D の Scale で変える(子機より少し大きいくらい)。
 
 signal collected(item : ScoreItem)
 signal missed(item : ScoreItem)
+
+enum Kind { SMALL, MEDIUM, LARGE, MEDAL }
+
+## このアイテムの種類(ScoreSystem が、種類ごとのシーンを使い分ける)
+@export var kind : Kind = Kind.SMALL
+## 拾ったときの効果音(シーンに置いた AudioStreamPlayer)。連続で拾うと、だんだん高くなる
+@export var pickup_sound : AudioStreamPlayer
 
 @export var hframes : int = 4
 ## 1コマの時間(秒)
@@ -39,6 +49,12 @@ signal missed(item : ScoreItem)
 @export var attract_accel : float = 1600.0
 @export var attract_max_speed : float = 900.0
 
+@export_group("とどまる")
+## その場にとどまるとき(hold)、弾けた勢いが止まる速さ(px/秒²)
+@export var hold_drag : float = 600.0
+## とどまる時間の終わり、この秒数のあいだ点滅する
+@export var hold_blink_time : float = 0.5
+
 ## 出たときに決まる点数(連続取得の倍率は、拾ったときに ScoreSystem が掛ける)
 var value : int = 10
 ## 弾を焼いて出たアイテムか(イグナイトの発動中は、自動で吸い寄せられる)
@@ -53,6 +69,8 @@ var _attracting : bool = false
 var _done : bool = false
 ## true なら、距離に関係なく自機へ吸い寄せられる(イグナイト発動時の全回収)
 var _forced : bool = false
+## その場にとどまる残り時間(秒)。0 なら、とどまっていない
+var _hold_left : float = 0.0
 
 @onready var _sprite : Sprite2D = $Sprite2D
 
@@ -74,6 +92,9 @@ func _physics_process(delta : float) -> void:
 	_age += delta
 	_sprite.frame = int(_age / frame_time) % _sprite.hframes
 
+	if _hold_left > 0.0:
+		_hold(delta)
+		return
 	if not _attracting and (_forced or (_age >= attract_delay and _should_attract())) and _can_pick():
 		_attracting = true
 		_speed = maxf(_velocity.length(), 120.0)
@@ -124,3 +145,32 @@ func _collect() -> void:
 ## 距離に関係なく、自機へ吸い寄せる(イグナイト発動時の全回収)。自機がいないあいだは、出てくるまで待つ
 func collect_now() -> void:
 	_forced = true
+	_end_hold()
+
+## seconds 秒のあいだ、その場にとどまる(落ちない・吸い寄せられない。自機が触れれば拾える)。
+## 時間が来たら、距離に関係なく自機へ吸い寄せられる(焼いた弾・反射弾のアイテム)
+func hold(seconds : float) -> void:
+	if seconds <= 0.0:
+		return
+	_hold_left = seconds
+
+## とどまっている間: 弾けた勢いがすぐ止まり、ふわふわ上下する。終わり際は点滅して、吸い寄せられる合図にする
+func _hold(delta : float) -> void:
+	_hold_left -= delta
+	_velocity = _velocity.move_toward(Vector2.ZERO, hold_drag * delta)
+	global_position += _velocity * delta
+	_sprite.position.y = sin(_age * 5.0) * 1.5
+	if _hold_left < hold_blink_time:
+		_sprite.modulate.a = 0.55 + 0.45 * absf(cos(_age * 18.0))
+	if _can_pick() and global_position.distance_to(_player.global_position) <= pickup_radius:
+		_collect()
+		return
+	if _hold_left <= 0.0:
+		_forced = true
+		_end_hold()
+
+func _end_hold() -> void:
+	_hold_left = 0.0
+	if _sprite:
+		_sprite.position = Vector2.ZERO
+		_sprite.modulate.a = 1.0

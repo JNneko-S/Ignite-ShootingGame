@@ -1,5 +1,7 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cnbgaw5th4h1l"]
 
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_jolse"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_85xu1"]
 
@@ -19,6 +21,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 
 [sub_resource type="Resource" id="Resource_gyea8"]
 script = ExtResource("2_85xu1")
+bullet_scene = ExtResource("b_stop")
 loop = false
 pause = 3.0
 bullet_count = 5
@@ -31,6 +34,7 @@ metadata/_custom_type_script = "uid://ct8u3n22w477n"
 
 [resource]
 script = ExtResource("2_85xu1")
+bullet_scene = ExtResource("b_split")
 bullet_count = 2
 spread_angle = 30.0
 split_time = 0.6

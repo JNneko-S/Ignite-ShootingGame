@@ -46,17 +46,18 @@ enum ChainShape { CURVE, CIRCLE, SPIRAL }
 
 ## 近距離で倒したときの豪華な爆発。並べ方は、曲線・円・渦巻きからランダムに選ぶ
 static func random_chain(tree : SceneTree, from : Vector2, size : float = 1.0, interval : float = 0.025,
-		base_scale : float = 1.0, sound : AudioStream = null, sound_db : float = -20.0) -> void:
+		base_scale : float = 1.0, sound : AudioStreamPlayer = null, volume_offset_db : float = 0.0) -> void:
 	var shape : ChainShape = [ChainShape.CURVE, ChainShape.CIRCLE, ChainShape.SPIRAL].pick_random()
-	chain(tree, from, shape, size, interval, base_scale, sound, sound_db)
+	chain(tree, from, shape, size, interval, base_scale, sound, volume_offset_db)
 
 ## 爆発を、shape の形に並べて順番に起こす。size は形の大きさの倍率(1 で、半径・長さが約 50〜110px)。
 ## 敵が先に消えても続くよう、どのノードにも紐づかない Tween で進める
 static func chain(tree : SceneTree, from : Vector2, shape : ChainShape, size : float = 1.0, interval : float = 0.025,
-		base_scale : float = 1.0, sound : AudioStream = null, sound_db : float = -20.0) -> void:
+		base_scale : float = 1.0, sound : AudioStreamPlayer = null, volume_offset_db : float = 0.0) -> void:
 	if tree == null:
 		return
 	var points := _chain_points(from, shape, size)
+	var sound_copy := SoundManager.copy_of(sound) # 敵が先に消えても鳴るように、音の設定を写しておく
 	var tween := tree.create_tween()
 	for i in points.size():
 		var t := float(i + 1) / float(points.size())
@@ -73,8 +74,8 @@ static func chain(tree : SceneTree, from : Vector2, shape : ChainShape, size : f
 		var with_sound := i % 2 == 0 # 音は1つおき(重なりすぎないように)
 		tween.tween_callback(func() -> void:
 			spawn(tree, scene, point, effect_scale)
-			if sound and with_sound:
-				SoundManager.play_sfx(sound, sound_db, pitch))
+			if with_sound:
+				SoundManager.play_copy(sound_copy, pitch, volume_offset_db))
 		tween.tween_interval(interval)
 
 static func _chain_points(from : Vector2, shape : ChainShape, size : float) -> Array[Vector2]:

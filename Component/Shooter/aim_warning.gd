@@ -50,8 +50,9 @@ func _draw() -> void:
 	var alpha := lerpf(0.4, 1.0, t) * blink
 	var origin := _shooter.global_position
 	for shot in _directions():
-		var start : Vector2 = origin + shot["offset"]
-		var end : Vector2 = start + Vector2.from_angle(shot["angle"]) * LENGTH
+		var turn := deg_to_rad(_shooter.turn_degrees)
+		var start : Vector2 = origin + (shot["offset"] as Vector2).rotated(turn)
+		var end : Vector2 = start + Vector2.from_angle(shot["angle"] + turn) * LENGTH
 		draw_line(start, end, Color(COLOR, alpha * 0.4), GLOW_WIDTH)
 		draw_line(start, end, Color(COLOR.lightened(0.5), alpha), WIDTH)
 

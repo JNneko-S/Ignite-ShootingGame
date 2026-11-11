@@ -24,6 +24,8 @@ var boss_reach_time : float = -1.0
 var alive_time : float = 0.0
 ## 近づいて撃って倒したか(倒された瞬間に ScoreSystem が決める)。爆発が豪華になり、点が増える
 var close_kill : bool = false
+## 中ボスか(StageRunner が、ボスのゲージを出すがボスの時間ボーナスのない敵に入れる)。大きいスコアアイテムを落とす
+var is_midboss : bool = false
 ## 移動パターンの位置に足すずれ(SwayFollow が、背景の横揺れに合わせて入れる)。
 ## 移動パターンで動いている途中でも、このずれは保たれる
 var sway_offset : Vector2 = Vector2.ZERO

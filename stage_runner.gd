@@ -179,6 +179,8 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 			death.big = true # 連鎖爆発 → 大爆発してから消える
 	if event.boss_time_bonus:
 		enemy.boss_reach_time = stage_time # スタートからボス到達までの時間(待機イベントの時間は含まない)
+	elif event.is_boss:
+		enemy.is_midboss = true # ゲージは出すが時間ボーナスのない敵 = 中ボス
 	# 段階の切り替え: ボスのシーンに BossPhaseController があれば、そちらを使う(SpawnEvent の Phases は使わない)
 	var has_controller := enemy.get_children().any(func(n : Node) -> bool: return n is BossPhaseController)
 	if not event.phases.is_empty() and not has_controller:

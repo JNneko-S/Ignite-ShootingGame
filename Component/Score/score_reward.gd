@@ -11,6 +11,18 @@ class_name ScoreReward
 ## そのボーナスを、何個のアイテムに分けて落とすか
 @export var ignite_kill_bonus_items : int = 6
 
+enum ItemKind {
+	AUTO,   ## 自動: 中ボスは大、アイテム(パワーアップなど)を落とす敵は中、ほかは小
+	SMALL,  ## 小(雑魚)
+	MEDIUM, ## 中
+	LARGE,  ## 大
+}
+
+## 倒したときに落とすスコアアイテムの種類
+@export var item_kind : ItemKind = ItemKind.AUTO
+## 落とす数。0 なら自動(小は点数 ÷ 100 個、中は点数 ÷ 300 個(1〜3個)、大は ScoreSystem の Midboss Item Count)
+@export var item_count : int = 0
+
 ## node の子の ScoreReward。なければ null
 static func of(node : Node) -> ScoreReward:
 	for child in node.get_children():

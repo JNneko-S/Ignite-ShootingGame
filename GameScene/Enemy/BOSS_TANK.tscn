@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
 [ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
 [ext_resource type="Script" uid="uid://bcedow6ffc4e5" path="res://Component/Boss/entrance_blast.gd" id="entrance_blast"]
+[ext_resource type="AudioStream" uid="uid://67syoxefkh77" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_entrance"]
 [ext_resource type="Script" uid="uid://c5fpb0pimae7e" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
 [ext_resource type="Script" uid="uid://bucp0ao8udq4" path="res://Component/Part/enemy_part.gd" id="part"]
 [ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
@@ -557,8 +558,13 @@ phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResou
 [node name="SwayFollow" type="Node" parent="." index="14" unique_id=301000310]
 script = ExtResource("sway_follow")
 
-[node name="EntranceBlast" type="Node" parent="." index="15" unique_id=301000311]
+[node name="EntranceBlast" type="Node" parent="." index="15" unique_id=301000311 node_paths=PackedStringArray("sound")]
 script = ExtResource("entrance_blast")
+sound = NodePath("EntranceSound")
+
+[node name="EntranceSound" type="AudioStreamPlayer" parent="EntranceBlast" unique_id=501000021]
+stream = ExtResource("snd_entrance")
+volume_db = -8.0
 
 [node name="TankMover" type="Node" parent="." index="16" unique_id=301000312]
 script = ExtResource("tank_mover")

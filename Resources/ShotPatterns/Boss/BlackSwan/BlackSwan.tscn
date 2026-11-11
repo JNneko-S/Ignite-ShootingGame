@@ -11,65 +11,98 @@
 [ext_resource type="Resource" uid="uid://dtpjbusws2fnp" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot.tres" id="9_40gf8"]
 [ext_resource type="Script" uid="uid://8otilot8gaq8" path="res://Component/Boss/afterburner_dive.gd" id="afterburner_dive"]
 [ext_resource type="Script" uid="uid://dnmayr1mexgt2" path="res://Component/Hitbox/contact_hitbox.gd" id="contact_hitbox"]
+[ext_resource type="AudioStream" uid="uid://cq6dud8jkv8ec" path="res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3" id="snd_ignite"]
+[ext_resource type="Script" uid="uid://cloo6hvvho0ws" path="res://Component/FSM/StateMachine.gd" id="fsm"]
+[ext_resource type="Script" path="res://Component/Boss/States/boss_shoot_state.gd" id="st_shoot"]
+[ext_resource type="Script" path="res://Component/Boss/States/cross_fire_state.gd" id="st_cross"]
+[ext_resource type="Script" path="res://Component/Boss/States/boss_dive_state.gd" id="st_dive"]
+[ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" uid="uid://cnbgaw5th4h1l" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedShotgunReverse.tres" id="p_shotgun"]
+[ext_resource type="Resource" uid="uid://c7y3eee2a2abp" path="res://Resources/ShotPatterns/Boss/BlackSwan/CrossFire.tres" id="p_cross"]
+[ext_resource type="Resource" uid="uid://bhg3cto3r8et3" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedCrossFire.tres" id="p_aimed_cross"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6di3i"]
 size = Vector2(263, 154)
 
 [sub_resource type="RectangleShape2D" id="ram_main"]
-size = Vector2(236, 246)
+size = Vector2(131, 137)
 
 [sub_resource type="RectangleShape2D" id="ram_pod"]
-size = Vector2(50, 60)
+size = Vector2(28, 33)
 
 [sub_resource type="RectangleShape2D" id="ram_nose_root"]
-size = Vector2(78, 12)
+size = Vector2(43, 7)
 
 [sub_resource type="RectangleShape2D" id="ram_nose"]
-size = Vector2(24, 50)
+size = Vector2(13, 28)
 
-[node name="Enemy" unique_id=724143726 instance=ExtResource("1_3v7c8")]
+[sub_resource type="Resource" id="main_p1"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("9_40gf8")])
+
+[sub_resource type="Resource" id="main_p2"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("p_shotgun"), ExtResource("9_40gf8")])
+
+[sub_resource type="Resource" id="main_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("p_shotgun")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("9_40gf8")])
+
+[sub_resource type="Resource" id="swan_phase_1"]
+script = ExtResource("boss_phase")
+
+[sub_resource type="Resource" id="swan_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.66
+
+[sub_resource type="Resource" id="swan_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.33
+boss_modulate = Color(1, 0.55, 0.5, 1)
+
+[node name="Enemy2" unique_id=724143726 instance=ExtResource("1_3v7c8")]
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("2_m6wyt")
 hframes = 6
 
 [node name="Sprite2D2" type="Sprite2D" parent="." index="1" unique_id=751307480]
 z_index = 2
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("3_k084q")
 hframes = 6
 
 [node name="Sprite2D4" type="Sprite2D" parent="." index="2" unique_id=1264692013]
 z_index = 2
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("4_6di3i")
 hframes = 6
 
 [node name="EngineL" type="Marker2D" parent="Sprite2D4" index="0" unique_id=401000001]
 position = Vector2(-41, 0)
-scale = Vector2(1.8, 1.8)
 
 [node name="EngineR" type="Marker2D" parent="Sprite2D4" index="1" unique_id=401000002]
 position = Vector2(41, 0)
-scale = Vector2(1.8, 1.8)
+
+[node name="Tail" type="Marker2D" parent="Sprite2D4" index="2" unique_id=601000010]
+position = Vector2(0, 84)
 
 [node name="Sprite2D3" type="Sprite2D" parent="." index="3" unique_id=1551978376]
 z_index = 2
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("5_1jycq")
 hframes = 6
 frame = 5
 
 [node name="Sprite2D5" type="Sprite2D" parent="." index="4" unique_id=675889779]
 z_index = 2
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("6_y34wv")
 hframes = 6
 
 [node name="Sprite2D6" type="Sprite2D" parent="." index="5" unique_id=818101113]
 z_index = 2
-scale = Vector2(1.8, 1.8)
 texture = ExtResource("7_xjkgf")
 
 [node name="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="0" unique_id=38672095]
@@ -77,25 +110,31 @@ position = Vector2(0.5, -22)
 shape = SubResource("RectangleShape2D_6di3i")
 
 [node name="HPComponent" parent="." index="8" unique_id=2079593739]
-max_hp = 50000
-hp = 50000
+max_hp = 66000
+hp = 66000
 
 [node name="Node2D" type="Node2D" parent="." index="14" unique_id=1666471861]
 z_index = 6
 position = Vector2(-203, -26)
 script = ExtResource("8_b25eq")
 pattern = ExtResource("9_40gf8")
-preview_time = 1.5467381111111074
+preview_time = 0.19405244444444447
 playing = true
 loop_length = 8.0
 
-[node name="AfterburnerDive" type="Node" parent="." index="15" unique_id=401000003 node_paths=PackedStringArray("engines", "ram_hitbox")]
+[node name="AfterburnerDive" type="Node" parent="." index="15" unique_id=401000003 node_paths=PackedStringArray("engines", "ram_hitbox", "sound", "tail_marker")]
 script = ExtResource("afterburner_dive")
+auto_run = false
 engines = [NodePath("../Sprite2D4/EngineL"), NodePath("../Sprite2D4/EngineR")]
-ram_hitbox = NodePath("../RamHitbox")
-bottom_offset = 150.0
+ram_hitbox = NodePath("../Sprite2D/RamHitbox")
+tail_marker = NodePath("../Sprite2D4/Tail")
+sound = NodePath("IgniteSound")
 
-[node name="RamHitbox" type="Area2D" parent="." index="16" unique_id=401000004]
+[node name="IgniteSound" type="AudioStreamPlayer" parent="AfterburnerDive" index="0" unique_id=501000031]
+stream = ExtResource("snd_ignite")
+volume_db = -6.0
+
+[node name="RamHitbox" type="Area2D" parent="Sprite2D" unique_id=401000004]
 collision_layer = 32
 collision_mask = 16
 script = ExtResource("contact_hitbox")
@@ -103,22 +142,72 @@ start_active = false
 damage = 1
 damage_source_type = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RamHitbox" index="0" unique_id=401000005]
-position = Vector2(-1.5, -29)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="0" unique_id=401000005]
+position = Vector2(-1, -16)
 shape = SubResource("ram_main")
 
-[node name="PodL" type="CollisionShape2D" parent="RamHitbox" index="1" unique_id=401000006]
-position = Vector2(-95, 125)
+[node name="PodL" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="1" unique_id=401000006]
+position = Vector2(-53, 69)
 shape = SubResource("ram_pod")
 
-[node name="PodR" type="CollisionShape2D" parent="RamHitbox" index="2" unique_id=401000007]
-position = Vector2(92, 125)
+[node name="PodR" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="2" unique_id=401000007]
+position = Vector2(51, 69)
 shape = SubResource("ram_pod")
 
-[node name="NoseRoot" type="CollisionShape2D" parent="RamHitbox" index="3" unique_id=401000008]
-position = Vector2(-2, 100)
+[node name="NoseRoot" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="3" unique_id=401000008]
+position = Vector2(-1, 56)
 shape = SubResource("ram_nose_root")
 
-[node name="Nose" type="CollisionShape2D" parent="RamHitbox" index="4" unique_id=401000009]
-position = Vector2(-3, 130)
+[node name="Nose" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="4" unique_id=401000009]
+position = Vector2(-2, 72)
 shape = SubResource("ram_nose")
+
+[node name="EnemyShooterComponent" parent="." index="9" unique_id=140393654]
+autostart = false
+phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
+
+[node name="CannonL" parent="Sprite2D6" unique_id=601000001 instance=ExtResource("shooter_scene")]
+z_index = 2
+position = Vector2(-80, -9)
+autostart = false
+
+[node name="CannonR" parent="Sprite2D6" unique_id=601000002 instance=ExtResource("shooter_scene")]
+z_index = 2
+position = Vector2(80, -8)
+autostart = false
+
+[node name="BossPhaseController" type="Node" parent="." unique_id=601000003]
+script = ExtResource("phase_controller")
+phases = Array[ExtResource("boss_phase")]([SubResource("swan_phase_1"), SubResource("swan_phase_2"), SubResource("swan_phase_3")])
+switch_shooters = false
+
+[node name="StateMachine" type="Node" parent="." unique_id=601000004 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("fsm")
+initial_state = NodePath("Intro")
+
+[node name="Intro" type="Node" parent="StateMachine" unique_id=601000005]
+script = ExtResource("st_shoot")
+next_state = "Barrage"
+duration = 3.0
+
+[node name="Barrage" type="Node" parent="StateMachine" unique_id=601000006 node_paths=PackedStringArray("shooters")]
+script = ExtResource("st_shoot")
+next_state = "CrossFire"
+shooters = [NodePath("../../EnemyShooterComponent")]
+
+[node name="CrossFire" type="Node" parent="StateMachine" unique_id=601000007 node_paths=PackedStringArray("shooters")]
+script = ExtResource("st_cross")
+next_state = "Barrage2"
+shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+cross_fire = ExtResource("p_cross")
+aimed_cross_fire = ExtResource("p_aimed_cross")
+
+[node name="Barrage2" type="Node" parent="StateMachine" unique_id=601000008 node_paths=PackedStringArray("shooters")]
+script = ExtResource("st_shoot")
+next_state = "Dive"
+shooters = [NodePath("../../EnemyShooterComponent")]
+
+[node name="Dive" type="Node" parent="StateMachine" unique_id=601000009 node_paths=PackedStringArray("dive")]
+script = ExtResource("st_dive")
+next_state = "Barrage"
+dive = NodePath("../../AfterburnerDive")

@@ -5,15 +5,19 @@ class_name ScoreSystem
 ## 点数:
 ##   敵の撃破   … 敵の ScoreReward 部品の Score Value(雑魚 100 / 中型 300 / 砲台 400 / 中ボス 1000)
 ##                × グレイズ倍率 × イグナイト倍率 × 反射弾ボーナス。
-##                その場では入らず、スコアアイテムになって落ちる(拾うと入る)。
+##                その場では入らず、スコアアイテムになって落ちる(拾うと入る)。アイテムの種類は敵による:
+##                  雑魚 = 小 / アイテム(パワーアップなど)を落とす敵 = 中 / 中ボス = 大(Midboss Item Count 個)
 ##                Ignite Kill Bonus のある敵は、イグナイトの発動中に倒すと、さらにボーナスのアイテムを落とす
 ##   グレイズ   … 1発 10 点。弾が自機のかなり近くまで来たら 20 点
-##   焼いた弾   … スコアアイテムになり、拾うと 10 点 × 消費したレベル(Lv5 で 50 点)
+##   焼いた弾   … その場にスコアアイテムが出て、Burn Item Hold Time 秒とどまってから自動で回収される(10 点 × 消費したレベル)
+##   反射弾     … イグナイトで跳ね返した弾が敵に当たるたびに、その場にアイテムが出る(Reflect Hit Points × イグナイト倍率)。
+##                とどまってから自動で回収される
 ##   背景の物   … イグナイトでだけ壊せる背景のオブジェクト(IgniteTarget)が、スコアアイテムを落とす
 ## スコアアイテムは、拾うと 点数 × 連続取得の倍率 が入る。
 ##   画面の下へ落とさずに拾い続けると、1個ごとに倍率が上がる(item_chain_step、上限 item_chain_max)。
 ##   1個でも落とすと、倍率は 1.0 に戻る。
-##   ボス       … 20000 × (ボス到達までの時間 − ボス戦の時間) × 残機
+##   ボス       … 20000 × (ボス到達までの時間 − ボス戦の時間) × 残機。勲章になって出る。
+##                一緒に、大きいアイテム(イグナイトを使った回数だけ)と小さいアイテム30個も撒き散らし、少しすると全部吸い寄せられる
 ##   クリア     … ノーミス・グレイズ数・残っているゲージ・イグナイトの使用回数のボーナス
 ##
 ## グレイズ倍率(1.0〜2.0):
@@ -82,6 +86,15 @@ signal burn_finished(count : int)
 
 @export_group("スコアアイテム")
 @export var score_item_scene : PackedScene = preload("res://GameScene/Item/score_item.tscn")
+## 中・大のスコアアイテムと、勲章のシーン
+@export var medium_item_scene : PackedScene = preload("res://GameScene/Item/score_item_medium.tscn")
+@export var large_item_scene : PackedScene = preload("res://GameScene/Item/score_item_large.tscn")
+@export var medal_scene : PackedScene = preload("res://GameScene/Item/score_medal.tscn")
+## 中ボスが落とす、大きいスコアアイテムの数(倒したときの点を、この数で分ける)
+@export var midboss_item_count : int = 5
+## 連続で拾うと、拾った音がだんだん高くなる(1個ごとの上がり幅と、上限の倍率)
+@export var pickup_pitch_step : float = 0.01
+@export var pickup_pitch_max : float = 1.5
 ## 自機が近づくと吸い寄せられ始める距離(px)
 @export var item_magnet_radius : float = 44.0
 ## イグナイトの発動中は、焼いた弾1発ごとに、吸い寄せられる距離がこれだけ広がる(px)
@@ -90,6 +103,13 @@ signal burn_finished(count : int)
 @export var burn_magnet_max : float = 600.0
 ## 焼いた弾1個の点数 = これ × 消費したレベル
 @export var burn_points_per_level : int = 10
+## 焼いた弾のアイテムが、その場にとどまる時間(秒)。そのあと自動で自機へ吸い寄せられる(0 なら、いつもどおり落ちる)
+@export var burn_item_hold_time : float = 2.0
+## 反射弾が敵に当たるたびに、その場に出るアイテムの点(イグナイト倍率が掛かる)。0 なら出ない
+@export var reflect_hit_points : int = 100
+## 反射弾のアイテムの種類と、その場にとどまる時間(秒)
+@export var reflect_item_kind : ScoreItem.Kind = ScoreItem.Kind.MEDIUM
+@export var reflect_item_hold_time : float = 1.5
 ## 敵1体から出るアイテムの最大数(基本点 100 ごとに1個)
 @export var max_kill_items : int = 10
 ## 画面の下へ落とさずに拾い続けると、1個ごとに倍率がこれだけ上がる
@@ -104,6 +124,16 @@ signal burn_finished(count : int)
 @export var boss_bonus_base : int = 20000
 ## 残機がこれより少なくても、これとして数える(1 なら、残機 0 でもボーナスが入る)
 @export var boss_bonus_min_lives : int = 1
+## ボスを倒すと、大爆発のあとに、勲章1個(ボスの点が入っている)・大きいアイテム(イグナイトを使った回数だけ)・
+## 小さいアイテム(Boss Small Items 個)を撒き散らす。少しすると、全部自機へ吸い寄せられる
+@export var boss_small_items : int = 30
+## 小さいアイテム・大きいアイテム1個の点
+@export var boss_small_item_value : int = 1000
+@export var boss_large_item_value : int = 10000
+## 勲章の点の最低(ボスの時間ボーナスがこれより少なくても、この点は入る)
+@export var boss_medal_min_value : int = 100000
+## 撒き散らしてから、全部が自機へ吸い寄せられるまでの時間(秒)
+@export var boss_drop_collect_delay : float = 1.5
 
 @export_group("ステージクリア")
 @export var no_miss_bonus : int = 1000000
@@ -206,7 +236,9 @@ func current_ignite_multiplier() -> float:
 func on_enemy_killed(enemy : Enemy) -> void:
 	kill_count += 1
 	if enemy.boss_reach_time >= 0.0:
-		add_points(_boss_bonus(enemy), enemy.global_position)
+		# ボスの点は、大爆発が終わって消えるときに、勲章になって出る
+		var bonus := _boss_bonus(enemy)
+		enemy.tree_exiting.connect(func() -> void: _drop_boss_items(enemy.global_position, bonus), CONNECT_ONE_SHOT)
 		return
 	var reward := ScoreReward.of(enemy)
 	if reward == null:
@@ -219,14 +251,57 @@ func on_enemy_killed(enemy : Enemy) -> void:
 	var points := float(reward.score_value) * graze_multiplier * ignite_multiplier
 	if enemy.killed_by_reflect:
 		points *= reflect_kill_multiplier
-	# 点はその場で入らず、アイテムになって落ちる(大きい敵ほど数が多い)
-	var count := clampi(roundi(float(reward.score_value) / 100.0), 1, max_kill_items)
-	spawn_items(enemy.global_position, roundi(points), count)
+	# 点はその場で入らず、アイテムになって落ちる(種類は敵による。大きい敵ほど数が多い)
+	var kind := _kill_item_kind(enemy, reward)
+	spawn_items(enemy.global_position, roundi(points), _kill_item_count(kind, reward), 1.0, kind)
 	# イグナイトの発動中に倒すと、さらにボーナスのアイテムが出る敵がいる
 	if reward.ignite_kill_bonus > 0 and ignite_multiplier > 1.0:
 		spawn_items(enemy.global_position, roundi(reward.ignite_kill_bonus * ignite_multiplier),
 			maxi(reward.ignite_kill_bonus_items, 1), 1.6)
 		ignite_bonus_killed.emit(enemy.global_position)
+
+## 倒した敵が落とすスコアアイテムの種類: ScoreReward の Item Kind。自動なら、中ボスは大、
+## アイテム(パワーアップなど)を落とす敵は中、ほかは小
+func _kill_item_kind(enemy : Enemy, reward : ScoreReward) -> ScoreItem.Kind:
+	match reward.item_kind:
+		ScoreReward.ItemKind.SMALL:
+			return ScoreItem.Kind.SMALL
+		ScoreReward.ItemKind.MEDIUM:
+			return ScoreItem.Kind.MEDIUM
+		ScoreReward.ItemKind.LARGE:
+			return ScoreItem.Kind.LARGE
+	if enemy.is_midboss:
+		return ScoreItem.Kind.LARGE
+	for child in enemy.get_children():
+		if child is ItemDrop and child.item_scene != null:
+			return ScoreItem.Kind.MEDIUM
+	return ScoreItem.Kind.SMALL
+
+## 落とす数: ScoreReward の Item Count。0 なら、小は点数 ÷ 100 個、中は点数 ÷ 300 個(1〜3個)、大は Midboss Item Count 個
+func _kill_item_count(kind : ScoreItem.Kind, reward : ScoreReward) -> int:
+	if reward.item_count > 0:
+		return reward.item_count
+	match kind:
+		ScoreItem.Kind.MEDIUM:
+			return clampi(roundi(float(reward.score_value) / 300.0), 1, 3)
+		ScoreItem.Kind.LARGE:
+			return maxi(midboss_item_count, 1)
+	return clampi(roundi(float(reward.score_value) / 100.0), 1, max_kill_items)
+
+## ボスのドロップ: 勲章1個(ボスの点)・大きいアイテム(イグナイトを使った回数だけ)・小さいアイテムを撒き散らし、
+## 少しすると全部を自機へ吸い寄せる
+func _drop_boss_items(at : Vector2, bonus : int) -> void:
+	var items : Array[ScoreItem] = []
+	items.append_array(spawn_items(at, maxi(bonus, boss_medal_min_value), 1, 0.5, ScoreItem.Kind.MEDAL))
+	var ignite_uses := game_manager.ignite_activation_count if game_manager else 0
+	if ignite_uses > 0:
+		items.append_array(spawn_items(at, boss_large_item_value * ignite_uses, ignite_uses, 1.8, ScoreItem.Kind.LARGE))
+	if boss_small_items > 0:
+		items.append_array(spawn_items(at, boss_small_item_value * boss_small_items, boss_small_items, 2.4))
+	await get_tree().create_timer(boss_drop_collect_delay).timeout
+	for item in items:
+		if is_instance_valid(item):
+			item.collect_now()
 
 ## ボスの点 = 基本点 × (ボス到達までの時間 − ボス戦の時間) × 残機。時間は秒(小数は切り捨て)
 func _boss_bonus(enemy : Enemy) -> int:
@@ -311,12 +386,22 @@ func _check_close_grazes() -> void:
 
 # ---------------------------------------------------------------- 焼いた弾
 
-## 焼いた弾の位置に、スコアアイテムを出す。level: 今の発動で消費したレベル
+## 焼いた弾の位置に、スコアアイテムを出す。level: 今の発動で消費したレベル。
+## アイテムは Burn Item Hold Time 秒その場にとどまってから、自動で自機へ吸い寄せられる
 func spawn_burn_item(at : Vector2, level : int) -> void:
-	spawn_items(at, burn_points_per_level * maxi(level, 1), 1, 0.5)
+	for item in spawn_items(at, burn_points_per_level * maxi(level, 1), 1, 0.5):
+		item.hold(burn_item_hold_time)
 	if _burning:
 		burn_count += 1
 		burn_count_changed.emit(burn_count)
+
+## 反射弾が敵に当たった: その場にアイテムが出る(とどまってから、自動で吸い寄せられる)
+func on_reflect_hit(at : Vector2) -> void:
+	if reflect_hit_points <= 0:
+		return
+	var points := roundi(reflect_hit_points * current_ignite_multiplier())
+	for item in spawn_items(at, points, 1, 0.6, reflect_item_kind):
+		item.hold(reflect_item_hold_time)
 
 ## GameManager から呼ばれる。イグナイトの発動が始まった / 終わった
 func begin_burn() -> void:
@@ -346,15 +431,20 @@ func is_close_kill(enemy : Enemy) -> bool:
 		return false
 	return enemy.global_position.distance_to(player.global_position) <= close_kill_distance
 
-## スコアアイテムを count 個出す。total を count 個で分ける。spread: 弾ける勢い(1 で普通)
-func spawn_items(at : Vector2, total : int, count : int = 1, spread : float = 1.0) -> void:
+## スコアアイテムを count 個出す。total を count 個で分ける。spread: 弾ける勢い(1 で普通)。kind: アイテムの種類。
+## 出したアイテムを返す
+func spawn_items(at : Vector2, total : int, count : int = 1, spread : float = 1.0,
+		kind : ScoreItem.Kind = ScoreItem.Kind.SMALL) -> Array[ScoreItem]:
+	var spawned : Array[ScoreItem] = []
 	count = maxi(count, 1)
 	var each := maxi(total / count, 1)
+	var scene := _item_scene(kind)
 	for i in count:
-		if score_item_scene == null or _item_count >= max_score_items:
+		if scene == null or _item_count >= max_score_items:
 			add_points(each, at) # 出し過ぎのときは、その場で点にする
 			continue
-		var item := score_item_scene.instantiate() as ScoreItem
+		var item := scene.instantiate() as ScoreItem
+		spawned.append(item)
 		item.setup(player, each, spread)
 		item.score_system = self
 		item.collected.connect(_on_item_collected)
@@ -363,10 +453,23 @@ func spawn_items(at : Vector2, total : int, count : int = 1, spread : float = 1.
 		_item_count += 1
 		get_tree().current_scene.add_child.call_deferred(item) # 物理の処理中に出ることが多いので、後で足す
 		item.position = at
+	return spawned
 
-## 拾った: 点数 × 連続取得の倍率 が入り、連続取得が1つ増える
+func _item_scene(kind : ScoreItem.Kind) -> PackedScene:
+	match kind:
+		ScoreItem.Kind.MEDIUM:
+			return medium_item_scene if medium_item_scene else score_item_scene
+		ScoreItem.Kind.LARGE:
+			return large_item_scene if large_item_scene else score_item_scene
+		ScoreItem.Kind.MEDAL:
+			return medal_scene if medal_scene else score_item_scene
+	return score_item_scene
+
+## 拾った: 点数 × 連続取得の倍率 が入り、連続取得が1つ増える。拾った音は、連続で拾うほど高くなる
 func _on_item_collected(item : ScoreItem) -> void:
 	add_points(roundi(item.value * item_chain_multiplier()), item.global_position)
+	var pitch := 1.0 if item.kind == ScoreItem.Kind.MEDAL else minf(1.0 + item_chain * pickup_pitch_step, pickup_pitch_max)
+	SoundManager.play_on_channel(StringName("score_item_%d" % item.kind), item.pickup_sound, pitch) # 種類ごとに1つの音(たくさん拾っても他の音を消さない)
 	item_chain += 1
 	item_chain_changed.emit(item_chain, item_chain_multiplier())
 
