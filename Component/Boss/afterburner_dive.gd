@@ -88,6 +88,11 @@ var _enemy : Enemy
 var _flames : Array[AfterburnerFlame] = []
 ## 移動の上の位置(横揺れのずれを除いた、ボスの位置)
 var _pos : Vector2
+## 技の最中か(FighterMover などの、ほかの動きを止めるのに使う)
+var _diving : bool = false
+
+func is_diving() -> bool:
+	return _diving
 var _shake_power : float = 0.0
 var _camera_base : Vector2
 var _camera : Camera2D
@@ -138,12 +143,14 @@ func _run() -> void:
 func perform() -> void:
 	if not _alive():
 		return
+	_diving = true
 	var attacked := await _dive(_pick_feint())
 	if not attacked:
 		# 見せかけだった: 少しあとで、本当に突っ込む
 		await _wait(back_off_retry)
 		if _alive():
 			await _dive(-1)
+	_diving = false
 
 ## フェイントを選ぶ。入れないときは -1
 func _pick_feint() -> int:

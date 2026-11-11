@@ -9,6 +9,8 @@ class_name BossShootState
 @export var duration : float = 8.0
 
 func _run(token : int) -> void:
+	if not shooters.is_empty():
+		await wait_bullets_clear(token) # 第一・第二形態は、前の弾が消えてから撃つ
 	if not running(token):
 		return
 	for shooter in shooters:

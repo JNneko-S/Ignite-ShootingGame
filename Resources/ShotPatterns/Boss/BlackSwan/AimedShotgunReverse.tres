@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cnbgaw5th4h1l"]
 
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_jolse"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_85xu1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 
 [sub_resource type="Resource" id="Resource_3acpb"]
 script = ExtResource("1_jolse")

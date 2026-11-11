@@ -445,7 +445,7 @@ func spawn_items(at : Vector2, total : int, count : int = 1, spread : float = 1.
 			continue
 		var item := scene.instantiate() as ScoreItem
 		spawned.append(item)
-		item.setup(player, each, spread)
+		item.setup(player if is_instance_valid(player) else null, each, spread) # 自機が消えたあと(ゲームオーバー後)でも出せるように
 		item.score_system = self
 		item.collected.connect(_on_item_collected)
 		item.missed.connect(_on_item_missed)

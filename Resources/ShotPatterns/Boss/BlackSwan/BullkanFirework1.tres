@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bddrp270ad5w5"]
+
+[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="b_accel"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+
+[sub_resource type="Resource" id="shell_slow"]
+script = ExtResource("step")
+target_speed = 25.0
+speed_trans = 4
+
+[sub_resource type="Resource" id="ring_accel"]
+script = ExtResource("step")
+duration = 1.2
+target_speed = 170.0
+speed_trans = 4
+speed_ease = 0
+
+[sub_resource type="Resource" id="ring"]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_accel")
+bullet_count = 16
+spread_angle = 360.0
+aim_at_player = false
+bullet_speed = 30.0
+motion = Array[ExtResource("step")]([SubResource("ring_accel")])
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_split")
+start_delay = 1.0
+pause = 2.0
+bullet_count = 2
+spread_angle = 50.0
+random_angle = 5.0
+bullet_speed = 160.0
+motion = Array[ExtResource("step")]([SubResource("shell_slow")])
+split_time = 1.1
+split_pattern = SubResource("ring")

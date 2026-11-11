@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_spread"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_spread")
+start_delay = 0.3
+shot_count = 40
+interval = 0.05
+pause = 0.6
+bullet_count = 3
+spread_angle = 24.0
+aim_at_player = false
+base_angle = 50.0
+angle_wave_amplitude = 30.0
+angle_wave_shots = 20
+line_count = 2
+line_speed_ratio = 0.25
+random_angle = 3.0
+bullet_speed = 280.0

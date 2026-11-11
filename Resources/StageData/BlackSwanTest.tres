@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="StageData" format=3 uid="uid://b8ayl04g4j0br"]
+
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="6_2sf3e"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="8_gbwdy"]
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="PackedScene" uid="uid://di60y0bpnpn6b" path="res://Resources/ShotPatterns/Boss/BlackSwan/BlackSwan.tscn" id="e_blackswan"]
+[ext_resource type="Resource" uid="uid://dycj5krbrj506" path="res://Resources/MovePatterns/BlackSwan/m_blackswan_enter.tres" id="m_enter"]
+[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
+[ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
+[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
+
+[sub_resource type="Resource" id="scroll_start"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.6
+duration = 2.0
+
+[sub_resource type="Resource" id="warning"]
+script = ExtResource("signal_script")
+signal_name = "warning"
+time = 2.0
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_blackswan")
+move_pattern = ExtResource("m_enter")
+tag = "boss"
+is_boss = true
+boss_name = "ブラックスワン"
+boss_phase_thresholds = Array[float]([0.66, 0.33])
+boss_time_bonus = true
+time = 5.0
+
+[sub_resource type="Resource" id="wait_boss"]
+script = ExtResource("wait_script")
+tag = "boss"
+time = 6.0
+
+[resource]
+script = ExtResource("stage_script")
+stage_name = "BlackSwan テスト"
+events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss")])

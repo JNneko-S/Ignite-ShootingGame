@@ -11,6 +11,17 @@ class_name BossState
 @export var next_state : String = ""
 ## true なら、入ったときに、このボスの全ての砲口を止める(ほかの弾幕と一緒に撃たない)
 @export var stop_all_shooters : bool = true
+## true なら、このステートの間、ボスは動き回らない(FighterMover が止まる)
+@export var hold_position : bool = false
+
+@export_group("弾が消えるのを待つ")
+## この段階より前(0 = 第一形態)は、撃ち始める前に、画面の敵弾が消えるのを待つ。
+## 2 なら第一形態・第二形態だけ待つ。0 なら待たない
+@export var wait_clear_before_phase : int = 2
+## 待つ時間の上限(秒)。弾が残っていても、これだけ待ったら撃ち始める
+@export var wait_clear_max : float = 6.0
+## 画面の敵弾がこの数以下なら、消えたことにする
+@export var clear_bullet_count : int = 3
 
 var boss : Enemy
 ## Exit で増える。動いている処理は、これが変わったら止まる
@@ -24,12 +35,16 @@ func _ready() -> void:
 
 func Enter() -> void:
 	_token += 1
+	if boss:
+		boss.set_meta(&"hold_position", hold_position)
 	if stop_all_shooters:
 		stop_shooters(all_shooters())
 	_run.call_deferred(_token)
 
 func Exit() -> void:
 	_token += 1
+	if boss:
+		boss.set_meta(&"hold_position", false)
 
 ## ステートの中身。終わったら finish(token) を呼ぶ
 func _run(_token_at_start : int) -> void:
@@ -69,6 +84,17 @@ func stop_shooters(shooters : Array[EnemyShooter]) -> void:
 		if is_instance_valid(shooter):
 			shooter.stop()
 			shooter.turn_degrees = 0.0
+
+## 撃ち始める前に、画面の敵弾が消えるのを待つ(Wait Clear Before Phase より前の段階だけ。上限は Wait Clear Max 秒)
+func wait_bullets_clear(token : int) -> void:
+	if phase() >= wait_clear_before_phase or not is_inside_tree():
+		return
+	var waited := 0.0
+	while running(token) and waited < wait_clear_max:
+		if get_tree().get_nodes_in_group("enemy_bullet").size() <= clear_bullet_count:
+			return
+		await wait(0.1)
+		waited += 0.1
 
 func wait(seconds : float) -> void:
 	if seconds > 0.0 and is_inside_tree():

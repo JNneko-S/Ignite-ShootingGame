@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c70cdw8vem15i"]
+
+[ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
+[ext_resource type="Resource" uid="uid://b8ayl04g4j0br" path="res://Resources/StageData/BlackSwanTest.tres" id="stage"]
+
+[node name="ScrollTest" unique_id=1532387328 instance=ExtResource("base")]
+difficulty = 1
+
+[node name="StageRunner" parent="." index="2" unique_id=1973239994]
+stage = ExtResource("stage")
