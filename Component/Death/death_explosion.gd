@@ -11,6 +11,13 @@ class_name DeathExplosion
 @export var explosion_scale : float = 1.0
 ## 効果音(シーンに置いた AudioStreamPlayer。音量・高さはノードで決める)。空なら鳴らさない
 @export var sound : AudioStreamPlayer
+## その場の爆発に加えて、周りにばらまく小さな爆発の数(0 なら出さない)
+@export var extra_count : int = 4
+## ばらまく範囲の半径(px)と、小さな爆発の大きさ
+@export var extra_radius : float = 26.0
+@export var extra_scale : float = 0.65
+## 小さな爆発を出していく間隔(秒)
+@export var extra_interval : float = 0.03
 
 @export_group("連鎖爆発 → 大爆発")
 ## オンなら、連鎖爆発 → 大爆発してから終わる。ボスは StageRunner が is_boss の敵をオンにする
@@ -29,28 +36,25 @@ class_name DeathExplosion
 ## 大爆発の効果音(AudioStreamPlayer)
 @export var big_sound : AudioStreamPlayer
 
-@export_group("近距離撃破")
-## 持ち主の close_kill がオンのとき(近づいて撃って倒したとき)、爆発が少し大きくなり、
-## たまに(close_chain_chance の確率で)曲線・円・渦巻きのどれかに並んだ爆発が追加で起こる
+@export_group("イグナイト中の撃破(大きめの爆発)")
+## 持ち主の ignite_kill がオンのとき(イグナイトの発動中に倒したとき)は、爆発が大きめになる:
+##   ・真ん中の爆発が Ignite Scale Boost 倍になる
+##   ・周りにばらまく爆発が増えて、広がる(Ignite Extra Count 個、半径 Ignite Extra Radius)
+@export var ignite_scale_boost : float = 1.9
+@export var ignite_extra_count : int = 10
+@export var ignite_extra_radius : float = 58.0
+@export var ignite_extra_scale : float = 1.0
+
+@export_group("近距離撃破(並んだ爆発)")
+## 持ち主の close_kill がオンのとき(近づいて撃って倒したとき)は、いつもの爆発に加えて、
+## 曲線・円・渦巻きのどれかに並んだ爆発が起こる。イグナイトの発動中なら、大きめの爆発と両方起こる
 ## 形の大きさの倍率(1 で、半径・長さが約 50〜110px)
 @export var close_chain_size : float = 1.0
 ## 爆発と爆発の間隔(秒)。小さいほど速く並ぶ
 @export var close_chain_interval : float = 0.025
 ## 爆発1つの大きさ
 @export var close_chain_scale : float = 1.1
-## 並んだ爆発が起きる確率(0〜1)。起きなかったときは、少し大きめの爆発だけになる
-@export_range(0.0, 1.0, 0.05) var close_chain_chance : float = 0.2
-## イグナイトの発動中に倒したときの確率
-@export_range(0.0, 1.0, 0.05) var close_chain_chance_ignite : float = 0.3
-## 近距離撃破のときの、いつもの爆発の大きさの倍率(並んだ爆発が起きても起きなくても掛かる)
-@export var close_scale_boost : float = 1.4
 
-## 今の、並んだ爆発が起きる確率(イグナイトの発動中は上がる)
-func _chain_chance() -> float:
-	var player := get_tree().get_first_node_in_group("player") as Player
-	if player and player.is_igniting:
-		return close_chain_chance_ignite
-	return close_chain_chance
 
 ## 爆発させる。big のときは、大爆発と持ち主のフェードが終わるまで待てる
 func play() -> void:
@@ -58,13 +62,20 @@ func play() -> void:
 	if body == null:
 		return
 	var close : bool = body.get("close_kill") == true
-	if close and randf() < _chain_chance():
+	var ignite : bool = body.get("ignite_kill") == true
+	if close:
 		Explosion.random_chain(get_tree(), body.global_position, close_chain_size,
 			close_chain_interval, close_chain_scale, sound, -6.0)
 	if not big:
 		if explosion_scene:
-			var effect_scale := explosion_scale * (close_scale_boost if close else 1.0) # 近距離撃破は、いつも少し大きめ
+			var effect_scale := explosion_scale * (ignite_scale_boost if ignite else 1.0)
 			Explosion.spawn(get_tree(), explosion_scene, body.global_position, effect_scale)
+			if ignite:
+				Explosion.burst(get_tree(), body.global_position, ignite_extra_count,
+					ignite_extra_radius * explosion_scale, ignite_extra_scale * explosion_scale, extra_interval)
+			else:
+				Explosion.burst(get_tree(), body.global_position, extra_count,
+					extra_radius * explosion_scale, extra_scale * explosion_scale, extra_interval)
 		if sound:
 			SoundManager.play(sound)
 		return
@@ -90,6 +101,7 @@ func _play_big(body : Node2D) -> void:
 		var scene : PackedScene = Explosion.ALL[i % Explosion.ALL.size()]
 		var effect_scale := randf_range(1.2, 2.0) * (0.6 if scene == Explosion.WAVE else 1.0) # 衝撃波は白く大きいので控えめ
 		Explosion.spawn(tree, scene, body.global_position + offset, effect_scale)
+		Explosion.burst(tree, body.global_position + offset, 3, 30.0, 0.8, 0.03) # 1回ごとに、周りにも小さな爆発
 		if sound:
 			SoundManager.play(sound, randf_range(0.9, 1.1), -4.0) # 連鎖の音は少し小さく、高さをばらす
 		SpriteShake.shake(body, 4.0 * shake_scale)

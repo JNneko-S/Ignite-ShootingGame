@@ -7,11 +7,14 @@ class_name Hurtbox
 @onready var cool_down: Timer = $Timer
 
 var current_area : Area2D
+## 最後にダメージを与えてきた Hitbox(被弾の向きを調べるのに使う)。もう消えていることもある
+var last_hitbox : Hitbox
 
 signal recieved_damage(damage : int)
 
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:
+		last_hitbox = hitbox
 		recieved_damage.emit(hitbox.damage)
 		hitbox.damage_dealt.emit(self)
 

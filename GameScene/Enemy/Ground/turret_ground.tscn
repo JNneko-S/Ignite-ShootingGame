@@ -33,6 +33,9 @@ hp = 100
 z_index = 0
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
 
+[node name="DeathExplosion" parent="." index="6" unique_id=301000002]
+explosion_scale = 1.3
+
 [node name="ScoreReward" parent="." index="8" unique_id=301000004]
 score_value = 300
 
@@ -42,6 +45,8 @@ texture = ExtResource("head")
 
 [node name="GroundUnit" type="Node" parent="." unique_id=1070302523 node_paths=PackedStringArray("body")]
 script = ExtResource("ground")
+body_radius = 18.0
+yield_to_others = false
 body = NodePath("../Sprite2D")
 
 [node name="TurretAim" type="Node" parent="." unique_id=1190580830 node_paths=PackedStringArray("turret", "muzzle")]

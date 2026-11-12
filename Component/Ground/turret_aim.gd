@@ -3,6 +3,8 @@ class_name TurretAim
 ## 砲塔を自機へ向ける部品。敵の子に置く。
 ## Muzzle(EnemyShooterComponent など)を砲身の先へ動かすので、弾は砲口から出る。
 
+## オフにすると、自機を狙わず、いつも Idle Angle の向き(正面)を向く(まっすぐ撃つ戦車)
+@export var aim_at_player : bool = true
 ## 回す砲塔の絵
 @export var turret : Node2D
 ## 絵の砲身の向き(度)。0 で右、90 で下
@@ -25,7 +27,7 @@ func _process(delta : float) -> void:
 		return
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var wanted := deg_to_rad(idle_angle_deg)
-	if player and player.visible:
+	if aim_at_player and player and player.visible:
 		wanted = turret.global_position.direction_to(player.global_position).angle()
 	if turn_speed <= 0.0:
 		_angle = wanted

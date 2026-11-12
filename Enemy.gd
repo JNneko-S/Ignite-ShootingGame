@@ -24,6 +24,8 @@ var boss_reach_time : float = -1.0
 var alive_time : float = 0.0
 ## 近づいて撃って倒したか(倒された瞬間に ScoreSystem が決める)。爆発が豪華になり、点が増える
 var close_kill : bool = false
+## イグナイトの発動中に倒されたか(倒された瞬間に ScoreSystem が決める)。爆発が大きめになり、点が増える
+var ignite_kill : bool = false
 ## 中ボスか(StageRunner が、ボスのゲージを出すがボスの時間ボーナスのない敵に入れる)。大きいスコアアイテムを落とす
 var is_midboss : bool = false
 ## 移動パターンの位置に足すずれ(SwayFollow が、背景の横揺れに合わせて入れる)。
@@ -167,6 +169,7 @@ func _die() -> void:
 	var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
 	if score_system:
 		close_kill = score_system.is_close_kill(self)
+		ignite_kill = score_system.is_ignite_kill()
 	died.emit(self)
 	get_tree().call_group("score_system", "on_enemy_killed", self)
 	ItemDrop.drop_all(self, global_position)

@@ -43,7 +43,7 @@ script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
-difficulty = 0
+difficulty = 2
 graze_radius_scales = Array[float]([1.2, 1.0, 0.8])
 
 [node name="Node2D" type="Node2D" parent="." unique_id=740174183]

@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://blyujc8uns8o2" path="res://GameScene/Bullet/enemy_bullet.tscn" id="1_base"]
+[ext_resource type="Texture2D" uid="uid://bhjl738aoa57i" path="res://Assets/Full Shmup Asset Pack/Bullet Pack/Bullet Pack/Medium_Pink_Purple.png" id="2_tex"]
+
+[sub_resource type="Animation" id="Animation_anim"]
+resource_name = "Anim"
+length = 0.36
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.00, 0.06, 0.12, 0.18, 0.24, 0.30),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [6, 7, 10, 11, 10, 7]
+}
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [7]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lib"]
+_data = {
+&"Anim": SubResource("Animation_anim"),
+&"RESET": SubResource("Animation_reset")
+}
+
+[node name="enemy_bullet" instance=ExtResource("1_base")]
+
+[node name="Sprite2D" parent="." index="0"]
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("2_tex")
+hframes = 18
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="2"]
+libraries/ = SubResource("AnimationLibrary_lib")
+autoplay = &"Anim"

@@ -1,0 +1,830 @@
+[gd_resource type="Resource" script_class="StageData" format=3 uid="uid://c8fe0hk3o0kc5"]
+
+[ext_resource type="PackedScene" uid="uid://dro6tqpru25cy" path="res://GameScene/Enemy/BOSS_TANK.tscn" id="32_vix8p"]
+[ext_resource type="PackedScene" path="res://GameScene/Prop/ignite_target.tscn" id="45_vix8p"]
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="e_gunship"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_heavy.tscn" id="e_heavy"]
+[ext_resource type="PackedScene" uid="uid://dcaufucsn0tn5" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_squad.tscn" id="e_squad"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_small.tscn" id="e_tank"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/turret_ground.tscn" id="e_turret"]
+[ext_resource type="Resource" uid="uid://d30fgjov0kkm7" path="res://Resources/MovePatterns/Stage1/m1_boss_enter.tres" id="m_boss_enter"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="phase_script"]
+[ext_resource type="Script" uid="uid://dt7u5fluwbohj" path="res://prop_event.gd" id="prop_script"]
+[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
+[ext_resource type="Resource" uid="uid://ds6sjihumi2wf" path="res://Resources/ShotPatterns/Stage1/s1_aim_3way.tres" id="s_aim_3way"]
+[ext_resource type="Resource" uid="uid://baqit7ar6353j" path="res://Resources/ShotPatterns/Stage1/s1_aim_single.tres" id="s_aim_single"]
+[ext_resource type="Resource" uid="uid://dinoq0tgh1iam" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
+[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
+
+[sub_resource type="Resource" id="scroll_start"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.6
+duration = 2.0
+
+[sub_resource type="Resource" id="rest_1_slow"]
+script = ExtResource("scroll_script")
+duration = 1.5
+time = 42.5
+
+[sub_resource type="Resource" id="rest_1_resume"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.6
+duration = 1.5
+time = 47.0
+
+[sub_resource type="Resource" id="rest_2_slow"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.1
+duration = 1.5
+time = 73.0
+
+[sub_resource type="Resource" id="rest_2_resume"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.8
+duration = 1.5
+time = 78.0
+
+[sub_resource type="Resource" id="prop_train_1"]
+script = ExtResource("prop_script")
+count = 3
+time = 37.0
+
+[sub_resource type="Resource" id="prop_train_2"]
+script = ExtResource("prop_script")
+local_x = 42.0
+count = 2
+time = 66.0
+
+[sub_resource type="Resource" id="scroll_midboss"]
+script = ExtResource("scroll_script")
+speed_multiplier = 0.4
+duration = 1.5
+time = 54.0
+
+[sub_resource type="Resource" id="midboss"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_midboss_split")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_mb_spiral"), ExtResource("s_aim_single")])
+tag = "midboss"
+is_boss = true
+boss_name = "分離砲台"
+boss_phase_thresholds = Array[float]([0.5])
+time = 55.0
+
+[sub_resource type="Resource" id="wait_midboss"]
+script = ExtResource("wait_script")
+tag = "midboss"
+timeout = 40.0
+time = 57.0
+
+[sub_resource type="Resource" id="scroll_late"]
+script = ExtResource("scroll_script")
+speed_multiplier = 1.8
+time = 58.0
+
+[sub_resource type="Resource" id="gunship_1_r"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+offset = Vector2(130, 0)
+time = 13.0
+
+[sub_resource type="Resource" id="gunship_2_c"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+time = 29.0
+
+[sub_resource type="Resource" id="gunship_3_l"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+offset = Vector2(-130, 0)
+time = 43.0
+
+[sub_resource type="Resource" id="gunship_4_c"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+time = 74.0
+
+[sub_resource type="Resource" id="gunship_5_r"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+offset = Vector2(130, 0)
+time = 93.0
+
+[sub_resource type="Resource" id="scroll_boss"]
+script = ExtResource("scroll_script")
+duration = 2.0
+time = 121.0
+
+[sub_resource type="Resource" id="warning"]
+script = ExtResource("signal_script")
+signal_name = "warning"
+time = 122.0
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("32_vix8p")
+move_pattern = ExtResource("m_boss_enter")
+tag = "boss"
+is_boss = true
+boss_name = "ボス"
+boss_phase_thresholds = Array[float]([0.7, 0.4])
+boss_time_bonus = true
+time = 125.0
+
+[sub_resource type="Resource" id="wait_boss"]
+script = ExtResource("wait_script")
+tag = "boss"
+time = 126.0
+
+[sub_resource type="Resource" id="a_open_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 4
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 1.0
+
+[sub_resource type="Resource" id="t_open_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.6
+offset = Vector2(-120, 0)
+offset_step = Vector2(240, 0)
+time = 2.5
+
+[sub_resource type="Resource" id="t_open_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.5
+offset = Vector2(-150, 0)
+offset_step = Vector2(150, 0)
+time = 6.0
+
+[sub_resource type="Resource" id="a_open_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 4
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 9.0
+
+[sub_resource type="Resource" id="t_open_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.5
+offset = Vector2(150, 0)
+offset_step = Vector2(-150, 0)
+time = 10.5
+
+[sub_resource type="Resource" id="t_a_0"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(-130, 0)
+offset_step = Vector2(120, 0)
+time = 14.0
+
+[sub_resource type="Resource" id="t_a_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(170, 0)
+offset_step = Vector2(-110, 0)
+time = 16.6
+
+[sub_resource type="Resource" id="t_a_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(40, 0)
+offset_step = Vector2(-170, 0)
+time = 19.2
+
+[sub_resource type="Resource" id="t_a_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(-170, 0)
+offset_step = Vector2(120, 0)
+time = 23.0
+
+[sub_resource type="Resource" id="t_a_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(-130, 0)
+offset_step = Vector2(120, 0)
+time = 25.6
+
+[sub_resource type="Resource" id="t_a_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(170, 0)
+offset_step = Vector2(-110, 0)
+time = 28.2
+
+[sub_resource type="Resource" id="t_a_6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(40, 0)
+offset_step = Vector2(-170, 0)
+time = 30.8
+
+[sub_resource type="Resource" id="t_a_7"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(-170, 0)
+offset_step = Vector2(120, 0)
+time = 33.4
+
+[sub_resource type="Resource" id="t_a_8"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(-130, 0)
+offset_step = Vector2(120, 0)
+time = 38.5
+
+[sub_resource type="Resource" id="t_a_9"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(170, 0)
+offset_step = Vector2(-110, 0)
+time = 41.0
+
+[sub_resource type="Resource" id="t_a_10"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(40, 0)
+offset_step = Vector2(-170, 0)
+time = 43.6
+
+[sub_resource type="Resource" id="t_a_11"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(-170, 0)
+offset_step = Vector2(120, 0)
+time = 46.2
+
+[sub_resource type="Resource" id="t_a_12"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.5
+offset = Vector2(-130, 0)
+offset_step = Vector2(120, 0)
+time = 48.8
+
+[sub_resource type="Resource" id="t_a_13"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.45
+offset = Vector2(170, 0)
+offset_step = Vector2(-110, 0)
+time = 51.0
+
+[sub_resource type="Resource" id="q_a_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 4
+interval = 0.0
+offset = Vector2(-150, 0)
+offset_step = Vector2(85, -60)
+time = 20.5
+
+[sub_resource type="Resource" id="q_a_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 4
+interval = 0.0
+offset = Vector2(150, 0)
+offset_step = Vector2(-85, -60)
+time = 36.0
+
+[sub_resource type="Resource" id="r_a_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(-150, 0)
+time = 17.5
+
+[sub_resource type="Resource" id="r_a_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(130, 0)
+time = 27.0
+
+[sub_resource type="Resource" id="r_a_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(-60, 0)
+time = 40.0
+
+[sub_resource type="Resource" id="a_a_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 5
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 16.0
+
+[sub_resource type="Resource" id="a_a_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 5
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 24.5
+
+[sub_resource type="Resource" id="a_a_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 5
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 33.0
+
+[sub_resource type="Resource" id="a_a_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 5
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 45.0
+
+[sub_resource type="Resource" id="t_b_0"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 59.0
+
+[sub_resource type="Resource" id="t_b_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(150, 0)
+offset_step = Vector2(-130, 0)
+time = 60.7
+
+[sub_resource type="Resource" id="t_b_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-110, 0)
+time = 63.5
+
+[sub_resource type="Resource" id="t_b_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(-90, 0)
+offset_step = Vector2(200, 0)
+time = 65.2
+
+[sub_resource type="Resource" id="t_b_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(180, 0)
+offset_step = Vector2(-120, 0)
+time = 66.9
+
+[sub_resource type="Resource" id="t_b_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 69.5
+
+[sub_resource type="Resource" id="t_b_6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(150, 0)
+offset_step = Vector2(-130, 0)
+time = 71.2
+
+[sub_resource type="Resource" id="t_b_7"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-110, 0)
+time = 72.9
+
+[sub_resource type="Resource" id="t_b_8"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(-90, 0)
+offset_step = Vector2(200, 0)
+time = 74.6
+
+[sub_resource type="Resource" id="t_b_9"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(180, 0)
+offset_step = Vector2(-120, 0)
+time = 77.5
+
+[sub_resource type="Resource" id="t_b_10"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 79.2
+
+[sub_resource type="Resource" id="t_b_11"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(150, 0)
+offset_step = Vector2(-130, 0)
+time = 81.5
+
+[sub_resource type="Resource" id="t_b_12"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-110, 0)
+time = 83.2
+
+[sub_resource type="Resource" id="t_b_13"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(-90, 0)
+offset_step = Vector2(200, 0)
+time = 84.9
+
+[sub_resource type="Resource" id="t_b_14"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(180, 0)
+offset_step = Vector2(-120, 0)
+time = 86.6
+
+[sub_resource type="Resource" id="t_b_15"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 88.3
+
+[sub_resource type="Resource" id="t_b_16"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(150, 0)
+offset_step = Vector2(-130, 0)
+time = 91.5
+
+[sub_resource type="Resource" id="t_b_17"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-110, 0)
+time = 93.2
+
+[sub_resource type="Resource" id="t_b_18"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(-90, 0)
+offset_step = Vector2(200, 0)
+time = 94.9
+
+[sub_resource type="Resource" id="t_b_19"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(180, 0)
+offset_step = Vector2(-120, 0)
+time = 96.6
+
+[sub_resource type="Resource" id="t_b_20"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 98.3
+
+[sub_resource type="Resource" id="t_b_21"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(150, 0)
+offset_step = Vector2(-130, 0)
+time = 101.5
+
+[sub_resource type="Resource" id="t_b_22"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-110, 0)
+time = 103.2
+
+[sub_resource type="Resource" id="t_b_23"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 2
+interval = 0.4
+offset = Vector2(-90, 0)
+offset_step = Vector2(200, 0)
+time = 104.9
+
+[sub_resource type="Resource" id="t_b_24"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(180, 0)
+offset_step = Vector2(-120, 0)
+time = 106.6
+
+[sub_resource type="Resource" id="t_b_25"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-170, 0)
+offset_step = Vector2(110, 0)
+time = 108.3
+
+[sub_resource type="Resource" id="q_b_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-170, 0)
+offset_step = Vector2(85, -60)
+time = 62.0
+
+[sub_resource type="Resource" id="q_b_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(170, 0)
+offset_step = Vector2(-85, -60)
+time = 70.0
+
+[sub_resource type="Resource" id="q_b_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-170, 0)
+offset_step = Vector2(85, -60)
+time = 80.5
+
+[sub_resource type="Resource" id="q_b_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(170, 0)
+offset_step = Vector2(-85, -60)
+time = 90.0
+
+[sub_resource type="Resource" id="q_b_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-170, 0)
+offset_step = Vector2(85, -60)
+time = 100.0
+
+[sub_resource type="Resource" id="h_b_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_heavy")
+interval = 0.0
+offset = Vector2(-110, 0)
+time = 68.0
+
+[sub_resource type="Resource" id="h_b_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_heavy")
+interval = 0.0
+offset = Vector2(110, 0)
+time = 92.0
+
+[sub_resource type="Resource" id="r_b_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(170, 0)
+time = 66.0
+
+[sub_resource type="Resource" id="r_b_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(-170, 0)
+time = 84.0
+
+[sub_resource type="Resource" id="r_b_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(20, 0)
+time = 98.0
+
+[sub_resource type="Resource" id="a_b_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 6
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 60.0
+
+[sub_resource type="Resource" id="a_b_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 6
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 76.0
+
+[sub_resource type="Resource" id="a_b_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 6
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 88.0
+
+[sub_resource type="Resource" id="a_b_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 6
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 104.0
+
+[sub_resource type="Resource" id="q_r_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-170, 0)
+offset_step = Vector2(85, -60)
+time = 111.0
+
+[sub_resource type="Resource" id="q_r_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(170, 0)
+offset_step = Vector2(-85, -60)
+time = 113.5
+
+[sub_resource type="Resource" id="q_r_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-175, 0)
+offset_step = Vector2(80, 0)
+time = 116.0
+
+[sub_resource type="Resource" id="t_r_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-60, 0)
+offset_step = Vector2(60, 0)
+time = 112.2
+
+[sub_resource type="Resource" id="t_r_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(60, 0)
+offset_step = Vector2(-60, 0)
+time = 114.8
+
+[sub_resource type="Resource" id="t_r_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.4
+offset = Vector2(-150, 0)
+offset_step = Vector2(150, 0)
+time = 117.5
+
+[sub_resource type="Resource" id="a_r_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_3way")])
+hp_override = 80
+count = 8
+interval = 0.4
+offset = Vector2(0, 40)
+alternate_mirror = true
+time = 115.0
+
+[resource]
+script = ExtResource("stage_script")
+stage_name = "Stage 1 タンクラッシュ"
+events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("rest_1_slow"), SubResource("rest_1_resume"), SubResource("rest_2_slow"), SubResource("rest_2_resume"), SubResource("prop_train_1"), SubResource("prop_train_2"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss"), SubResource("a_open_1"), SubResource("t_open_1"), SubResource("t_open_2"), SubResource("a_open_2"), SubResource("t_open_3"), SubResource("t_a_0"), SubResource("t_a_1"), SubResource("t_a_2"), SubResource("t_a_3"), SubResource("t_a_4"), SubResource("t_a_5"), SubResource("t_a_6"), SubResource("t_a_7"), SubResource("t_a_8"), SubResource("t_a_9"), SubResource("t_a_10"), SubResource("t_a_11"), SubResource("t_a_12"), SubResource("t_a_13"), SubResource("q_a_1"), SubResource("q_a_2"), SubResource("r_a_1"), SubResource("r_a_2"), SubResource("r_a_3"), SubResource("a_a_1"), SubResource("a_a_2"), SubResource("a_a_3"), SubResource("a_a_4"), SubResource("t_b_0"), SubResource("t_b_1"), SubResource("t_b_2"), SubResource("t_b_3"), SubResource("t_b_4"), SubResource("t_b_5"), SubResource("t_b_6"), SubResource("t_b_7"), SubResource("t_b_8"), SubResource("t_b_9"), SubResource("t_b_10"), SubResource("t_b_11"), SubResource("t_b_12"), SubResource("t_b_13"), SubResource("t_b_14"), SubResource("t_b_15"), SubResource("t_b_16"), SubResource("t_b_17"), SubResource("t_b_18"), SubResource("t_b_19"), SubResource("t_b_20"), SubResource("t_b_21"), SubResource("t_b_22"), SubResource("t_b_23"), SubResource("t_b_24"), SubResource("t_b_25"), SubResource("q_b_1"), SubResource("q_b_2"), SubResource("q_b_3"), SubResource("q_b_4"), SubResource("q_b_5"), SubResource("h_b_1"), SubResource("h_b_2"), SubResource("r_b_1"), SubResource("r_b_2"), SubResource("r_b_3"), SubResource("a_b_1"), SubResource("a_b_2"), SubResource("a_b_3"), SubResource("a_b_4"), SubResource("q_r_1"), SubResource("q_r_2"), SubResource("q_r_3"), SubResource("t_r_1"), SubResource("t_r_2"), SubResource("t_r_3"), SubResource("a_r_1")])

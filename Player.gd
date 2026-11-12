@@ -124,6 +124,8 @@ var graze_radius_scale : float = 1.0:
 @onready var hp_component: HPComponent = $HPComponent
 @onready var graze_effect: GPUParticles2D = $GrazeEffect
 @onready var ignite_aura : IgniteAura = get_node_or_null("IgniteAura")
+## 被弾したときの炎(子の HitFlame)。なければ炎は出ない
+@onready var hit_flame : PhoenixHitFlame = get_node_or_null("HitFlame")
 
 const MAX_SHOT_STAGE : int = 5
 
@@ -479,10 +481,28 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	# 無敵中・死亡中は被弾を無視する
 	if is_invincible():
 		return
+	var hit_position := global_position
+	var hit_direction := _hit_direction()
+	var was_alive := _is_alive
 	damaged.emit()
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
 	if _is_alive:
 		start_invincibility(hit_invincible_time)
+		if hit_flame:
+			hit_flame.burst(hit_position, hit_direction) # イグナイトが残っている: 撃たれた向きの先へ炎が噴き出す
+	elif was_alive and hit_flame:
+		hit_flame.scatter(hit_position) # イグナイトがない: 爆発して炎が散る
+
+## 被弾した弾が進んでいた向き(炎を飛ばす向き)。弾でなければ、当たったものから自機への向き
+func _hit_direction() -> Vector2:
+	var hurtbox := get_node_or_null("Hurtbox") as Hurtbox
+	var hitbox : Hitbox = hurtbox.last_hitbox if hurtbox else null
+	if not is_instance_valid(hitbox):
+		return Vector2.DOWN
+	if hitbox is EnemyBullet:
+		return (hitbox as EnemyBullet).direction
+	var away := global_position - hitbox.global_position
+	return away.normalized() if away.length() > 1.0 else Vector2.DOWN
 
 ## HPComponent 側から呼ばれる場合に備えて残している(体力はゲージで管理するので通常は使わない)
 func _on_hp_component_is_dead() -> void:

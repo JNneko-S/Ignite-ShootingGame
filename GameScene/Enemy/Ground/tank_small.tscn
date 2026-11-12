@@ -14,7 +14,7 @@
 size = Vector2(24, 28)
 
 [node name="TankSmall" unique_id=1071477686 instance=ExtResource("base")]
-scale = Vector2(1.4, 1.4)
+scale = Vector2(2.8, 2.8)
 pattern = null
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
@@ -35,6 +35,9 @@ hp = 60
 z_index = 0
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
 
+[node name="DeathExplosion" parent="." index="6" unique_id=301000002]
+explosion_scale = 1.8
+
 [node name="ScoreReward" parent="." index="8" unique_id=301000004]
 score_value = 200
 
@@ -46,6 +49,9 @@ texture = ExtResource("head")
 script = ExtResource("ground")
 body = NodePath("../Sprite2D")
 drive_speed = 45.0
+look_ahead = 50.0
+probe_width = 26.0
+body_radius = 34.0
 drive_textures = Array[Texture2D]([ExtResource("body0"), ExtResource("body1")])
 wreck_texture = ExtResource("wreck")
 

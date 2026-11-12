@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dro6tqpru25cy"]
 
+[ext_resource type="Script" path="res://Component/Boss/boss_scroll_boost.gd" id="scroll_boost"]
 [ext_resource type="Texture2D" uid="uid://b02kojahk51jq" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Wheels_strip4.png" id="1_xstfq"]
 [ext_resource type="Texture2D" uid="uid://5d3cvuu4pylh" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_strip4.png" id="2_7ermy"]
 [ext_resource type="Texture2D" uid="uid://b6uflatai842f" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_Top_L.png" id="3_pflla"]
@@ -568,3 +569,6 @@ volume_db = -8.0
 
 [node name="TankMover" type="Node" parent="." index="16" unique_id=301000312]
 script = ExtResource("tank_mover")
+
+[node name="BossScrollBoost" type="Node" parent="." unique_id=701000001]
+script = ExtResource("scroll_boost")

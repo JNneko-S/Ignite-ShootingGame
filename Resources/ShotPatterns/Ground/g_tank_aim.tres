@@ -1,11 +1,15 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c6jeqp8p4dhka"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="3"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_7vbln"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Tank_Aim.tscn" id="3"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("3")
 start_delay = 1.2
+shot_count = 6
+interval = 0.2
 pause = 2.6
-bullet_speed = 130.0
+aim_once_per_burst = true
+bullet_speed = 260.0

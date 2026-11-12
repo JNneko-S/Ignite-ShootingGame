@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Tank2_2.png" id="body1"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Tank2_3.png" id="body2"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/tank2_head.png" id="head"]
+[ext_resource type="PackedScene" path="res://GameScene/Item/power_up_lock.tscn" id="drop"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(52, 60)
@@ -42,6 +43,9 @@ duration = 0.7
 burn_bullets = false
 shake_scale = 0.5
 
+[node name="ItemDrop" parent="." unique_id=301000003]
+item_scene = ExtResource("drop")
+
 [node name="ScoreReward" parent="." index="8" unique_id=301000004]
 score_value = 1500
 
@@ -55,6 +59,8 @@ body = NodePath("../Sprite2D")
 drive_speed = 20.0
 drive_textures = Array[Texture2D]([ExtResource("body0"), ExtResource("body1"), ExtResource("body2")])
 drive_anim_fps = 6.0
+body_radius = 30.0
+yield_to_others = false
 
 [node name="TurretAim" type="Node" parent="." unique_id=496555068 node_paths=PackedStringArray("turret", "muzzle")]
 script = ExtResource("aim")

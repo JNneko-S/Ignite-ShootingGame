@@ -11,5 +11,7 @@ start_delay = 1.0
 shot_count = 3
 interval = 0.12
 pause = 2.2
+bullet_count = 3
+spread_angle = 36.0
 aim_once_per_burst = true
 bullet_speed = 170.0

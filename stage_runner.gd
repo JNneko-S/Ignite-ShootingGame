@@ -235,6 +235,8 @@ func spawn_prop(event : PropEvent) -> void:
 	var root := get_tree().current_scene
 	var parent : Node2D = root.get_node_or_null(event.parent_path) as Node2D if root else null
 	if parent == null:
+		parent = get_tree().get_first_node_in_group("ground") as Node2D # 見つからなければ、地面の絵("ground" グループ)に乗せる
+	if parent == null:
 		push_warning("StageRunner: PropEvent の親 %s が見つかりません (t=%.1f)" % [event.parent_path, event.time])
 		parent = root as Node2D
 		if parent == null:

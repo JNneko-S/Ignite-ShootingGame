@@ -28,6 +28,8 @@ enum Kind { SMALL, MEDIUM, LARGE, MEDAL }
 @export var hframes : int = 4
 ## 1コマの時間(秒)
 @export var frame_time : float = 0.08
+## 描く順番。敵弾(5)と予測線(4)より下、空の敵(2)より上。5 以上にすると弾を隠してしまう
+@export var draw_z : int = 3
 
 @export_group("落ちる")
 ## 出た瞬間に弾ける速さ(px/秒)。上向きに弾けてから落ちる
@@ -81,7 +83,8 @@ func setup(player : Player, points : int, spread : float = 1.0) -> void:
 	_velocity = Vector2.from_angle(angle) * pop_speed * randf_range(0.6, 1.0) * maxf(spread, 0.4)
 
 func _ready() -> void:
-	z_index = 5
+	z_as_relative = false
+	z_index = draw_z
 	add_to_group("score_item")
 	_sprite.hframes = maxi(hframes, 1)
 	_sprite.frame = randi() % _sprite.hframes

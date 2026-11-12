@@ -84,6 +84,15 @@ signal burn_finished(count : int)
 ## 近距離撃破で、さらに入る点
 @export var close_kill_bonus : int = 50
 
+@export_group("倒し方の倍率(爆発の種類と対応する)")
+## 通常ショットで倒したとき(周りに小さな爆発)は等倍。
+## イグナイトの発動中に倒したとき(大きめの爆発)の倍率
+@export var ignite_kill_multiplier : float = 1.2
+## 近づいて倒したとき(曲線・円・渦巻きに並んだ爆発)の倍率
+@export var close_kill_multiplier : float = 1.2
+## イグナイトの発動中に、近づいて倒したとき(大きめの爆発 + 並んだ爆発)の倍率
+@export var ignite_close_kill_multiplier : float = 1.5
+
 @export_group("スコアアイテム")
 @export var score_item_scene : PackedScene = preload("res://GameScene/Item/score_item.tscn")
 ## 中・大のスコアアイテムと、勲章のシーン
@@ -248,7 +257,7 @@ func on_enemy_killed(enemy : Enemy) -> void:
 		close_killed.emit(enemy.global_position)
 	_raise_graze_multiplier()
 	var ignite_multiplier := current_ignite_multiplier()
-	var points := float(reward.score_value) * graze_multiplier * ignite_multiplier
+	var points := float(reward.score_value) * graze_multiplier * ignite_multiplier * kill_style_multiplier(enemy)
 	if enemy.killed_by_reflect:
 		points *= reflect_kill_multiplier
 	# 点はその場で入らず、アイテムになって落ちる(種類は敵による。大きい敵ほど数が多い)
@@ -424,6 +433,20 @@ func current_magnet_radius() -> float:
 	if not _burning:
 		return item_magnet_radius
 	return minf(item_magnet_radius + burn_count * burn_magnet_per_bullet, burn_magnet_max)
+
+## イグナイトの発動中に倒したか(爆発が大きめになる)
+func is_ignite_kill() -> bool:
+	return game_manager != null and game_manager.ignite_level_in_use > 0
+
+## 倒し方による倍率: 通常 1 / イグナイト中 / 近距離 / イグナイト中かつ近距離
+func kill_style_multiplier(enemy : Enemy) -> float:
+	if enemy.ignite_kill and enemy.close_kill:
+		return ignite_close_kill_multiplier
+	if enemy.ignite_kill:
+		return ignite_kill_multiplier
+	if enemy.close_kill:
+		return close_kill_multiplier
+	return 1.0
 
 ## 近距離撃破か: 自機のショットで倒し、そのとき自機が close_kill_distance 以内にいた
 func is_close_kill(enemy : Enemy) -> bool:
