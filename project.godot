@@ -12,8 +12,9 @@ config_version=5
 
 config/name="Ignite"
 config/version="0.0.0alpha"
-run/main_scene="uid://bs4dp2bu5owql"
+run/main_scene="uid://cdpyuc213bh0u"
 config/features=PackedStringArray("4.7", "Forward Plus")
+run/max_fps=144
 config/icon="res://icon.svg"
 
 [autoload]

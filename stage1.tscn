@@ -4,8 +4,8 @@
 [ext_resource type="Resource" uid="uid://c8fe0hk3o0kc5" path="res://Resources/StageData/Stage1TankRush.tres" id="stage"]
 
 [node name="ScrollTest" unique_id=2065326320 instance=ExtResource("base")]
-start_levels = Array[int]([3, 3, 1])
-graze_per_level = 15.0
+graze_per_levels = Array[float]([10.0, 12.0, 14.0])
+graze_radius_scales = Array[float]([1.1, 1.0, 0.8])
 burn_max_radius = Array[float]([40.0, 60.0, 80.0, 100.0, 0.0])
 burn_final_radius = Array[float]([0.0, 0.0, 0.0, 0.0, 120.0])
 post_ignite_invincible_time = 1.2
@@ -15,3 +15,5 @@ end_b_use_count_required = 20
 
 [node name="StageRunner" parent="." index="2" unique_id=1973239994]
 stage = ExtResource("stage")
+
+[editable path="UI/ScoreUI"]

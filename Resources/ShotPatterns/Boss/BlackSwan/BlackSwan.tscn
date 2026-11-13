@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://di60y0bpnpn6b"]
 
 [ext_resource type="Script" path="res://Component/Boss/boss_scroll_boost.gd" id="scroll_boost"]
+[ext_resource type="Script" path="res://Component/Boss/shadow_flyby.gd" id="shadow_flyby"]
+[ext_resource type="Texture2D" uid="uid://dgpqd35yvg5js" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/pp_1.png" id="tex_escort"]
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="1_3v7c8"]
 [ext_resource type="Texture2D" uid="uid://7a60wnm5bufm" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Body_engine_strip6.png" id="2_m6wyt"]
 [ext_resource type="Texture2D" uid="uid://8c1q0ocqcen5" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/Body_strip6.png" id="3_k084q"]
@@ -216,7 +218,7 @@ initial_state = NodePath("Intro")
 
 [node name="Intro" type="Node" parent="StateMachine" index="0" unique_id=601000005]
 script = ExtResource("st_shoot")
-duration = 3.0
+duration = 4.8
 next_state = "Barrage"
 
 [node name="Barrage" type="Node" parent="StateMachine" index="1" unique_id=601000006 node_paths=PackedStringArray("shooters")]
@@ -268,6 +270,11 @@ autostart = false
 [node name="FighterMover" type="Node" parent="." index="22" unique_id=601000020 node_paths=PackedStringArray("dive")]
 script = ExtResource("fighter_mover")
 dive = NodePath("../AfterburnerDive")
+start_delay = 5.0
 
 [node name="BossScrollBoost" type="Node" parent="." unique_id=701000001]
 script = ExtResource("scroll_boost")
+
+[node name="ShadowFlyby" type="Node" parent="." unique_id=701000002]
+script = ExtResource("shadow_flyby")
+texture = ExtResource("tex_escort")

@@ -27,12 +27,13 @@ signal score_changed(score : int)
 @export var start_levels : Array[int] = [5, 3, 0]
 ## 被弾1回で減るレベル。1ならレベルの数 = 耐えられる被弾回数。減らした結果が0未満なら死亡
 @export var miss_penalties : Array[int] = [1, 1, 1]
+## Lv1 に到達するのに必要なグレイズ量(Lv n に上がるには n 倍)。
+## 20 なら累計 20, 60, 120, 200, 300。12 なら累計 12, 36, 72, 120, 180
+@export var graze_per_levels : Array[float] = [12.0, 16.0, 20.0]
 ## グレイズ範囲の倍率(初心者ほど大きい。仮の値)
 @export var graze_radius_scales : Array[float] = [1.5, 1.25, 1.0]
 
 @export_group("ゲージ")
-## Lv1 に到達するのに必要なグレイズ量(Lv n に上がるには n 倍。累計は 20, 60, 120, 200, 300)
-@export var graze_per_level : float = 20.0
 @export var density_bonus : float = 0.05
 
 @export_group("イグナイト(消費したレベル 1〜5 の順)")
@@ -52,6 +53,10 @@ signal score_changed(score : int)
 @export var burn_extend_max_ratio : float = 1.0
 ## 画面演出のシーン(衝撃波・ヒットストップ・画面のふちの光)。空なら演出なし
 @export var screen_effect_scene : PackedScene = preload("res://GameScene/Effect/ignite_screen_effect.tscn")
+
+@export_group("ゲームオーバー")
+## 残機が尽きたときに出す画面(ルートが GameOverScreen)。空なら何も出さない
+@export var game_over_scene : PackedScene = preload("res://GameScene/UI/game_over.tscn")
 
 @export_group("被弾時の補給アイテム")
 ## 散らばるアイテムのシーン(ルートが IgniteItem)。見た目はこのシーンの Sprite2D で変える
@@ -115,6 +120,9 @@ var _extended : bool = false
 var _screen_effect : IgniteScreenEffect
 
 func _ready() -> void:
+	# 機体選択の画面を通って出撃したときは、そこで選んだ難易度にする
+	if RunConfig.has_selection:
+		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as Player
 	if ui == null:
@@ -124,7 +132,7 @@ func _ready() -> void:
 	if score_system:
 		score_system.score_changed.connect(_on_score_changed)
 
-	ignite.graze_per_level = graze_per_level
+	ignite.graze_per_level = _by_difficulty(graze_per_levels)
 	ignite.density_bonus = density_bonus
 	ignite.level_changed.connect(_on_level_changed)
 	ignite.configure(_by_difficulty(start_levels), _by_difficulty(miss_penalties))
@@ -146,6 +154,7 @@ func _ready() -> void:
 	player.graze_hit.connect(_on_player_graze_hit)
 	player.damaged.connect(_on_player_damaged)
 	player.respawned.connect(_on_player_respawned)
+	player.game_over.connect(_on_game_over)
 	player.ignite_requested.connect(_on_ignite_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
 	if player.ignite_aura:
@@ -221,6 +230,14 @@ func _scatter_items(level_before : int, progress_before : float) -> void:
 		item.collected.connect(ignite.add_value)
 		get_tree().current_scene.add_child(item)
 		item.global_position = player.global_position
+
+## 残機が尽きた: ゲームオーバーの画面を出す
+func _on_game_over() -> void:
+	if game_over_scene == null:
+		return
+	var screen := game_over_scene.instantiate() as GameOverScreen
+	add_child(screen)
+	screen.play(score_system.score if score_system else score)
 
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:

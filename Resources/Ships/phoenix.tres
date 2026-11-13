@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ShipData" format=3]
+
+[ext_resource type="Script" path="res://Resources/Ships/ship_data.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/makebead-99x99.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://Player.tscn" id="3_player"]
+
+[resource]
+script = ExtResource("1_script")
+ship_name = "PHOENIX"
+subtitle = "炎の翼をもつ試作機"
+description = "敵弾をかすめてゲージを溜め、イグナイトで弾幕を焼き払う。
+ショット: 前方3連射 / 低速移動: ロックショット"
+texture = ExtResource("2_tex")
+preview_scale = 1.1
+icon_scale = 0.75
+player_scene = ExtResource("3_player")

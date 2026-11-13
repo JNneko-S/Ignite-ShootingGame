@@ -1,0 +1,199 @@
+[gd_scene format=3 uid="uid://cdpyuc213bh0u"]
+
+[ext_resource type="Script" uid="uid://tfeboepyn4it" path="res://GameScene/Select/ship_select.gd" id="1_select"]
+[ext_resource type="Script" uid="uid://dbsvtggbtigus" path="res://Resources/Ships/ship_data.gd" id="2_trkis"]
+[ext_resource type="Script" uid="uid://uval7epgnqfq" path="res://GameScene/UI/led_board.gd" id="5_board"]
+[ext_resource type="Script" uid="uid://bhfq8fhyle633" path="res://GameScene/Select/tech_panel.gd" id="6_panel"]
+[ext_resource type="Script" uid="uid://ci2bvdxf7l7c1" path="res://GameScene/Select/selector_ring.gd" id="7_ring"]
+[ext_resource type="Resource" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="9_font"]
+[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
+[ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="11_confirm"]
+[ext_resource type="PackedScene" path="res://GameScene/UI/shutter.tscn" id="13_shutter_scene"]
+[ext_resource type="AudioStream" uid="uid://drqvi48px8sp1" path="res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3" id="14_spark"]
+[ext_resource type="AudioStream" uid="uid://bhh1h78p6hl0b" path="res://Assets/Sounds/Music/AS_1026032_SF系、メニュー画面向けエレクトロニカ.mp3" id="15_music"]
+
+[sub_resource type="LabelSettings" id="ls_name"]
+font = ExtResource("9_font")
+font_size = 12
+font_color = Color(0.85, 0.95, 1, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="ls_small"]
+font = ExtResource("9_font")
+font_size = 8
+font_color = Color(0.45, 0.8, 1, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="ls_desc_title"]
+font = ExtResource("9_font")
+font_size = 12
+font_color = Color(1, 0.75, 0.3, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="ls_desc_sub"]
+font_size = 9
+font_color = Color(0.45, 0.85, 1, 1)
+
+[sub_resource type="LabelSettings" id="ls_desc_text"]
+line_spacing = 1.0
+font_size = 9
+font_color = Color(0.9, 0.93, 0.97, 1)
+
+[node name="ShipSelect" type="Node" unique_id=792165094 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music", "spark_sound")]
+script = ExtResource("1_select")
+ships = Array[ExtResource("2_trkis")]([ExtResource("8_phoenix")])
+move_sound = NodePath("MoveSound")
+confirm_sound = NodePath("ConfirmSound")
+back_sound = NodePath("BackSound")
+music = NodePath("Music")
+spark_sound = NodePath("SparkSound")
+
+[node name="Shutter" parent="." unique_id=1658499860 instance=ExtResource("13_shutter_scene")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=473990478]
+layer = 95
+
+[node name="Root" type="Control" parent="UI" unique_id=644240581]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="TitleBoard" type="Control" parent="UI/Root" unique_id=1648837275]
+anchors_preset = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 324.0
+offset_bottom = 60.0
+mouse_filter = 2
+script = ExtResource("5_board")
+text = "SELECT YOUR FIGHTER"
+lit_color = Color(0.35, 0.85, 1, 1)
+dim_color = Color(0.03, 0.1, 0.14, 1)
+fixed_pitch = 4.0
+
+[node name="PreviewFrame" type="Control" parent="UI/Root" unique_id=1600188410]
+anchors_preset = 0
+offset_top = 84.0
+offset_right = 160.0
+offset_bottom = 300.0
+mouse_filter = 2
+script = ExtResource("6_panel")
+shape = 1
+
+[node name="PreviewPanel" type="Control" parent="UI/Root/PreviewFrame" unique_id=236038725]
+anchors_preset = 0
+offset_left = 12.0
+offset_top = 14.0
+offset_right = 134.0
+offset_bottom = 202.0
+mouse_filter = 2
+script = ExtResource("6_panel")
+fill_color = Color(0.02, 0.05, 0.08, 0.95)
+show_grid = true
+
+[node name="PreviewShip" type="Sprite2D" parent="UI/Root/PreviewFrame/PreviewPanel" unique_id=648101764]
+position = Vector2(61, 94)
+
+[node name="Selector" type="Control" parent="UI/Root" unique_id=1218154726]
+anchors_preset = 0
+offset_left = 176.0
+offset_top = 146.0
+offset_right = 312.0
+offset_bottom = 246.0
+mouse_filter = 2
+script = ExtResource("7_ring")
+radius = 40.0
+
+[node name="Icon" type="Sprite2D" parent="UI/Root/Selector" unique_id=2131544178]
+position = Vector2(68, 50)
+
+[node name="ShipName" type="Label" parent="UI/Root" unique_id=621386783]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 252.0
+offset_right = 312.0
+offset_bottom = 270.0
+text = "PHOENIX"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="ShipIndex" type="Label" parent="UI/Root" unique_id=499590208]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 270.0
+offset_right = 312.0
+offset_bottom = 284.0
+text = "1 / 1"
+label_settings = SubResource("ls_small")
+horizontal_alignment = 1
+
+[node name="DescPanel" type="Control" parent="UI/Root" unique_id=1573665707]
+anchors_preset = 0
+offset_top = 316.0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+script = ExtResource("6_panel")
+shape = 2
+cut = 30.0
+
+[node name="DescTitle" type="Label" parent="UI/Root/DescPanel" unique_id=573636955]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 10.0
+offset_right = 296.0
+offset_bottom = 26.0
+text = "PHOENIX"
+label_settings = SubResource("ls_desc_title")
+
+[node name="DescSub" type="Label" parent="UI/Root/DescPanel" unique_id=468663106]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 27.0
+offset_right = 296.0
+offset_bottom = 41.0
+label_settings = SubResource("ls_desc_sub")
+
+[node name="DescText" type="Label" parent="UI/Root/DescPanel" unique_id=2007924532]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 44.0
+offset_right = 302.0
+offset_bottom = 104.0
+label_settings = SubResource("ls_desc_text")
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="UI/Root/DescPanel" unique_id=254730343]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 110.0
+offset_right = 302.0
+offset_bottom = 124.0
+label_settings = SubResource("ls_small")
+horizontal_alignment = 1
+
+[node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=1837419916]
+stream = ExtResource("10_beep")
+volume_db = -10.0
+
+[node name="ConfirmSound" type="AudioStreamPlayer" parent="." unique_id=738655468]
+stream = ExtResource("11_confirm")
+volume_db = -8.0
+
+[node name="BackSound" type="AudioStreamPlayer" parent="." unique_id=485129091]
+stream = ExtResource("10_beep")
+volume_db = -10.0
+pitch_scale = 0.6
+
+[node name="SparkSound" type="AudioStreamPlayer" parent="." unique_id=2073730607]
+stream = ExtResource("14_spark")
+volume_db = -6.0
+pitch_scale = 1.6
+
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=1076512167]
+stream = ExtResource("15_music")
+volume_db = -19.0

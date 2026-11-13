@@ -62,7 +62,8 @@ func _start_phase(index : int) -> void:
 	_index = index
 	var phase := phases[index]
 	if phase.clear_bullets:
-		get_tree().call_group("enemy_bullet", "queue_free")
+		# ボスから近い弾ほど先に、光ってはじけて消える(点にはならない)
+		EnemyBullet.vanish_all(get_tree(), (get_parent() as Node2D).global_position)
 	var boss := get_parent()
 	for shooter in (_shooters(boss) if switch_shooters else []):
 		if shooter.has_phases():

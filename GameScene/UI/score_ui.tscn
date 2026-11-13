@@ -1,10 +1,46 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c7xcqd7dn8yjc"]
 
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="2_f513s"]
+[ext_resource type="FontFile" uid="uid://cll7r4vdclxel" path="res://Assets/Fonts/micronianlaacad.ttf" id="3_u5mr0"]
 [ext_resource type="Script" uid="uid://bhcr4x21vssx8" path="res://score_ui.gd" id="script"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_jq5vw"]
+font = ExtResource("2_f513s")
+font_size = 12
+font_color = Color(1, 1, 0.40784314, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_l8h3n"]
+font = ExtResource("2_f513s")
+
+[sub_resource type="LabelSettings" id="LabelSettings_cp5wt"]
+font = ExtResource("2_f513s")
+font_size = 18
+font_color = Color(0.35686275, 1, 1, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_6y6f4"]
+font = ExtResource("3_u5mr0")
+font_color = Color(0.99999577, 0.38564253, 0.33928928, 1)
+outline_size = 2
+outline_color = Color(1, 0.72906274, 0.54547006, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ogqy2"]
+font = ExtResource("3_u5mr0")
+font_size = 32
+font_color = Color(0.63529414, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_3xvw3"]
+font = ExtResource("2_f513s")
+font_color = Color(0.99999994, 0.654236, 0.32747892, 1)
+outline_size = 4
+outline_color = Color(1, 0.16811618, 0.17511156, 1)
+
 [node name="ScoreUI" type="CanvasLayer" unique_id=183779531]
-script = ExtResource("script")
 layer = 15
+script = ExtResource("script")
 
 [node name="Root" type="Control" parent="." unique_id=811719662]
 layout_mode = 3
@@ -30,6 +66,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 10
 text = "HI 000000000"
+label_settings = SubResource("LabelSettings_jq5vw")
 horizontal_alignment = 2
 
 [node name="ScoreLabel" type="Label" parent="Root" unique_id=971349778]
@@ -47,6 +84,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 text = "000000000"
+label_settings = SubResource("LabelSettings_l8h3n")
 horizontal_alignment = 2
 
 [node name="MultLabel" type="Label" parent="Root" unique_id=277545438]
@@ -55,9 +93,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -140.0
-offset_top = 32.0
+offset_top = 25.0
 offset_right = -6.0
-offset_bottom = 48.0
+offset_bottom = 45.0
 grow_horizontal = 0
 pivot_offset = Vector2(134, 7)
 theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
@@ -65,6 +103,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
 text = "x1.00"
+label_settings = SubResource("LabelSettings_cp5wt")
 horizontal_alignment = 2
 
 [node name="ChainLabel" type="Label" parent="Root" unique_id=2034423832]
@@ -73,41 +112,44 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -140.0
-offset_top = 45.0
+offset_top = 41.0
 offset_right = -6.0
-offset_bottom = 61.0
+offset_bottom = 58.0
 grow_horizontal = 0
 pivot_offset = Vector2(134, 7)
 theme_override_colors/font_color = Color(1, 0.85, 0.45, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
+label_settings = SubResource("LabelSettings_6y6f4")
 horizontal_alignment = 2
 
 [node name="ExtendLabel" type="Label" parent="Root" unique_id=1607422154]
+visible = false
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = -1
 anchor_top = 0.4
 anchor_right = 1.0
 anchor_bottom = 0.4
 offset_bottom = 34.0
 grow_horizontal = 2
-visible = false
 theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 24
 text = "EXTEND!"
+label_settings = SubResource("LabelSettings_ogqy2")
 horizontal_alignment = 1
 
 [node name="Result" type="VBoxContainer" parent="Root" unique_id=1269412477]
+visible = false
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.15
 anchor_top = 0.3
 anchor_right = 0.85
 anchor_bottom = 0.3
 grow_horizontal = 2
-visible = false
 mouse_filter = 2
 theme_override_constants/separation = 4
 
@@ -116,15 +158,14 @@ layer = 16
 
 [node name="BurnLabel" type="Label" parent="BurnLayer" unique_id=301000020]
 visible = false
-layout_mode = 0
 offset_left = -80.0
 offset_right = 80.0
 offset_bottom = 26.0
 pivot_offset = Vector2(80, 13)
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.62, 0.22, 1)
 theme_override_colors/font_outline_color = Color(0.25, 0.04, 0, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 20
 text = "238 BURN!"
+label_settings = SubResource("LabelSettings_3xvw3")
 horizontal_alignment = 1

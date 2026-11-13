@@ -1,0 +1,125 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://GameScene/UI/game_over.gd" id="1_script"]
+[ext_resource type="Script" path="res://GameScene/UI/led_board.gd" id="2_board"]
+[ext_resource type="Shader" path="res://GameScene/UI/shutter.gdshader" id="3_shutter"]
+[ext_resource type="Shader" path="res://GameScene/UI/game_over_screen_fx.gdshader" id="4_fx"]
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="5_font"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1634288_ボン！爆発音_中_01.mp3" id="6_slam"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="7_beep"]
+
+[sub_resource type="ShaderMaterial" id="mat_top"]
+shader = ExtResource("3_shutter")
+shader_parameter/rect_size = Vector2(336, 224)
+shader_parameter/edge_at_bottom = true
+shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/slat_height = 14.0
+shader_parameter/edge_height = 16.0
+shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
+shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="mat_bottom"]
+shader = ExtResource("3_shutter")
+shader_parameter/rect_size = Vector2(336, 224)
+shader_parameter/edge_at_bottom = false
+shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/slat_height = 14.0
+shader_parameter/edge_height = 16.0
+shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
+shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="mat_fx"]
+shader = ExtResource("4_fx")
+shader_parameter/strength = 0.0
+shader_parameter/noise_amount = 0.13
+shader_parameter/scanline_amount = 0.18
+shader_parameter/tear_amount = 0.02
+shader_parameter/tear_chance = 0.04
+shader_parameter/desaturate = 0.35
+shader_parameter/vignette = 0.6
+
+[sub_resource type="LabelSettings" id="ls_score"]
+font = ExtResource("5_font")
+font_size = 12
+font_color = Color(1, 0.9, 0.55, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="ls_prompt"]
+font = ExtResource("5_font")
+font_size = 10
+font_color = Color(0.85, 0.9, 1, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[node name="GameOver" type="CanvasLayer" node_paths=PackedStringArray("slam_sound", "board_sound")]
+process_mode = 3
+layer = 100
+visible = false
+script = ExtResource("1_script")
+slam_sound = NodePath("SlamSound")
+board_sound = NodePath("BoardSound")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="ShutterTop" type="ColorRect" parent="Root"]
+material = SubResource("mat_top")
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 224.0
+mouse_filter = 2
+
+[node name="ShutterBottom" type="ColorRect" parent="Root"]
+material = SubResource("mat_bottom")
+layout_mode = 0
+offset_top = 224.0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+
+[node name="Board" type="Control" parent="Root"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 190.0
+offset_right = 324.0
+offset_bottom = 258.0
+mouse_filter = 2
+script = ExtResource("2_board")
+
+[node name="ScoreLabel" type="Label" parent="Root"]
+layout_mode = 0
+offset_top = 272.0
+offset_right = 336.0
+offset_bottom = 290.0
+text = "SCORE 000000000"
+label_settings = SubResource("ls_score")
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="Root"]
+layout_mode = 0
+offset_top = 294.0
+offset_right = 336.0
+offset_bottom = 310.0
+text = "PRESS SHOT TO RETRY"
+label_settings = SubResource("ls_prompt")
+horizontal_alignment = 1
+
+[node name="ScreenFx" type="ColorRect" parent="Root"]
+material = SubResource("mat_fx")
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+
+[node name="SlamSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_slam")
+volume_db = -4.0
+pitch_scale = 0.6
+
+[node name="BoardSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_beep")
+volume_db = -8.0
+pitch_scale = 0.8

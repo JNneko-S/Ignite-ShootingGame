@@ -1,0 +1,68 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://GameScene/UI/shutter_transition.gd" id="1_shutter"]
+[ext_resource type="Shader" path="res://GameScene/UI/shutter.gdshader" id="2_shader"]
+[ext_resource type="Shader" path="res://GameScene/UI/game_over_screen_fx.gdshader" id="3_fx"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1634288_ボン！爆発音_中_01.mp3" id="4_slam"]
+
+[sub_resource type="ShaderMaterial" id="mat_top"]
+shader = ExtResource("2_shader")
+shader_parameter/rect_size = Vector2(336, 224)
+shader_parameter/edge_at_bottom = true
+shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/slat_height = 14.0
+shader_parameter/edge_height = 16.0
+shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
+shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="mat_bottom"]
+shader = ExtResource("2_shader")
+shader_parameter/rect_size = Vector2(336, 224)
+shader_parameter/edge_at_bottom = false
+shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/slat_height = 14.0
+shader_parameter/edge_height = 16.0
+shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
+shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+
+[sub_resource type="ShaderMaterial" id="mat_fx"]
+shader = ExtResource("3_fx")
+shader_parameter/strength = 0.4
+shader_parameter/noise_amount = 0.13
+shader_parameter/scanline_amount = 0.18
+shader_parameter/tear_amount = 0.02
+shader_parameter/tear_chance = 0.04
+shader_parameter/desaturate = 0.15
+shader_parameter/vignette = 0.6
+
+[node name="Shutter" type="CanvasLayer" node_paths=PackedStringArray("open_sound")]
+layer = 90
+script = ExtResource("1_shutter")
+open_sound = NodePath("OpenSound")
+
+[node name="ShutterTop" type="ColorRect" parent="."]
+material = SubResource("mat_top")
+offset_right = 336.0
+offset_bottom = 224.0
+mouse_filter = 2
+
+[node name="ShutterBottom" type="ColorRect" parent="."]
+material = SubResource("mat_bottom")
+offset_top = 224.0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+
+[node name="FxLayer" type="CanvasLayer" parent="."]
+layer = 99
+
+[node name="ScreenFx" type="ColorRect" parent="FxLayer"]
+material = SubResource("mat_fx")
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+
+[node name="OpenSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_slam")
+volume_db = -8.0
+pitch_scale = 1.4

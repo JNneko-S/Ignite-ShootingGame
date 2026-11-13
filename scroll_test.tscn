@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://cy01axe4ckhws" path="res://background_scroller.gd" id="6_spej0"]
 [ext_resource type="Texture2D" uid="uid://bpmwsg86hpo15" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Top_Layer.png" id="7_nxg43"]
 [ext_resource type="Texture2D" uid="uid://cx4gd465fu883" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Loop this at the end.png" id="7_sf26y"]
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="11_32fuh"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/boss_gauge.tscn" id="14_0u1li"]
 [ext_resource type="AudioStream" uid="uid://ce7p8gonc583" path="res://Assets/Sounds/Music/AS_1240332_勇壮なプログレッシブブレイクス.mp3" id="19_sf26y"]
 [ext_resource type="AudioStream" uid="uid://dhj4htoqrenf0" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="20_32fuh"]
@@ -18,13 +19,13 @@
 [ext_resource type="Script" uid="uid://bwysosabdx413" path="res://hud_fader.gd" id="hud_fader"]
 [ext_resource type="Resource" uid="uid://beiarkvgmkkj1" path="res://Resources/StageData/Stage1GrazeRush.tres" id="s1_graze_rush"]
 [ext_resource type="Script" uid="uid://8cpjmeybdx1k" path="res://score_system.gd" id="score_system"]
-[ext_resource type="PackedScene" path="res://GameScene/UI/score_ui.tscn" id="score_ui"]
+[ext_resource type="PackedScene" uid="uid://c7xcqd7dn8yjc" path="res://GameScene/UI/score_ui.tscn" id="score_ui"]
 [ext_resource type="Script" uid="uid://betsud25wihtg" path="res://stage_bgm.gd" id="stage_bgm"]
 [ext_resource type="PackedScene" path="res://GameScene/Intro/stage_intro.tscn" id="stage_intro"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/warning_display.tscn" id="warning_display"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
-bg_color = Color(0, 0, 0, 0.24700001)
+bg_color = Color(0.45882353, 0, 0, 0.6627451)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -38,13 +39,18 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="LabelSettings" id="LabelSettings_ri2fp"]
+font = ExtResource("11_32fuh")
+font_color = Color(0.96385103, 0.4562564, 5.7756904e-07, 1)
+outline_size = 3
+
 [node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui", "lives_label")]
 script = ExtResource("1_7uoxh")
 player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
-difficulty = 2
-graze_radius_scales = Array[float]([1.2, 1.0, 0.8])
+start_levels = Array[int]([3, 2, 1])
+graze_radius_scales = Array[float]([1.0, 1.0, 0.8])
 
 [node name="Node2D" type="Node2D" parent="." unique_id=740174183]
 z_index = 1
@@ -101,19 +107,22 @@ script = ExtResource("2_n7bgm")
 [node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=380880432]
 
 [node name="ProgressBar" type="ProgressBar" parent="UI/CanvasLayer" unique_id=2113409768]
-offset_left = 24.0
+offset_left = 5.0
 offset_top = 24.0
-offset_right = 120.0
+offset_right = 93.0
 offset_bottom = 51.0
+theme_override_fonts/font = ExtResource("11_32fuh")
 theme_override_styles/background = SubResource("StyleBoxFlat_jhy2k")
 theme_override_styles/fill = SubResource("StyleBoxFlat_5hoxb")
 value = 25.36
 
 [node name="Label" type="Label" parent="UI/CanvasLayer" unique_id=624918176]
-offset_left = 24.0
-offset_right = 76.0
-offset_bottom = 23.0
+offset_left = 5.0
+offset_top = 6.0
+offset_right = 62.0
+offset_bottom = 24.0
 text = "Ignite"
+label_settings = SubResource("LabelSettings_ri2fp")
 
 [node name="Label2" type="Label" parent="UI/CanvasLayer" unique_id=237769609]
 offset_left = 416.0
@@ -169,3 +178,5 @@ script = ExtResource("score_system")
 [node name="HudFader" type="Node" parent="." unique_id=938386772 node_paths=PackedStringArray("layers")]
 script = ExtResource("hud_fader")
 layers = [NodePath("../UI/CanvasLayer"), NodePath("../UI/BossGauge")]
+
+[editable path="UI/ScoreUI"]

@@ -17,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="snd_lock"]
 [ext_resource type="AudioStream" uid="uid://dv225hu0xeqco" path="res://Assets/Sounds/Graze/AS_151526_シャッ（ライターを使って火を付ける）.mp3" id="snd_graze"]
 [ext_resource type="Script" path="res://GameScene/Player/phoenix_hit_flame.gd" id="c_hit_flame"]
+[ext_resource type="Script" path="res://GameScene/Player/graze_sparks.gd" id="c_graze_sparks"]
 [ext_resource type="AudioStream" uid="uid://difae074m7ntk" path="res://Assets/Sounds/Explosive/AS_8381_ドカーンという爆発音.mp3" id="snd_death"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
@@ -167,6 +168,9 @@ death_sound = NodePath("DeathSound")
 [node name="DeathSound" type="AudioStreamPlayer" parent="HitFlame" unique_id=501000021]
 stream = ExtResource("snd_death")
 volume_db = -8.0
+
+[node name="GrazeSparks" type="Node2D" parent="." unique_id=501000022]
+script = ExtResource("c_graze_sparks")
 
 [connection signal="is_dead" from="HPComponent" to="." method="_on_hp_component_is_dead"]
 [connection signal="recieved_damage" from="Hurtbox" to="." method="_on_hurtbox_recieved_damage"]

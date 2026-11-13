@@ -8,7 +8,8 @@ class_name EnemyBullet
 ##   IGNITED : 反射弾(敵へ弧を描いて飛ぶ。イグナイトのフレアに触れると変わる)
 ##   BURNING : 焼却中(イグナイトの範囲に入った弾。燃えて消える)
 
-enum BulletState { NORMAL, IGNITED, BURNING }
+## VANISHING: 弾消しで消えるところ(その場で止まり、光って消える)
+enum BulletState { NORMAL, IGNITED, BURNING, VANISHING }
 
 # ---- 連鎖の許可(イグナイトON中かつ高レベルのときだけ。全ての敵弾で共有) ----
 static var _chain_allowed : bool = false
@@ -139,6 +140,7 @@ func burn() -> bool:
 	if _state != BulletState.NORMAL:
 		return false
 	_state = BulletState.BURNING
+	BurnPuff.spawn(get_tree(), global_position) # 燃え尽きる炎(そのあと、その場にスコアアイテムが残る)
 	remove_from_group("enemy_bullet")
 	set_deferred("monitorable", false) # 自機に当たらなくなる
 	set_deferred("monitoring", false)
@@ -147,6 +149,44 @@ func burn() -> bool:
 	tween.tween_property(self, "scale", scale * 1.6, 0.18)
 	tween.chain().tween_callback(queue_free)
 	return true
+
+## 弾消し(ボスの形態変更など)で消える。点にはならない。
+## 当たり判定はすぐ消え、その場で止まって、delay 秒後に白く光ってはじけ、消滅のエフェクトを残す。
+## 通常の弾だけが対象(反射弾・焼却中の弾はそのまま)。消えることになったら true
+func vanish(delay : float = 0.0) -> bool:
+	if _state != BulletState.NORMAL:
+		return false
+	_state = BulletState.VANISHING
+	remove_from_group("enemy_bullet")
+	set_deferred("monitorable", false) # 自機に当たらず、グレイズもできなくなる
+	set_deferred("monitoring", false)
+	var sprite := _find_sprite()
+	var color := sprite.self_modulate * modulate if sprite else Color(0.7, 0.85, 1.0)
+	var tween := create_tween()
+	if delay > 0.0:
+		tween.tween_interval(delay)
+	tween.tween_callback(func() -> void: VanishPuff.spawn(get_tree(), global_position, color))
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate", Color(2.5, 2.5, 2.5, 0.0), 0.14)
+	tween.tween_property(self, "scale", scale * 1.7, 0.14)
+	tween.chain().tween_callback(queue_free)
+	return true
+
+## 画面の敵弾を、まとめて弾消しする。from から近い弾ほど先に消える(波が広がるように)。
+## spread_time: いちばん遠い弾が消えるまでの時間(秒)
+static func vanish_all(tree : SceneTree, from : Vector2, spread_time : float = 0.35) -> void:
+	if tree == null:
+		return
+	var bullets := tree.get_nodes_in_group("enemy_bullet")
+	var far := 1.0
+	for node in bullets:
+		far = maxf(far, from.distance_to((node as Node2D).global_position))
+	for node in bullets:
+		var bullet := node as EnemyBullet
+		if bullet:
+			bullet.vanish(spread_time * from.distance_to(bullet.global_position) / far)
+		elif is_instance_valid(node):
+			node.queue_free()
 
 ## 反射弾になる。
 ## chain_until_msec: この時刻まで連鎖できる / is_chain: 連鎖で着火したか
