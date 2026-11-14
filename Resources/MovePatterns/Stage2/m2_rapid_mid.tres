@@ -1,0 +1,387 @@
+[gd_resource type="Resource" script_class="MovePattern" format=3]
+
+[ext_resource type="Script" uid="uid://dk7uu30dge1ll" path="res://Resources/MovePatterns/move_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://e6xjmp17mmgm" path="res://Resources/MovePatterns/move_step.gd" id="2"]
+
+[sub_resource type="Resource" id="st0"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st6"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st8"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st9"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st10"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st11"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st12"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st13"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st14"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st15"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st16"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st17"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st18"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st19"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st20"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st21"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st22"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st23"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st24"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st25"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st26"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st27"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st28"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st29"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st30"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st31"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st32"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st33"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st34"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st35"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st36"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st37"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st38"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st39"]
+script = ExtResource("2")
+target = Vector2(240, -1408.91)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st40"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 2
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[sub_resource type="Resource" id="st41"]
+script = ExtResource("2")
+target = Vector2(240, 40)
+duration = 4.5
+wait_after = 99999
+x_trans = 1
+y_trans = 1
+y_ease = 2
+
+[resource]
+script = ExtResource("1")
+start_position = Vector2(240, 640)
+steps = Array[ExtResource("2")]([SubResource("st0"), SubResource("st1"), SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5"), SubResource("st6"), SubResource("st7"), SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12"), SubResource("st13"), SubResource("st14"), SubResource("st15"), SubResource("st16"), SubResource("st17"), SubResource("st18"), SubResource("st19"), SubResource("st20"), SubResource("st21"), SubResource("st22"), SubResource("st23"), SubResource("st24"), SubResource("st25"), SubResource("st26"), SubResource("st27"), SubResource("st28"), SubResource("st29"), SubResource("st30"), SubResource("st31"), SubResource("st32"), SubResource("st33"), SubResource("st34"), SubResource("st35"), SubResource("st36"), SubResource("st37"), SubResource("st38"), SubResource("st39"), SubResource("st40"), SubResource("st41")])

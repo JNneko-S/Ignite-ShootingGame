@@ -13,6 +13,8 @@ var accel : float = 0.0
 var homing_target : Node2D
 ## 追いかけるときに曲がる速さ(度/秒)
 var homing_turn_rate : float = 720.0
+## 追いかけるときも、真上からこの角度(度)より横へは曲がらない(弾が横向きに飛んで、敵の弾と見まちがえないように)
+const HOMING_MAX_ANGLE : float = 45.0
 
 func _ready() -> void:
 	if animation_player:
@@ -56,6 +58,8 @@ func _physics_process(delta : float) -> void:
 			var max_turn := deg_to_rad(homing_turn_rate) * delta
 			var wanted := direction.angle_to(global_position.direction_to(homing_target.global_position))
 			direction = direction.rotated(clampf(wanted, -max_turn, max_turn))
+			var from_up := clampf(Vector2.UP.angle_to(direction), -deg_to_rad(HOMING_MAX_ANGLE), deg_to_rad(HOMING_MAX_ANGLE))
+			direction = Vector2.UP.rotated(from_up)
 			rotation = direction.angle() + PI / 2.0
 		else:
 			homing_target = null # 相手が倒れたら、そのまままっすぐ飛ぶ

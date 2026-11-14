@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Train/train_rapid.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="rewards"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_680154_破壊のタックル：ディーゼル列車が通....mp3" id="tackle"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_3way.tres" id="p0"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Train/express_curve_2way.tres" id="p1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_spray.tres" id="p2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_pair.tres" id="p3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_turret_burst.tres" id="p4"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_stream.tres" id="p5"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_turret_curve.tres" id="p6"]
+
+[node name="TrainRapidSupport" instance=ExtResource("base")]
+
+[node name="ScoreReward" parent="."]
+score_value = 0
+
+[node name="PartsDefeat" parent="."]
+part_hp_scale = 0.35
+
+[node name="TrainBossMover" parent="."]
+hold_min = 4.0
+hold_max = 6.0
+rush_entry = true
+rush_sound = ExtResource("tackle")
+
+[node name="Gun_m_top" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_m_mid" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w3_l" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w3_r" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w3_c1" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w3_c2" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w2_a" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w2_b" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w2_c" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="Gun_w2_d" parent="."]
+pause_scale = 0.5
+fire_offscreen_sideways = true
+
+[node name="TrainRewards" type="Node" parent="."]
+script = ExtResource("rewards")
+ignite_fixed_levels = 3
+
+[node name="UpgradeDrop" parent="."]
+power_up_scene = null

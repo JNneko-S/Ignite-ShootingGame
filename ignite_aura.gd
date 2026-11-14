@@ -47,7 +47,12 @@ var _radius_tween : Tween
 var _flares : Array[IgniteFlare] = []
 var _last_flare_pos : Vector2
 
+## イグナイトの円を描く重なり順。弾(5)・敵・アイテムより手前に出す(画面の光(30)・文字(40)・霧(50)よりは奥)
+@export var draw_z : int = 35
+
 func _ready() -> void:
+	z_as_relative = false
+	z_index = draw_z # いちばん手前に出す(弾や敵の後ろに隠れないように)
 	if params == null:
 		params = IgniteParams.new()
 	if params.ignited_collision_layer == 0 or params.ignited_collision_mask == 0:
@@ -64,6 +69,10 @@ func _ready() -> void:
 		visual = null
 	if visual == null:
 		push_warning("IgniteAura: IgniteVisual(Ignite シーン)が使えません。簡易の円で表示します")
+	elif visual is CanvasItem:
+		# 見た目(Ignite)は IgniteAura の子でないこともあるので、見た目にも同じ重なり順を付ける
+		visual.z_as_relative = false
+		visual.z_index = draw_z
 
 	# 当たり判定のシェイプ。無ければ自動で作る
 	var shapes := find_children("*", "CollisionShape2D", false, false)

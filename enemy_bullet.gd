@@ -42,6 +42,19 @@ var _split_pattern : ShotPattern # 割れる設定を持つパターン(この�
 var _split_in : float = -1.0 # 割れるまでの残り秒数。マイナスなら割れない
 var _split_depth : int = 0
 
+## 画面からこれより遠くへ行った弾は消す(px)
+const FAR_AWAY_DISTANCE : float = 700.0
+
+## 生まれた時刻と、はじめて画面に入った時刻(ミリ秒)
+var _born_msec : int = 0
+var _revealed_msec : int = 0
+
+## 画面の外で生まれて、ついさっき(within_msec 以内に)画面に入ってきた弾か
+func just_revealed_from_offscreen(within_msec : int) -> bool:
+	if _revealed_msec == 0:
+		return false # まだ画面に入ったと分かっていない(念のため守らない)
+	return _revealed_msec - _born_msec > 80 and Time.get_ticks_msec() - _revealed_msec <= within_msec
+
 func _ready() -> void:
 	damage_source_type = DamageSourceType.Enemy
 	add_to_group("enemy_bullet") # 被弾時・イグナイト終了時の弾消しの対象
@@ -52,6 +65,17 @@ func _ready() -> void:
 	var notifier := VisibleOnScreenNotifier2D.new()
 	add_child(notifier)
 	notifier.screen_exited.connect(queue_free)
+	# 画面の外で生まれて、カメラが動いて画面に入ってきた弾か(自機の理不尽な被弾を防ぐのに使う)
+	_born_msec = Time.get_ticks_msec()
+	notifier.screen_entered.connect(func() -> void:
+		if _revealed_msec == 0:
+			_revealed_msec = Time.get_ticks_msec())
+	# 画面の外で撃たれた弾(画面外から撃ってくるボス)は、画面に入らないまま遠くへ行ったら消す
+	var lifetime_check := Timer.new()
+	lifetime_check.wait_time = 0.5
+	lifetime_check.autostart = true
+	lifetime_check.timeout.connect(_check_far_away)
+	add_child(lifetime_check)
 
 func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	direction = dir.normalized()
@@ -287,12 +311,14 @@ func _move_ignited(delta : float) -> void:
 func _find_nearest_enemy() -> Node2D:
 	var nearest : Node2D = null
 	var best := INF
-	for node in get_tree().get_nodes_in_group("enemy"):
-		var enemy := node as Node2D
-		if enemy == null:
-			continue
+	for enemy in EnemyPart.targets(get_tree()): # 敵と、ボスの部位(砲台など)
 		var d := global_position.distance_squared_to(enemy.global_position)
 		if d < best:
 			best = d
 			nearest = enemy
 	return nearest
+
+## 画面から Far Away Distance より遠くにいたら消す(画面の外から撃たれて、画面に入らなかった弾)
+func _check_far_away() -> void:
+	if not CameraView.visible_rect(self).grow(FAR_AWAY_DISTANCE).has_point(global_position):
+		queue_free()

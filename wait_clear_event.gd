@@ -8,6 +8,8 @@ class_name WaitClearEvent
 @export var tag : String = ""
 ## 待つ時間の上限(秒)。0 なら上限なし。超えたら、倒せていなくても進行を再開する
 @export var timeout : float = 0.0
+## オンなら、通り過ぎる列車(Train。壊れた車両の残骸も)が画面からいなくなるまでも待つ(中ボスを出す前など)
+@export var include_trains : bool = false
 
 func execute(runner : StageRunner, _unit_index : int) -> void:
-	runner.begin_wait(tag, timeout)
+	runner.begin_wait(tag, timeout, include_trains)

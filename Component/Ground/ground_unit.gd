@@ -149,8 +149,12 @@ func _place_at_spawn() -> void:
 	var area := CameraView.visible_rect(_enemy)
 	var x := spawn_x
 	if _enemy.mirror_x:
-		x = area.position.x * 2.0 + area.size.x - x
+		x = _enemy.mirror_axis() * 2.0 - x
 	_enemy.global_position = Vector2(x, area.position.y - spawn_margin) + _enemy.path_offset
+	# 線路のあるステージ(RailGround)では、線路の上に出ないよう、線路のあいだの地面に寄せる
+	var rails := RailGround.of(_enemy)
+	if rails:
+		_enemy.global_position.x = rails.clamp_off_rails(_enemy.global_position.x, 30.0)
 	if avoid_obstacles or keep_off_roof:
 		_enemy.global_position = _nearest_free(_enemy.global_position)
 	if _ground:

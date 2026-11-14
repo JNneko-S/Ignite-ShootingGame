@@ -233,6 +233,8 @@ func _check_extend() -> void:
 		if is_instance_valid(player):
 			player.add_life(1)
 			extended.emit(player.lives)
+			if player.visible:
+				LevelUpPopup.show_text(get_tree(), player.global_position, "EXTEND!!") # 残機が増えた
 
 func current_ignite_multiplier() -> float:
 	if game_manager == null or game_manager.ignite_level_in_use <= 0 or ignite_multipliers.is_empty():
@@ -247,7 +249,11 @@ func on_enemy_killed(enemy : Enemy) -> void:
 	if enemy.boss_reach_time >= 0.0:
 		# ボスの点は、大爆発が終わって消えるときに、勲章になって出る
 		var bonus := _boss_bonus(enemy)
-		enemy.tree_exiting.connect(func() -> void: _drop_boss_items(enemy.global_position, bonus), CONNECT_ONE_SHOT)
+		if enemy.keep_after_death:
+			# 壊れたまま走り去るボス(列車)は、消えるときには画面の外なので、大爆発が終わるころに画面の中へ出す
+			_drop_boss_items_later(enemy, bonus)
+		else:
+			enemy.tree_exiting.connect(func() -> void: _drop_boss_items(enemy.global_position, bonus), CONNECT_ONE_SHOT)
 		return
 	var reward := ScoreReward.of(enemy)
 	if reward == null:
@@ -299,7 +305,17 @@ func _kill_item_count(kind : ScoreItem.Kind, reward : ScoreReward) -> int:
 
 ## ボスのドロップ: 勲章1個(ボスの点)・大きいアイテム(イグナイトを使った回数だけ)・小さいアイテムを撒き散らし、
 ## 少しすると全部を自機へ吸い寄せる
+func _drop_boss_items_later(enemy : Enemy, bonus : int) -> void:
+	var death := DeathExplosion.of(enemy)
+	await get_tree().create_timer(death.duration if death and death.big else 1.0, false).timeout
+	_drop_boss_items(enemy.global_position if is_instance_valid(enemy) else Vector2.ZERO, bonus)
+
+## at の位置(画面の上半分に寄せる。下すぎると拾えないので)に、ボスの勲章とアイテムを出す
 func _drop_boss_items(at : Vector2, bonus : int) -> void:
+	var ref : CanvasItem = player if is_instance_valid(player) else get_tree().current_scene as CanvasItem
+	var view := CameraView.visible_rect(ref) if ref else Rect2(at - Vector2(224, 300), Vector2(448, 597))
+	at = Vector2(clampf(at.x, view.position.x + 60.0, view.end.x - 60.0),
+		clampf(at.y, view.position.y + 90.0, view.position.y + view.size.y * 0.4))
 	var items : Array[ScoreItem] = []
 	items.append_array(spawn_items(at, maxi(bonus, boss_medal_min_value), 1, 0.5, ScoreItem.Kind.MEDAL))
 	var ignite_uses := game_manager.ignite_activation_count if game_manager else 0
@@ -421,6 +437,13 @@ func begin_burn() -> void:
 ## 今出ているスコアアイテムを、全部自機へ吸い寄せる(このあと出たアイテムは、いつもどおり)
 func collect_all_items() -> void:
 	get_tree().call_group("score_item", "collect_now")
+
+## 画面にあるアイテムを、全部回収する(スコアアイテムは自機へ吸い寄せ、パワーアップとイグナイトの回復はその場で拾う)。
+## ボスが援護を呼ぶ演出のように、しばらく自機を動かせなくなる前に呼ぶ
+func collect_everything() -> void:
+	collect_all_items()
+	get_tree().call_group("ignite_item", "collect_now")
+	get_tree().call_group("power_up_item", "collect_now")
 
 func end_burn() -> void:
 	if not _burning:

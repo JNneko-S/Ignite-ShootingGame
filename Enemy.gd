@@ -15,6 +15,15 @@ signal died(enemy : Enemy)
 @export var path_offset : Vector2 = Vector2.ZERO
 ## true なら、mirror_x のとき、見た目と子ノードの位置も左右反転する(砲口が左右逆になる)
 @export var mirror_visuals : bool = true
+@export_group("壊れたあと(残骸)")
+## 設定すると、倒されても消えずに、Sprite2D の絵をこれに替えて残骸として残る(列車の車両など)。
+## 残骸は当たり判定がなくなり、撃たず、"enemy" グループからも外れる。消すのは持ち主(Train など)に任せる
+@export var wreck_texture : Texture2D
+## 残骸の色(少し暗くするなど)
+@export var wreck_modulate : Color = Color(0.85, 0.8, 0.78)
+## オンなら、倒されても消えない(残骸として残る。絵は替えない)。WreckExit などの部品が、あとで消す
+@export var keep_after_death : bool = false
+@export_group("")
 
 ## 最後に当たったのが反射弾か(反射弾で倒すと点が増える)
 var killed_by_reflect : bool = false
@@ -33,6 +42,9 @@ var is_midboss : bool = false
 var sway_offset : Vector2 = Vector2.ZERO
 ## 今、位置に足してあるずれ
 var _applied_sway : Vector2 = Vector2.ZERO
+## 左右反転の軸(x)。NAN なら、そのときカメラに映っている範囲の中央。
+## StageRunner が、カメラが横に動くステージで「最初の画面の中央」を入れる(Path Offset にカメラのずれが入るため)
+var mirror_center_x : float = NAN
 
 @onready var hp_component : HPComponent = $HPComponent
 @onready var hurtbox : Hurtbox = $Hurtbox
@@ -139,9 +151,14 @@ func _wait_after(step : MoveStep) -> void:
 
 func _convert_absolute(pos : Vector2) -> Vector2:
 	if mirror_x:
-		var area := CameraView.visible_rect(self) # Camera2D に映っている範囲の、左右の中心で反転する
-		pos.x = area.position.x * 2.0 + area.size.x - pos.x
+		pos.x = mirror_axis() * 2.0 - pos.x
 	return pos + path_offset
+
+## 左右反転の軸(x)。Mirror Center X がなければ、Camera2D に映っている範囲の左右の中央
+func mirror_axis() -> float:
+	if not is_nan(mirror_center_x):
+		return mirror_center_x
+	return CameraView.visible_rect(self).get_center().x
 
 func _convert_relative(offset : Vector2) -> Vector2:
 	if mirror_x:
@@ -174,9 +191,34 @@ func _die() -> void:
 	get_tree().call_group("score_system", "on_enemy_killed", self)
 	ItemDrop.drop_all(self, global_position)
 	var death := DeathExplosion.of(self)
+	var stay := wreck_texture != null or keep_after_death
+	if stay:
+		_become_wreck() # 爆発の前に当たり判定を消す(爆発のあいだも撃たれ続けないように)
 	if death:
 		await death.play()
+	if stay:
+		return
 	queue_free()
+
+## 残骸になる: 絵を替え、当たり判定と砲口を止め、敵や待機の印から外れる
+func _become_wreck() -> void:
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite and wreck_texture:
+		sprite.texture = wreck_texture
+		sprite.modulate = wreck_modulate
+	hurtbox.set_deferred("monitoring", false)
+	hurtbox.set_deferred("monitorable", false)
+	for node in find_children("*", "", true, false):
+		if node is EnemyShooter:
+			node.stop()
+	for group in get_groups():
+		if group == &"enemy" or String(group).begins_with("stage_"):
+			remove_from_group(group)
+	add_to_group("wreck")
+
+## 残骸になっているか
+func is_wreck() -> bool:
+	return _is_dead and (wreck_texture != null or keep_after_death)
 
 func _find_hit_flash() -> HitFlash:
 	for child in get_children():

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_3tong"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3cyk5"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_uf758"]
+
+[sub_resource type="Resource" id="Resource_3oyle"]
+script = ExtResource("2_3cyk5")
+duration = 0.5
+target_speed = 85.0
+speed_trans = 7
+speed_ease = 0
+angular_velocity = 5.0
+metadata/_custom_type_script = "uid://bh3bd44efapvd"
+
+[resource]
+script = ExtResource("3_uf758")
+bullet_scene = ExtResource("1_3tong")
+skip_auto_tuning = true
+start_delay = 1.0
+shot_count = 12
+interval = 0.16
+pause = 2.4
+aim_at_player = false
+base_angle = -60.0
+rotate_per_shot = 20.0
+reverse_every_shots = 6
+bullet_speed = 160.0
+motion = Array[ExtResource("2_3cyk5")]([SubResource("Resource_3oyle")])
+metadata/_custom_type_script = "uid://ct8u3n22w477n"

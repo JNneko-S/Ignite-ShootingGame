@@ -1,0 +1,732 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="x0"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="x1"]
+[ext_resource type="Script" path="res://Component/Part/enemy_part.gd" id="x2"]
+[ext_resource type="Script" path="res://Component/Turret/turret.gd" id="x3"]
+[ext_resource type="Script" path="res://Component/Hurtbox/Hurtbox.gd" id="x4"]
+[ext_resource type="Script" path="res://Component/Part/parts_defeat.gd" id="x5"]
+[ext_resource type="Script" path="res://Component/Death/wreck_exit.gd" id="x6"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="x7"]
+[ext_resource type="Script" path="res://shooter_phase.gd" id="x8"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wheels-Base_Strip2.png" id="x9"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_Main_strip7.png" id="x10"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_3.png" id="x11"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_2.png" id="x12"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Main_Cannon_2_strip7.png" id="x13"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_3way.tres" id="x14"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Main_Cannon_strip7.png" id="x15"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_spray.tres" id="x16"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wgn_Turret_DoubleCannon_strip6.png" id="x17"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_single.tres" id="x18"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_turret_burst.tres" id="x19"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_turret_curve.tres" id="x20"]
+[ext_resource type="Script" path="res://Component/Rail/rail_rider.gd" id="x21"]
+[ext_resource type="Script" path="res://Component/Rail/train_boss_mover.gd" id="x22"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_733824_列車のエアホーン：貨物：シングルブ....mp3" id="x23"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_1196077_貨物列車の橋梁通過音.mp3" id="x24"]
+[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="upgrade_rewards"]
+
+[sub_resource type="CircleShape2D" id="shape_main2"]
+radius = 28
+
+[sub_resource type="CircleShape2D" id="shape_main"]
+radius = 24
+
+[sub_resource type="CircleShape2D" id="shape_double"]
+radius = 17
+
+[sub_resource type="CircleShape2D" id="shape_single"]
+radius = 17
+
+[sub_resource type="CircleShape2D" id="shape_small"]
+radius = 12
+
+[sub_resource type="Animation" id="fire_main2"]
+resource_name = "Fire"
+length = 0.29
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 0]
+}
+
+[sub_resource type="Animation" id="reset_main2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="lib_main2"]
+_data = {
+&"Fire": SubResource("fire_main2"),
+&"RESET": SubResource("reset_main2")
+}
+
+[sub_resource type="Animation" id="fire_main"]
+resource_name = "Fire"
+length = 0.29
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 0]
+}
+
+[sub_resource type="Animation" id="reset_main"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="lib_main"]
+_data = {
+&"Fire": SubResource("fire_main"),
+&"RESET": SubResource("reset_main")
+}
+
+[sub_resource type="Animation" id="fire_double"]
+resource_name = "Fire"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 0]
+}
+
+[sub_resource type="Animation" id="reset_double"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="lib_double"]
+_data = {
+&"Fire": SubResource("fire_double"),
+&"RESET": SubResource("reset_double")
+}
+
+[sub_resource type="Animation" id="fire_single"]
+resource_name = "Fire"
+length = 0.29
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 0]
+}
+
+[sub_resource type="Animation" id="reset_single"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="lib_single"]
+_data = {
+&"Fire": SubResource("fire_single"),
+&"RESET": SubResource("reset_single")
+}
+
+[sub_resource type="Animation" id="fire_small"]
+resource_name = "Fire"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 0]
+}
+
+[sub_resource type="Animation" id="reset_small"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="lib_small"]
+_data = {
+&"Fire": SubResource("fire_small"),
+&"RESET": SubResource("reset_small")
+}
+
+[node name="TrainRapid" unique_id=1760000001 instance=ExtResource("x0")]
+pattern = null
+
+[node name="Sprite2D" parent="." unique_id=430556030]
+visible = false
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 10000
+hp = 10000
+
+[node name="DeathExplosion" parent="." unique_id=301000002]
+area = Rect2(-80, 0, 160, 1968.91)
+count = 18
+duration = 2.6
+
+[node name="ScoreReward" parent="." unique_id=301000004]
+score_value = 20000
+
+[node name="VisualRoot" type="Node2D" parent="." unique_id=1760000002]
+z_index = 1
+scale = Vector2(1.9303, 1.9303)
+
+[node name="Chassis" type="Sprite2D" parent="VisualRoot" unique_id=1760000003]
+texture_filter = 1
+texture = ExtResource("x9")
+centered = false
+offset = Vector2(-117, 0)
+region_enabled = true
+region_rect = Rect2(0, 0, 240, 1020)
+
+[node name="Main" type="Sprite2D" parent="VisualRoot" unique_id=1760000004]
+texture_filter = 1
+position = Vector2(0, 216.5)
+offset = Vector2(4, 0)
+texture = ExtResource("x10")
+hframes = 7
+
+[node name="W3" type="Sprite2D" parent="VisualRoot" unique_id=1760000005]
+texture_filter = 1
+position = Vector2(0, 586)
+offset = Vector2(5.5, 0)
+texture = ExtResource("x11")
+
+[node name="W2" type="Sprite2D" parent="VisualRoot" unique_id=1760000006]
+texture_filter = 1
+position = Vector2(0, 879.5)
+offset = Vector2(4.25, 0)
+texture = ExtResource("x12")
+
+[node name="Part_m_top" type="Node2D" parent="VisualRoot" unique_id=1760000007 node_paths=PackedStringArray("shooters")]
+position = Vector2(-1, 105)
+script = ExtResource("x2")
+max_hp = 2000
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_m_top")]
+break_score = 2000
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_m_top" unique_id=1760000008 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_m_top")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_m_top/Turret" unique_id=1760000009]
+texture_filter = 1
+texture = ExtResource("x13")
+hframes = 7
+offset = Vector2(0, 2.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_m_top/Turret" unique_id=1760000010]
+position = Vector2(0, 38)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_m_top/Turret" unique_id=1760000011]
+libraries/ = SubResource("lib_main2")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_m_top" unique_id=1760000012]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_m_top/Hurtbox" unique_id=1760000013]
+shape = SubResource("shape_main2")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_m_top/Hurtbox" unique_id=1760000014]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_m_top" parent="." unique_id=1760000015 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x14")])
+
+[node name="Part_m_mid" type="Node2D" parent="VisualRoot" unique_id=1760000016 node_paths=PackedStringArray("shooters")]
+position = Vector2(-1, 210)
+script = ExtResource("x2")
+max_hp = 1600
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_m_mid")]
+break_score = 1600
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_m_mid" unique_id=1760000017 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_m_mid")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_m_mid/Turret" unique_id=1760000018]
+texture_filter = 1
+texture = ExtResource("x15")
+hframes = 7
+offset = Vector2(0, 11.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_m_mid/Turret" unique_id=1760000019]
+position = Vector2(0, 35)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_m_mid/Turret" unique_id=1760000020]
+libraries/ = SubResource("lib_main")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_m_mid" unique_id=1760000021]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_m_mid/Hurtbox" unique_id=1760000022]
+shape = SubResource("shape_main")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_m_mid/Hurtbox" unique_id=1760000023]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_m_mid" parent="." unique_id=1760000024 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x16")])
+
+[node name="Part_w3_l" type="Node2D" parent="VisualRoot" unique_id=1760000025 node_paths=PackedStringArray("shooters")]
+position = Vector2(-19.5, 517.5)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w3_l")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w3_l" unique_id=1760000026 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w3_l")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w3_l/Turret" unique_id=1760000027]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w3_l/Turret" unique_id=1760000028]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w3_l/Turret" unique_id=1760000029]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w3_l" unique_id=1760000030]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w3_l/Hurtbox" unique_id=1760000031]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w3_l/Hurtbox" unique_id=1760000032]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w3_l" parent="." unique_id=1760000033 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+
+[node name="Part_w3_r" type="Node2D" parent="VisualRoot" unique_id=1760000034 node_paths=PackedStringArray("shooters")]
+position = Vector2(19.5, 517.5)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w3_r")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w3_r" unique_id=1760000035 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w3_r")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w3_r/Turret" unique_id=1760000036]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w3_r/Turret" unique_id=1760000037]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w3_r/Turret" unique_id=1760000038]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w3_r" unique_id=1760000039]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w3_r/Hurtbox" unique_id=1760000040]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w3_r/Hurtbox" unique_id=1760000041]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w3_r" parent="." unique_id=1760000042 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+
+[node name="Part_w3_c1" type="Node2D" parent="VisualRoot" unique_id=1760000043 node_paths=PackedStringArray("shooters")]
+position = Vector2(0, 594.5)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w3_c1")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w3_c1" unique_id=1760000044 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w3_c1")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w3_c1/Turret" unique_id=1760000045]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w3_c1/Turret" unique_id=1760000046]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w3_c1/Turret" unique_id=1760000047]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w3_c1" unique_id=1760000048]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w3_c1/Hurtbox" unique_id=1760000049]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w3_c1/Hurtbox" unique_id=1760000050]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w3_c1" parent="." unique_id=1760000051 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x19")])
+
+[node name="Part_w3_c2" type="Node2D" parent="VisualRoot" unique_id=1760000052 node_paths=PackedStringArray("shooters")]
+position = Vector2(0, 651)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w3_c2")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w3_c2" unique_id=1760000053 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w3_c2")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w3_c2/Turret" unique_id=1760000054]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w3_c2/Turret" unique_id=1760000055]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w3_c2/Turret" unique_id=1760000056]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w3_c2" unique_id=1760000057]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w3_c2/Hurtbox" unique_id=1760000058]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w3_c2/Hurtbox" unique_id=1760000059]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w3_c2" parent="." unique_id=1760000060 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x19")])
+
+[node name="Part_w2_a" type="Node2D" parent="VisualRoot" unique_id=1760000061 node_paths=PackedStringArray("shooters")]
+position = Vector2(-20.75, 816.5)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w2_a")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w2_a" unique_id=1760000062 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w2_a")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w2_a/Turret" unique_id=1760000063]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w2_a/Turret" unique_id=1760000064]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w2_a/Turret" unique_id=1760000065]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w2_a" unique_id=1760000066]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w2_a/Hurtbox" unique_id=1760000067]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w2_a/Hurtbox" unique_id=1760000068]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w2_a" parent="." unique_id=1760000069 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x20")])
+
+[node name="Part_w2_b" type="Node2D" parent="VisualRoot" unique_id=1760000070 node_paths=PackedStringArray("shooters")]
+position = Vector2(20.75, 816.5)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w2_b")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w2_b" unique_id=1760000071 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w2_b")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w2_b/Turret" unique_id=1760000072]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w2_b/Turret" unique_id=1760000073]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w2_b/Turret" unique_id=1760000074]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w2_b" unique_id=1760000075]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w2_b/Hurtbox" unique_id=1760000076]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w2_b/Hurtbox" unique_id=1760000077]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w2_b" parent="." unique_id=1760000078 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+
+[node name="Part_w2_c" type="Node2D" parent="VisualRoot" unique_id=1760000079 node_paths=PackedStringArray("shooters")]
+position = Vector2(-20.75, 864)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w2_c")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w2_c" unique_id=1760000080 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w2_c")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w2_c/Turret" unique_id=1760000081]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w2_c/Turret" unique_id=1760000082]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w2_c/Turret" unique_id=1760000083]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w2_c" unique_id=1760000084]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w2_c/Hurtbox" unique_id=1760000085]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w2_c/Hurtbox" unique_id=1760000086]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w2_c" parent="." unique_id=1760000087 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+
+[node name="Part_w2_d" type="Node2D" parent="VisualRoot" unique_id=1760000088 node_paths=PackedStringArray("shooters")]
+position = Vector2(20.75, 864)
+script = ExtResource("x2")
+max_hp = 700
+destroyed_look = 1
+damage_to_body = 0.0
+shooters = [NodePath("../../Gun_w2_d")]
+break_score = 700
+
+[node name="Turret" type="Node2D" parent="VisualRoot/Part_w2_d" unique_id=1760000089 node_paths=PackedStringArray("shooter")]
+script = ExtResource("x3")
+shooter = NodePath("../../../Gun_w2_d")
+max_angle = 75.0
+rest_rotation = 0
+turn_speed = 70.0
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualRoot/Part_w2_d/Turret" unique_id=1760000090]
+texture_filter = 1
+texture = ExtResource("x17")
+hframes = 6
+offset = Vector2(0, 7.5)
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Part_w2_d/Turret" unique_id=1760000091]
+position = Vector2(0, 23.5)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/Part_w2_d/Turret" unique_id=1760000092]
+libraries/ = SubResource("lib_double")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Part_w2_d" unique_id=1760000093]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("x4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Part_w2_d/Hurtbox" unique_id=1760000094]
+shape = SubResource("shape_double")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Part_w2_d/Hurtbox" unique_id=1760000095]
+wait_time = 0.2
+one_shot = true
+
+[node name="Gun_w2_d" parent="." unique_id=1760000096 instance=ExtResource("x1")]
+patterns = Array[ExtResource("x7")]([ExtResource("x20")])
+
+[node name="RailRider" type="Node" parent="." unique_id=1760000097]
+script = ExtResource("x21")
+span = 0
+
+[node name="TrainBossMover" type="Node" parent="." unique_id=1760000098]
+script = ExtResource("x22")
+wagon_names = PackedStringArray("Main", "W3", "W2")
+horn_sound = ExtResource("x23")
+rush_sound = ExtResource("x24")
+
+[node name="PartsDefeat" type="Node" parent="." unique_id=1760000099]
+script = ExtResource("x5")
+
+[node name="WreckExit" type="Node" parent="." unique_id=1760000100 node_paths=PackedStringArray("visual")]
+script = ExtResource("x6")
+visual = NodePath("../VisualRoot")
+top_extent = 0
+
+[node name="UpgradeDrop" type="Node" parent="."]
+script = ExtResource("upgrade_rewards")
+ignite_items = 0
+score_total = 0
+score_items = 0
+label = ""

@@ -33,6 +33,9 @@ class_name DeathExplosion
 @export var drift : Vector2 = Vector2.ZERO
 ## 揺れの強さの倍率(中型機は小さめにする)
 @export var shake_scale : float = 1.0
+## オンなら、大爆発のあとに持ち主を透明にして消えたように見せる。
+## オフなら、光るだけで姿は残す(列車のボスが、壊れたまま走り去るとき。WreckExit がオフにする)
+@export var fade_out_body : bool = true
 ## 大爆発の効果音(AudioStreamPlayer)
 @export var big_sound : AudioStreamPlayer
 
@@ -117,8 +120,12 @@ func _play_big(body : Node2D) -> void:
 		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * rect.size.length() * 0.25, big_scale * 0.5)
 	SpriteShake.shake(body, 12.0 * shake_scale)
 	var fade := body.create_tween()
+	var after := body.modulate
 	fade.tween_property(body, "modulate", Color(3.0, 3.0, 3.0, 1.0), 0.08)
-	fade.tween_property(body, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.35)
+	if fade_out_body:
+		fade.tween_property(body, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.35)
+	else:
+		fade.tween_property(body, "modulate", after, 0.35) # 光って元に戻る(姿は残す)
 	await fade.finished
 
 ## 撃つのをやめ、当たり判定(部位も含めて)を消す

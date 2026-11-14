@@ -30,6 +30,7 @@
 [ext_resource type="Resource" uid="uid://dpma0ny2n4du0" path="res://Resources/ShotPatterns/Boss/Tank/Shot.tres" id="t_shot"]
 [ext_resource type="Resource" uid="uid://c74agcbn334yb" path="res://Resources/ShotPatterns/Boss/Tank/SubShot.tres" id="t_sub"]
 [ext_resource type="Resource" uid="uid://cjpjkmf1ehatj" path="res://Resources/ShotPatterns/Boss/Tank/SubShot2.tres" id="t_sub2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/SubShotEasy.tres" id="t_sub_easy"]
 [ext_resource type="Resource" uid="uid://ba7h4uf1jak66" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine.tres" id="t_washer"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
@@ -168,6 +169,7 @@ patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
 [sub_resource type="Resource" id="side_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
+easy_patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub_easy")])
 
 [sub_resource type="Resource" id="right_p1"]
 script = ExtResource("shooter_phase")

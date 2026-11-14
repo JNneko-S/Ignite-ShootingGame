@@ -125,7 +125,7 @@ func _fire_once() -> void:
 		return
 	var aim := (player.global_position - global_position).angle() if player else Vector2.DOWN.angle()
 	var mirror := _body.mirror_x if _body and is_instance_valid(_body) else false
-	EnemyShooter.spawn_bullets(pattern, _shot_index, aim, global_position, get_tree().current_scene,
+	EnemyShooter.spawn_bullets(DifficultyTuning.tune(pattern), _shot_index, aim, global_position, get_tree().current_scene,
 			default_bullet_scene, mirror)
 	_shot_index += 1
 

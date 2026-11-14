@@ -4,7 +4,9 @@ class_name MotionTilt
 ##   向き: 進む方向へ機首(絵の下側)を向ける。Face Mode で「少し傾ける」か「進む向きへ完全に向く」を選ぶ
 ##   ロール: 曲がるときや横へ流れるときに、bank_tilt シェーダーで機体を斜めに倒して見せる
 ##           (曲がる内側の翼が奥へ沈み、暗くなる)
-## 絵は機首が下向きの前提。Target の Material が空なら、シェーダーを自動で付ける。
+## 絵は機首が下向きの前提(ロールだけなら、機首が上の自機でも使える: Face Mode を NONE、Bank Per Turn を 0 に)。
+## Target の Material が空なら、シェーダーを自動で付ける。
+## 親が CharacterBody2D(自機など)なら、物理フレームで動きを測る(画面のフレームと物理フレームの差でガタつかないように)。
 
 enum FaceMode { NONE, LEAN, FULL }
 
@@ -47,6 +49,8 @@ var _heading : float = 0.0 # 進む向きの角度(ラジアン)。旋回の速�
 var _turn_rate : float = 0.0
 var _face : float = 0.0 # 絵に足している回転
 var _roll : float = 0.0
+## 親が物理フレームで動く(CharacterBody2D)か
+var _physics_owner : bool = false
 
 func _ready() -> void:
 	_owner2d = get_parent() as Node2D
@@ -54,7 +58,11 @@ func _ready() -> void:
 		target = _owner2d.get_node_or_null("Sprite2D") as Node2D
 	if target == null:
 		set_process(false)
+		set_physics_process(false)
 		return
+	_physics_owner = _owner2d is CharacterBody2D
+	set_process(not _physics_owner)
+	set_physics_process(_physics_owner)
 	_setup_material()
 
 ## 敵ごとに別のロールにするので、マテリアルは1体ずつ持つ
@@ -74,6 +82,12 @@ func _setup_material() -> void:
 	target.material = _material
 
 func _process(delta : float) -> void:
+	_step(delta)
+
+func _physics_process(delta : float) -> void:
+	_step(delta)
+
+func _step(delta : float) -> void:
 	if delta <= 0.0 or not is_instance_valid(_owner2d):
 		return
 	var pos := _owner2d.global_position

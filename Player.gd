@@ -327,9 +327,8 @@ func _update_lock(delta : float) -> void:
 func _nearest_lockable() -> Node2D:
 	var best : Node2D = null
 	var best_distance := INF
-	for node in get_tree().get_nodes_in_group("enemy"):
-		var enemy := node as Node2D
-		if enemy == null or lock_targets.has(enemy) or not _in_lock_area(enemy, lock_range):
+	for enemy in EnemyPart.targets(get_tree()): # 敵と、ボスの部位(砲台など)
+		if lock_targets.has(enemy) or not _in_lock_area(enemy, lock_range):
 			continue
 		var d := global_position.distance_squared_to(enemy.global_position)
 		if d < best_distance:
@@ -348,7 +347,7 @@ func _in_lock_area(enemy : Node2D, max_range : float) -> bool:
 
 ## 一度ロックした敵は、少し離れても(扇の外でも)、画面内にいる間は外さない
 func _can_keep_lock(enemy : Node2D) -> bool:
-	if not is_instance_valid(enemy) or not enemy.is_inside_tree() or enemy.is_queued_for_deletion():
+	if not EnemyPart.is_target(enemy): # 倒された・壊れた・残骸になった
 		return false
 	return CameraView.visible_rect(self).has_point(enemy.global_position) 			and global_position.distance_to(enemy.global_position) <= lock_range * 1.3
 
@@ -530,6 +529,21 @@ func die() -> void:
 	lives_changed.emit(lives)
 	_respawn()
 
+## 理不尽な被弾を防ぐ: 自機が動いてカメラが横に流れているときに、画面の外から入ってきたばかりの弾には当たらない。
+## (見えないところから飛んできた弾に、よける間もなく当たらないように)
+## 悪用を防ぐため: カメラが止まっていれば効かない(画面の端で待っていても守られない)。画面の中で撃たれた弾にも効かない
+@export_group("理不尽な被弾を防ぐ")
+@export var reveal_grace_msec : int = 350
+
+func ignores_hit(area : Area2D) -> bool:
+	if has_meta("camera_frozen"):
+		return true # カメラだけがほかを向いている演出のあいだは、何にも当たらない
+	if not area is EnemyBullet:
+		return false
+	if not StageCamera.moved_recently(self, reveal_grace_msec):
+		return false
+	return (area as EnemyBullet).just_revealed_from_offscreen(reveal_grace_msec)
+
 func _respawn() -> void:
 	# 復活までは非表示にして、操作と射撃を止める
 	visible = false
@@ -538,7 +552,7 @@ func _respawn() -> void:
 	wait.tween_interval(respawn_delay)
 	await wait.finished
 
-	global_position = _spawn_position
+	global_position = _spawn_position + StageCamera.view_offset(self) # カメラが横に動いていたら、その画面の中で復活する
 	velocity = Vector2.ZERO
 	hp_component.restore_hp()
 	visible = true

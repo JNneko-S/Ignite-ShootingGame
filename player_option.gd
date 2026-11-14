@@ -27,7 +27,7 @@ var slot : int = 0
 ## 弾1発の威力の、自機のショットに対する倍率
 @export var damage_scale : float = 0.6
 ## 弾の色(自機と同じ弾を使うときだけ掛ける。Bullet Scene を指定したら、そのシーンの見た目のまま)
-@export var shot_color : Color = Color(0.6, 1.0, 0.8)
+@export var shot_color : Color = Color(1.0, 0.78, 0.5)
 ## 回転の速さ(ラジアン/秒)。0 なら回らない
 @export var spin_speed : float = 0.0
 

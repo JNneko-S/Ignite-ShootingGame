@@ -99,6 +99,8 @@ signal score_changed(score : int)
 @export var debug_ignite : bool = false
 
 var ignite : IgniteGauge = IgniteGauge.new()
+## 最後に知らせたイグナイトのレベル(上がったときだけ LEVEL UP を出すため)
+var _shown_level : int = 99
 ## 今のスコア(ScoreSystem の値を写したもの)
 var score : int = 0
 ## 今の発動で消費したレベルの数(発動中でなければ 0)。スコアの倍率に使う
@@ -119,10 +121,14 @@ var _extend_left : float = 0.0
 var _extended : bool = false
 var _screen_effect : IgniteScreenEffect
 
-func _ready() -> void:
-	# 機体選択の画面を通って出撃したときは、そこで選んだ難易度にする
+func _enter_tree() -> void:
+	# 機体選択の画面を通って出撃したときは、そこで選んだ難易度にする。
+	# 敵の砲口(子)の _ready より先に、弾幕の難易度を決めておく
 	if RunConfig.has_selection:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
+	DifficultyTuning.level = int(difficulty)
+
+func _ready() -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as Player
 	if ui == null:
@@ -246,8 +252,12 @@ func _on_player_respawned() -> void:
 	get_tree().call_group("enemy_bullet", "queue_free")
 	EnemyShooter.hold_fire(respawn_ceasefire_time)
 
-func _on_level_changed(_level : int) -> void:
+func _on_level_changed(level : int) -> void:
 	_apply_level_stats()
+	# レベルが上がったら、自機の後ろに「LEVEL UP!!!」を出す(下がったときは出さない)
+	if level > _shown_level and is_instance_valid(player) and player.visible:
+		LevelUpPopup.show_image(get_tree(), player.global_position)
+	_shown_level = level
 
 ## レベルに応じて、移動速度とショットの威力を変える
 func _apply_level_stats() -> void:

@@ -14,3 +14,15 @@ class_name BossPhase
 @export var clear_bullets : bool = true
 ## この段階のボスの色(白なら元の色)。発狂などを、見た目で分かるようにする
 @export var boss_modulate : Color = Color.WHITE
+
+@export_group("呼び寄せ(援護)")
+## この段階のあいだに出すもの(SpawnEvent / TrainEvent など。Time は呼び寄せてからの秒数)
+@export var summons : Array[StageEvent] = []
+## HPの割合がこれ以下になったら呼び寄せる。この段階の Hp Ratio 以上なら、段階に入ったときに呼ぶ。
+## 例: 第一形態(Hp Ratio 1.0)で 0.83 なら、第一形態のHPが半分になったとき
+@export_range(0.0, 1.0, 0.01) var summon_hp_ratio : float = 1.0
+## 0 以上なら、呼び寄せたときに、カメラ(StageCamera)をこのレーンへ一時的に向ける(0 = 左、1 = 中央、2 = 右)。
+## そのとき、画面の弾を消し、敵は少し撃たず、自機はその場に止まる(カメラだけが向く)
+@export var summon_look_lane : int = -1
+## カメラを向けている時間(秒)
+@export var summon_look_hold : float = 3.5

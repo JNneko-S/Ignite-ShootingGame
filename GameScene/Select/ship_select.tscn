@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://uval7epgnqfq" path="res://GameScene/UI/led_board.gd" id="5_board"]
 [ext_resource type="Script" uid="uid://bhfq8fhyle633" path="res://GameScene/Select/tech_panel.gd" id="6_panel"]
 [ext_resource type="Script" uid="uid://ci2bvdxf7l7c1" path="res://GameScene/Select/selector_ring.gd" id="7_ring"]
+[ext_resource type="Script" path="res://GameScene/Select/ship_preview_fire.gd" id="16_fire"]
 [ext_resource type="Resource" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="9_font"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
@@ -95,8 +96,26 @@ script = ExtResource("6_panel")
 fill_color = Color(0.02, 0.05, 0.08, 0.95)
 show_grid = true
 
+[node name="FireClip" type="Control" parent="UI/Root/PreviewFrame/PreviewPanel" unique_id=1730100002]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PreviewFire" type="Node2D" parent="UI/Root/PreviewFrame/PreviewPanel/FireClip" unique_id=1730100001 node_paths=PackedStringArray("ship")]
+script = ExtResource("16_fire")
+ship = NodePath("../../PreviewShip")
+
 [node name="PreviewShip" type="Sprite2D" parent="UI/Root/PreviewFrame/PreviewPanel" unique_id=648101764]
-position = Vector2(61, 94)
+position = Vector2(61, 126)
 
 [node name="Selector" type="Control" parent="UI/Root" unique_id=1218154726]
 anchors_preset = 0

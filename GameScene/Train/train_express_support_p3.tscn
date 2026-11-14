@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Train/train_express_support.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_feint_fan.tres" id="feint"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_aim_3way_x6.tres" id="aim6"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_stream.tres" id="stream"]
+
+[node name="TrainExpressSupportP3" instance=ExtResource("base")]
+
+[node name="Gun_m_top" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("aim6")])
+easy_patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_m_mid" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("stream")])
+easy_patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w3_l" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w3_r" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w3_c1" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w3_c2" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w2_a" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w2_b" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w2_c" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w2_d" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w1_l" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w1_r" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w1_p1" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w1_p2" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])
+
+[node name="Gun_w1_p3" parent="."]
+pause_scale = 1.0
+patterns = Array[ExtResource("shot")]([ExtResource("feint")])

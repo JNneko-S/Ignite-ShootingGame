@@ -24,6 +24,8 @@ speed_ease = 0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_a1agy")
+min_difficulty = null
+skip_auto_tuning = null
 start_delay = 4.0
 pause = 2.2
 bullet_count = 20

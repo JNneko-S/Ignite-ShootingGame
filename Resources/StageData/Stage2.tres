@@ -1,0 +1,736 @@
+[gd_resource type="Resource" script_class="StageData" format=3 uid="uid://cntywovlfev65"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Train/passing_train.tscn" id="3_vgtod"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="5_0rjlf"]
+[ext_resource type="Script" uid="uid://bmmsqs21nxnjs" path="res://train_event.gd" id="e0"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_small.tscn" id="e1"]
+[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_squad.tscn" id="e3"]
+[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="e4"]
+[ext_resource type="Script" uid="uid://ccfmq4kd2eata" path="res://wait_kills_event.gd" id="e5"]
+[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="e6"]
+[ext_resource type="Script" uid="uid://c5e87maa7fwsm" path="res://camera_event.gd" id="e7"]
+[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="e8"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/train_rapid.tscn" id="e9"]
+[ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e10"]
+[ext_resource type="PackedScene" uid="uid://bdgkopm2s363s" path="res://GameScene/Enemy/Zako/sniper.tscn" id="e11"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="e12"]
+[ext_resource type="PackedScene" uid="uid://dc0yogfaxm6ds" path="res://GameScene/Enemy/Zako/charger.tscn" id="e13"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_heavy.tscn" id="e14"]
+[ext_resource type="PackedScene" uid="uid://k67ebdq26l1a" path="res://GameScene/Enemy/Zako/curve_turret.tscn" id="e15"]
+[ext_resource type="PackedScene" uid="uid://bw7h5h6wbmv5y" path="res://GameScene/Enemy/Zako/firework.tscn" id="e16"]
+[ext_resource type="PackedScene" uid="uid://i131tu5hvwxs" path="res://GameScene/Enemy/Zako/armored.tscn" id="e17"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/mine_layer.tscn" id="e18"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/train_express.tscn" id="e19"]
+[ext_resource type="PackedScene" uid="uid://d2cow05163fxg" path="res://GameScene/Enemy/Zako/absorber.tscn" id="e20"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e21"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_rain.tres" id="e22"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_ring.tres" id="e23"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_spiral.tres" id="e24"]
+[ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="e25"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/train_limited.tscn" id="e26"]
+[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="e27"]
+
+[sub_resource type="Resource" id="s1"]
+script = ExtResource("e0")
+time = 1.0
+
+[sub_resource type="Resource" id="s2"]
+script = ExtResource("e0")
+rail = 7
+time = 2.0
+
+[sub_resource type="Resource" id="s3"]
+script = ExtResource("e0")
+rail = 1
+time = 3.0
+
+[sub_resource type="Resource" id="s4"]
+script = ExtResource("e0")
+rail = 5
+time = 3.5
+
+[sub_resource type="Resource" id="s5"]
+script = ExtResource("e0")
+rail = 10
+time = 4.0
+
+[sub_resource type="Resource" id="s6"]
+script = ExtResource("e0")
+rail = 6
+time = 4.5
+
+[sub_resource type="Resource" id="s7"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+time = 2.5
+
+[sub_resource type="Resource" id="s8"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 0
+time = 4.0
+
+[sub_resource type="Resource" id="s9"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 2
+time = 5.0
+
+[sub_resource type="Resource" id="s10"]
+script = ExtResource("e0")
+
+[sub_resource type="Resource" id="s11"]
+script = ExtResource("e0")
+rail = 11
+time = 0.8
+
+[sub_resource type="Resource" id="s12"]
+script = ExtResource("e0")
+rail = 7
+time = 1.5
+
+[sub_resource type="Resource" id="s13"]
+script = ExtResource("e0")
+rail = 0
+time = 2.2
+
+[sub_resource type="Resource" id="s14"]
+script = ExtResource("e0")
+rail = 5
+time = 3.0
+
+[sub_resource type="Resource" id="s15"]
+script = ExtResource("e0")
+rail = 8
+time = 3.6
+
+[sub_resource type="Resource" id="s16"]
+script = ExtResource("e0")
+rail = 6
+time = 4.5
+
+[sub_resource type="Resource" id="s17"]
+script = ExtResource("e0")
+rail = 3
+time = 5.2
+
+[sub_resource type="Resource" id="s18"]
+script = ExtResource("e0")
+rail = 2
+time = 6.0
+
+[sub_resource type="Resource" id="s19"]
+script = ExtResource("e0")
+rail = 9
+time = 6.8
+
+[sub_resource type="Resource" id="s20"]
+script = ExtResource("e0")
+rail = 1
+time = 7.6
+
+[sub_resource type="Resource" id="s21"]
+script = ExtResource("e0")
+rail = 10
+time = 8.5
+
+[sub_resource type="Resource" id="s22"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 1
+time = 1.0
+
+[sub_resource type="Resource" id="s23"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 0
+time = 3.5
+
+[sub_resource type="Resource" id="s24"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 2
+time = 6.0
+
+[sub_resource type="Resource" id="s25"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 1
+time = 8.0
+
+[sub_resource type="Resource" id="s26"]
+script = ExtResource("e5")
+tag = "train"
+kills = 20
+timeout = 80.0
+loop_events = Array[ExtResource("e4")]([SubResource("s10"), SubResource("s11"), SubResource("s12"), SubResource("s13"), SubResource("s14"), SubResource("s15"), SubResource("s16"), SubResource("s17"), SubResource("s18"), SubResource("s19"), SubResource("s20"), SubResource("s21"), SubResource("s22"), SubResource("s23"), SubResource("s24"), SubResource("s25")])
+loop_length = 10.0
+time = 6.0
+
+[sub_resource type="Resource" id="s27"]
+script = ExtResource("e6")
+timeout = 15.0
+include_trains = true
+time = 6.5
+
+[sub_resource type="Resource" id="s28"]
+script = ExtResource("e7")
+lane = 0
+move_time = 1.5
+time = 7.0
+
+[sub_resource type="Resource" id="s29"]
+script = ExtResource("e8")
+speed_multiplier = 2.0
+duration = 2.0
+time = 7.0
+
+[sub_resource type="Resource" id="s30"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e9")
+tag = "midboss"
+is_boss = true
+boss_name = "破壊兵器輸送列車[快速]"
+camera_lane = 0
+time = 9.0
+
+[sub_resource type="Resource" id="s31"]
+script = ExtResource("e6")
+tag = "midboss"
+time = 9.5
+
+[sub_resource type="Resource" id="s32"]
+script = ExtResource("e7")
+mode = 0
+time = 12.0
+
+[sub_resource type="Resource" id="s33"]
+script = ExtResource("e8")
+duration = 2.0
+time = 12.0
+
+[sub_resource type="Resource" id="s34"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 5
+interval = 0.35
+camera_lane = 0
+time = 12.5
+
+[sub_resource type="Resource" id="s35"]
+script = ExtResource("e0")
+time = 13.0
+
+[sub_resource type="Resource" id="s36"]
+script = ExtResource("e0")
+rail = 9
+time = 13.0
+
+[sub_resource type="Resource" id="s37"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 1
+time = 14.0
+
+[sub_resource type="Resource" id="s38"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 2
+interval = 0.6
+alternate_mirror = true
+camera_lane = 2
+time = 15.0
+
+[sub_resource type="Resource" id="s39"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e12")
+camera_lane = 1
+time = 16.5
+
+[sub_resource type="Resource" id="s40"]
+script = ExtResource("e0")
+rail = 0
+time = 17.0
+
+[sub_resource type="Resource" id="s41"]
+script = ExtResource("e0")
+rail = 7
+time = 17.5
+
+[sub_resource type="Resource" id="s42"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 0
+time = 18.0
+
+[sub_resource type="Resource" id="s43"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 3
+interval = 0.5
+camera_lane = 0
+time = 19.0
+
+[sub_resource type="Resource" id="s44"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 5
+interval = 0.35
+mirror_x = true
+camera_lane = 2
+time = 20.5
+
+[sub_resource type="Resource" id="s45"]
+script = ExtResource("e0")
+rail = 10
+time = 21.0
+
+[sub_resource type="Resource" id="s46"]
+script = ExtResource("e0")
+rail = 5
+time = 21.0
+
+[sub_resource type="Resource" id="s47"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e14")
+camera_lane = 2
+time = 22.0
+
+[sub_resource type="Resource" id="s48"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e15")
+count = 2
+interval = 0.1
+alternate_mirror = true
+camera_lane = 1
+time = 23.5
+
+[sub_resource type="Resource" id="s49"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e16")
+camera_lane = 0
+time = 25.0
+
+[sub_resource type="Resource" id="s50"]
+script = ExtResource("e0")
+rail = 2
+time = 25.5
+
+[sub_resource type="Resource" id="s51"]
+script = ExtResource("e0")
+rail = 11
+time = 26.0
+
+[sub_resource type="Resource" id="s52"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 2
+time = 26.5
+
+[sub_resource type="Resource" id="s53"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e17")
+camera_lane = 1
+time = 28.0
+
+[sub_resource type="Resource" id="s54"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 2
+interval = 0.6
+alternate_mirror = true
+camera_lane = 0
+time = 29.5
+
+[sub_resource type="Resource" id="s55"]
+script = ExtResource("e0")
+rail = 6
+time = 30.0
+
+[sub_resource type="Resource" id="s56"]
+script = ExtResource("e0")
+rail = 1
+time = 30.5
+
+[sub_resource type="Resource" id="s57"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.0
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 1
+time = 31.0
+
+[sub_resource type="Resource" id="s58"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 6
+interval = 0.35
+camera_lane = 1
+time = 32.5
+
+[sub_resource type="Resource" id="s59"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e12")
+camera_lane = 2
+time = 33.5
+
+[sub_resource type="Resource" id="s60"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e18")
+camera_lane = 0
+time = 35.0
+
+[sub_resource type="Resource" id="s61"]
+script = ExtResource("e0")
+rail = 8
+time = 35.5
+
+[sub_resource type="Resource" id="s62"]
+script = ExtResource("e0")
+rail = 3
+time = 36.0
+
+[sub_resource type="Resource" id="s63"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e14")
+camera_lane = 1
+time = 36.5
+
+[sub_resource type="Resource" id="s64"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 3
+interval = 0.5
+camera_lane = 2
+time = 38.0
+
+[sub_resource type="Resource" id="s65"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 5
+interval = 0.35
+mirror_x = true
+camera_lane = 0
+time = 39.0
+
+[sub_resource type="Resource" id="s66"]
+script = ExtResource("e6")
+timeout = 10.0
+include_trains = true
+time = 41.0
+
+[sub_resource type="Resource" id="s67"]
+script = ExtResource("e7")
+lane = 2
+move_time = 1.5
+time = 41.5
+
+[sub_resource type="Resource" id="s68"]
+script = ExtResource("e8")
+speed_multiplier = 2.0
+duration = 2.0
+time = 41.5
+
+[sub_resource type="Resource" id="s69"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e19")
+tag = "midboss"
+is_boss = true
+boss_name = "壊滅兵器輸送列車[急行]"
+camera_lane = 2
+time = 43.5
+
+[sub_resource type="Resource" id="s70"]
+script = ExtResource("e6")
+tag = "midboss"
+time = 44.0
+
+[sub_resource type="Resource" id="s71"]
+script = ExtResource("e7")
+mode = 0
+time = 46.5
+
+[sub_resource type="Resource" id="s72"]
+script = ExtResource("e8")
+duration = 2.0
+time = 46.5
+
+[sub_resource type="Resource" id="s73"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 5
+interval = 0.35
+camera_lane = 1
+time = 47.5
+
+[sub_resource type="Resource" id="s74"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 5
+interval = 0.35
+mirror_x = true
+camera_lane = 0
+time = 48.5
+
+[sub_resource type="Resource" id="s75"]
+script = ExtResource("e0")
+rail = 0
+time = 49.5
+
+[sub_resource type="Resource" id="s76"]
+script = ExtResource("e0")
+rail = 5
+time = 49.5
+
+[sub_resource type="Resource" id="s77"]
+script = ExtResource("e0")
+rail = 10
+time = 49.5
+
+[sub_resource type="Resource" id="s78"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e12")
+camera_lane = 1
+time = 50.5
+
+[sub_resource type="Resource" id="s79"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 2
+interval = 0.6
+alternate_mirror = true
+camera_lane = 2
+time = 51.5
+
+[sub_resource type="Resource" id="s80"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 3
+interval = 0.5
+camera_lane = 0
+time = 52.5
+
+[sub_resource type="Resource" id="s81"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e17")
+camera_lane = 1
+time = 54.5
+
+[sub_resource type="Resource" id="s82"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e16")
+camera_lane = 2
+time = 55.5
+
+[sub_resource type="Resource" id="s83"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e20")
+camera_lane = 0
+time = 56.5
+
+[sub_resource type="Resource" id="s84"]
+script = ExtResource("e0")
+rail = 1
+time = 57.5
+
+[sub_resource type="Resource" id="s85"]
+script = ExtResource("e0")
+time = 57.5
+
+[sub_resource type="Resource" id="s86"]
+script = ExtResource("e0")
+rail = 11
+time = 57.5
+
+[sub_resource type="Resource" id="s87"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e18")
+camera_lane = 1
+time = 59.5
+
+[sub_resource type="Resource" id="s88"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 6
+interval = 0.35
+camera_lane = 2
+time = 60.5
+
+[sub_resource type="Resource" id="s89"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e15")
+count = 2
+interval = 0.1
+alternate_mirror = true
+camera_lane = 0
+time = 61.5
+
+[sub_resource type="Resource" id="s90"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e12")
+camera_lane = 1
+time = 63.5
+
+[sub_resource type="Resource" id="s91"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 2
+interval = 0.6
+alternate_mirror = true
+camera_lane = 1
+time = 64.0
+
+[sub_resource type="Resource" id="s92"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e3")
+count = 3
+interval = 0.0
+offset = Vector2(-50, 0)
+offset_step = Vector2(50, -40)
+camera_lane = 1
+time = 53.5
+
+[sub_resource type="Resource" id="s93"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e14")
+camera_lane = 0
+time = 58.5
+
+[sub_resource type="Resource" id="s94"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+count = 2
+interval = 1.2
+offset = Vector2(-30, 0)
+offset_step = Vector2(60, 0)
+camera_lane = 2
+time = 62.5
+
+[sub_resource type="Resource" id="s95"]
+script = ExtResource("e6")
+timeout = 20.0
+include_trains = true
+time = 66.0
+
+[sub_resource type="Resource" id="s96"]
+script = ExtResource("e7")
+move_time = 1.5
+time = 66.5
+
+[sub_resource type="Resource" id="s97"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e16")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e22")])
+count = 2
+interval = 0.8
+alternate_mirror = true
+time = 68.5
+
+[sub_resource type="Resource" id="s98"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e23")])
+count = 6
+interval = 0.35
+time = 71.5
+
+[sub_resource type="Resource" id="s99"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e12")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e24")])
+time = 74.5
+
+[sub_resource type="Resource" id="s100"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e16")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e23")])
+count = 2
+interval = 0.8
+alternate_mirror = true
+time = 76.5
+
+[sub_resource type="Resource" id="s101"]
+script = ExtResource("e6")
+timeout = 20.0
+include_trains = true
+time = 80.0
+
+[sub_resource type="Resource" id="s102"]
+script = ExtResource("e8")
+speed_multiplier = 3.0
+duration = 5.0
+time = 80.5
+
+[sub_resource type="Resource" id="s103"]
+script = ExtResource("e25")
+signal_name = "warning"
+time = 81.5
+
+[sub_resource type="Resource" id="s104"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e26")
+tag = "boss"
+is_boss = true
+boss_name = "殺戮兵器輸送列車[特急]"
+boss_phase_thresholds = Array[float]([0.66, 0.33])
+boss_time_bonus = true
+camera_lane = 1
+time = 85.5
+
+[sub_resource type="Resource" id="s105"]
+script = ExtResource("e7")
+mode = 0
+time = 86.0
+
+[sub_resource type="Resource" id="s106"]
+script = ExtResource("e6")
+tag = "boss"
+time = 86.5
+
+[resource]
+script = ExtResource("e27")
+stage_name = "Stage 2"
+events = Array[ExtResource("e4")]([SubResource("s1"), SubResource("s2"), SubResource("s3"), SubResource("s4"), SubResource("s5"), SubResource("s6"), SubResource("s7"), SubResource("s8"), SubResource("s9"), SubResource("s26"), SubResource("s27"), SubResource("s28"), SubResource("s29"), SubResource("s30"), SubResource("s31"), SubResource("s32"), SubResource("s33"), SubResource("s34"), SubResource("s35"), SubResource("s36"), SubResource("s37"), SubResource("s38"), SubResource("s39"), SubResource("s40"), SubResource("s41"), SubResource("s42"), SubResource("s43"), SubResource("s44"), SubResource("s45"), SubResource("s46"), SubResource("s47"), SubResource("s48"), SubResource("s49"), SubResource("s50"), SubResource("s51"), SubResource("s52"), SubResource("s53"), SubResource("s54"), SubResource("s55"), SubResource("s56"), SubResource("s57"), SubResource("s58"), SubResource("s59"), SubResource("s60"), SubResource("s61"), SubResource("s62"), SubResource("s63"), SubResource("s64"), SubResource("s65"), SubResource("s66"), SubResource("s67"), SubResource("s68"), SubResource("s69"), SubResource("s70"), SubResource("s71"), SubResource("s72"), SubResource("s73"), SubResource("s74"), SubResource("s75"), SubResource("s76"), SubResource("s77"), SubResource("s78"), SubResource("s79"), SubResource("s80"), SubResource("s81"), SubResource("s82"), SubResource("s83"), SubResource("s84"), SubResource("s85"), SubResource("s86"), SubResource("s87"), SubResource("s88"), SubResource("s89"), SubResource("s90"), SubResource("s91"), SubResource("s92"), SubResource("s93"), SubResource("s94"), SubResource("s95"), SubResource("s96"), SubResource("s97"), SubResource("s98"), SubResource("s99"), SubResource("s100"), SubResource("s101"), SubResource("s102"), SubResource("s103"), SubResource("s104"), SubResource("s105"), SubResource("s106")])

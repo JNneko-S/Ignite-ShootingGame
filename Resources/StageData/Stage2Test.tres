@@ -1,0 +1,128 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" path="res://train_event.gd" id="e0"]
+[ext_resource type="Script" path="res://stage_event.gd" id="e1"]
+[ext_resource type="Script" path="res://wait_kills_event.gd" id="e2"]
+[ext_resource type="Script" path="res://camera_event.gd" id="e3"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/formation.tscn" id="e4"]
+[ext_resource type="Script" path="res://spawn_event.gd" id="e5"]
+[ext_resource type="Script" path="res://stage_data.gd" id="e6"]
+
+[sub_resource type="Resource" id="s1"]
+script = ExtResource("e0")
+time = 0.5
+rail = 4
+tag = "train"
+speed = 140.0
+count = 2
+interval = 2.5
+rail_step = 1
+
+[sub_resource type="Resource" id="s2"]
+script = ExtResource("e0")
+time = 1.0
+rail = 6
+tag = "train"
+speed = 100.0
+
+[sub_resource type="Resource" id="s3"]
+script = ExtResource("e0")
+time = 1.2
+rail = 7
+tag = "train"
+speed = 100.0
+
+[sub_resource type="Resource" id="s4"]
+script = ExtResource("e0")
+time = 0.0
+rail = 4
+tag = "train"
+speed = 160.0
+
+[sub_resource type="Resource" id="s5"]
+script = ExtResource("e0")
+time = 2.5
+rail = 5
+tag = "train"
+speed = 90.0
+
+[sub_resource type="Resource" id="s6"]
+script = ExtResource("e2")
+time = 3.0
+tag = "train"
+kills = 4
+timeout = 25.0
+loop_length = 5.0
+loop_events = Array[ExtResource("e1")]([SubResource("s4"), SubResource("s5")])
+
+[sub_resource type="Resource" id="s7"]
+script = ExtResource("e3")
+time = 4.0
+mode = 1
+lane = 0
+move_time = -1.0
+hold = 2.0
+
+[sub_resource type="Resource" id="s8"]
+script = ExtResource("e5")
+time = 5.5
+enemy_scene = ExtResource("e4")
+count = 3
+interval = 0.4
+
+[sub_resource type="Resource" id="s9"]
+script = ExtResource("e0")
+time = 6.0
+rail = 0
+tag = "train"
+speed = 150.0
+
+[sub_resource type="Resource" id="s10"]
+script = ExtResource("e0")
+time = 6.5
+rail = 3
+tag = "train"
+speed = 120.0
+
+[sub_resource type="Resource" id="s11"]
+script = ExtResource("e3")
+time = 10.0
+mode = 1
+lane = 2
+move_time = -1.0
+hold = 2.0
+
+[sub_resource type="Resource" id="s12"]
+script = ExtResource("e0")
+time = 11.0
+rail = 9
+tag = "train"
+speed = 120.0
+
+[sub_resource type="Resource" id="s13"]
+script = ExtResource("e3")
+time = 14.0
+mode = 0
+lane = 1
+move_time = -1.0
+hold = 2.0
+
+[sub_resource type="Resource" id="s14"]
+script = ExtResource("e0")
+time = 15.0
+rail = 6
+tag = "train"
+speed = 120.0
+
+[sub_resource type="Resource" id="s15"]
+script = ExtResource("e3")
+time = 17.0
+mode = 2
+lane = 0
+move_time = -1.0
+hold = 1.5
+
+[resource]
+script = ExtResource("e6")
+stage_name = "Stage 2 Test"
+events = Array[ExtResource("e1")]([SubResource("s1"), SubResource("s2"), SubResource("s3"), SubResource("s6"), SubResource("s7"), SubResource("s8"), SubResource("s9"), SubResource("s10"), SubResource("s11"), SubResource("s12"), SubResource("s13"), SubResource("s14"), SubResource("s15")])

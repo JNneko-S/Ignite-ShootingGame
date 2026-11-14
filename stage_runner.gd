@@ -56,6 +56,19 @@ var _base_autoscroll : Array[Vector2] = []
 var _scroll_tween : Tween
 ## 全滅ボーナスを数えている隊列(SpawnEvent → {total, gone, killed, last})
 var _formations : Dictionary = {}
+## 0 以上なら、次に出す敵の RailRider の Span をこれにする(1回だけ)
+var span_override : int = -1
+## tag ごとの、倒された数(WaitKillsEvent が使う)
+var _kills : Dictionary = {}
+## WaitKillsEvent の待機中: 待っている tag と数、待ち始めたときの倒した数
+var _kill_wait : WaitKillsEvent
+## WaitClearEvent の Include Trains(通り過ぎる列車がいなくなるまで待つ)
+var _wait_trains : bool = false
+var _kill_base : int = 0
+## WaitKillsEvent の待機中に繰り返すイベント(1回ごとに展開したもの)と、その時計
+var _loop_entries : Array[Dictionary] = []
+var _loop_next : int = 0
+var _loop_time : float = 0.0
 
 func _ready() -> void:
 	add_to_group("stage_runner")
@@ -70,6 +83,8 @@ func start() -> void:
 		return
 	_build_entries()
 	_formations.clear()
+	_kills.clear()
+	_kill_wait = null
 	_next = 0
 	_finished = false
 	_waiting = false
@@ -77,13 +92,18 @@ func start() -> void:
 	if debug_start_time > 0.0:
 		stage_time = debug_start_time
 		var last_scroll : ScrollSpeedEvent = null
+		var last_camera : StageCameraEvent = null
 		while _next < _entries.size() and _entries[_next]["time"] < stage_time:
 			if _entries[_next]["event"] is ScrollSpeedEvent:
 				last_scroll = _entries[_next]["event"]
+			elif _entries[_next]["event"] is StageCameraEvent and _entries[_next]["event"].mode != StageCamera.Mode.LOOK:
+				last_camera = _entries[_next]["event"]
 			_next += 1
-		# 飛ばしたスクロール変更のうち、最後のものだけを即座に反映する
+		# 飛ばしたスクロール変更・カメラの移動のうち、最後のものだけを即座に反映する
 		if last_scroll:
 			set_scroll_speed(last_scroll.speed_multiplier, 0.0)
+		if last_camera and StageCamera.of(self):
+			StageCamera.of(self).change(last_camera.mode, last_camera.lane, 0.0)
 	_running = true
 	stage_started.emit()
 	if debug_log:
@@ -143,6 +163,34 @@ func _physics_process(delta : float) -> void:
 			print("[Stage] クリア t=%.1f" % stage_time)
 		stage_cleared.emit()
 
+## ステージの最後のボス(Boss Time Bonus の敵)を倒した: 残っている敵は去らせて、ボスの爆発が終わったらクリアにする
+@export var final_boss_clear_delay : float = 3.0
+
+func _on_final_boss_died(_boss : Enemy) -> void:
+	if _finished:
+		return
+	_finished = true # これより後のイベントは進めない
+	EnemyShooter.hold_fire(final_boss_clear_delay + 10.0)
+	EnemyBullet.vanish_all(get_tree(), _boss.global_position)
+	for node in get_tree().get_nodes_in_group("enemy"):
+		if node == _boss:
+			continue
+		var mover : TrainBossMover = null
+		for child in node.get_children():
+			if child is TrainBossMover:
+				mover = child
+		if mover:
+			mover.leave_now() # 援護の列車は、走り去る
+		elif node is Enemy:
+			node.remove_from_group("enemy")
+			var fade : Tween = (node as Node2D).create_tween()
+			fade.tween_property(node, "modulate:a", 0.0, 0.6)
+			fade.tween_callback(node.queue_free)
+	await get_tree().create_timer(final_boss_clear_delay, false).timeout
+	if debug_log:
+		print("[Stage] クリア(最後のボスを撃破) t=%.1f" % stage_time)
+	stage_cleared.emit()
+
 func _enemies_alive() -> int:
 	return get_tree().get_nodes_in_group("enemy").size()
 
@@ -153,6 +201,12 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		push_warning("StageRunner: SpawnEvent に enemy_scene がありません (t=%.1f)" % event.time)
 		return
 	var enemy := event.enemy_scene.instantiate() as Enemy
+	if enemy and span_override >= 0:
+		# 線路の位置を指定して出す(ボスが援護を、自分のすぐ隣の線路に呼ぶとき)
+		for child in enemy.get_children():
+			if child is RailRider:
+				child.span = span_override
+		span_override = -1
 	if enemy == null:
 		push_error("StageRunner: enemy_scene のルートが Enemy(enemy.gd)ではありません")
 		return
@@ -161,6 +215,14 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.pattern = event.move_pattern
 	enemy.mirror_x = event.mirror_x != (event.alternate_mirror and unit_index % 2 == 1)
 	enemy.path_offset = event.offset + event.offset_step * unit_index
+	# カメラが横に動くステージ(StageCamera)では、座標は「今の画面」の座標として扱う
+	var view_offset := StageCamera.view_offset(self)
+	var camera := StageCamera.of(self)
+	if camera and event.camera_lane >= 0:
+		view_offset = Vector2(camera.lane_x(event.camera_lane) - camera.home_x, 0.0)
+	if view_offset != Vector2.ZERO:
+		enemy.path_offset += view_offset
+		enemy.mirror_center_x = camera.home_x + (camera.get_screen_center_position().x - camera.global_position.x)
 
 	if not event.shot_patterns.is_empty():
 		for node in enemy.find_children("*", "", true, false):
@@ -172,13 +234,14 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 			hp.max_hp = event.hp_override
 			hp.hp = event.hp_override
 	if event.tag != "":
-		enemy.add_to_group(_tag_group(event.tag)) # 待機イベントが見つけるための印
+		register_tag(enemy, event.tag)
 	if event.is_boss:
 		var death := DeathExplosion.of(enemy)
 		if death:
 			death.big = true # 連鎖爆発 → 大爆発してから消える
 	if event.boss_time_bonus:
 		enemy.boss_reach_time = stage_time # スタートからボス到達までの時間(待機イベントの時間は含まない)
+		enemy.died.connect(_on_final_boss_died) # ステージの最後のボスを倒したら、ほかの敵が残っていてもクリア
 	elif event.is_boss:
 		enemy.is_midboss = true # ゲージは出すが時間ボーナスのない敵 = 中ボス
 	# 段階の切り替え: ボスのシーンに BossPhaseController があれば、そちらを使う(SpawnEvent の Phases は使わない)
@@ -254,19 +317,90 @@ func spawn_prop(event : PropEvent) -> void:
 func _tag_group(tag : String) -> String:
 	return "stage_" + tag
 
+## 敵に tag の印を付けて、倒された数を数える(待機イベントが使う)。列車など、SpawnEvent 以外で出したものも、これを呼ぶ
+func register_tag(enemy : Node, tag : String) -> void:
+	if tag == "":
+		return
+	enemy.add_to_group(_tag_group(tag))
+	if enemy.has_signal("died"):
+		enemy.died.connect(func(_dead) -> void: _kills[tag] = int(_kills.get(tag, 0)) + 1)
+
+## tag の敵が、これまでに倒された数
+func kills_of(tag : String) -> int:
+	return int(_kills.get(tag, 0))
+
 # ---------------------------------------------------------------- 待機(中ボス・ボス)
 
-func begin_wait(tag : String, timeout : float) -> void:
+func begin_wait(tag : String, timeout : float, include_trains : bool = false) -> void:
 	_wait_group = _tag_group(tag) if tag != "" else "enemy"
+	_wait_trains = include_trains
+	if include_trains:
+		# 通り過ぎる列車は、急いで画面の外へ去る(中ボスの前など)
+		for node in get_tree().get_nodes_in_group("train"):
+			if node.has_method("hurry"):
+				node.hurry()
 	_wait_timeout = timeout
 	_wait_elapsed = 0.0
 	_waiting = true
 	if debug_log:
 		print("[Stage] 待機 group=%s timeout=%.1f" % [_wait_group, timeout])
 
+## tag の敵を count 体倒すまで、ステージの進行を止める。そのあいだ、event の Loop Events を繰り返す
+func begin_kill_wait(event : WaitKillsEvent) -> void:
+	_kill_wait = event
+	_kill_base = kills_of(event.tag)
+	_wait_timeout = event.timeout
+	_wait_elapsed = 0.0
+	_waiting = true
+	_loop_entries.clear()
+	var order := 0
+	for e in event.loop_events:
+		if e == null:
+			continue
+		for i in e.unit_count():
+			_loop_entries.append({"time": e.unit_time(i), "order": order, "event": e, "unit": i})
+			order += 1
+	_loop_entries.sort_custom(func(a : Dictionary, b : Dictionary) -> bool:
+		if is_equal_approx(a["time"], b["time"]):
+			return a["order"] < b["order"]
+		return a["time"] < b["time"])
+	_loop_next = 0
+	_loop_time = 0.0
+	if debug_log:
+		print("[Stage] 撃破待ち %s x%d (繰り返し %d件)" % [event.tag, event.kills, _loop_entries.size()])
+
+func _update_kill_wait(delta : float) -> void:
+	_wait_elapsed += delta
+	var done := kills_of(_kill_wait.tag) - _kill_base >= _kill_wait.kills
+	var timed_out := _wait_timeout > 0.0 and _wait_elapsed >= _wait_timeout
+	if done or timed_out:
+		_waiting = false
+		_kill_wait = null
+		if debug_log:
+			print("[Stage] 撃破待ち終了 (%s)" % ("達成" if done else "タイムアウト"))
+		return
+	if _loop_entries.is_empty():
+		return
+	_loop_time += delta
+	while _loop_next < _loop_entries.size() and _loop_entries[_loop_next]["time"] <= _loop_time:
+		var entry := _loop_entries[_loop_next]
+		_loop_next += 1
+		if entry["event"] is WaitClearEvent or entry["event"] is WaitKillsEvent:
+			continue # 繰り返しの中では、待機はしない
+		entry["event"].execute(self, entry["unit"])
+	var length := maxf(_kill_wait.loop_length, 0.5)
+	if _loop_time >= length:
+		_loop_time -= length
+		_loop_next = 0
+
 func _update_wait(delta : float) -> void:
+	if _kill_wait:
+		_update_kill_wait(delta)
+		return
 	_wait_elapsed += delta
 	var cleared := get_tree().get_nodes_in_group(_wait_group).is_empty()
+	if _wait_trains and not get_tree().get_nodes_in_group("train").is_empty():
+		cleared = false
 	var timed_out := _wait_timeout > 0.0 and _wait_elapsed >= _wait_timeout
 	if cleared or timed_out:
 		_waiting = false

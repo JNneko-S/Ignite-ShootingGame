@@ -100,6 +100,13 @@ func _begin() -> void:
 		stage_runner = get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as Player
+	if StageCarry.arriving:
+		# 前のステージから霧を抜けて入ってくる。演出の雲や母艦は出さず、StageTransition が終わってから _finish() を呼ぶ
+		for child in get_children():
+			child.queue_free()
+		_cloud_material = null
+		set_process(false)
+		return
 	if not play_intro or player == null:
 		_finish()
 		return

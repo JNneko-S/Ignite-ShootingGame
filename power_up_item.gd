@@ -47,7 +47,9 @@ var _done : bool = false
 @onready var _sprite : Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
 
 func _ready() -> void:
-	z_index = 6
+	add_to_group("power_up_item")
+	z_as_relative = false
+	z_index = 3 # 敵弾(5)より奥に描く(アイテムで弾が隠れないように)
 	_rise = maxf(_rise, pop_speed)
 	_phase = randf() * TAU
 	scale = Vector2.ZERO
@@ -91,6 +93,12 @@ func _physics_process(delta : float) -> void:
 		var player := get_tree().get_first_node_in_group("player") as Player
 		if player and player.visible and global_position.distance_to(player.global_position) <= pickup_radius:
 			_collect(player)
+
+## その場で拾ったことにする(ボスが援護を呼ぶ演出の前の、全回収)
+func collect_now() -> void:
+	var player := get_tree().get_first_node_in_group("player") as Player
+	if not _done and player:
+		_collect(player)
 
 func _collect(player : Player) -> void:
 	_done = true

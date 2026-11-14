@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
 [ext_resource type="Resource" uid="uid://c8fe0hk3o0kc5" path="res://Resources/StageData/Stage1TankRush.tres" id="stage"]
+[ext_resource type="Script" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
 
 [node name="ScrollTest" unique_id=2065326320 instance=ExtResource("base")]
 graze_per_levels = Array[float]([10.0, 12.0, 14.0])
@@ -15,5 +16,9 @@ end_b_use_count_required = 20
 
 [node name="StageRunner" parent="." index="2" unique_id=1973239994]
 stage = ExtResource("stage")
+
+[node name="StageTransition" type="Node" parent="." unique_id=1780000001]
+script = ExtResource("stage_transition")
+next_stage = "res://stage2.tscn"
 
 [editable path="UI/ScoreUI"]

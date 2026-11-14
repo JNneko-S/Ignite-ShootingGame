@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn00_Strip2.png" id="tex"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn01_Strip2.png" id="wreck"]
+
+[sub_resource type="RectangleShape2D" id="hurt"]
+size = Vector2(56, 170)
+
+[node name="Car_Loco" unique_id=1740000100 instance=ExtResource("base")]
+pattern = null
+wreck_texture = ExtResource("wreck")
+
+[node name="Sprite2D" parent="." unique_id=430556030]
+z_index = 1
+texture_filter = 1
+scale = Vector2(2.6, 2.6)
+offset = Vector2(3.5, 0)
+texture = ExtResource("tex")
+hframes = 2
+
+[node name="CollisionShape2D" parent="Hurtbox" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt")
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 120
+hp = 120
+
+[node name="ScoreReward" parent="." unique_id=301000004]
+score_value = 500

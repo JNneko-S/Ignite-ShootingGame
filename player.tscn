@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://dv225hu0xeqco" path="res://Assets/Sounds/Graze/AS_151526_シャッ（ライターを使って火を付ける）.mp3" id="snd_graze"]
 [ext_resource type="Script" path="res://GameScene/Player/phoenix_hit_flame.gd" id="c_hit_flame"]
 [ext_resource type="Script" path="res://GameScene/Player/graze_sparks.gd" id="c_graze_sparks"]
+[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="c_motion_tilt"]
 [ext_resource type="AudioStream" uid="uid://difae074m7ntk" path="res://Assets/Sounds/Explosive/AS_8381_ドカーンという爆発音.mp3" id="snd_death"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
@@ -177,3 +178,14 @@ script = ExtResource("c_graze_sparks")
 
 [editable path="Ignite"]
 [editable path="Hurtbox"]
+
+[node name="MotionTilt" type="Node" parent="." unique_id=501000030 node_paths=PackedStringArray("target")]
+script = ExtResource("c_motion_tilt")
+target = NodePath("../Sprite2D")
+face_mode = 0
+bank_max_deg = 40.0
+bank_per_turn = 0.0
+bank_per_side = 40.0
+bank_side_speed = 260.0
+bank_sharpness = 12.0
+perspective = 220.0

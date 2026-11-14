@@ -58,6 +58,12 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 				spread = 360.0 * i / count
 			else:
 				spread = -pattern.spread_angle / 2.0 + pattern.spread_angle * i / (count - 1)
+		# 平行に並べる(Parallel Spacing): 撃つ向きに直角に、横へずらす
+		var lateral := 0.0
+		if pattern.parallel_spacing > 0.0 and count > 1:
+			lateral = (i - (count - 1) / 2.0) * pattern.parallel_spacing
+		# 片側だけ曲がりを反転する(Mirror Curve By Side): 広がり・横のずれがマイナスの側
+		var flip := pattern.mirror_curve_by_side and (spread < 0.0 or lateral < 0.0)
 		for line in lines:
 			var angle := base + deg_to_rad(spread) * sign
 			var speed_scale := 1.0 + pattern.line_speed_ratio * line
@@ -69,7 +75,8 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 			result.append({
 				"angle": angle,
 				"speed_scale": speed_scale,
-				"offset": Vector2.from_angle(angle) * pattern.spawn_radius})
+				"flip": flip,
+				"offset": Vector2.from_angle(angle) * pattern.spawn_radius + Vector2.from_angle(base + PI / 2.0) * lateral * sign})
 	return result
 
 ## shot_index 回目の発射での、基準角度の回転量(度)。渦巻き・反転・回転の加速・揺れを合わせたもの

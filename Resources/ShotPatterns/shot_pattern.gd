@@ -27,6 +27,18 @@ enum TimingUnit {
 ## 速い弾ほどアニメはゆっくり、遅い弾ほど速くすると見やすい
 @export var bullet_scene : PackedScene
 
+@export_group("難易度")
+## この難易度より下では撃たない(0 = EASY から撃つ、1 = NORMAL から、2 = HARD だけ)。
+## 弾幕(.tres)ごとの設定なので、同じ弾幕を使う、全ての敵で消える
+@export_range(0, 2) var min_difficulty : int = 0
+## オンなら、NORMAL・EASY でも、数や速さを自動で調整しない(EASY 用に作った弾幕など)
+@export var skip_auto_tuning : bool = false
+## NORMAL のときは、この弾幕の代わりに、こちらを撃つ(自動の調整はしない)。
+## EASY でも、Easy Version がなければ、こちらを元に EASY 用に自動で調整して撃つ
+@export var normal_version : ShotPattern
+## EASY のときは、この弾幕の代わりに、こちらを撃つ(自動の調整はしない)
+@export var easy_version : ShotPattern
+
 @export_group("タイミング")
 ## Start Delay / Interval / Pause を、秒で数えるか拍で数えるか。
 ## 拍なら、例えば Interval 0.5 = 8分音符ごと、Pause 2 = 2拍休み
@@ -69,6 +81,12 @@ enum TimingUnit {
 @export var aim_once_per_burst : bool = false
 ## 弾を、砲口からこの距離(px)の円周上に出す。0 なら砲口から
 @export var spawn_radius : float = 0.0
+## 0 より大きければ、弾を同じ向きに平行に並べて撃つ(この間隔(px)で横に並べる。砲身が何本もある砲台など)。
+## 広がり(Spread Angle)も使えるが、ふつうは 0 にする
+@export var parallel_spacing : float = 0.0
+## オンなら、左右に並んだ弾のうち片側の曲がり(Motion の Angular Velocity など)を左右反転する。
+## 2way の弾を、左の弾は左へ、右の弾は右へ(または内側へ)曲げたいときに使う
+@export var mirror_curve_by_side : bool = false
 
 @export_group("列弾")
 ## 同じ向きに、速さの違う弾を何発ずつ重ねるか(1 なら重ねない)

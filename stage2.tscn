@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
+[ext_resource type="Resource" path="res://Resources/StageData/Stage2.tres" id="stage"]
+[ext_resource type="Script" path="res://Component/Camera/stage_camera.gd" id="stage_camera"]
+[ext_resource type="Script" path="res://Component/Rail/rail_ground.gd" id="rail_ground"]
+[ext_resource type="Script" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
+[ext_resource type="Script" path="res://Component/Rail/speed_lines.gd" id="speed_lines"]
+[ext_resource type="Script" path="res://Component/UI/offscreen_arrows.gd" id="offscreen_arrows"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_111999_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="music_stage2"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_112585_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="music_boss2"]
+[ext_resource type="Texture2D" uid="uid://cx4gd465fu883" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Loop this at the end.png" id="loop_tex"]
+
+[node name="Stage2" unique_id=2065326320 instance=ExtResource("base")]
+
+[node name="StageRunner" parent="." unique_id=1973239994]
+stage = ExtResource("stage")
+debug_log = true
+
+[node name="Scroller" parent="." unique_id=944740712]
+visible = false
+process_mode = 4
+
+[node name="BackgroundSway" parent="." unique_id=418265093]
+process_mode = 4
+
+[node name="Camera2D" parent="." unique_id=1832352645]
+script = ExtResource("stage_camera")
+dead_zone = 0.0
+
+[node name="RailGround" type="Sprite2D" parent="." unique_id=1750000001]
+z_index = -10
+texture_filter = 1
+position = Vector2(250.4, 0)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("loop_tex")
+script = ExtResource("rail_ground")
+scroll_speed = 180.0
+
+[node name="StageIntro" parent="." unique_id=875853486]
+play_intro = false
+
+[node name="AudioStreamPlayer" parent="." unique_id=1308156288]
+stage_music = ExtResource("music_stage2")
+boss_music = ExtResource("music_boss2")
+
+[node name="StageTransition" type="Node" parent="." unique_id=1780000002]
+script = ExtResource("stage_transition")
+
+[node name="SpeedLines" type="Node2D" parent="." unique_id=1790000001]
+script = ExtResource("speed_lines")
+
+[node name="OffscreenLayer" type="CanvasLayer" parent="." unique_id=1790000002]
+layer = 5
+
+[node name="OffscreenArrows" type="Control" parent="OffscreenLayer" unique_id=1790000003]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("offscreen_arrows")

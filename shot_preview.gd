@@ -70,14 +70,16 @@ func _draw() -> void:
 	var rect := Rect2(to_local(screen.position), screen.size).grow(80.0)
 	var aim_angle := player_local.angle()
 	var table := ShotMath.motion_table(pattern)
+	var table_flip := ShotMath.motion_table(pattern, true) # Mirror Curve By Side の片側
 	for shot in ShotMath.shot_times(pattern, preview_time, 60.0 / maxf(bpm, 1.0)):
 		var age : float = preview_time - shot["time"]
 		if age > BULLET_LIFETIME:
 			continue
 		var fade := clampf(1.0 - age / BULLET_LIFETIME, 0.25, 1.0)
 		for bullet in ShotMath.bullets(pattern, shot["index"], aim_angle):
-			for point in ShotMath.split_positions(pattern, table, bullet["angle"], bullet["speed_scale"], age,
-					bullet["offset"], player_local):
+			var flip : bool = bullet.get("flip", false)
+			for point in ShotMath.split_positions(pattern, table_flip if flip else table, bullet["angle"], bullet["speed_scale"], age,
+					bullet["offset"], player_local, flip):
 				if not rect.has_point(point):
 					continue
 				draw_circle(point, bullet_radius, Color(0.55, 0.8, 1.0, fade))

@@ -239,6 +239,7 @@ func _draw_bullets(event : SpawnEvent, unit : int, screen : Rect2, player : Vect
 			if pattern == null:
 				continue
 			var table := _motion_table(pattern, mirror)
+			var table_flip := _motion_table(pattern, not mirror) # Mirror Curve By Side の片側
 			var burst := maxi(pattern.shot_count, 1)
 			var burst_aim := 0.0
 			for shot in ShotMath.shot_times(pattern, fire_until, seconds_per_beat):
@@ -253,8 +254,9 @@ func _draw_bullets(event : SpawnEvent, unit : int, screen : Rect2, player : Vect
 				if pattern.aim_once_per_burst:
 					aim_angle = burst_aim
 				for bullet in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
-					for point in ShotMath.split_positions(pattern, table, bullet["angle"], bullet["speed_scale"],
-							local_time - shot_time, muzzle + bullet["offset"], player, mirror):
+					var flip : bool = bullet.get("flip", false)
+					for point in ShotMath.split_positions(pattern, table_flip if flip else table, bullet["angle"], bullet["speed_scale"],
+							local_time - shot_time, muzzle + bullet["offset"], player, mirror != flip):
 						if not visible_rect.has_point(point):
 							continue # 画面外に出た弾は消える
 						draw_circle(point, bullet_radius, color)

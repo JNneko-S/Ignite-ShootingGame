@@ -26,13 +26,44 @@ signal destroyed(part : EnemyPart)
 ## 壊れたときに落とすスコアアイテムの点数の合計と個数(0 なら落とさない)
 @export var break_score : int = 0
 @export var break_items : int = 6
+## 壊れたときの音(シーンに置いた AudioStreamPlayer)。空なら、本体の DeathExplosion の音を少し高くして鳴らす
+@export var break_sound : AudioStreamPlayer
+## 壊れたあとの見た目。FADE: 暗くなって縮んで消える / DARKEN: 黒くなって、その場に残る(列車の砲台など。revive() で直せる)
+enum DestroyedLook { FADE, DARKEN }
+@export var destroyed_look : DestroyedLook = DestroyedLook.FADE
+## DARKEN のときの色
+@export var destroyed_color : Color = Color(0.22, 0.2, 0.2)
 ## 壊れたときに有効にする当たり判定(本体の、この部位に隠れていた部分など)。最初は Disabled にしておく
 @export var reveal_on_destroy : Array[CollisionShape2D] = []
 
 var hp : int = 0
 var _destroyed : bool = false
+## 壊れる前に、ロックオンの対象("lock_target" グループ)だったか(直したときに戻す)
+var _was_lock_target : bool = false
 var _breakable : bool = true
 var _flash_tween : Tween
+
+## 狙える(ロックオン・反射弾の追尾)ものを全部返す:
+##   ・"enemy" グループの敵(ただし "no_lock" グループのもの = 部位だけを狙わせたい本体 は除く)
+##   ・"lock_target" グループの部位(壊せるあいだだけ)
+static func targets(tree : SceneTree) -> Array[Node2D]:
+	var result : Array[Node2D] = []
+	for node in tree.get_nodes_in_group("enemy"):
+		if node is Node2D and not node.is_in_group("no_lock"):
+			result.append(node)
+	for node in tree.get_nodes_in_group("lock_target"):
+		var part := node as EnemyPart
+		if part and not part.is_destroyed() and part.is_breakable():
+			result.append(part)
+	return result
+
+## まだ狙ってよいか(ロックを外すかどうか)
+static func is_target(node : Node2D) -> bool:
+	if not is_instance_valid(node) or not node.is_inside_tree() or node.is_queued_for_deletion():
+		return false
+	if node is EnemyPart:
+		return not node.is_destroyed() and node.is_in_group("lock_target")
+	return node.is_in_group("enemy") and not node.is_in_group("no_lock")
 
 func _ready() -> void:
 	hp = max_hp
@@ -93,6 +124,8 @@ func _on_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void
 
 func _destroy() -> void:
 	_destroyed = true
+	_was_lock_target = is_in_group("lock_target")
+	remove_from_group("lock_target")
 	var stopped : Array = shooters.duplicate()
 	for node in find_children("*", "", true, false):
 		if node is EnemyShooter:
@@ -109,16 +142,54 @@ func _destroy() -> void:
 			shape.set_deferred("disabled", false)
 	if break_explosion_scale > 0.0:
 		Explosion.spawn(get_tree(), Explosion.EXPLOSIVE, global_position, break_explosion_scale)
+	_play_break_sound()
 	if break_score > 0:
 		var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
 		if score_system:
 			score_system.spawn_items(global_position, break_score, break_items, 1.3)
 	destroyed.emit(self)
-	# 光ってから、暗くなって縮む
 	var tween := create_tween()
 	modulate = Color(2.0, 1.6, 1.2)
-	tween.tween_property(self, "modulate", Color(0.35, 0.3, 0.3, 0.0), 0.5)
-	tween.parallel().tween_property(self, "scale", scale * 0.6, 0.5)
+	if destroyed_look == DestroyedLook.DARKEN:
+		# 光ってから、黒くなって、その場に残る(動かない・撃たない)
+		tween.tween_property(self, "modulate", destroyed_color, 0.5)
+	else:
+		# 光ってから、暗くなって縮む
+		tween.tween_property(self, "modulate", Color(0.35, 0.3, 0.3, 0.0), 0.5)
+		tween.parallel().tween_property(self, "scale", scale * 0.6, 0.5)
+
+## 壊れた部位を直す(ボスの段階が変わったときなど)。HP を戻し、また撃てて、当たるようにする。
+## 砲口の弾幕は、呼ぶ側が入れ直す(BossPhaseController が段階の弾幕に切り替える)
+func revive() -> void:
+	if not _destroyed:
+		return
+	_destroyed = false
+	hp = max_hp
+	if _was_lock_target:
+		add_to_group("lock_target")
+	var revived : Array = shooters.duplicate()
+	for node in find_children("*", "", true, false):
+		if node is EnemyShooter:
+			revived.append(node)
+		elif node is Hurtbox:
+			node.set_deferred("monitoring", true)
+			node.set_deferred("monitorable", true)
+	for shooter in revived:
+		if is_instance_valid(shooter):
+			shooter.enabled = true
+	# 白く光って、元の色に戻る(直った合図)
+	var tween := create_tween()
+	modulate = Color(2.2, 2.2, 2.4)
+	tween.tween_property(self, "modulate", Color.WHITE, 0.6)
+
+func _play_break_sound() -> void:
+	if break_sound:
+		SoundManager.play(break_sound)
+		return
+	var body := _body()
+	var death := DeathExplosion.of(body) if body else null
+	if death and death.sound:
+		SoundManager.play(death.sound, randf_range(1.05, 1.2)) # 本体が倒れたときの音より、少し高く軽く
 
 func _flash(color : Color = Color(1.8, 1.8, 1.8)) -> void:
 	if _flash_tween and _flash_tween.is_running():

@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn21.png" id="tex"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn20.png" id="wreck"]
+[ext_resource type="Script" path="res://Component/Rail/car_skin.gd" id="skin"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn21.png" id="i0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn20.png" id="w0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn30.png" id="i1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn31.png" id="w1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn40.png" id="i2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn41.png" id="w2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn50.png" id="i3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn51.png" id="w3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn60.png" id="i4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn61.png" id="w4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn70.png" id="i5"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn71.png" id="w5"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn10_Strip2.png" id="i6"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Small Train/SmallTrain_Wgn11_Strip2.png" id="w6"]
+
+[sub_resource type="RectangleShape2D" id="hurt"]
+size = Vector2(56, 140)
+
+[node name="Car_Wagon" unique_id=1740000200 instance=ExtResource("base")]
+pattern = null
+wreck_texture = ExtResource("wreck")
+
+[node name="Sprite2D" parent="." unique_id=430556030]
+z_index = 1
+texture_filter = 1
+scale = Vector2(2.6, 2.6)
+offset = Vector2(3.5, 0)
+texture = ExtResource("tex")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("hurt")
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 60
+hp = 60
+
+[node name="ScoreReward" parent="." unique_id=301000004]
+score_value = 200
+
+[node name="CarSkin" type="Node" parent="." unique_id=1740000201]
+script = ExtResource("skin")
+intact = Array[Texture2D]([ExtResource("i0"), ExtResource("i1"), ExtResource("i2"), ExtResource("i3"), ExtResource("i4"), ExtResource("i5"), ExtResource("i6")])
+wrecks = Array[Texture2D]([ExtResource("w0"), ExtResource("w1"), ExtResource("w2"), ExtResource("w3"), ExtResource("w4"), ExtResource("w5"), ExtResource("w6")])

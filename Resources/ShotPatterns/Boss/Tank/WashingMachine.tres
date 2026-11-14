@@ -22,6 +22,8 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("2_o0fgd")
 bullet_scene = ExtResource("1_o0fgd")
+min_difficulty = null
+skip_auto_tuning = null
 shot_count = 36
 loop = false
 bullet_count = 2

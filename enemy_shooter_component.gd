@@ -22,16 +22,28 @@ signal fired
 @export var bullet_parent : Node
 ## true なら、画面内にいる間だけ撃つ(画面外からの不意打ち・無駄撃ち防止)
 @export var only_when_on_screen : bool = true
+## オンなら、画面の左右の外にいるときも撃つ(画面の上下の外では撃たない)。Only When On Screen より優先。
+## 横に広いステージのボスが、となりの画面から撃ってくるのに使う
+@export var fire_offscreen_sideways : bool = false
+## オンなら、画面の左右の外にいるときだけ撃つ(画面の中や、上下の外では撃たない)。
+## ボスが、となりの画面にいる自機を、画面の外から狙ってくる砲口に使う
+@export var only_offscreen_sideways : bool = false
+## 弾幕の休み(Pause)の長さの倍率。0.5 なら休みが半分になり、撃つ頻度が上がる(同じ弾幕を、もっと頻繁に撃たせるとき)
+@export var pause_scale : float = 1.0
 ## true なら、発射のたびに使われている値をデバッグ出力に表示する(設定が効いているかの確認用)
 @export var debug_log : bool = false
 ## false なら、出現しても自分では撃ち始めない(ボスのステートなど、外から set_patterns / set_phase で撃たせる)
 @export var autostart : bool = true
+## EASY のときは、Patterns の代わりに、こちらを撃つ(空なら差し替えない。Phases を使う砲口は、ShooterPhase の Easy Patterns を使う)
+@export var easy_patterns : Array[ShotPattern] = []
 
 ## 全ての弾の向きを、この角度(度)だけ回す。正で左回り(画面の左へ)。ボスのステートが、弾幕の向きを振るのに使う
 var turn_degrees : float = 0.0
 
 ## false にすると撃たなくなる(壊れた部位の砲口など)。譜面で撃つときも撃たない
 var enabled : bool = true
+## true のあいだは撃たない(列車ボスが、自機の後ろにある砲口を一時的に止めるときなど)。Enabled とは別に、毎フレーム決め直す
+var blocked : bool = false
 
 ## この時刻(Time.get_ticks_msec)まで、全ての敵が撃たない(自機の復活直後など)
 static var _hold_fire_until_msec : int = 0
@@ -43,6 +55,26 @@ static func hold_fire(seconds : float) -> void:
 static func is_holding_fire() -> bool:
 	return Time.get_ticks_msec() < _hold_fire_until_msec
 
+## 雑魚の砲口か(-1 = まだ調べていない)。EASY で、雑魚の弾をさらに遅くするのに使う
+var _zako : int = -1
+
+## 雑魚の砲口か(ボス・中ボス・援護の列車でなければ雑魚)
+func is_zako() -> bool:
+	if _zako < 0:
+		_zako = 1
+		var node := get_parent()
+		while node and not node is Enemy:
+			node = node.get_parent()
+		var enemy := node as Enemy
+		if enemy == null or enemy.is_midboss:
+			_zako = 0
+		else:
+			for child in enemy.get_children():
+				if child is BossPhaseController or child is TrainBossMover or (child is DeathExplosion and child.big):
+					_zako = 0
+					break
+	return _zako == 1
+
 ## stop() で増える。動いている _run_pattern は、これが変わったら止まる
 var _generation : int = 0
 ## aim_once_per_burst 用の、パターンごとのバーストの向き(譜面で撃つとき)
@@ -50,8 +82,10 @@ var _burst_aims : Dictionary = {}
 
 func _ready() -> void:
 	if not phases.is_empty() and phases[0]:
-		patterns = phases[0].patterns
-		sequence = phases[0].sequence
+		patterns = phases[0].patterns_for_difficulty()
+		sequence = phases[0].sequence_for_difficulty()
+	elif DifficultyTuning.is_easy() and not easy_patterns.is_empty():
+		patterns = easy_patterns
 	if debug_log:
 		print("[EnemyShooter] 開始 node=%s patterns=%d" % [get_path(), patterns.size()])
 		for pattern in patterns:
@@ -62,7 +96,7 @@ func _ready() -> void:
 		return # 外から撃たせる
 	if _has_conductor():
 		return # 譜面で撃つので、Patterns では撃たない
-	for pattern in patterns:
+	for pattern in DifficultyTuning.layers(patterns):
 		_run_pattern(pattern)
 	_run_sequence()
 
@@ -87,7 +121,7 @@ func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPa
 	sequence = new_sequence
 	if _has_conductor():
 		return
-	for pattern in patterns:
+	for pattern in DifficultyTuning.layers(patterns):
 		_run_pattern(pattern)
 	_run_sequence()
 
@@ -103,7 +137,7 @@ func set_phase(index : int) -> void:
 	if phase == null:
 		set_patterns([], [])
 		return
-	set_patterns(phase.patterns, phase.sequence)
+	set_patterns(phase.patterns_for_difficulty(), phase.sequence_for_difficulty())
 
 ## sequence の弾幕を、1つずつ順番に撃つ(最後まで行ったら最初に戻る)
 func _run_sequence() -> void:
@@ -119,6 +153,10 @@ func _run_sequence() -> void:
 
 ## pattern を1回分(Start Delay → Shot Count 発 → Pause)だけ撃つ。Loop は見ない
 func _run_once(pattern : ShotPattern, generation : int) -> void:
+	if not DifficultyTuning.allows(pattern):
+		await get_tree().process_frame
+		return
+	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
 	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
@@ -131,18 +169,23 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 		await _wait(pattern.interval * unit)
 	if generation != _generation:
 		return
-	await _wait(pattern.pause * unit)
+	await _wait(pattern.pause * unit * pause_scale)
 
 ## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
 func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
+	if not DifficultyTuning.allows(pattern):
+		return
 	var burst := maxi(pattern.shot_count, 1)
 	if shot_index % burst == 0 or not _burst_aims.has(pattern):
 		_burst_aims[pattern] = _aim_angle()
 	if not _can_fire():
 		return
-	_fire(pattern, shot_index, _burst_aims[pattern] if pattern.aim_once_per_burst else _aim_angle())
+	_fire(DifficultyTuning.tune(pattern, is_zako()), shot_index, _burst_aims[pattern] if pattern.aim_once_per_burst else _aim_angle())
 
 func _run_pattern(pattern : ShotPattern) -> void:
+	if not DifficultyTuning.allows(pattern):
+		return # この難易度では撃たない弾幕
+	pattern = DifficultyTuning.tune(pattern, is_zako()) # この難易度用に、数や速さを変えた写し(HARD ならそのまま)
 	var generation := _generation
 	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
 	var clock := MusicClock.find_in(get_tree())
@@ -166,12 +209,18 @@ func _run_pattern(pattern : ShotPattern) -> void:
 				return
 		if not pattern.loop:
 			return
-		await _wait_with_warning(pattern, pattern.pause * unit, generation)
+		await _wait_with_warning(pattern, pattern.pause * unit * pause_scale, generation)
 
 func _can_fire() -> bool:
-	if not enabled or is_holding_fire():
+	if not enabled or blocked or is_holding_fire():
 		return false
-	return not only_when_on_screen or CameraView.visible_rect(self).has_point(global_position)
+	var view := CameraView.visible_rect(self)
+	if only_offscreen_sideways:
+		var in_height := global_position.y >= view.position.y - 120.0 and global_position.y <= view.end.y
+		return in_height and (global_position.x < view.position.x or global_position.x > view.end.x)
+	if fire_offscreen_sideways:
+		return global_position.y >= view.position.y and global_position.y <= view.end.y # 高さが画面の中なら、左右の外でも撃つ
+	return not only_when_on_screen or view.has_point(global_position)
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
@@ -198,10 +247,12 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 		bullet.global_position = origin + offset.rotated(turn)
 		if bullet.has_method("setup"):
 			bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+		# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
+		var bullet_mirror : bool = mirror != shot.get("flip", false)
 		if bullet.has_method("set_motion"):
-			bullet.set_motion(pattern.motion, shot["speed_scale"], mirror)
+			bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
 		if bullet.has_method("set_split"):
-			bullet.set_split(pattern, mirror, split_depth)
+			bullet.set_split(pattern, bullet_mirror, split_depth)
 
 ## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する
 func _is_mirrored() -> bool:

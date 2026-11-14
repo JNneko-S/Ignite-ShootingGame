@@ -58,9 +58,13 @@ func setup(player : Node2D, value : float, burst_velocity : Vector2) -> void:
 	_player = player
 	amount = value
 	_velocity = burst_velocity
-	z_index = 5
+	z_as_relative = false
+	z_index = 3 # 敵弾(5)より奥に描く(アイテムで弾が隠れないように)
 
 func _ready() -> void:
+	add_to_group("ignite_item")
+	z_as_relative = false
+	z_index = 3 # 敵弾(5)より奥に描く(アイテムで弾が隠れないように)
 	scale = Vector2.ZERO
 	create_tween().tween_property(self, "scale", Vector2.ONE, 0.2)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -125,6 +129,11 @@ func _stay_on_screen() -> void:
 	global_position = global_position.clamp(area.position, area.end)
 
 ## 自機が生きていて、見えているときだけ拾える(復活待ちのあいだは拾えない)
+## その場で拾ったことにする(ボスが援護を呼ぶ演出の前の、全回収)
+func collect_now() -> void:
+	if not _done:
+		_collect()
+
 func _can_pick() -> bool:
 	return is_instance_valid(_player) and _player.visible and _player.is_inside_tree()
 

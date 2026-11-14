@@ -65,6 +65,8 @@ const RED_FILL := Color(0.02, 0.0, 0.0, 0.94)
 @onready var _ui_root : Control = $UI/Root
 @onready var _board : LedBoard = $UI/Root/TitleBoard
 @onready var _preview : Sprite2D = $UI/Root/PreviewFrame/PreviewPanel/PreviewShip
+## プレビューの機体に、子機付きで撃たせる(なければ撃たない)
+@onready var _preview_fire : ShipPreviewFire = get_node_or_null("UI/Root/PreviewFrame/PreviewPanel/FireClip/PreviewFire")
 @onready var _selector : SelectorRing = $UI/Root/Selector
 @onready var _icon : Sprite2D = $UI/Root/Selector/Icon
 @onready var _ship_name : Label = $UI/Root/ShipName
@@ -194,6 +196,8 @@ func _show_ship(animate : bool, direction : int = 1) -> void:
 		tween.tween_property(_icon, "position:x", _icon_base.x, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		tween.tween_property(_icon, "modulate:a", 1.0, 0.15)
 		_flash(_preview)
+		if _preview_fire:
+			_preview_fire.reset()
 
 func _shake_icon(direction : int) -> void:
 	var tween := create_tween()

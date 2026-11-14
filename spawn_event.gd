@@ -42,6 +42,9 @@ class_name SpawnEvent
 @export var mirror_x : bool = false
 ## true なら、1体おきに左右反転する(左右対称のペアになる)
 @export var alternate_mirror : bool = false
+## カメラが横に動くステージ(StageCamera)で、どの画面の座標として出すか。
+## -1 なら今カメラに映っている画面。0 以上なら、そのレーン(0 = 左、1 = 中央、2 = 右)の画面(ボスが呼び寄せる援護など)
+@export var camera_lane : int = -1
 ## 隊列を1体残らず倒したときのボーナス点(0 ならなし)。最後に倒した場所に「全滅 +点」と出る。
 ## 1体でも画面の外へ逃げたら出ない(Count が 2 以上のときだけ)
 @export var formation_bonus : int = 0

@@ -14,6 +14,8 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_le2ts")
 bullet_scene = ExtResource("1_q13d3")
+min_difficulty = null
+skip_auto_tuning = null
 warning_time = 2.0
 line_count = 10
 line_speed_ratio = 0.1

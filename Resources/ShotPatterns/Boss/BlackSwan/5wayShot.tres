@@ -16,6 +16,8 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("2_01ax5")
 bullet_scene = ExtResource("b_curve")
+min_difficulty = null
+skip_auto_tuning = null
 start_delay = 1.0
 shot_count = 4
 interval = 1.5

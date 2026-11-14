@@ -5,9 +5,10 @@
 [ext_resource type="Script" uid="uid://xchyfr3avu0m" path="res://Component/Hitbox/Hitbox.gd" id="hitbox_script"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_charger.tres" id="move"]
 [ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
+[ext_resource type="Script" path="res://Component/Motion/after_image.gd" id="after_image"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
-size = Vector2(14, 14)
+size = Vector2(22, 22)
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 7.0
@@ -18,8 +19,8 @@ pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
 texture_filter = 1
-position = Vector2(0, -2)
-scale = Vector2(0.67, 0.67)
+position = Vector2(0, -3)
+scale = Vector2(1.07, 1.07)
 texture = ExtResource("3_76jf6")
 hframes = 1
 
@@ -40,3 +41,6 @@ shape = SubResource("body_shape")
 script = ExtResource("motion_tilt")
 face_mode = 2
 bank_per_turn = 30.0
+
+[node name="AfterImage" type="Node" parent="." unique_id=1863673107]
+script = ExtResource("after_image")

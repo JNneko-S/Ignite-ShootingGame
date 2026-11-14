@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_pink"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_eqnhq"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_7oibl"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrikeNormal.tres" id="normal_ver"]
 
 [sub_resource type="Resource" id="Resource_emv7r"]
 script = ExtResource("2_eqnhq")
@@ -22,6 +23,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_7oibl")
 bullet_scene = ExtResource("1_pink")
+normal_version = ExtResource("normal_ver")
 shot_count = 10
 loop = false
 pause = 5.0

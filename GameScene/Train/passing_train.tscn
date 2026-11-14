@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Component/Rail/train.gd" id="train"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/car_loco.tscn" id="loco"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/car_wagon.tscn" id="wagon"]
+
+[node name="PassingTrain" type="Node2D" unique_id=1740000001]
+script = ExtResource("train")
+cars = Array[PackedScene]([ExtResource("loco"), ExtResource("wagon")])
+car_count = 4
+speed = 330.0
+down_speed = 120.0

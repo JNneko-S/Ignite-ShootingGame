@@ -11,6 +11,6 @@ subtitle = "炎の翼をもつ試作機"
 description = "敵弾をかすめてゲージを溜め、イグナイトで弾幕を焼き払う。
 ショット: 前方3連射 / 低速移動: ロックショット"
 texture = ExtResource("2_tex")
-preview_scale = 1.1
+preview_scale = 0.85
 icon_scale = 0.75
 player_scene = ExtResource("3_player")

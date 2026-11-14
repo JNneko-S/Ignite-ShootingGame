@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bkyv48cijhwac" path="res://stage_preview.gd" id="2_nxg43"]
 [ext_resource type="Script" uid="uid://c7pvbus1k2x0h" path="res://stage_runner.gd" id="2_yintm"]
 [ext_resource type="Script" uid="uid://ce41j8w4twusb" path="res://lives_label.gd" id="3_n7bgm"]
-[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://Player.tscn" id="4_nr4bh"]
+[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://player.tscn" id="4_nr4bh"]
 [ext_resource type="Script" uid="uid://b7vmnigxshh4w" path="res://shot_preview.gd" id="4_yintm"]
 [ext_resource type="Texture2D" uid="uid://53vdxebofh7" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Lower_Layer.png" id="6_kku2p"]
 [ext_resource type="Script" uid="uid://cy01axe4ckhws" path="res://background_scroller.gd" id="6_spej0"]
@@ -50,7 +50,10 @@ player = NodePath("Player")
 ui = NodePath("UI")
 lives_label = NodePath("UI/CanvasLayer/Label2")
 start_levels = Array[int]([3, 2, 1])
-graze_radius_scales = Array[float]([1.0, 1.0, 0.8])
+graze_per_levels = Array[float]([10.0, 15.0, 20.0])
+graze_radius_scales = Array[float]([1.1, 1.0, 0.8])
+shot_power_scales = Array[float]([1.6, 1.4, 1.3, 1.2, 1.1, 1.0])
+end_b_use_count_required = 20
 
 [node name="Node2D" type="Node2D" parent="." unique_id=740174183]
 z_index = 1
