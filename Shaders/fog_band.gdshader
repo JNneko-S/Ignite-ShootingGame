@@ -18,6 +18,8 @@ uniform float aspect = 0.75;
 uniform float pixel_size = 2.0;
 uniform vec2 rect_size = vec2(448.0, 597.0);
 uniform float color_steps = 6.0;
+// 霧がちぎれて消えていく度合い(0 = そのまま、1 = 全部消えた)。薄いところから穴があいて、濃いところが最後に消える
+uniform float dissolve : hint_range(0.0, 1.0) = 0.0;
 
 float hash(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -51,6 +53,7 @@ void fragment() {
 	float a = fbm(p + vec2(0.0, -scroll * cloud_scale));
 	float b = fbm(p * 1.6 + vec2(4.1, -scroll * cloud_scale * 0.6));
 	float cloud = clamp(a * 0.65 + b * 0.55, 0.0, 1.0);
+	float raw_cloud = cloud;
 	cloud = floor(cloud * color_steps) / color_steps;
 	// 端のギザギザ(横の位置と、流れで揺れる)
 	float wobble = (fbm(vec2(cell.x * 6.0, scroll * 0.5)) - 0.5) * 2.0 * edge_noise;
@@ -58,6 +61,10 @@ void fragment() {
 	float below_back = smoothstep(back - 0.06, back + 0.06, y);
 	float above_front = 1.0 - smoothstep(front - 0.06, front + 0.06, y);
 	float mask = below_back * above_front;
+	// ちぎれて消える: 模様の薄いところから消えていく(ドット絵に合わせて、ふちはくっきり)
+	float keep = step(mix(0.25, 0.95, dissolve), raw_cloud + (fbm(p * 3.0 + vec2(7.3, 2.1)) - 0.5) * 0.25);
+	keep = max(keep, step(dissolve, 0.0)); // 0 のときは、全部残す
+	mask *= keep;
 	vec3 color = mix(shadow_color.rgb, fog_color.rgb, cloud);
 	COLOR = vec4(color, mask * density);
 }

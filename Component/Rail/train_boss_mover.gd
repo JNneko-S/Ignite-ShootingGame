@@ -5,7 +5,8 @@ class_name TrainBossMover
 ##
 ## 動き方:
 ##   1. 画面の外(進む向きの手前)から、ゆっくり入ってきて、先頭の車両が画面に入ったところで止まる
-##   2. 動いているあいだも撃つ(Fire While Moving をオフにすると、止まっているあいだだけ撃つ)
+##   2. 動いているあいだも撃つ(Fire While Moving をオフにすると、止まっているあいだだけ撃つ。
+##      Fire Cue Time があれば、止まってから砲口に「撃つ合図」を出し、合図が終わってから撃ち始める)
 ##   3. しばらく撃ったら、ゆっくり次の車両が見えるところへ動く。いちばん後ろまで行ったら、また前へ戻る(行ったり来たり)
 ##   4. 見えている車両の砲台を全部壊されたら、壊れていない砲台のある車両へ、ゆっくり動く
 ##   5. Route があれば、何回か止まるごとに、ゆっくり画面の上(進む向き)へ走り去り、次の位置の線路に移って入り直す
@@ -17,11 +18,23 @@ class_name TrainBossMover
 @export var wagon_names : PackedStringArray = ["Main", "W3", "W2", "W1", "W0"]
 ## オンなら、動いているあいだも撃つ。オフなら、止まっているあいだだけ撃つ(ビームも)
 @export var fire_while_moving : bool = true
+## 止まってから撃ち始めるまでの時間(秒)。このあいだ、撃つ砲口に合図(光が砲口へ集まる)を出す。0 なら合図なしですぐ撃つ
+@export var fire_cue_time : float = 0.0
+## 合図の色
+@export var fire_cue_color : Color = Color(1.0, 0.35, 0.15)
+## 合図を出すときに鳴らす音。空なら鳴らさない
+@export var fire_cue_sound : AudioStream
 ## 動いているあいだ、自機が画面の真ん中か、それより下にいるときは、自機より後ろ(下)の砲口から撃たない
 ## (後ろから急に撃たれて、すぐ死ぬのを防ぐ)
 @export var no_fire_from_behind_while_moving : bool = true
 ## 自機よりこの距離(px)以上、下にある砲口を「後ろ」とする
 @export var behind_margin : float = 8.0
+## 画面のこの高さ(上から 0〜1)より下にある砲口は、いつも撃たない(自機の近くから、いきなり撃たれないように)。1 ならしない
+@export_range(0.0, 1.0, 0.05) var low_fire_limit : float = 0.5
+## 線路を移って入り直す前に、入ってくる線路に予告を出す時間(秒)。0 なら出さない
+@export var lane_warning_time : float = 1.4
+## 自機からこの距離(px)より近い砲口は撃たない(砲台が自機に重なったまま撃って、すぐ当たるのを防ぐ)。0 ならしない
+@export var no_fire_radius : float = 96.0
 ## 動く速さ(px/秒)。動き始めと止まる前は、ゆっくりになる
 @export var move_speed : float = 110.0
 ## 入ってくるときの速さ(px/秒)
@@ -59,6 +72,16 @@ class_name TrainBossMover
 @export var flank_heights : Array[float] = [0.2, 0.45]
 
 @export_group("援護")
+## オンなら、見えている車両の砲台を全部壊すまで、その車両の前から動かない(時間で次の車両へ動かない)
+@export var stay_until_cleared : bool = false
+## オンなら、見えている車両の砲台を全部壊したら、すぐに次の車両が「ガコン!」と押し出されてくる
+## (速く動いて、止まるときにつんのめり、画面が揺れる)
+@export var snap_to_next : bool = false
+## 壊してから押し出され始めるまでの時間(秒)と、押し出されてくる時間(秒)
+@export var snap_delay : float = 0.3
+@export var snap_time : float = 0.45
+## 押し出されて止まったときに鳴らす音。空なら鳴らさない
+@export var snap_sound : AudioStream
 ## 0 より大きければ、出てからこの秒数たったら走り去って消える
 @export var exit_after : float = 0.0
 ## オンなら、暴走列車のように突っ込んでくる(猛スピードで入ってきて急ブレーキ。火花と画面の揺れ付き)
@@ -107,6 +130,11 @@ var _all_shooters : Array[EnemyShooter] = []
 var _horn_end_msec : int = 0
 ## 登場の動き(突っ込んで止まるまで)が終わったか
 var entered : bool = false
+## 今、撃つのを止めているか(動いている・登場中・合図を出している)
+var _holding : bool = true
+## 合図を出している途中か。合図の番号(動き出したら増やして、出していた合図をやめる)
+var _cueing : bool = false
+var _cue_id : int = 0
 
 func _ready() -> void:
 	_enemy = get_parent() as Enemy
@@ -300,19 +328,28 @@ func _run() -> void:
 			continue
 		var next := _next_wagon()
 		if next != _current:
+			var cleared := not _wagon_alive(_current)
 			_current = next
+			if snap_to_next and cleared:
+				await _snap_to_wagon(_current)
+			else:
+				await _move_to_wagon(_current, move_speed)
+		elif absf(_wagon_target_y(_current) - _enemy.global_position.y) > 24.0:
+			# 同じ車両のまま: 砲台が壊れて、残った砲台が画面の外に出ていたら、見えるところまで動き直す
 			await _move_to_wagon(_current, move_speed)
 
 ## 止まって撃つ。見えている車両の砲台が全部壊れたら、早めに切り上げる
 func _hold() -> void:
 	_set_moving(false)
 	var time := randf_range(hold_min, maxf(hold_min, hold_max))
+	if _cueing:
+		time += fire_cue_time # 合図のぶん、撃っている時間が短くならないように
 	var t := 0.0
-	while t < time and _alive() and not _leaving:
+	while (t < time or stay_until_cleared) and _alive() and not _leaving:
 		if _force_span >= 0:
 			return # 最後の段階に入った: すぐ中央へ移る
 		if not _wagon_alive(_current) and _any_alive():
-			await _wait(regroup_delay)
+			await _wait(snap_delay if snap_to_next else regroup_delay)
 			return
 		if exit_after > 0.0 and _age >= exit_after:
 			return
@@ -338,9 +375,10 @@ func _first_alive(from : int, step : int) -> int:
 		i += step
 	return clampi(from, 0, _wagons.size() - 1)
 
+## 車両 i に、今壊せる(壊れていない)砲台があるか。段階を待っていて壊せない砲台しかない車両は、見せに行かない
 func _wagon_alive(i : int) -> bool:
 	for part in _wagons[i]["parts"]:
-		if is_instance_valid(part) and not part.is_destroyed():
+		if is_instance_valid(part) and not part.is_destroyed() and part.is_breakable():
 			return true
 	return false
 
@@ -359,6 +397,37 @@ func _move_to_wagon(i : int, speed : float) -> void:
 	await _move_y(target, speed, far_move_max_time if far else -1.0)
 	_fast_moving = false
 
+## 次の車両が「ガコン!」と押し出されてくる: 速く動いて、止まるときに少しつんのめって戻る。画面が揺れて、車輪から火花が出る。
+## 動いているあいだは撃たない
+func _snap_to_wagon(i : int) -> void:
+	var target := _wagon_target_y(i)
+	var dir := signf(target - _enemy.global_position.y) # 動いてくる向き
+	_fast_moving = true
+	_set_moving(true)
+	_stop_tween()
+	_tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	_tween.tween_property(_enemy, "global_position:y", target, snap_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	await _tween.finished
+	if not _alive():
+		return
+	var camera := StageCamera.of(self)
+	if camera:
+		camera.shake(6.0, 0.3)
+	if snap_sound:
+		_play(snap_sound, -3.0)
+	# 止まった反動で、進んできた向きへ少しつんのめってから戻る
+	var view := CameraView.visible_rect(_enemy)
+	var back := 1.0 if _front_is_top() else -1.0
+	var tree := get_tree()
+	for side in [-1.0, 1.0]:
+		var at := Vector2(_enemy.global_position.x + side * _half_width(), clampf(view.get_center().y, view.position.y, view.end.y))
+		RailSparks.emit(tree, at, Vector2(side * 220.0, back * 300.0), 8, 70.0)
+	_tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	_tween.tween_property(_enemy, "global_position:y", target + 10.0 * dir, 0.06).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tween.tween_property(_enemy, "global_position:y", target, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await _tween.finished
+	_fast_moving = false
+
 ## 車両 i を見せるときの、敵の y。壊れていない砲台の真ん中を View Anchor の高さに置き、
 ## いちばん下の砲台が Lowest Turret Limit より下に来ないようにする(砲台がなければ、車両の真ん中を使う)
 func _wagon_target_y(i : int) -> float:
@@ -375,7 +444,9 @@ func _wagon_target_y(i : int) -> float:
 		bottom = top
 	var target := view.position.y + view.size.y * view_anchor - (top + bottom) * 0.5
 	var lowest := view.position.y + view.size.y * lowest_turret_limit - bottom
-	return minf(target, lowest)
+	# いちばん上の砲台が、画面の上の外に出ないようにする(下の制限より優先する)
+	var highest := view.position.y + 40.0 - top
+	return maxf(minf(target, lowest), highest)
 
 ## y まで、動き始めと止まる前がゆっくりになるように動く。動いているあいだは撃たない
 func _move_y(target : float, speed : float, max_time : float = -1.0) -> void:
@@ -418,7 +489,10 @@ func _switch_rail_to(next : int) -> void:
 	var ground := RailGround.of(self)
 	if ground and next >= 0 and next < ground.span_count():
 		_enemy.global_position.x = ground.span_x(next)
-	await _wait(1.0)
+	# どこから入ってくるか分かるように、入ってくる線路に予告を出してから入る
+	if lane_warning_time > 0.0:
+		LaneWarning.spawn(_enemy, _enemy.global_position.x, _half_width() * 2.0, _front_is_top(), lane_warning_time)
+	await _wait(maxf(1.0, lane_warning_time))
 	if not _alive():
 		return
 	_place_outside()
@@ -485,18 +559,23 @@ func _block_shooters_behind_player() -> void:
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var active := no_fire_from_behind_while_moving and _moving and player != null and player.visible
 	var line := INF
+	var view := CameraView.visible_rect(_enemy)
 	if active:
-		var view := CameraView.visible_rect(_enemy)
 		if player.global_position.y >= view.get_center().y:
 			line = player.global_position.y + behind_margin
+	if low_fire_limit < 1.0:
+		line = minf(line, view.position.y + view.size.y * low_fire_limit) # 画面の下のほうの砲口は撃たない
 	_enemy.set_meta("train_behind_line", line)
 	if _all_shooters.is_empty():
 		for node in _enemy.find_children("*", "", true, false):
 			if node is EnemyShooter:
 				_all_shooters.append(node)
+	var near := player != null and player.visible and no_fire_radius > 0.0
 	for shooter in _all_shooters:
 		if is_instance_valid(shooter):
-			shooter.blocked = shooter.global_position.y > line
+			var too_close := near and shooter.global_position.distance_to(player.global_position) < no_fire_radius
+			# 撃つのを止めているあいだは、直った部位の砲口(Enabled が戻る)も止める
+			shooter.blocked = _holding or shooter.global_position.y > line or too_close
 
 ## 列車(enemy)が動いていて、pos が自機より後ろ(下)なので、撃たないほうがいいか(ビームが使う)
 static func is_behind_player(enemy : Node, pos : Vector2) -> bool:
@@ -528,10 +607,45 @@ func _set_moving(moving : bool) -> void:
 		return
 	_enemy.set_meta("train_moving", moving)
 	var hold := (moving and (not fire_while_moving or _fast_moving)) or _entering
+	_cue_id += 1 # 出していた合図はやめる
+	_cueing = false
+	if not hold and _holding and fire_cue_time > 0.0:
+		# 止まった: すぐには撃たず、合図を出してから撃ち始める
+		_cueing = true
+		_cue_then_fire(_cue_id)
+		return
+	_apply_hold(hold)
+
+## 撃つのを止める・撃たせる(ビームは Holds Fire を見る)
+func _apply_hold(hold : bool) -> void:
+	_holding = hold
 	_enemy.set_meta("train_hold_fire", hold)
 	for node in _enemy.find_children("*", "", true, false):
 		if node is EnemyShooter:
 			node.enabled = not hold and not _shooter_broken(node)
+
+## 撃つ砲口に合図を出し、Fire Cue Time 秒たったら撃ち始める(途中で動き出したら、やめる)
+func _cue_then_fire(id : int) -> void:
+	var guns : Array[Node2D] = []
+	var view := CameraView.visible_rect(_enemy)
+	for node in _enemy.find_children("*", "", true, false):
+		if not (node is EnemyShooter or node is BeamShooter) or not view.has_point(node.global_position):
+			continue
+		if node is EnemyShooter and (node.only_offscreen_sideways or _shooter_broken(node)):
+			continue
+		if node is BeamShooter and node._part_destroyed():
+			continue
+		guns.append(node)
+	var cue := FireCue.spawn(_enemy, guns, fire_cue_time, fire_cue_color)
+	if fire_cue_sound and not guns.is_empty():
+		_play(fire_cue_sound, -6.0)
+	await _wait(fire_cue_time)
+	if is_instance_valid(cue):
+		cue.queue_free()
+	if id != _cue_id or not _alive():
+		return
+	_cueing = false
+	_apply_hold(false)
 
 ## 壊れた部位の砲口か(部位の Shooters に入っているか、部位の子か)
 func _shooter_broken(shooter : EnemyShooter) -> bool:

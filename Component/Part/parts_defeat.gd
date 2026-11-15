@@ -17,6 +17,11 @@ class_name PartsDefeat
 @export var disable_body_hurtbox : bool = true
 ## 部位の HP の倍率(同じ列車を、弱い援護として出すときなどに下げる)
 @export var part_hp_scale : float = 1.0
+## 0 より大きければ、本体の HP(ボスのゲージ)をこの値にする(部位の HP の合計を使わない)。
+## 部位を柔らかくして、たくさん壊しながら戦うボスにするときに使う(Revive On Phase がオンのとき)
+@export var body_hp : int = 0
+## 0 より大きければ、壊れた部位は、この秒数たつと1つずつ直る(Revive On Phase がオンで、最後の段階より前のとき)
+@export var revive_part_delay : float = 0.0
 ## オンなら、ロックオンは部位にだけかかる(本体はロックしない。本体には当たり判定がないので)
 @export var lock_parts_only : bool = true
 ## オンなら、ボスの段階が変わったときに、壊れた部位を直す(上の「倒れ方」を参照)
@@ -34,10 +39,14 @@ var _final_mode : bool = false
 ## 最後の段階に入ったときの本体の HP と、部位の HP の合計
 var _final_start_hp : int = 0
 var _final_total : int = 0
+## 最後の段階に入ってから、部位以外から受けたダメージ(援護の列車の爆発など)
+var _final_extra : int = 0
 
 var _enemy : Enemy
 var _hp : HPComponent
 var _reviving : bool = false
+## 部位が壊れた時刻(ミリ秒)。Revive Part Delay で1つずつ直すのに使う
+var _broken_at : Dictionary = {}
 
 func _ready() -> void:
 	_enemy = get_parent() as Enemy
@@ -62,9 +71,13 @@ func _ready() -> void:
 		total += part.max_hp
 	# 親の Enemy の _ready はまだなので、@onready の変数ではなく、ノードを直接見る
 	_hp = _enemy.get_node_or_null("HPComponent") as HPComponent
+	if revive_on_phase and body_hp > 0:
+		total = body_hp # ゲージは決まった値(部位は柔らかく、何度も直る)
 	if _hp and total > 0:
 		_hp.max_hp = total
 		_hp.hp = total
+	for part in parts:
+		part.destroyed.connect(func(p : EnemyPart) -> void: _broken_at[p] = Time.get_ticks_msec())
 	var body_hurtbox := _enemy.get_node_or_null("Hurtbox")
 	if disable_body_hurtbox and body_hurtbox:
 		for shape in body_hurtbox.find_children("*", "CollisionShape2D", false, false):
@@ -89,6 +102,7 @@ func _enter_final_mode() -> void:
 	_final_mode = true
 	_final_start_hp = _hp.hp
 	_final_total = 0
+	_final_extra = 0
 	for part in parts:
 		if is_instance_valid(part):
 			part.damage_to_body = 0.0 # 本体の HP は、部位の残りから決める
@@ -98,19 +112,23 @@ func _physics_process(_delta : float) -> void:
 	if _hp == null or _hp.hp <= 0:
 		return
 	var left := 0
+	var breakable_left := 0 # 今壊せる部位の残り(段階を待っていて壊せない部位は数えない)
 	for part in parts:
 		if is_instance_valid(part) and not part.is_destroyed():
 			left += maxi(part.hp, 0)
+			if part.is_breakable():
+				breakable_left += 1
 	if _final_mode:
-		var target := ceili(float(_final_start_hp) * left / maxf(_final_total, 1.0))
+		var target := ceili(float(_final_start_hp) * left / maxf(_final_total, 1.0)) - _final_extra
 		if left == 0:
 			target = 0 # 全部壊した
 		if target < _hp.hp:
 			_hp.apply_damage(_hp.hp - target)
 		return
 	if revive_on_phase:
-		# 段階の途中で全部壊れたら、少し待って全部直す
-		if left == 0 and not _reviving:
+		_revive_old_parts()
+		# 段階の途中で(今壊せる部位が)全部壊れたら、少し待って全部直す
+		if breakable_left == 0 and not _reviving:
 			_reviving = true
 			await get_tree().create_timer(revive_all_delay, false).timeout
 			if _hp.hp > 0:
@@ -121,6 +139,36 @@ func _physics_process(_delta : float) -> void:
 	if left < hp:
 		# 全部壊れたときは、残りを全部減らして倒す
 		_hp.apply_damage(hp - left if left > 0 else hp)
+
+## 部位を撃つ以外のダメージ(援護の列車の爆発など)を、本体の HP に与える。
+## 最後の段階(部位の残りで HP が決まる)でも、そのぶんだけ HP が減ったままになる
+func add_external_damage(amount : int) -> void:
+	if _hp == null or _hp.hp <= 0 or amount <= 0:
+		return
+	if _final_mode:
+		_final_extra += amount
+	_hp.apply_damage(mini(amount, _hp.hp))
+
+## 壊れてから Revive Part Delay 秒たった部位を直す(列車が速く動いているあいだは、止まるまで待つ)
+func _revive_old_parts() -> void:
+	if revive_part_delay <= 0.0 or _broken_at.is_empty():
+		return
+	if TrainBossMover.holds_fire(_enemy):
+		return
+	var now := Time.get_ticks_msec()
+	var controller := _controller()
+	var phase := controller.current_phase() if controller else 0
+	for part in _broken_at.keys():
+		if not is_instance_valid(part) or not part.is_destroyed():
+			_broken_at.erase(part)
+			continue
+		if now - int(_broken_at[part]) < revive_part_delay * 1000.0:
+			continue
+		_broken_at.erase(part)
+		part.revive()
+		for shooter in part.shooters:
+			if is_instance_valid(shooter) and shooter.has_phases():
+				shooter.set_phase(phase)
 
 ## 部位を全部直して(壊れていない部位も HP を満タンに)、今の段階の弾幕で撃たせる
 func _revive_all() -> void:

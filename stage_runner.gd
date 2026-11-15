@@ -81,6 +81,9 @@ func start() -> void:
 	if stage == null:
 		push_warning("StageRunner: Stage(StageData)が設定されていません")
 		return
+	# パワーアップの落とし方(雑魚が落とすか、列車の全車両撃破で落とすか)
+	ItemDrop.enabled = stage.zako_power_drops
+	Train.setup_clear_power_up(stage.train_clear_power_up, stage.train_clear_power_interval)
 	_build_entries()
 	_formations.clear()
 	_kills.clear()

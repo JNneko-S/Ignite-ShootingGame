@@ -14,18 +14,18 @@
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_3.png" id="x11"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_2.png" id="x12"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Main_Cannon_2_strip7.png" id="x13"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_3way.tres" id="x14"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_t_aim5.tres" id="x14"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Main_Cannon_strip7.png" id="x15"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_spray.tres" id="x16"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wgn_Turret_DoubleCannon_strip6.png" id="x17"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_aim_single.tres" id="x18"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_turret_burst.tres" id="x19"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_turret_curve.tres" id="x20"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_t_aim_stream.tres" id="x18"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_t_fan7.tres" id="x19"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_t_ring16.tres" id="x20"]
 [ext_resource type="Script" path="res://Component/Rail/rail_rider.gd" id="x21"]
 [ext_resource type="Script" path="res://Component/Rail/train_boss_mover.gd" id="x22"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_733824_列車のエアホーン：貨物：シングルブ....mp3" id="x23"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_1196077_貨物列車の橋梁通過音.mp3" id="x24"]
-[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="upgrade_rewards"]
+[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="x25"]
 
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
@@ -317,7 +317,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="Gun_m_top" parent="." unique_id=1760000015 instance=ExtResource("x1")]
-patterns = Array[ExtResource("x7")]([ExtResource("x14")])
+patterns = Array[ExtResource("x7")]([ExtResource("x14"), ExtResource("x20")])
 
 [node name="Part_m_mid" type="Node2D" parent="VisualRoot" unique_id=1760000016 node_paths=PackedStringArray("shooters")]
 position = Vector2(-1, 210)
@@ -360,7 +360,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="Gun_m_mid" parent="." unique_id=1760000024 instance=ExtResource("x1")]
-patterns = Array[ExtResource("x7")]([ExtResource("x16")])
+patterns = Array[ExtResource("x7")]([ExtResource("x16"), ExtResource("x19")])
 
 [node name="Part_w3_l" type="Node2D" parent="VisualRoot" unique_id=1760000025 node_paths=PackedStringArray("shooters")]
 position = Vector2(-19.5, 517.5)
@@ -715,18 +715,23 @@ script = ExtResource("x22")
 wagon_names = PackedStringArray("Main", "W3", "W2")
 horn_sound = ExtResource("x23")
 rush_sound = ExtResource("x24")
+low_fire_limit = 0.75
+hold_min = 4.0
+hold_max = 6.0
+snap_to_next = true
 
 [node name="PartsDefeat" type="Node" parent="." unique_id=1760000099]
 script = ExtResource("x5")
+part_hp_scale = 1.3
+
+[node name="UpgradeDrop" type="Node" parent="."]
+script = ExtResource("x25")
+ignite_items = 0
+score_total = 0
+score_items = 0
+label = ""
 
 [node name="WreckExit" type="Node" parent="." unique_id=1760000100 node_paths=PackedStringArray("visual")]
 script = ExtResource("x6")
 visual = NodePath("../VisualRoot")
 top_extent = 0
-
-[node name="UpgradeDrop" type="Node" parent="."]
-script = ExtResource("upgrade_rewards")
-ignite_items = 0
-score_total = 0
-score_items = 0
-label = ""

@@ -17,10 +17,29 @@ signal phase_started(index : int)
 ## false なら、段階が変わっても砲口の弾幕を切り替えない(ボスのステートが、今の段階を見て撃たせるとき)
 @export var switch_shooters : bool = true
 
+@export_group("援護を呼び続ける")
+## 0 より大きければ、その段階の呼び寄せが済んだあと、援護(Summons で出したもの)がいなくなってから、この秒数たったら、
+## 今の段階の Summons から順に1つずつ、左右交互に、ボスのすぐ隣の線路へ呼ぶ(援護を倒し続ける戦いにする)
+@export var resummon_delay : float = 0.0
+## 呼ぶ前に、入ってくる線路に予告を出す時間(秒)
+@export var resummon_warning : float = 1.4
+## 援護のグループ(StageRunner が付ける「stage_ + タグ」)
+@export var support_group : StringName = &"stage_support"
+## 援護を出す線路は、ボスや他の列車から、この距離(px)以上はなれたところにする(列車どうしが重ならないように)
+@export var support_min_gap : float = 340.0
+
 var _hp : HPComponent
 var _index : int = 0
 ## 呼び寄せ(Summons)が済んだ段階
 var _summoned : Dictionary = {}
+## 呼び寄せの演出の途中か(呼び続けるのを待たせる)
+var _summoning : bool = false
+## 最後に援護を呼んだ画面(0 = 左、2 = 右)。次は反対側へ呼ぶ
+var _last_lane : int = 2
+## 呼び続けるときに、次に使う Summons の番号
+var _resummon_index : int = 0
+## 段階の呼び寄せ(演出つき)をするたびに増える
+var _summon_serial : int = 0
 
 func _ready() -> void:
 	if _hp == null:
@@ -29,6 +48,10 @@ func _ready() -> void:
 			_hp = boss.get_node_or_null("HPComponent") as HPComponent
 		if _hp:
 			_hp.hp_changed.connect(_on_hp_changed)
+	if resummon_delay > 0.0 and not Engine.is_editor_hint():
+		_resummon_loop.call_deferred()
+	if not Engine.is_editor_hint():
+		_first_summon.call_deferred()
 
 ## StageRunner が SpawnEvent の Phases から付けるときに使う(ツリーに入る前に呼ぶ)
 func setup(hp : HPComponent, boss_phases : Array[BossPhase]) -> void:
@@ -81,6 +104,21 @@ func _start_phase(index : int) -> void:
 	if _hp and _hp.max_hp > 0:
 		_check_summon(float(_hp.hp) / _hp.max_hp)
 
+## 戦いが始まったら(列車のボスなら、入ってきて止まったら)、最初の段階の呼び寄せを確かめる。
+## 呼び寄せは HP が変わったときにも確かめるが、Summon Hp Ratio が 1.0 のときは、ダメージを受ける前に呼ぶため
+func _first_summon() -> void:
+	var mover : TrainBossMover = null
+	for child in get_parent().get_children():
+		if child is TrainBossMover:
+			mover = child
+	var waited := 0.0
+	while mover and is_instance_valid(mover) and not mover.entered and waited < 15.0:
+		await get_tree().create_timer(0.2, false).timeout
+		waited += 0.2
+	if not is_inside_tree() or _hp == null or _hp.hp <= 0 or _hp.max_hp <= 0:
+		return
+	_check_summon(float(_hp.hp) / _hp.max_hp)
+
 ## 今の段階の呼び寄せ: HPの割合が Summon Hp Ratio 以下になったら、1回だけ出す
 func _check_summon(ratio : float) -> void:
 	if phases.is_empty() or _summoned.has(_index) or _hp.hp <= 0:
@@ -92,6 +130,12 @@ func _check_summon(ratio : float) -> void:
 	_summon(phase)
 
 func _summon(phase : BossPhase) -> void:
+	_summon_serial += 1 # 呼び続けている途中の援護は、取りやめる(段階の援護と重ならないように)
+	_summoning = true
+	await _summon_inner(phase)
+	_summoning = false
+
+func _summon_inner(phase : BossPhase) -> void:
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	if runner == null:
 		return
@@ -159,10 +203,11 @@ func _summon_with_cut_in(runner : StageRunner, camera : StageCamera, entries : A
 		if not is_inside_tree() or _hp.hp <= 0:
 			break
 		var event : StageEvent = entry[1]
-		_keep_safe(player, 12.0)
+		_keep_safe(player, 3.0) # カメラが向くまで(このあとは 0.1 秒ごとに延ばす。長くすると、演出のあとも撃たなくなる)
 		var lane : int = event.camera_lane if "camera_lane" in event and event.camera_lane >= 0 else 1
 		# ボスのすぐ隣の線路に呼ぶ(左の画面の援護は左隣、右は右隣を先に探す。空いていなければ反対側)
 		var spot := _support_span(ground, lane, taken)
+		_last_lane = lane
 		var look_x := camera.lane_x(lane)
 		if spot >= 0 and ground:
 			taken.append(spot)
@@ -191,6 +236,56 @@ func _summon_with_cut_in(runner : StageRunner, camera : StageCamera, entries : A
 	_keep_safe(player, 2.0)
 	await camera.end_focus()
 
+# ---------------------------------------------------------------- 援護を呼び続ける
+
+## 援護がいなくなったら、Resummon Delay 秒たってから、次の援護を反対側に呼ぶ
+func _resummon_loop() -> void:
+	var empty := 0.0
+	var step := 0.25
+	while is_inside_tree() and _hp and _hp.hp > 0:
+		await get_tree().create_timer(step, false).timeout
+		if not is_inside_tree() or _hp.hp <= 0:
+			return
+		if _summoning or not _summoned.has(_index) or _supports_alive():
+			empty = 0.0
+			continue
+		empty += step
+		if empty >= resummon_delay:
+			empty = 0.0
+			await _resummon()
+
+func _supports_alive() -> bool:
+	for node in get_tree().get_nodes_in_group(support_group):
+		if is_instance_valid(node) and not node.is_queued_for_deletion():
+			return true
+	return false
+
+## 今の段階の Summons から1つ、前の援護と反対側の、ボスのすぐ隣の線路に呼ぶ(呼ぶ前に、その線路に予告を出す)
+func _resummon() -> void:
+	if phases.is_empty():
+		return
+	var events : Array = phases[_index].summons.filter(func(e) -> bool: return e != null)
+	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+	var ground := RailGround.of(self)
+	if events.is_empty() or runner == null or ground == null:
+		return
+	var event : StageEvent = events[_resummon_index % events.size()]
+	_resummon_index += 1
+	var lane := 0 if _last_lane >= 2 else 2
+	var spot := _support_span(ground, lane, [])
+	if spot < 0:
+		return
+	# 空いていなくて反対側になったときも、実際に呼んだ側を覚えておく
+	_last_lane = 0 if ground.span_x(spot) < (get_parent() as Node2D).global_position.x else 2
+	var serial := _summon_serial
+	if resummon_warning > 0.0:
+		LaneWarning.spawn(get_parent(), ground.span_x(spot), 140.0, true, resummon_warning)
+		await get_tree().create_timer(resummon_warning, false).timeout
+	if is_inside_tree() and _hp.hp > 0 and serial == _summon_serial and not _summoning:
+		runner.span_override = spot
+		event.execute(runner, 0)
+		runner.span_override = -1
+
 ## 援護を出す位置(Span): ボスのすぐ隣で、空いているところ。lane が左(0)なら左隣、右(2)なら右隣を先に探す
 func _support_span(ground : RailGround, lane : int, taken : Array[int]) -> int:
 	if ground == null:
@@ -202,10 +297,18 @@ func _support_span(ground : RailGround, lane : int, taken : Array[int]) -> int:
 	if boss_span < 0:
 		return -1
 	var busy := TrainBossMover.occupied_spans(get_tree())
+	busy.append_array(taken)
 	var side := -1 if lane <= 1 else 1
 	for offset in [side, -side, side * 2, -side * 2]:
 		var s : int = boss_span + offset
-		if s >= 0 and s < ground.span_count() and not busy.has(s) and not taken.has(s):
+		if s < 0 or s >= ground.span_count() or busy.has(s):
+			continue
+		# ボスや他の列車と近すぎる(重なる)位置は使わない
+		var near := false
+		for other in busy + [boss_span]:
+			if absf(ground.span_x(s) - ground.span_x(other)) < support_min_gap:
+				near = true
+		if not near:
 			return s
 	return -1
 

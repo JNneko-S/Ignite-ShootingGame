@@ -8,9 +8,12 @@ class_name ItemDrop
 ## 出す確率(0〜1)
 @export_range(0.0, 1.0, 0.05) var chance : float = 1.0
 
+## false のあいだは、どの ItemDrop も出さない(StageRunner が、ステージの Zako Power Drops から決める)
+static var enabled : bool = true
+
 ## at の位置(画面の座標)にアイテムを出す。物理の処理中に呼ばれてもよい
 func drop(at : Vector2) -> void:
-	if item_scene == null or randf() > chance:
+	if not enabled or item_scene == null or randf() > chance:
 		return
 	var item := item_scene.instantiate()
 	if item is Node2D:

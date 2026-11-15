@@ -55,9 +55,10 @@ func _set_back(value : float) -> void:
 
 ## time 秒かけて、霧が上から降りてきて画面を覆う
 func descend(time : float) -> void:
-	_set_band(-0.2, -0.5)
+	if front_edge() <= 0.0: # まだ霧が出ていなければ、画面の上の外から
+		_set_band(-0.2, -0.5)
 	var tween := create_tween()
-	tween.tween_method(_set_front, -0.2, 1.25, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_method(_set_front, front_edge(), 1.25, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tween.finished
 
 ## はじめから画面が覆われている
@@ -70,6 +71,27 @@ func clear(time : float) -> void:
 	tween.tween_method(_set_back, -0.25, 1.25, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	await tween.finished
 	queue_free()
+
+## time 秒かけて、画面を覆っている霧がちぎれるように消えていく(薄いところから穴があき、最後に濃いところが消える)。
+## 消えたら、このノードも消える
+func dissolve(time : float) -> void:
+	var tween := create_tween()
+	tween.tween_method(func(v : float) -> void: _material.set_shader_parameter("dissolve", v), 0.0, 1.0, time) # 同じ速さで、少しずつ穴があいていく
+	await tween.finished
+	queue_free()
+
+## 霧の先頭(下の端)を、time 秒かけて to の高さまで降ろす(画面の上 = 0、下 = 1)
+func descend_to(to : float, time : float) -> void:
+	if front_edge() <= 0.0:
+		_set_band(-0.2, -0.5) # まだ霧が出ていなければ、画面の上の外から
+	var from := front_edge()
+	var tween := create_tween()
+	tween.tween_method(_set_front, from, to, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tween.finished
+
+## 霧の先頭(下の端)の高さ(画面の上 = 0、下 = 1)
+func front_edge() -> float:
+	return float(_material.get_shader_parameter("front"))
 
 ## 霧の終わり(晴れたところとの境目)の高さ(画面の上 = 0、下 = 1)
 func back_edge() -> float:

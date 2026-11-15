@@ -59,6 +59,11 @@ var _held : bool = true
 ## 急いで去っているときの、速さの倍率
 var _speed_scale : float = 1.0
 var _bonus_done : bool = false
+## 全車両撃破で落とすパワーアップ(StageRunner が、ステージの Train Clear Power Up から決める。空なら落とさない)
+static var clear_power_up : PackedScene
+## 全車両撃破でパワーアップを落とせる間隔(秒)と、最後に落とした時刻(ミリ秒)
+static var clear_power_interval : float = 12.0
+static var _last_power_msec : int = -1000000
 ## 出した順番(同じ線路で待っている列車は、先に出したものから入る)
 var _serial : int = 0
 static var _next_serial : int = 0
@@ -224,7 +229,27 @@ func _explode_all() -> void:
 	if score_system:
 		score_system.spawn_items(at, bonus_score, bonus_items, 1.4)
 	FloatingText.spawn(tree, at, "全車両撃破 +%d" % bonus_score)
+	_drop_power_up(at)
 	# 列車はそのまま、残骸として画面の外へ走り去る
+
+## 全車両撃破のパワーアップ。前に落としてから Clear Power Interval 秒たっていなければ落とさない(落ちる間隔をそろえる)
+func _drop_power_up(at : Vector2) -> void:
+	if clear_power_up == null:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_power_msec < clear_power_interval * 1000.0:
+		return
+	_last_power_msec = now
+	var item := clear_power_up.instantiate()
+	if item is Node2D:
+		item.position = at
+	get_tree().current_scene.add_child.call_deferred(item)
+
+## ステージが始まるときに、全車両撃破のパワーアップの設定を入れる
+static func setup_clear_power_up(scene : PackedScene, interval : float) -> void:
+	clear_power_up = scene
+	clear_power_interval = interval
+	_last_power_msec = -1000000
 
 func _finish() -> void:
 	set_physics_process(false)

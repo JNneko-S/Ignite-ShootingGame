@@ -13,6 +13,11 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_turret_curve.tres" id="p6"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Ground/g_turret_burst.tres" id="p7"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_spray.tres" id="p8"]
+[ext_resource type="Script" path="res://Component/Rail/support_blast.gd" id="blast"]
+[ext_resource type="Script" path="res://Component/Rail/flank_barrage.gd" id="flank"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_line.tres" id="fl_line"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_3way5.tres" id="fl_3way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_firework.tres" id="fl_fire"]
 
 [node name="TrainExpressSupport" instance=ExtResource("base")]
 
@@ -20,73 +25,60 @@
 score_value = 0
 
 [node name="PartsDefeat" parent="."]
-part_hp_scale = 0.3
+part_hp_scale = 0.2
 
 [node name="TrainBossMover" parent="."]
 hold_min = 4.0
 hold_max = 6.0
 rush_entry = true
+stay_until_cleared = true
+snap_to_next = true
 rush_sound = ExtResource("tackle")
 
 [node name="Gun_m_top" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_m_mid" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w3_l" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w3_r" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w3_c1" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w3_c2" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w2_a" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w2_b" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w2_c" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w2_d" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w1_l" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w1_r" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w1_p1" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w1_p2" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="Gun_w1_p3" parent="."]
-pause_scale = 0.5
-fire_offscreen_sideways = true
+pause_scale = 1.0
 
 [node name="TrainRewards" type="Node" parent="."]
 script = ExtResource("rewards")
@@ -94,3 +86,10 @@ ignite_fixed_levels = 3
 
 [node name="UpgradeDrop" parent="."]
 power_up_scene = null
+
+[node name="SupportBlast" type="Node" parent="." unique_id=1790000101]
+script = ExtResource("blast")
+
+[node name="FlankBarrage" type="Node" parent="." unique_id=1790000102]
+script = ExtResource("flank")
+patterns = Array[ExtResource("shot")]([ExtResource("fl_line"), ExtResource("fl_3way"), ExtResource("fl_fire")])

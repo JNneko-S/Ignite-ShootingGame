@@ -44,6 +44,8 @@ var turn_degrees : float = 0.0
 var enabled : bool = true
 ## true のあいだは撃たない(列車ボスが、自機の後ろにある砲口を一時的に止めるときなど)。Enabled とは別に、毎フレーム決め直す
 var blocked : bool = false
+## true のあいだは撃たない(列車ボスの押し出す弾幕(PushBarrage)が、援護がいないときに止めるなど)。Enabled・Blocked とは別に、外の部品が決める
+var suppressed : bool = false
 
 ## この時刻(Time.get_ticks_msec)まで、全ての敵が撃たない(自機の復活直後など)
 static var _hold_fire_until_msec : int = 0
@@ -212,7 +214,7 @@ func _run_pattern(pattern : ShotPattern) -> void:
 		await _wait_with_warning(pattern, pattern.pause * unit * pause_scale, generation)
 
 func _can_fire() -> bool:
-	if not enabled or blocked or is_holding_fire():
+	if not enabled or blocked or suppressed or is_holding_fire():
 		return false
 	var view := CameraView.visible_rect(self)
 	if only_offscreen_sideways:

@@ -31,7 +31,7 @@
 [ext_resource type="Script" path="res://Component/Rail/train_boss_mover.gd" id="x28"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_733824_列車のエアホーン：貨物：シングルブ....mp3" id="x29"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_1196077_貨物列車の橋梁通過音.mp3" id="x30"]
-[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="upgrade_rewards"]
+[ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="x31"]
 
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
@@ -965,14 +965,14 @@ rush_sound = ExtResource("x30")
 [node name="PartsDefeat" type="Node" parent="." unique_id=1760000147]
 script = ExtResource("x5")
 
-[node name="WreckExit" type="Node" parent="." unique_id=1760000148 node_paths=PackedStringArray("visual")]
-script = ExtResource("x6")
-visual = NodePath("../VisualRoot")
-top_extent = 2562.48
-
 [node name="UpgradeDrop" type="Node" parent="."]
-script = ExtResource("upgrade_rewards")
+script = ExtResource("x31")
 ignite_items = 0
 score_total = 0
 score_items = 0
 label = ""
+
+[node name="WreckExit" type="Node" parent="." unique_id=1760000148 node_paths=PackedStringArray("visual")]
+script = ExtResource("x6")
+visual = NodePath("../VisualRoot")
+top_extent = 2562.48
