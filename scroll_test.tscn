@@ -127,12 +127,14 @@ offset_bottom = 24.0
 text = "Ignite"
 label_settings = SubResource("LabelSettings_ri2fp")
 
-[node name="Label2" type="Label" parent="UI/CanvasLayer" unique_id=237769609]
-offset_left = 416.0
-offset_top = 8.0
-offset_right = 462.0
-offset_bottom = 31.0
-text = "残機:1"
+[node name="Label2" type="Control" parent="UI/CanvasLayer" unique_id=237769609]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 54.0
+offset_right = 126.0
+offset_bottom = 72.0
+mouse_filter = 2
 script = ExtResource("3_n7bgm")
 
 [node name="WarningDisplay" parent="UI" unique_id=1400875786 instance=ExtResource("warning_display")]
