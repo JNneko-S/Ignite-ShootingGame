@@ -277,6 +277,7 @@ func _apply_level_stats() -> void:
 		return
 	player.level_move_scale = _at_level(move_speed_scales, ignite.level)
 	player.level_power_scale = _at_level(shot_power_scales, ignite.level)
+	player.shot_look_level = ignite.level # ショットの見た目(Lv1〜5)。威力は変わらない
 
 # ---------------------------------------------------------------- イグナイト
 

@@ -42,8 +42,13 @@ var graze_radius_scale : float = 1.0:
 @export var shot_speed : float = 900.0
 ## true なら、前進している速度の分だけ弾速を足す。縦に動いても、弾の間隔が一定になり、重ならない
 @export var shot_inherit_forward_speed : bool = true
-## 弾の色(弾の見た目に掛け合わせる。白ならそのまま)
+## (使っていない)前は弾の色に掛けていた。今は弾の絵の色のまま撃つ
 @export var shot_color : Color = Color(1.0, 1.0, 1.0)
+## レベルが上がったときの、平行に並ぶ弾の横の位置(px)。Lv2 は4発、Lv3 からは5発
+@export var parallel_offsets_4 : Array[float] = [-10.5, -3.5, 3.5, 10.5]
+@export var parallel_offsets_5 : Array[float] = [-14.0, -7.0, 0.0, 7.0, 14.0]
+## 低速移動中(ロックしていないとき)に、平行な弾・ビームの幅を絞る倍率
+@export var focus_parallel_scale : float = 0.45
 
 @export_group("ロックショット(低速移動中に撃つ)")
 ## オンなら、UI_Focus(Shift)を押しながら撃つと、ロックした敵を追いかける弾になる
@@ -144,6 +149,9 @@ var is_igniting : bool = false
 ## ゲージのレベルによる補正(GameManager が設定する)
 var level_move_scale : float = 1.0
 var level_power_scale : float = 1.0
+## ショットの見た目のレベル(イグナイトのレベル。GameManager が設定する)。Lv2〜3 は平行な弾、Lv4〜5 はビーム
+var shot_look_level : int = 1
+var _beam : PlayerBeam
 
 ## 現在のショット強化の段階(0〜5)
 var shot_stage : int = 0
@@ -206,6 +214,10 @@ func _ready() -> void:
 	shoot_timer.wait_time = fire_interval
 	graze_area.radius_scale = graze_radius_scale
 	graze_area.grazed.connect(_on_grazed)
+	_beam = PlayerBeam.new()
+	_beam.player = self
+	_beam.muzzle_offset = muzzle_offset
+	add_child(_beam)
 
 func _physics_process(delta: float) -> void:
 	# UI_Focus が InputMap に未登録でもエラーにならないようにしている
@@ -281,6 +293,11 @@ func _fire_volley(angles : Array) -> void:
 			return
 		# ロックしていなければ、前方に絞ったショット
 		angles = angles.map(func(a : float) -> float: return a * focus_spread_scale)
+	var damage := shot_damage * shot_power * level_power_scale
+	var look := _shot_look()
+	if look >= 2 and angles.size() == shot_angles.size():
+		_fire_parallel(look, roundi(damage) * angles.size())
+		return
 	for angle_deg in angles:
 		var bullet : Bullet = bullet_scene.instantiate()
 		get_tree().current_scene.add_child(bullet)
@@ -290,8 +307,34 @@ func _fire_volley(angles : Array) -> void:
 			var speed := shot_speed
 			if shot_inherit_forward_speed:
 				speed += maxf(velocity.dot(direction), 0.0) # 弾の向きに進んでいる速度だけ足す
-			bullet.setup(direction, speed, roundi(shot_damage * shot_power * level_power_scale), 0) # 切り捨てだと 0 ダメージになるので四捨五入
-			bullet.modulate = shot_color
+			bullet.setup(direction, speed, roundi(damage), 0) # 切り捨てだと 0 ダメージになるので四捨五入
+
+## ショットの見た目のレベル(1〜5)。イグナイトのレベルで決まる(Lv0 は Lv1 と同じ)。威力は変わらない
+func _shot_look() -> int:
+	return clampi(shot_look_level, 1, 5)
+
+## Lv2 以上の見た目: まっすぐ平行に並んだ弾(Lv2 は4発、Lv3 からは5発)。
+## 1回分のダメージの合計(total)は、Lv1 の3発と同じで、それを発数で分ける。
+## Lv4 からはビーム: 当たり判定は Lv3 の5発と同じで、弾は見えなくして、代わりにビームを描く
+func _fire_parallel(look : int, total : int) -> void:
+	var offsets : Array = parallel_offsets_4 if look == 2 else parallel_offsets_5
+	var width_scale := focus_parallel_scale if _is_lock_shooting() else 1.0 # 低速移動中(ロックなし)は、幅を絞る
+	var beam := look >= 4
+	for i in offsets.size():
+		var x : float = offsets[i]
+		var bullet : Bullet = bullet_scene.instantiate()
+		get_tree().current_scene.add_child(bullet)
+		bullet.global_position = global_position + muzzle_offset + Vector2(float(x) * width_scale, 0.0)
+		var speed := shot_speed
+		if shot_inherit_forward_speed:
+			speed += maxf(velocity.dot(Vector2.UP), 0.0)
+		# 合計が Lv1 の3発とぴったり同じになるように、割り切れない分は、はじめの弾に1ずつ足す
+		var each : int = total / offsets.size() + (1 if i < total % offsets.size() else 0)
+		bullet.setup(Vector2.UP, speed, each, 0)
+		if beam:
+			bullet.visible = false # 当たり判定だけ(見た目はビーム)
+	if beam and _beam:
+		_beam.fire(look >= 5, absf(float(offsets[0])) * width_scale)
 
 # ---------------------------------------------------------------- ロックショット
 
