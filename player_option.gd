@@ -50,6 +50,13 @@ var slot : int = 0
 @export var afterimage_interval : float = 0.025
 @export var afterimage_life : float = 0.18
 
+@export_group("描く順番")
+## 子機を描く順番(自機に付いて動いても、敵の上に見えるように、画面全体での順番で決める)。
+## 敵(列車・戦車は 0〜2、空の敵は 2)より手前、敵弾(5)より奥。
+## 輪を回る途中で自機の後ろ(奥)にいるときは Back Z、それ以外は Front Z
+@export var front_z : int = 4
+@export var back_z : int = 3
+
 var _player : Player
 var _mode_now : int = -1
 var _changing : bool = false
@@ -67,6 +74,8 @@ func setup(player : Player, index : int) -> void:
 	global_position = player.global_position
 
 func _ready() -> void:
+	z_as_relative = false
+	z_index = front_z
 	scale = Vector2.ZERO
 	create_tween().tween_property(self, "scale", Vector2.ONE, 0.25)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -133,7 +142,7 @@ func _apply_depth(angle : float, amount : float) -> void:
 	var shade := 1.0 - ring_depth * (1.0 - front) * 0.5 * amount
 	scale = Vector2.ONE * shade
 	modulate = Color(shade, shade, shade, 1.0)
-	z_index = _player.z_index + (1 if front >= 0.0 or amount <= 0.0 else -1)
+	z_index = front_z if front >= 0.0 or amount <= 0.0 else back_z
 
 ## 最後に少し行きすぎてから戻る
 func _ease_out_back(t : float) -> float:

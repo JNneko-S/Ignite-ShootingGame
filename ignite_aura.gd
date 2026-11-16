@@ -24,6 +24,11 @@ signal burned(bullet_position : Vector2)
 @export var shrink_time : float = 0.4
 ## 見た目(IgniteVisual)が無いときの簡易円の色
 @export var fallback_color : Color = Color(1.0, 0.45, 0.1, 0.25)
+## オンなら、焼却範囲のふちに、くっきりした輪を重ねて描く(背景や敵の色に関係なく、範囲が分かるように)。
+## 外側に暗いふち、内側に明るい線の2重にしてある
+@export var edge_ring : bool = true
+@export var edge_ring_color : Color = Color(1.0, 0.88, 0.45)
+@export var edge_ring_width : float = 2.0
 
 @export_group("フレア(通った跡に残る火)")
 ## 何px動くごとにフレアを置くか
@@ -149,7 +154,7 @@ func stop() -> void:
 		visual.hide_aura()
 	else:
 		_fallback_on = false
-		queue_redraw()
+	queue_redraw()
 
 func _kill_radius_tween() -> void:
 	if _radius_tween:
@@ -161,13 +166,16 @@ func _set_radius(r : float) -> void:
 	(_shape_node.shape as CircleShape2D).radius = _radius
 	if visual:
 		visual.set_radius(_radius)
-	else:
-		queue_redraw()
+	queue_redraw()
 
 func _draw() -> void:
 	if _fallback_on and _radius > 0.0:
 		draw_circle(Vector2.ZERO, _radius, fallback_color)
 		draw_arc(Vector2.ZERO, _radius, 0.0, TAU, 64, Color(fallback_color, 0.9), 2.0)
+	if edge_ring and _active and _radius > 2.0:
+		# 外側の暗いふち(明るい背景の上でも見える) → 内側の明るい線(暗い背景の上でも見える)
+		draw_arc(Vector2.ZERO, _radius, 0.0, TAU, 72, Color(0.15, 0.02, 0.0, 0.55), edge_ring_width + 3.0)
+		draw_arc(Vector2.ZERO, _radius, 0.0, TAU, 72, edge_ring_color, edge_ring_width)
 
 # ---------------------------------------------------------------- フレア
 

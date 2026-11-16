@@ -6,9 +6,11 @@ class_name LevelUpPopup
 ##   LevelUpPopup.show_text(tree, at, text)     … 文字で出す(残機が増えたとき)
 
 const LEVEL_UP_PATH := "res://Assets/UI/level_up.png"
+## レベルが最大(Lv5)になったときの絵
+const LEVEL_MAX_PATH := "res://Assets/UI/level_max.png"
 const FONT := preload("res://Assets/Fonts/micronian.ttf")
 
-## 流れる距離(右上へ)と、時間(秒)
+## 流れる距離(斜めのどれかの向きへ。向きは毎回ランダム)と、時間(秒)
 const DRIFT := Vector2(70.0, -70.0)
 const SHOW_TIME := 0.75
 const VANISH_TIME := 0.14
@@ -54,12 +56,14 @@ func _start(tree : SceneTree, at : Vector2) -> void:
 	modulate = Color(1, 1, 1, 0)
 	scale = Vector2(0.6, 0.6)
 	tree.current_scene.add_child(self)
-	global_position = at + Vector2(-30.0, 30.0)
+	# 斜めの4つの向きから1つ選んで、その反対側から出て、その向きへ流れる
+	var drift := Vector2(DRIFT.x * (1.0 if randf() < 0.5 else -1.0), DRIFT.y * (1.0 if randf() < 0.5 else -1.0))
+	global_position = at - drift * 0.43
 	var tween := create_tween()
-	# ぽんと出てきて、右上へ流れる
+	# ぽんと出てきて、斜めに流れる
 	tween.tween_property(self, "modulate:a", ALPHA, 0.08)
 	tween.parallel().tween_property(self, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(self, "global_position", global_position + DRIFT, SHOW_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(self, "global_position", global_position + drift, SHOW_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	# しゅっと消える(横に細くなって、薄くなる)
 	tween.tween_property(self, "scale", Vector2(1.6, 0.05), VANISH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tween.parallel().tween_property(self, "modulate:a", 0.0, VANISH_TIME)

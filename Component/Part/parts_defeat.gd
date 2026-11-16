@@ -31,11 +31,29 @@ class_name PartsDefeat
 ## 倒れたとき、残っている部位を順に爆発させる間隔(秒)
 @export var death_break_interval : float = 0.12
 ## ボスがこの段階(0 から)に入ったら、部位は直らなくなり、部位を全部壊すと倒れる(ゲージは、残っている部位の量で減る)。
+## 部位が1つでも残っているうちは、ほかのダメージ(援護の爆発など)では倒れない
 ## -1 ならしない
 @export var final_phase : int = 2
 
+## 最後の段階に入ったときに、部位の HP をこの倍にする(最後の段階を長く・固くする)。1 なら変えない
+@export var final_part_hp_scale : float = 1.0
+
+@export_group("援護がいるあいだの装甲")
+## オンなら、援護(Support Group の敵)が生きているあいだ、部位は装甲で弾をはじく:
+## 入るダメージが Armored Damage Scale 倍になり、当たった所に「はじいた」火花が出る。援護を倒すと、装甲がなくなる
+@export var support_armor : bool = false
+@export_range(0.0, 1.0, 0.05) var armored_damage_scale : float = 0.15
+## 援護のグループ(StageRunner が付ける「stage_ + タグ」)
+@export var support_group : StringName = &"stage_support"
+## はじいたときの音(短く高い音がよい)。空なら鳴らさない
+@export var deflect_sound : AudioStream = preload("res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3")
+@export var deflect_volume_db : float = -16.0
+
 ## 最後の段階: 部位を全部壊したら倒れる
 var _final_mode : bool = false
+## 今、装甲があるか(援護が生きているか)。毎フレーム確かめる
+var _armored : bool = false
+var _deflect_player : AudioStreamPlayer
 ## 最後の段階に入ったときの本体の HP と、部位の HP の合計
 var _final_start_hp : int = 0
 var _final_total : int = 0
@@ -106,11 +124,61 @@ func _enter_final_mode() -> void:
 	for part in parts:
 		if is_instance_valid(part):
 			part.damage_to_body = 0.0 # 本体の HP は、部位の残りから決める
+			if not is_equal_approx(final_part_hp_scale, 1.0):
+				part.max_hp = maxi(roundi(part.max_hp * final_part_hp_scale), 1)
+				if not part.is_destroyed():
+					part.hp = part.max_hp
 			_final_total += part.max_hp
+
+## node の子の PartsDefeat。なければ null
+static func of(node : Node) -> PartsDefeat:
+	if node == null:
+		return null
+	for child in node.get_children():
+		if child is PartsDefeat:
+			return child
+	return null
+
+## 部位が装甲で弾をはじくか(援護が生きているあいだ)
+func is_armored() -> bool:
+	return _armored
+
+## 部位に入るダメージの倍率(装甲があるあいだは小さい)
+func damage_scale() -> float:
+	return armored_damage_scale if _armored else 1.0
+
+## はじいた音(続けて当たっても、鳴りすぎないように)
+func play_deflect() -> void:
+	if deflect_sound == null:
+		return
+	if _deflect_player == null:
+		_deflect_player = AudioStreamPlayer.new()
+		_deflect_player.stream = deflect_sound
+		_deflect_player.volume_db = deflect_volume_db
+		_deflect_player.pitch_scale = 1.9
+		add_child(_deflect_player)
+	SoundManager.play_on_channel(&"part_deflect", _deflect_player, randf_range(0.95, 1.1))
+
+func _update_armor() -> void:
+	var armored := false
+	if support_armor:
+		for node in get_tree().get_nodes_in_group(support_group):
+			if node != _enemy and is_instance_valid(node) and not node.is_queued_for_deletion() \
+					and not (node is Enemy and node._is_dead):
+				armored = true
+				break
+	if armored == _armored:
+		return
+	_armored = armored
+	# 装甲が付いた: 水色に光る / なくなった: 赤く光って、壊せるようになった合図
+	for part in parts:
+		if is_instance_valid(part) and not part.is_destroyed():
+			part.pulse(Color(0.8, 1.5, 2.0) if armored else Color(2.2, 1.2, 1.0))
 
 func _physics_process(_delta : float) -> void:
 	if _hp == null or _hp.hp <= 0:
 		return
+	_update_armor()
 	var left := 0
 	var breakable_left := 0 # 今壊せる部位の残り(段階を待っていて壊せない部位は数えない)
 	for part in parts:
@@ -122,6 +190,8 @@ func _physics_process(_delta : float) -> void:
 		var target := ceili(float(_final_start_hp) * left / maxf(_final_total, 1.0)) - _final_extra
 		if left == 0:
 			target = 0 # 全部壊した
+		else:
+			target = maxi(target, 1) # 砲台が1つでも残っていれば、倒れない(全部壊すまで終わらない)
 		if target < _hp.hp:
 			_hp.apply_damage(_hp.hp - target)
 		return
@@ -141,12 +211,16 @@ func _physics_process(_delta : float) -> void:
 		_hp.apply_damage(hp - left if left > 0 else hp)
 
 ## 部位を撃つ以外のダメージ(援護の列車の爆発など)を、本体の HP に与える。
-## 最後の段階(部位の残りで HP が決まる)でも、そのぶんだけ HP が減ったままになる
+## 最後の段階(部位の残りで HP が決まる)でも、そのぶんだけ HP が減ったままになる。ただし、部位が残っているうちは倒れない
 func add_external_damage(amount : int) -> void:
 	if _hp == null or _hp.hp <= 0 or amount <= 0:
 		return
 	if _final_mode:
 		_final_extra += amount
+		# 最後の段階は、砲台を全部壊すまで倒れない(援護の爆発では、ゲージを 1 まで減らすだけ)
+		amount = mini(amount, _hp.hp - 1)
+		if amount <= 0:
+			return
 	_hp.apply_damage(mini(amount, _hp.hp))
 
 ## 壊れてから Revive Part Delay 秒たった部位を直す(列車が速く動いているあいだは、止まるまで待つ)

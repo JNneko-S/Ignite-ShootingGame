@@ -54,9 +54,11 @@ signal score_changed(score : int)
 ## 画面演出のシーン(衝撃波・ヒットストップ・画面のふちの光)。空なら演出なし
 @export var screen_effect_scene : PackedScene = preload("res://GameScene/Effect/ignite_screen_effect.tscn")
 
-@export_group("ゲームオーバー")
+@export_group("ゲームオーバー・ポーズ")
 ## 残機が尽きたときに出す画面(ルートが GameOverScreen)。空なら何も出さない
 @export var game_over_scene : PackedScene = preload("res://GameScene/UI/game_over.tscn")
+## ポーズ画面(ルートが PauseMenu)。空ならポーズできない
+@export var pause_scene : PackedScene = preload("res://GameScene/UI/pause_menu.tscn")
 
 @export_group("被弾時の補給アイテム")
 ## 散らばるアイテムのシーン(ルートが IgniteItem)。見た目はこのシーンの Sprite2D で変える
@@ -101,6 +103,8 @@ signal score_changed(score : int)
 var ignite : IgniteGauge = IgniteGauge.new()
 ## 最後に知らせたイグナイトのレベル(上がったときだけ LEVEL UP を出すため)
 var _shown_level : int = 99
+## 復活でレベルを戻しているところか(LEVEL UP を出さない)
+var _respawning : bool = false
 ## 今のスコア(ScoreSystem の値を写したもの)
 var score : int = 0
 ## 今の発動で消費したレベルの数(発動中でなければ 0)。スコアの倍率に使う
@@ -161,6 +165,10 @@ func _ready() -> void:
 	player.damaged.connect(_on_player_damaged)
 	player.respawned.connect(_on_player_respawned)
 	player.game_over.connect(_on_game_over)
+	if pause_scene:
+		var pause := pause_scene.instantiate() as PauseMenu
+		pause.player = player
+		add_child(pause)
 	player.ignite_requested.connect(_on_ignite_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
 	if player.ignite_aura:
@@ -247,7 +255,9 @@ func _on_game_over() -> void:
 
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:
+	_respawning = true # 開始のレベルに戻るときは、LEVEL UP を出さない
 	ignite.reset_to_start()
+	_respawning = false
 	# 復活の瞬間に残っている敵弾を消して、しばらく撃たせない
 	get_tree().call_group("enemy_bullet", "queue_free")
 	EnemyShooter.hold_fire(respawn_ceasefire_time)
@@ -255,8 +265,10 @@ func _on_player_respawned() -> void:
 func _on_level_changed(level : int) -> void:
 	_apply_level_stats()
 	# レベルが上がったら、自機の後ろに「LEVEL UP!!!」を出す(下がったときは出さない)
-	if level > _shown_level and is_instance_valid(player) and player.visible:
-		LevelUpPopup.show_image(get_tree(), player.global_position)
+	# 最大(Lv5)になったときは「LEVEL MAX」。復活でレベルが戻ったときは出さない
+	if level > _shown_level and not _respawning and is_instance_valid(player) and player.visible:
+		var texture : Texture2D = load(LevelUpPopup.LEVEL_MAX_PATH) if level >= IgniteGauge.MAX_LEVEL else null
+		LevelUpPopup.show_image(get_tree(), player.global_position, texture)
 	_shown_level = level
 
 ## レベルに応じて、移動速度とショットの威力を変える

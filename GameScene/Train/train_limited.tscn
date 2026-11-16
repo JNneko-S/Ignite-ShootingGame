@@ -1449,6 +1449,8 @@ meteor_trail = true
 script = ExtResource("x5")
 revive_on_phase = true
 body_hp = 41250
+final_part_hp_scale = 2.5
+support_armor = true
 
 [node name="WreckExit" type="Node" parent="." unique_id=1760000179 node_paths=PackedStringArray("visual")]
 script = ExtResource("x6")
@@ -1458,7 +1460,7 @@ top_extent = 0
 [node name="BossPhaseController" type="Node" parent="." unique_id=1760000180]
 script = ExtResource("x41")
 phases = Array[ExtResource("x40")]([SubResource("boss_phase_0"), SubResource("boss_phase_1"), SubResource("boss_phase_2")])
-resummon_delay = 3.0
+resummon_delay = 0.0
 
 [node name="PushBarrage" type="Node" parent="." unique_id=1760000190 node_paths=PackedStringArray("shooters")]
 script = ExtResource("push_script")

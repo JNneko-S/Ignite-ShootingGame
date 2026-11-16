@@ -33,6 +33,28 @@ func layout_closed() -> void:
 		_fx.position = Vector2.ZERO
 		_fx.size = view
 
+## 開いた位置(画面の外)に置く。close() の前に呼ぶ
+func layout_open() -> void:
+	layout_closed()
+	_top.position.y = -_top.size.y
+	_bottom.position.y = _bottom.size.y * 2.0
+	if _fx:
+		(_fx.material as ShaderMaterial).set_shader_parameter("strength", 0.0)
+
+## 上下から閉まる(最後にガシャンと跳ねる)。閉まりきるまで待てる
+func close(time : float = 0.5) -> void:
+	var half := _top.size.y
+	var fx_strength := 0.4
+	var tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_top, "position:y", 0.0, time)
+	tween.tween_property(_bottom, "position:y", half, time)
+	if _fx:
+		var material := _fx.material as ShaderMaterial
+		tween.tween_method(func(v : float) -> void: material.set_shader_parameter("strength", v), 0.0, fx_strength, time)
+	await get_tree().create_timer(time * 0.36, true).timeout # 跳ねる動きで、最初に閉まりきる時刻
+	SoundManager.play(open_sound, 0.75)
+	await tween.finished
+
 ## シーンを切り替えて、その上でシャッターを開く
 func change_scene_and_open(path : String) -> void:
 	reparent(get_tree().root)

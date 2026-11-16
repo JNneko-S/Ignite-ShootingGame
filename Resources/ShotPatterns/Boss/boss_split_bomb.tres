@@ -13,8 +13,6 @@ target_speed = 25.0
 [sub_resource type="Resource" id="ring"]
 script = ExtResource("1")
 bullet_scene = ExtResource("4_u6gbo")
-min_difficulty = null
-skip_auto_tuning = null
 bullet_count = 14
 spread_angle = 360.0
 aim_at_player = false
@@ -24,8 +22,6 @@ bullet_accel = 45.0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("big")
-min_difficulty = null
-skip_auto_tuning = null
 start_delay = 1.0
 pause = 2.4
 bullet_speed = 170.0

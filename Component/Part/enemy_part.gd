@@ -42,6 +42,8 @@ var _destroyed : bool = false
 var _was_lock_target : bool = false
 var _breakable : bool = true
 var _flash_tween : Tween
+## 最後に「はじいた」火花を出した時刻(ミリ秒)
+var _last_deflect_msec : int = 0
 
 ## 狙える(ロックオン・反射弾の追尾)ものを全部返す:
 ##   ・"enemy" グループの敵(ただし "no_lock" グループのもの = 部位だけを狙わせたい本体 は除く)
@@ -111,6 +113,11 @@ func _on_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void
 	if _destroyed:
 		return
 	var body := _body()
+	# 援護がいるあいだの装甲(PartsDefeat): 弾をはじいて、ダメージがほとんど入らない
+	var defeat := PartsDefeat.of(body)
+	if defeat and defeat.is_armored():
+		damage *= defeat.damage_scale()
+		_deflect(defeat)
 	if body and damage_to_body > 0.0:
 		body.hp_component.apply_damage(ceili(damage * damage_to_body))
 	if not _breakable:
@@ -181,6 +188,27 @@ func revive() -> void:
 	var tween := create_tween()
 	modulate = Color(2.2, 2.2, 2.4)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.6)
+
+## 装甲で弾をはじいた: 当たった所に火花が出て、部位が水色に光る(続けて当たっても、出すぎないように間引く)
+func _deflect(defeat : PartsDefeat) -> void:
+	var now := Time.get_ticks_msec()
+	if now - _last_deflect_msec < 50:
+		return
+	_last_deflect_msec = now
+	var at := global_position
+	for node in get_children():
+		if node is Hurtbox and is_instance_valid(node.last_hitbox):
+			at = node.last_hitbox.global_position
+	var away := at - global_position
+	DeflectSpark.spawn(get_tree(), at, away if away.length() > 1.0 else Vector2.DOWN)
+	defeat.play_deflect()
+	_flash(Color(0.8, 1.4, 1.8))
+
+## 一瞬だけ、color に光ってから戻る(装甲が付いた・外れた合図など)
+func pulse(color : Color) -> void:
+	var tween := create_tween()
+	modulate = color
+	tween.tween_property(self, "modulate", Color.WHITE, 0.45)
 
 func _play_break_sound() -> void:
 	if break_sound:

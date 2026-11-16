@@ -1,0 +1,147 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://GameScene/UI/pause_menu.gd" id="1_pause"]
+[ext_resource type="Script" path="res://GameScene/UI/led_board.gd" id="2_board"]
+[ext_resource type="Script" path="res://GameScene/Select/tech_panel.gd" id="3_panel"]
+[ext_resource type="Shader" path="res://GameScene/UI/game_over_screen_fx.gdshader" id="4_fx"]
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="5_font"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="6_beep"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="7_confirm"]
+
+[sub_resource type="ShaderMaterial" id="mat_fx"]
+shader = ExtResource("4_fx")
+shader_parameter/strength = 0.0
+shader_parameter/noise_amount = 0.08
+shader_parameter/scanline_amount = 0.18
+shader_parameter/tear_amount = 0.02
+shader_parameter/tear_chance = 0.02
+shader_parameter/desaturate = 0.75
+shader_parameter/vignette = 0.7
+
+[sub_resource type="LabelSettings" id="ls_item"]
+font = ExtResource("5_font")
+font_size = 14
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="ls_hint"]
+font = ExtResource("5_font")
+font_size = 8
+font_color = Color(0.45, 0.8, 1, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[node name="PauseMenu" type="CanvasLayer" node_paths=PackedStringArray("move_sound", "confirm_sound", "open_sound")]
+process_mode = 3
+layer = 80
+visible = false
+script = ExtResource("1_pause")
+move_sound = NodePath("MoveSound")
+confirm_sound = NodePath("ConfirmSound")
+open_sound = NodePath("OpenSound")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="ScreenFx" type="ColorRect" parent="Root"]
+material = SubResource("mat_fx")
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root"]
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+color = Color(0, 0.02, 0.05, 0.35)
+
+[node name="Board" type="Control" parent="Root"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 110.0
+offset_right = 278.0
+offset_bottom = 158.0
+mouse_filter = 2
+script = ExtResource("2_board")
+text = "PAUSE"
+lit_color = Color(0.35, 0.85, 1, 1)
+dim_color = Color(0.03, 0.1, 0.14, 1)
+fixed_pitch = 4.0
+
+[node name="Panel" type="Control" parent="Root"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 178.0
+offset_right = 278.0
+offset_bottom = 300.0
+pivot_offset = Vector2(110, 61)
+mouse_filter = 2
+script = ExtResource("3_panel")
+
+[node name="Cursor" type="ColorRect" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 20.0
+offset_right = 202.0
+offset_bottom = 42.0
+mouse_filter = 2
+color = Color(0.35, 0.85, 1, 0.22)
+
+[node name="Resume" type="Label" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 200.0
+offset_bottom = 42.0
+text = "RESUME"
+label_settings = SubResource("ls_item")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Retry" type="Label" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 48.0
+offset_right = 200.0
+offset_bottom = 72.0
+text = "RETRY"
+label_settings = SubResource("ls_item")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShipSelect" type="Label" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 78.0
+offset_right = 200.0
+offset_bottom = 102.0
+text = "SHIP SELECT"
+label_settings = SubResource("ls_item")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hint" type="Label" parent="Root"]
+layout_mode = 0
+offset_top = 312.0
+offset_right = 336.0
+offset_bottom = 326.0
+text = "U/D: SELECT   SHOT: OK   ESC: RESUME"
+label_settings = SubResource("ls_hint")
+horizontal_alignment = 1
+
+[node name="MoveSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_beep")
+volume_db = -10.0
+
+[node name="ConfirmSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_confirm")
+volume_db = -8.0
+
+[node name="OpenSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_beep")
+volume_db = -8.0
+pitch_scale = 1.3

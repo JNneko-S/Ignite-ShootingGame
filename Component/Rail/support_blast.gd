@@ -7,8 +7,8 @@ class_name SupportBlast
 ##   3. 波がボスに届くと、ボスの見えているところが爆発し、ボスの HP が Boss Damage Ratio の割合だけ減る
 ## 走り去って消えたとき(倒していないとき)は、何も起きない。
 
-## ボスの HP の最大値に対する、与えるダメージの割合(0.25 なら 4編成倒すとボスが倒れる)
-@export_range(0.0, 1.0, 0.01) var boss_damage_ratio : float = 0.25
+## ボスの HP の最大値に対する、与えるダメージの割合(0.1 なら、1編成でボスのゲージが 1割減る)
+@export_range(0.0, 1.0, 0.01) var boss_damage_ratio : float = 0.1
 ## 倒れてから、波が走り出すまでの時間(秒)。負なら、DeathExplosion の Duration に合わせる
 @export var wave_delay : float = -1.0
 ## 波がボスまで走る時間(秒)

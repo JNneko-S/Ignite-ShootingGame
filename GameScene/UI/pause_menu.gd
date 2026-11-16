@@ -1,0 +1,139 @@
+extends CanvasLayer
+class_name PauseMenu
+## ポーズ画面。シーン(GameScene/UI/pause_menu.tscn)を GameManager が出す(Pause Scene)。
+##
+## Pause Action(Esc)でゲームが止まり、画面が暗く・灰色になって、電光掲示板の PAUSE と、メニューが出る。
+##   RESUME     : 続ける(Pause Action でも戻れる)
+##   RETRY      : シャッターが閉まって、ステージを最初からやり直す
+##   SHIP SELECT: シャッターが閉まって、機体選択の画面へ戻る(選んでいた機体・難易度のまま)
+## 上下で選び、ショットで決める。
+## ゲームオーバーの画面が出ているあいだと、自機がいないときは開かない。
+
+## ポーズの切り替え(Input Map のアクション名。ui_cancel は Esc)
+@export var pause_action : StringName = &"ui_cancel"
+## 機体選択の画面のシーン
+@export_file("*.tscn") var ship_select_scene : String = "res://GameScene/Select/ship_select.tscn"
+## 閉まるシャッター(shutter.tscn)
+@export var shutter_scene : PackedScene = preload("res://GameScene/UI/shutter.tscn")
+## 選ぶものを変えたとき・決めたとき・開いたとき(シーンに置いた AudioStreamPlayer)
+@export var move_sound : AudioStreamPlayer
+@export var confirm_sound : AudioStreamPlayer
+@export var open_sound : AudioStreamPlayer
+## 選んでいる項目の色と、選んでいない項目の色
+@export var selected_color : Color = Color(0.85, 0.97, 1.0)
+@export var normal_color : Color = Color(0.35, 0.55, 0.65)
+
+enum Item { RESUME, RETRY, SHIP_SELECT }
+
+@onready var _root : Control = $Root
+@onready var _board : LedBoard = $Root/Board
+@onready var _panel : TechPanel = $Root/Panel
+@onready var _items : Array[Label] = [$Root/Panel/Resume, $Root/Panel/Retry, $Root/Panel/ShipSelect]
+@onready var _cursor : Control = $Root/Panel/Cursor
+@onready var _fx : ColorRect = $Root/ScreenFx
+
+## 自機(いないときは開かない)。GameManager が入れる
+var player : Node
+var _open : bool = false
+## メニューで決めたあと(シャッターが閉まるあいだ)は、何も受け付けない
+var _busy : bool = false
+var _index : int = 0
+var _time : float = 0.0
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	visible = false
+
+func _process(delta : float) -> void:
+	_time += delta
+	if _busy:
+		return
+	if not _open:
+		if _pressed([pause_action]) and _can_open():
+			_open_menu()
+		return
+	if _pressed([pause_action]):
+		_close_menu()
+	elif _pressed(["UI_Forward", "ui_up"]):
+		_select(_index - 1)
+	elif _pressed(["UI_Back", "ui_down"]):
+		_select(_index + 1)
+	elif _pressed(["UI_Shoot", "ui_accept"]):
+		_decide()
+	# 選んでいる項目の印が、ゆっくり左右に動く
+	_cursor.position.x = 18.0 + sin(_time * 6.0) * 2.0
+
+func _pressed(actions : Array) -> bool:
+	for action in actions:
+		if InputMap.has_action(action) and Input.is_action_just_pressed(action):
+			return true
+	return false
+
+## 開いてよいか(ゲームオーバーなどで、ほかが止めているときは開かない)
+func _can_open() -> bool:
+	return not get_tree().paused and is_instance_valid(player) and player.is_inside_tree()
+
+func _open_menu() -> void:
+	_open = true
+	get_tree().paused = true
+	visible = true
+	SoundManager.play(open_sound)
+	_select(0, false)
+	# 画面が乱れてから、暗く・灰色になる
+	var material := _fx.material as ShaderMaterial
+	material.set_shader_parameter("tear_chance", 0.5)
+	var tween := create_tween().set_parallel(true)
+	tween.tween_method(func(v : float) -> void: material.set_shader_parameter("strength", v), 0.0, 1.0, 0.15)
+	tween.tween_method(func(v : float) -> void: material.set_shader_parameter("tear_chance", v), 0.5, 0.02, 0.3)
+	_panel.scale = Vector2(1.0, 0.0)
+	tween.tween_property(_panel, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_board.run_marquee(90.0)
+
+func _close_menu() -> void:
+	_open = false
+	visible = false
+	SoundManager.play(move_sound, 0.7)
+	get_tree().paused = false
+
+func _select(index : int, with_sound : bool = true) -> void:
+	_index = wrapi(index, 0, _items.size())
+	for i in _items.size():
+		_items[i].modulate = selected_color if i == _index else normal_color
+	_cursor.position.y = _items[_index].position.y + _items[_index].size.y * 0.5 - _cursor.size.y * 0.5
+	if with_sound:
+		SoundManager.play(move_sound)
+
+func _decide() -> void:
+	match _index:
+		Item.RESUME:
+			_close_menu()
+		Item.RETRY:
+			_leave(get_tree().current_scene.scene_file_path, true)
+		Item.SHIP_SELECT:
+			_leave(ship_select_scene, false)
+
+## シャッターが閉まってから、ステージを出る。
+## reopen がオンなら、読み込んだ先でシャッターが開く(やり直し)。オフなら、閉まったまま切り替える
+## (機体選択の画面は、閉まったシャッターが背景なので、そのままつながる)
+func _leave(path : String, reopen : bool) -> void:
+	if path == "":
+		return
+	_busy = true
+	SoundManager.play(confirm_sound)
+	# 選んだ項目が点滅して、メニューが消える
+	for i in 3:
+		_items[_index].modulate = Color.WHITE
+		await get_tree().create_timer(0.06).timeout
+		_items[_index].modulate = normal_color
+		await get_tree().create_timer(0.06).timeout
+	_root.visible = false
+	var shutter := shutter_scene.instantiate() as ShutterTransition
+	add_child(shutter)
+	shutter.layout_open()
+	await shutter.close()
+	await get_tree().create_timer(0.15).timeout
+	if reopen:
+		shutter.change_scene_and_open(path)
+	else:
+		get_tree().paused = false
+		get_tree().change_scene_to_file(path)
