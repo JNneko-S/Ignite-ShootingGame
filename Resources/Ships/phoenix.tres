@@ -1,14 +1,14 @@
-[gd_resource type="Resource" script_class="ShipData" format=3]
+[gd_resource type="Resource" script_class="ShipData" format=3 uid="uid://2udwwk4uk82w"]
 
-[ext_resource type="Script" path="res://Resources/Ships/ship_data.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/makebead-99x99.png" id="2_tex"]
-[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://Player.tscn" id="3_player"]
+[ext_resource type="Script" uid="uid://dbsvtggbtigus" path="res://Resources/Ships/ship_data.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/PHOENIX.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://player.tscn" id="3_player"]
 
 [resource]
 script = ExtResource("1_script")
-ship_name = "PHOENIX"
 subtitle = "炎の翼をもつ試作機"
-description = "敵弾をかすめてゲージを溜め、イグナイトで弾幕を焼き払う。
+description = "極秘にして作られた不死鳥初号機。ショットは苛烈で、ロックオンも搭載しているため、撃墜性能に特化している。
+また、不死鳥の名を冠することになった敵弾を燃やして跳ね返す「イグナイト」を始めて搭載した機体。
 ショット: 前方3連射 / 低速移動: ロックショット"
 texture = ExtResource("2_tex")
 preview_scale = 0.85

@@ -8,6 +8,8 @@ class_name Bullet
 var direction : Vector2 = Vector2.UP
 var speed : float = 600.0
 var accel : float = 0.0
+## 0 より大きければ、この秒数で消える(BASTION のショットガンなど、届く距離が短い弾)。最後は薄くなって消える
+var life : float = 0.0
 
 ## 追いかける相手(ロックショット)。null ならまっすぐ飛ぶ
 var homing_target : Node2D
@@ -52,6 +54,13 @@ func _on_homing_hit(_hurtbox : Hurtbox) -> void:
 	queue_free()
 
 func _physics_process(delta : float) -> void:
+	if life > 0.0:
+		life -= delta
+		if life <= 0.0:
+			queue_free()
+			return
+		if life < 0.08:
+			modulate.a = minf(modulate.a, life / 0.08)
 	speed = maxf(speed + accel * delta, 0.0)
 	if homing_target:
 		if is_instance_valid(homing_target) and homing_target.is_inside_tree():

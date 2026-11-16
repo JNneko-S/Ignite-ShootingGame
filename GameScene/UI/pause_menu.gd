@@ -23,6 +23,12 @@ class_name PauseMenu
 @export var selected_color : Color = Color(0.85, 0.97, 1.0)
 @export var normal_color : Color = Color(0.35, 0.55, 0.65)
 
+@export_group("隠しコマンド(デバッグ)")
+## ポーズ中に Shift + F1 + Space を同時に押してから、この秒数のうちにこの文字を打つと、デバッグ機能が使えるようになる
+## (ゲーム中に F1 でデバッグパネルが開く)
+@export var debug_code : String = "debug"
+@export var debug_code_time : float = 2.0
+
 enum Item { RESUME, RETRY, SHIP_SELECT }
 
 @onready var _root : Control = $Root
@@ -35,6 +41,10 @@ enum Item { RESUME, RETRY, SHIP_SELECT }
 ## 自機(いないときは開かない)。GameManager が入れる
 var player : Node
 var _open : bool = false
+## 隠しコマンド: 文字の入力を待つ残り時間(秒)、今まで打った文字、同時押しが続いているか
+var _code_left : float = 0.0
+var _typed : String = ""
+var _chord_held : bool = false
 ## メニューで決めたあと(シャッターが閉まるあいだ)は、何も受け付けない
 var _busy : bool = false
 var _index : int = 0
@@ -52,6 +62,9 @@ func _process(delta : float) -> void:
 		if _pressed([pause_action]) and _can_open():
 			_open_menu()
 		return
+	_check_debug_chord(delta)
+	if _code_left > 0.0 or Input.is_key_pressed(KEY_SHIFT) or Input.is_key_pressed(KEY_F1):
+		return # 隠しコマンドの入力中は、メニューを動かさない(Shift + Space で決定しないように)
 	if _pressed([pause_action]):
 		_close_menu()
 	elif _pressed(["UI_Forward", "ui_up"]):
@@ -62,6 +75,47 @@ func _process(delta : float) -> void:
 		_decide()
 	# 選んでいる項目の印が、ゆっくり左右に動く
 	_cursor.position.x = 18.0 + sin(_time * 6.0) * 2.0
+
+# ---------------------------------------------------------------- 隠しコマンド(デバッグの解放)
+
+## Shift + F1 + Space を同時に押した瞬間から、Debug Code Time 秒のあいだ、文字の入力を待つ
+func _check_debug_chord(delta : float) -> void:
+	var chord := Input.is_key_pressed(KEY_SHIFT) and Input.is_key_pressed(KEY_F1) and Input.is_key_pressed(KEY_SPACE)
+	if chord and not _chord_held:
+		_code_left = debug_code_time
+		_typed = ""
+	_chord_held = chord
+	if _code_left > 0.0 and not chord:
+		_code_left -= delta
+		if _code_left <= 0.0:
+			_typed = ""
+
+func _input(event : InputEvent) -> void:
+	if not _open or _code_left <= 0.0:
+		return
+	var key := event as InputEventKey
+	if key == null or not key.pressed or key.echo:
+		return
+	var letter := OS.get_keycode_string(key.keycode).to_lower()
+	if letter.length() != 1:
+		return # Shift や F1 などは数えない
+	_typed = (_typed + letter).right(debug_code.length())
+	get_viewport().set_input_as_handled()
+	if _typed == debug_code:
+		_code_left = 0.0
+		_unlock_debug()
+
+## デバッグ機能を使えるようにした: 掲示板が切り替わって知らせる
+func _unlock_debug() -> void:
+	DebugTools.unlocked = true
+	SoundManager.play(confirm_sound, 1.5)
+	var color := _board.lit_color
+	_board.lit_color = Color(0.35, 1.0, 0.4)
+	_board.set_text("DEBUG ON")
+	await get_tree().create_timer(1.4).timeout
+	if is_instance_valid(_board):
+		_board.lit_color = color
+		_board.set_text("PAUSE")
 
 func _pressed(actions : Array) -> bool:
 	for action in actions:

@@ -116,6 +116,18 @@ var graze_radius_scale : float = 1.0:
 ## 被弾して生き残ったあとの無敵時間(秒)。点滅し、この間はグレイズもできない
 @export var hit_invincible_time : float = 3.0
 
+@export_group("機体ごとの決まり(GameManager が読む)")
+## オフなら、ゲージのLvによる威力・移動の速さの補正を使わない(どのLvでも同じ)
+@export var use_level_scales : bool = true
+## 空でなければ、イグナイトの効果時間(消費したレベル 1〜5 の順、秒)を、ステージの設定の代わりにこれにする
+@export var ignite_durations_override : Array[float] = []
+## オフなら、イグナイト中に弾を焼いても効果時間が延びない
+@export var burn_extends_ignite : bool = true
+## 0 以上なら、被弾時の補給アイテムで取り戻せる割合(ステージの Hit Item Recover Rate の代わり)
+@export var hit_item_recover_override : float = -1.0
+## 0 以上なら、補給アイテムが出る最低のレベル(ステージの Hit Item Min Level の代わり)
+@export var hit_item_min_level_override : int = -1
+
 @export_group("残機")
 ## 残機の数(0のとき死亡するとゲームオーバー)
 @export var lives : int = 3
@@ -520,8 +532,8 @@ func _on_grazed(bullet : Area2D, density : int) -> void:
 
 ## 被弾。レベル(体力)を減らすかどうかは、damaged を受けた側(GameManager)が決める
 func _on_hurtbox_recieved_damage(_damage: int) -> void:
-	# 無敵中・死亡中は被弾を無視する
-	if is_invincible():
+	# 無敵中・死亡中・デバッグの無敵中は被弾を無視する
+	if is_invincible() or DebugTools.invincible:
 		return
 	var hit_position := global_position
 	var hit_direction := _hit_direction()
@@ -698,3 +710,9 @@ func _create_hitbox_marker() -> void:
 		if shape_node.shape is CircleShape2D:
 			_marker.radius = maxf((shape_node.shape as CircleShape2D).radius, 2.0)
 	add_child(_marker)
+
+# ---------------------------------------------------------------- 機体ごとに変えるところ(派生の機体が上書きする)
+
+## グレイズ1回で入るゲージの倍率(GameManager が掛ける)。ふだんは 1
+func graze_gain_scale() -> float:
+	return 1.0

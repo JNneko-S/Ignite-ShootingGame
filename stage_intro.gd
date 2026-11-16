@@ -107,6 +107,10 @@ func _begin() -> void:
 		_cloud_material = null
 		set_process(false)
 		return
+	if DebugTools.skip_intro_once:
+		DebugTools.skip_intro_once = false # デバッグパネルのジャンプでは、出撃の演出を飛ばす
+		_finish()
+		return
 	if not play_intro or player == null:
 		_finish()
 		return

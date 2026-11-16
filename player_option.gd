@@ -22,6 +22,11 @@ var slot : int = 0
 @export var lock_slot_angles : Array[float] = [0.0, 0.0, 0.0, 0.0]
 ## 位置へ追いつく速さ(大きいほどぴったり付いてくる)
 @export var follow_sharpness : float = 14.0
+## 0 より大きければ、通常のとき(低速移動・ロックオンでないとき)は、自機を中心に、この半径(px)の円の上を回る(BASTION)。
+## 子機どうしは等間隔に並ぶ。0 なら Slots の位置
+@export var orbit_radius : float = 0.0
+## 回る速さ(度/秒)。プラスで時計回り
+@export var orbit_speed : float = 150.0
 ## 子機が撃つ弾のシーン。空なら、自機と同じ弾(Player の Bullet Scene)を使う
 @export var bullet_scene : PackedScene
 ## 弾1発の威力の、自機のショットに対する倍率
@@ -177,6 +182,8 @@ func target_offset() -> Vector2:
 
 ## その状態での位置(0: 通常 / 1: 低速移動中 / 2: ロックオン中)
 func _offset_for(mode : int) -> Vector2:
+	if mode == 0 and orbit_radius > 0.0:
+		return Vector2.from_angle(orbit_angle()) * orbit_radius
 	var list : Array[Vector2] = slots
 	match mode:
 		1: list = focus_slots
@@ -204,18 +211,23 @@ func _mode() -> int:
 	return 0
 
 ## 1発撃つ。target があれば、追いかける弾にする。player_bullet は自機の弾(Bullet Scene が空のときに使う)
-func fire(player_bullet : PackedScene, speed : float, damage : float, target : Node2D = null, turn_rate : float = 720.0) -> void:
+## direction があれば(長さが 0 でなければ)、自分の向きの代わりに、その向きへ撃つ(BASTION の低速移動中)。
+## 撃った弾を返す(撃てなかったら null)
+func fire(player_bullet : PackedScene, speed : float, damage : float, target : Node2D = null, turn_rate : float = 720.0,
+		direction : Vector2 = Vector2.ZERO) -> Bullet:
 	var scene := bullet_scene if bullet_scene else player_bullet
 	if scene == null or not visible:
-		return
+		return null
 	var bullet : Bullet = scene.instantiate()
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = global_position
-	bullet.setup(Vector2.UP.rotated(deg_to_rad(shot_angle())), speed, damage * damage_scale, 0)
+	var dir := direction if direction.length_squared() > 0.0001 else Vector2.UP.rotated(deg_to_rad(shot_angle()))
+	bullet.setup(dir, speed, damage * damage_scale, 0)
 	if bullet_scene == null:
 		bullet.modulate = shot_color
 	if target:
 		bullet.set_homing(target, turn_rate)
+	return bullet
 
 ## 消える(自機が死んだとき)
 func vanish() -> void:
@@ -231,3 +243,8 @@ func _draw() -> void:
 		return
 	draw_circle(Vector2.ZERO, 6.0, Color(0.3, 1.0, 0.7, 0.3))
 	draw_circle(Vector2.ZERO, 3.5, Color(0.7, 1.0, 0.9))
+
+## 円を回っているときの、今の角度(ラジアン。0 で自機の右、時計回りに増える)。子機どうしは等間隔
+func orbit_angle() -> float:
+	var count := maxi(_player.options.size(), 1) if is_instance_valid(_player) else 1
+	return deg_to_rad(orbit_speed) * Time.get_ticks_msec() / 1000.0 + TAU * slot / count - PI / 2.0

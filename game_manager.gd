@@ -132,6 +132,41 @@ func _enter_tree() -> void:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
 	DifficultyTuning.level = int(difficulty)
 
+## シーンを読み込んだ直後(まだツリーに入る前)に、選んだ機体へ入れ替える
+func _notification(what : int) -> void:
+	if what == NOTIFICATION_SCENE_INSTANTIATED:
+		_swap_player_ship()
+
+## 機体選択で選んだ機体が、ステージに置いてある自機と違えば、入れ替える。
+## シーンがツリーに入る前なので、ほかの部品は入れ替えたあとの自機を見つける
+func _swap_player_ship() -> void:
+	var ship := RunConfig.ship
+	if not is_instance_valid(player):
+		player = get_node_or_null("Player") as Player
+	if not RunConfig.has_selection or ship == null or ship.player_scene == null or player == null:
+		return
+	if player.scene_file_path == ship.player_scene.resource_path:
+		return
+	var old := player
+	var fresh := ship.player_scene.instantiate() as Player
+	if fresh == null:
+		push_warning("GameManager: 機体 %s の自機のシーンのルートが Player ではありません" % ship.ship_name)
+		return
+	# 置き場所と、ステージの決まり(復活の待ち時間・撃墜時の弾消し・残機)は、元の自機から引き継ぐ
+	fresh.name = old.name
+	fresh.position = old.position
+	fresh.respawn_delay = old.respawn_delay
+	fresh.clear_bullets_on_death = old.clear_bullets_on_death
+	fresh.lives = old.lives
+	var parent := old.get_parent()
+	var index := old.get_index()
+	parent.remove_child(old)
+	old.free()
+	parent.add_child(fresh)
+	parent.move_child(fresh, index)
+	fresh.owner = self
+	player = fresh
+
 func _ready() -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as Player
@@ -169,6 +204,10 @@ func _ready() -> void:
 		var pause := pause_scene.instantiate() as PauseMenu
 		pause.player = player
 		add_child(pause)
+	# デバッグパネル(ポーズ画面の隠しコマンドで解放すると、F1 で開く)
+	var debug_panel := DebugPanel.new()
+	debug_panel.game_manager = self
+	add_child(debug_panel)
 	player.ignite_requested.connect(_on_ignite_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
 	if player.ignite_aura:
@@ -204,6 +243,10 @@ func _on_player_graze_hit(_bullet_position : Vector2, density : int) -> void:
 	if player.is_igniting:
 		return
 	ignite.add_graze(density)
+	# 機体によっては、グレイズで入るゲージが多い(BASTION の被弾後など)
+	var gain := player.graze_gain_scale()
+	if gain > 1.0:
+		ignite.add_value((gain - 1.0) * (1.0 + density_bonus * maxi(density - 1, 0)))
 
 ## 被弾: ゲージ(体力)が減る。0未満になったら死亡
 func _on_player_damaged() -> void:
@@ -227,11 +270,14 @@ func _on_player_damaged() -> void:
 ## 被弾の位置から、ゲージの補給アイテムを散らばらせる。
 ## 量は「被弾したときの進捗 × hit_item_recover_rate」を、下がったあとのレベルの幅で換算したもの
 func _scatter_items(level_before : int, progress_before : float) -> void:
-	if level_before < hit_item_min_level:
+	# 機体ごとの決まりがあれば、そちらを使う
+	var min_level := player.hit_item_min_level_override if player.hit_item_min_level_override >= 0 else hit_item_min_level
+	var recover_rate := player.hit_item_recover_override if player.hit_item_recover_override >= 0.0 else hit_item_recover_rate
+	if level_before < min_level:
 		return
 	if progress_before <= 0.0 or progress_before <= hit_item_min_progress:
 		return
-	var recover := progress_before * hit_item_recover_rate
+	var recover := progress_before * recover_rate
 	var span := ignite.threshold(mini(ignite.level + 1, IgniteGauge.MAX_LEVEL)) - ignite.threshold(ignite.level)
 	var total := recover * span
 	var count := clampi(ceili(recover / hit_item_progress_each - 0.0001), 1, maxi(hit_item_max_count, 1))
@@ -275,8 +321,8 @@ func _on_level_changed(level : int) -> void:
 func _apply_level_stats() -> void:
 	if player == null:
 		return
-	player.level_move_scale = _at_level(move_speed_scales, ignite.level)
-	player.level_power_scale = _at_level(shot_power_scales, ignite.level)
+	player.level_move_scale = _at_level(move_speed_scales, ignite.level) if player.use_level_scales else 1.0
+	player.level_power_scale = _at_level(shot_power_scales, ignite.level) if player.use_level_scales else 1.0
 	player.shot_look_level = ignite.level # ショットの見た目(Lv1〜5)。威力は変わらない
 
 # ---------------------------------------------------------------- イグナイト
@@ -301,7 +347,7 @@ func _start_ignite_effect(levels : int) -> void:
 	var final_radius : float = _at_level(burn_final_radius, levels - 1)
 	if final_radius <= 0.0:
 		final_radius = max_radius * 0.5
-	var duration : float = _at_level(ignite_durations, levels - 1)
+	var duration : float = _at_level(player.ignite_durations_override if not player.ignite_durations_override.is_empty() else ignite_durations, levels - 1)
 	if debug_ignite:
 		print("[Ignite] 発動 %dレベル消費 → 残りLv%d / 範囲%.0f→%.0f / %.1f秒" % [
 			levels, ignite.level, max_radius, final_radius, duration])
@@ -344,7 +390,7 @@ func _on_ignite_toggled(on : bool) -> void:
 func _on_bullet_burned(bullet_position : Vector2) -> void:
 	if score_system:
 		score_system.spawn_burn_item(bullet_position, ignite_level_in_use)
-	if player.is_igniting and _extend_left > 0.0:
+	if player.is_igniting and _extend_left > 0.0 and player.burn_extends_ignite:
 		var add := minf(burn_extend_time, _extend_left)
 		_extend_left -= add
 		_ignite_time_left += add

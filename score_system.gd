@@ -559,6 +559,8 @@ func _load_hi_score() -> void:
 		hi_score = int(config.get_value("hi_score", save_key, 0))
 
 func save_hi_score() -> void:
+	if DebugTools.used:
+		return # デバッグ機能を使ったプレイは、ハイスコアを保存しない
 	var config := ConfigFile.new()
 	config.load(save_path) # なければ新しく作る
 	if hi_score <= int(config.get_value("hi_score", save_key, 0)):

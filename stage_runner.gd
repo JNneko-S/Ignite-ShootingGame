@@ -74,6 +74,10 @@ func _ready() -> void:
 	add_to_group("stage_runner")
 	_collect_parallax()
 	_load_playtest()
+	# デバッグパネルの「ボスへジャンプ」など
+	if DebugTools.pending_start_time > 0.0:
+		debug_start_time = DebugTools.pending_start_time
+		DebugTools.pending_start_time = 0.0
 	if autostart:
 		start()
 

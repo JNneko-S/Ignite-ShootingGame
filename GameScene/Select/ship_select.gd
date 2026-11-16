@@ -188,6 +188,8 @@ func _show_ship(animate : bool, direction : int = 1) -> void:
 	_desc_title.text = ship.ship_name
 	_desc_sub.text = ship.subtitle
 	_desc_text.text = ship.description
+	if _preview_fire and not animate:
+		_preview_fire.configure(ship) # 最初に出たときも、その機体の撃ち方にする
 	if animate:
 		# 新しい機体が、押した向きから滑り込んでくる
 		_icon.position.x = _icon_base.x + direction * 30.0
@@ -197,6 +199,7 @@ func _show_ship(animate : bool, direction : int = 1) -> void:
 		tween.tween_property(_icon, "modulate:a", 1.0, 0.15)
 		_flash(_preview)
 		if _preview_fire:
+			_preview_fire.configure(ship)
 			_preview_fire.reset()
 
 func _shake_icon(direction : int) -> void:

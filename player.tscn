@@ -5,21 +5,21 @@
 [ext_resource type="PackedScene" uid="uid://d0ybnbes8i6vj" path="res://GameScene/Bullet/player_bullet.tscn" id="2_sweqy"]
 [ext_resource type="PackedScene" uid="uid://co8nbu3ldl1ly" path="res://GameScene/Player/ignite.tscn" id="3_1jxqw"]
 [ext_resource type="PackedScene" uid="uid://d4ikto8y7jfwf" path="res://Component/Hurtbox/hurtbox.tscn" id="4_hqtel"]
-[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/makebead-99x99.png" id="5_b26j0"]
+[ext_resource type="Texture2D" uid="uid://bpl5n76x1lxyk" path="res://Assets/PHOENIX.png" id="5_b26j0"]
 [ext_resource type="PackedScene" uid="uid://cl4bv6vi5lqk1" path="res://GameScene/Player/GrazeEffect.tscn" id="6_2hs0m"]
 [ext_resource type="Texture2D" uid="uid://dsfkddeaqo01p" path="res://Assets/Effect/32x32_Impact_6.png" id="6_n7ghd"]
 [ext_resource type="Script" uid="uid://khde6xp7pdu" path="res://ignite_aura.gd" id="7_dw050"]
 [ext_resource type="Texture2D" uid="uid://dl1tyft1wtew8" path="res://Assets/Effect/32x32_Arcane_16.png" id="7_nvl01"]
 [ext_resource type="Script" uid="uid://cj1p0qdeu80na" path="res://ignite_params.gd" id="8_b26j0"]
 [ext_resource type="Script" uid="uid://rfvrrp2uytpk" path="res://Component/Graze/graze_detector.gd" id="c_graze"]
+[ext_resource type="Script" uid="uid://dfpgg05ruumij" path="res://GameScene/Player/graze_sparks.gd" id="c_graze_sparks"]
+[ext_resource type="Script" uid="uid://c3vge15ce7jhr" path="res://GameScene/Player/phoenix_hit_flame.gd" id="c_hit_flame"]
 [ext_resource type="Script" uid="uid://f3mid0nwuvbs" path="res://Component/Invincibility/invincibility.gd" id="c_invincible"]
-[ext_resource type="AudioStream" uid="uid://bngd7crvsq5h5" path="res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3" id="snd_shot"]
-[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="snd_lock"]
-[ext_resource type="AudioStream" uid="uid://dv225hu0xeqco" path="res://Assets/Sounds/Graze/AS_151526_シャッ（ライターを使って火を付ける）.mp3" id="snd_graze"]
-[ext_resource type="Script" path="res://GameScene/Player/phoenix_hit_flame.gd" id="c_hit_flame"]
-[ext_resource type="Script" path="res://GameScene/Player/graze_sparks.gd" id="c_graze_sparks"]
-[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="c_motion_tilt"]
+[ext_resource type="Script" uid="uid://dp85fp6w51s3i" path="res://Component/Motion/motion_tilt.gd" id="c_motion_tilt"]
 [ext_resource type="AudioStream" uid="uid://difae074m7ntk" path="res://Assets/Sounds/Explosive/AS_8381_ドカーンという爆発音.mp3" id="snd_death"]
+[ext_resource type="AudioStream" uid="uid://dv225hu0xeqco" path="res://Assets/Sounds/Graze/AS_151526_シャッ（ライターを使って火を付ける）.mp3" id="snd_graze"]
+[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="snd_lock"]
+[ext_resource type="AudioStream" uid="uid://bngd7crvsq5h5" path="res://Assets/Sounds/Shot/AS_277791_ショットガンの銃声＿その４.mp3" id="snd_shot"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_elpp1"]
 
@@ -56,7 +56,7 @@ _data = {
 &"RESET": SubResource("Animation_2hs0m")
 }
 
-[node name="Player" type="CharacterBody2D" unique_id=1981584153 node_paths=PackedStringArray("shot_sound", "lock_sound", "graze_sound")]
+[node name="Player" type="CharacterBody2D" unique_id=1981584153 node_paths=PackedStringArray("shot_sound", "graze_sound", "lock_sound")]
 z_index = 1
 collision_layer = 2
 collision_mask = 0
@@ -64,9 +64,9 @@ script = ExtResource("1_onrkg")
 bullet_scene = ExtResource("2_sweqy")
 shot_angles = Array[float]([0.0, 3.0, -3.0])
 shot_sound = NodePath("ShotSound")
-lock_sound = NodePath("LockSound")
 graze_sound = NodePath("GrazeSound")
 shot_power = 1.3
+lock_sound = NodePath("LockSound")
 ignite_hold_time = 1.0
 charge_ring_radius = 30.0
 clear_bullets_on_death = false
@@ -173,12 +173,6 @@ volume_db = -8.0
 [node name="GrazeSparks" type="Node2D" parent="." unique_id=501000022]
 script = ExtResource("c_graze_sparks")
 
-[connection signal="is_dead" from="HPComponent" to="." method="_on_hp_component_is_dead"]
-[connection signal="recieved_damage" from="Hurtbox" to="." method="_on_hurtbox_recieved_damage"]
-
-[editable path="Ignite"]
-[editable path="Hurtbox"]
-
 [node name="MotionTilt" type="Node" parent="." unique_id=501000030 node_paths=PackedStringArray("target")]
 script = ExtResource("c_motion_tilt")
 target = NodePath("../Sprite2D")
@@ -189,3 +183,9 @@ bank_per_side = 40.0
 bank_side_speed = 260.0
 bank_sharpness = 12.0
 perspective = 220.0
+
+[connection signal="is_dead" from="HPComponent" to="." method="_on_hp_component_is_dead"]
+[connection signal="recieved_damage" from="Hurtbox" to="." method="_on_hurtbox_recieved_damage"]
+
+[editable path="Ignite"]
+[editable path="Hurtbox"]
