@@ -157,6 +157,30 @@ func _build_entries() -> void:
 			return a["order"] < b["order"]
 		return a["time"] < b["time"])
 
+## これから出てくるザコ敵(ボスでない SpawnEvent)を、出る時刻順に返す。[{ "event", "time" }]。
+## stop_signal のシグナル(WARNING など)か、ボスの出現まで(背景に、フェーズの敵の影を集めるため)
+func upcoming_spawns(stop_signal : String = "warning") -> Array[Dictionary]:
+	var list : Array[Dictionary] = []
+	for i in range(_next, _entries.size()):
+		var entry := _entries[i]
+		var event = entry["event"]
+		if event is StageSignalEvent and event.signal_name == stop_signal:
+			break
+		if event is SpawnEvent:
+			if event.is_boss:
+				break
+			if entry["unit"] == 0 and event.enemy_scene:
+				list.append({"event": event, "time": entry["time"]})
+	return list
+
+## そのシグナル(StageSignalEvent)を、もう出したか(途中から始めたときも、飛ばした分は出したことにする)
+func signal_passed(signal_name : String) -> bool:
+	for i in mini(_next, _entries.size()):
+		var event = _entries[i]["event"]
+		if event is StageSignalEvent and event.signal_name == signal_name:
+			return true
+	return false
+
 func _physics_process(delta : float) -> void:
 	if not _running or _finished:
 		return

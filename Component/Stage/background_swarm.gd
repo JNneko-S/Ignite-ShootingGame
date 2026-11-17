@@ -24,6 +24,10 @@ var scroll_speed : float = 1.0
 var density : float = 1.0
 ## オンのあいだは、群れも影も出さない(最初のボスの顔見せのあいだなど)。影の知らせは、終わるまで預かる
 var quiet : bool = false
+## オフなら、適当に飛び回る群れは出さない(奥行きの場面では、フェーズの敵の影だけを出す)
+var ambient : bool = true
+## 画面の点(画面の真ん中を 0 とした割合)→ このノードのローカル座標。SkyBackground が入れる(遠近・筒をほどく)
+var map_screen : Callable
 
 ## 次の編隊を出すまでの時間(秒。多さが 1 のとき)
 @export var group_interval : float = 1.3
@@ -41,6 +45,9 @@ var quiet : bool = false
 ## 影の編隊の、待つあいだの旋回の半径(px)と速さ(px/秒)
 @export var orbit_radius : float = 95.0
 @export var orbit_speed : float = 150.0
+## 待機するグループの影の色(群れより少し濃く、敵だと分かるように)と、待機の場所へ入ってくる速さ(px/秒)
+@export var staged_tint : Color = Color(0.24, 0.14, 0.28, 0.55)
+@export var staged_speed : float = 300.0
 
 var _textures : Array[Texture2D] = []
 ## 編隊。{ "units": [{ "node", "offset" }], "pos", "angle", "speed", "plan": [[秒, 回る速さ(rad/秒)], …],
@@ -77,7 +84,7 @@ func _process(delta : float) -> void:
 	if _was_quiet and not quiet:
 		_release_pending()
 	_was_quiet = quiet
-	if not quiet and _hold <= 0.0 and density > 0.05:
+	if ambient and not quiet and _hold <= 0.0 and density > 0.05:
 		_timer -= delta * density
 		if _timer <= 0.0:
 			_timer = group_interval * randf_range(0.6, 1.4)
@@ -88,20 +95,25 @@ func _process(delta : float) -> void:
 		group["age"] += delta
 		if group.get("leave", false):
 			_leave(group, delta)
+		elif group.get("staged", false):
+			_update_staged(group, delta)
 		elif group["shadow"]:
 			_update_shadow(group, delta)
 		else:
 			_fly(group, delta)
 		var alpha := _alpha(group)
+		var color : Color = staged_tint if group.get("staged", false) else tint
 		var any_inside := false
 		for unit in group["units"]:
 			var node : Sprite2D = unit["node"]
-			node.modulate = Color(tint, alpha)
+			node.modulate = Color(color, alpha)
 			if grown.has_point(node.position):
 				any_inside = true
 		var done : bool
 		if group.get("leave", false):
 			done = not any_inside or group["leave_alpha"] <= 0.0
+		elif group.get("staged", false):
+			done = group["state"] == "done"
 		elif group["shadow"]:
 			done = group["age"] >= group["end"]
 		else:
@@ -116,6 +128,11 @@ func _alpha(group : Dictionary) -> float:
 	var age : float = group["age"]
 	if group.get("leave", false):
 		return tint.a * clampf(group["leave_alpha"], 0.0, 1.0)
+	if group.get("staged", false):
+		var a := staged_tint.a * clampf(group["age"] / 0.7, 0.0, 1.0)
+		if group["state"] == "launch" and group["fade_out"]:
+			a *= clampf((1.0 - group["launch_w"]) / 0.25, 0.0, 1.0)
+		return a
 	if group["shadow"]:
 		var end : float = group["end"]
 		return tint.a * clampf(age / 0.8, 0.0, 1.0) * clampf((end - age) / 0.7, 0.0, 1.0)
@@ -340,3 +357,83 @@ func _update_shadow(group : Dictionary, delta : float) -> void:
 static func facing(texture : Texture2D, vel : Vector2) -> float:
 	var nose_up := texture != null and texture.resource_path.get_file().begins_with("MG_")
 	return vel.angle() + (PI * 0.5 if nose_up else -PI * 0.5)
+
+# ---------------------------------------------------------------- フェーズの敵の影(待機して、グループごとに襲ってくる)
+
+## 待機するグループの影を出す。from(画面の割合)から入ってきて、slot(画面の割合)で隊列を組んで待つ。
+## 返したグループを launch_group に渡すと、離れて襲ってくる
+func stage_group(texture : Texture2D, unit_scale : float, count : int, slot : Vector2, from : Vector2) -> Dictionary:
+	var gap := 30.0
+	var offsets := _formation(maxi(count, 1), gap, randi() % 3)
+	var start : Vector2 = map_screen.call(from) if map_screen.is_valid() else Vector2.ZERO
+	var group := _make_group(texture, offsets, unit_scale, start, -PI * 0.5, staged_speed, true)
+	group["staged"] = true
+	group["state"] = "enter"
+	group["slot"] = slot
+	group["unit_scale"] = unit_scale
+	group["spread"] = 0.6 # 遠くにいるので、隊列も詰める
+	group["angle"] = ((map_screen.call(slot) as Vector2) - start).angle() if map_screen.is_valid() else -PI * 0.5
+	_groups.append(group)
+	_place(group, group["spread"])
+	return group
+
+## 待機しているグループを送り出す。seconds 秒で、画面の target(割合)へ飛び込み、大きくなって(近づいて)入れ替わる。
+## fade_out なら、着くころに消える(敵は画面の外から入ってくる)。オフなら、着いたときに消える(敵がそこに現れる)
+func launch_group(group : Dictionary, target : Vector2, seconds : float, arrive_scale : float, fade_out : bool) -> void:
+	if group.is_empty() or group.get("leave", false) or group["state"] == "done":
+		return
+	group["state"] = "launch"
+	group["launch_from"] = group["pos"]
+	group["launch_scale"] = group["unit_scale"]
+	group["launch_target"] = target
+	group["launch_time"] = maxf(seconds, 0.2)
+	group["launch_t"] = 0.0
+	group["launch_w"] = 0.0
+	group["arrive_scale"] = arrive_scale
+	group["fade_out"] = fade_out
+	# 弧を描く向き: 画面の真ん中から見て、行き先の外側へふくらむ
+	group["swing"] = -1.0 if target.x < 0.0 else 1.0
+
+func _update_staged(group : Dictionary, delta : float) -> void:
+	var state : String = group["state"]
+	if state == "launch":
+		group["launch_t"] += delta
+		var w := clampf(group["launch_t"] / group["launch_time"], 0.0, 1.0)
+		group["launch_w"] = w
+		var p0 : Vector2 = group["launch_from"]
+		var p2 : Vector2 = map_screen.call(group["launch_target"])
+		var mid := (p0 + p2) * 0.5
+		var along := p2 - p0
+		var perp := Vector2(along.y, -along.x).normalized()
+		if perp.x * group["swing"] < 0.0:
+			perp = -perp # 行き先の側へふくらませる
+		var ctrl := mid + perp * along.length() * 0.3
+		var e := w * w * (3.0 - 2.0 * w) # ゆっくり離れて、加速して飛び込み、着く前に少しゆるむ
+		var a := p0.lerp(ctrl, e)
+		var b := ctrl.lerp(p2, e)
+		var pos := a.lerp(b, e)
+		if (pos - group["pos"]).length() > 0.5:
+			group["angle"] = (pos - group["pos"]).angle()
+		group["pos"] = pos
+		group["unit_scale"] = lerpf(group["launch_scale"], group["arrive_scale"], w * w)
+		group["spread"] = lerpf(0.6, 1.3, w)
+		if w >= 1.0:
+			group["state"] = "done"
+	else:
+		# 入ってくる → 待機する場所で、隊列のまま漂う(機首は進む向き = 上)
+		var bob := Vector2(sin(_time * 0.9 + group["phase"]) * 6.0, cos(_time * 0.7 + group["phase"]) * 4.0)
+		var target : Vector2 = map_screen.call(group["slot"]) + bob
+		var to := target - (group["pos"] as Vector2)
+		if state == "enter":
+			group["angle"] = lerp_angle(group["angle"], to.angle(), minf(delta * 3.0, 1.0))
+			var speed := clampf(to.length() * 2.0, 60.0, staged_speed)
+			group["pos"] += Vector2.from_angle(group["angle"]) * speed * delta
+			if to.length() < 16.0:
+				group["state"] = "hold"
+		else:
+			group["pos"] = (group["pos"] as Vector2).lerp(target, minf(delta * 3.0, 1.0))
+			group["angle"] = lerp_angle(group["angle"], -PI * 0.5, minf(delta * 2.0, 1.0))
+	_place(group, group["spread"])
+	var s : float = group["unit_scale"]
+	for unit in group["units"]:
+		(unit["node"] as Sprite2D).scale = Vector2(s, s)

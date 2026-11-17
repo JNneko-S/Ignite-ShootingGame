@@ -10,8 +10,16 @@ class_name SkyBackground
 ## 飛行の動き: 背景全体をゆっくり回し(ロール)、斜めに傾け(奥行き)、雲の層ごとに横へずらして(旋回)、
 ## 空を飛び回っているように見せる。敵・弾・自機は動かさない(背景だけ)。
 ## 流れる速さには、StageRunner のスクロール倍率(ScrollSpeedEvent・ボス戦の加速)が掛かる。
+##
+## 擬似3D: 背景は SubViewport に描いてから、sky_projection.gdshader で画面に映す。
+##   ステージの "sky_phase" シグナルが来ると、背景が奥へ倒れて(遠近)、進む向きを軸にした筒のように曲がり、
+##   風の筋とともに加速する。そのフェーズで出てくるザコ敵の影が、下や左右からグループごとに集まって、
+##   画面の中央の奥で待機する。グループが襲ってくる時刻が近づくと、そのグループが離れて、
+##   敵が出てくる場所(画面の上下左右どこでも)へ飛んでいき、本物の敵と入れ替わる。
+##   グループが離れるときは、筒を回す(ロール)カメラワークで、襲来を見せる。
 
 const CLOUD_SHADER := preload("res://Shaders/sky_clouds.gdshader")
+const PROJECTION_SHADER := preload("res://Shaders/sky_projection.gdshader")
 
 @export_group("空")
 ## 空の色(上・真ん中・下)。夕暮れ
@@ -70,11 +78,72 @@ const CLOUD_SHADER := preload("res://Shaders/sky_clouds.gdshader")
 ## ステージの時間がこの秒数になるまでは、背景の群れ(と影)を出さない(最初のボスの顔見せを邪魔しないように)。0 なら最初から
 @export var swarm_after_time : float = 0.0
 
+@export_group("擬似3D(奥行き・筒)")
+## 奥行きの場面での、遠近の強さ(背景が奥へ倒れる量)と、筒の曲がり
+@export_range(0.0, 0.8) var depth_tilt : float = 0.62
+@export_range(0.0, 1.2) var depth_curve : float = 0.55
+## 平らな背景から、奥行きの場面へ移るのにかける時間(秒)
+@export var depth_transition_time : float = 3.0
+## 奥行きの場面では、ゆっくりした回転・傾きを、この割合まで弱める(筒のロールを主役にする)
+@export_range(0.0, 1.0) var depth_calm : float = 0.3
+## 遠く(画面の上)の霞みと、筒の端の暗さ
+@export_range(0.0, 1.0) var depth_haze : float = 0.55
+@export_range(0.0, 1.0) var depth_edge_shade : float = 0.5
+
+@export_group("ロール(グループの襲来)")
+## 1回のロールで、背景を横へ回す量(画面の幅)と、かける時間(秒)
+@export var roll_amount : float = 0.55
+@export var roll_time : float = 1.6
+## 次のロールまで、少なくともあける時間(秒)
+@export var roll_cooldown : float = 5.0
+## ロール中に、背景を傾ける角度(度)と、筒をさらに曲げる量
+@export var roll_bank_deg : float = 9.0
+@export var roll_curve_boost : float = 0.35
+
+@export_group("影の待機")
+## 影のグループが、離れてから敵の出てくる場所に着くまでの時間(秒)
+@export var launch_time : float = 1.8
+## 待機している影の、敵に対する大きさ(遠くにいる)
+@export var hold_scale : float = 0.32
+## 1グループに出す影の数の上限(敵が多い隊列でも、影はこれまで)
+@export var max_shadow_units : int = 5
+
 @export_group("")
 ## 描く高さ(地面より奥。敵・弾・自機より奥)
 @export var background_z : int = -20
 
 var _rig : Node2D
+## 背景を描く SubViewport と、それを画面に映す絵
+var _vp : SubViewport
+var _screen : Sprite2D
+var _projection : ShaderMaterial
+## 今のカメラの範囲(ワールド座標)
+var _view : Rect2 = Rect2(0, 0, 448, 597)
+## 擬似3Dの今の量(0 = 平ら、1 = 奥行きの場面)と、今かかっている遠近・筒
+var _depth : float = 0.0
+var _tilt : float = 0.0
+var _curve : float = 0.0
+var _depth_started : bool = false
+## ロール: 回した量の合計(画面の幅)、進み具合(負なら回していない)、向き、最後に回した時刻
+var _roll_offset : float = 0.0
+var _roll_from : float = 0.0
+var _roll_t : float = -1.0
+var _roll_dir : float = 1.0
+var _roll_pulse : float = 0.0
+var _last_roll : float = -100.0
+## 影の待機の予定。{ "event", "time", "launch_at", "texture", "scale", "count", "handoff": 画面の割合,
+##   "approach": 背景から近づいてくる敵か, "group", "slot", "launched", "skipped" }
+var _plan : Array[Dictionary] = []
+## 影が待機する場所(画面の真ん中を 0 とした割合。上がマイナス)と、使っているか
+const SLOTS : Array[Vector2] = [
+	Vector2(-0.08, -0.30), Vector2(0.08, -0.30), Vector2(-0.24, -0.27), Vector2(0.24, -0.27),
+	Vector2(0.0, -0.19), Vector2(-0.17, -0.17), Vector2(0.17, -0.17), Vector2(-0.33, -0.14),
+	Vector2(0.33, -0.14), Vector2(-0.09, -0.08), Vector2(0.09, -0.08),
+]
+var _slot_used : Array[bool] = []
+var _entry_turn : int = 0
+## 影を出しているイベント(背景から出てくる敵の、ふつうの影を出さないように)
+var _staged_events : Dictionary = {}
 var _size : Vector2 = Vector2.ONE
 var _sky : TextureRect
 var _sea : Sprite2D
@@ -106,8 +175,26 @@ func _ready() -> void:
 	add_to_group("sky_background")
 	z_as_relative = false
 	z_index = background_z
+	_slot_used.resize(SLOTS.size())
+	_slot_used.fill(false)
+	# 背景は SubViewport に描いて、遠近・筒のシェーダーで画面に映す
+	_vp = SubViewport.new()
+	_vp.transparent_bg = false
+	_vp.disable_3d = true
+	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_vp.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
+	add_child(_vp)
+	_screen = Sprite2D.new()
+	_screen.texture = _vp.get_texture()
+	_screen.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_projection = ShaderMaterial.new()
+	_projection.shader = PROJECTION_SHADER
+	_projection.set_shader_parameter("haze_color", sky_middle)
+	_projection.set_shader_parameter("edge_color", sky_top.darkened(0.35))
+	_screen.material = _projection
+	add_child(_screen)
 	_rig = Node2D.new()
-	add_child(_rig)
+	_vp.add_child(_rig)
 	# 1. 空
 	var gradient := Gradient.new()
 	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
@@ -151,6 +238,7 @@ func _ready() -> void:
 	# 4. 背景の敵の群れ
 	_swarm = BackgroundSwarm.new()
 	_swarm.quiet = swarm_after_time > 0.0
+	_swarm.map_screen = screen_to_local
 	_rig.add_child(_swarm)
 	# 5・6. 中層・上層の雲
 	_low = _make_clouds(low_coverage, low_opacity)
@@ -161,15 +249,146 @@ func _ready() -> void:
 ## 背景から出てくる敵がもうすぐ来ると知らせてもらう(背景に同じ編隊の影を出す)
 func _connect_runner() -> void:
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+	# 途中から始めたとき(ここから試遊など): もう奥行きの場面に入っていれば、すぐにそうして影を集める
+	if runner and runner.signal_passed("sky_phase"):
+		start_depth(true)
+		_assemble()
 	if runner and not runner.enemy_incoming.is_connected(_on_enemy_incoming):
 		runner.enemy_incoming.connect(_on_enemy_incoming)
 	if runner and not runner.stage_signal.is_connected(_on_stage_signal):
 		runner.stage_signal.connect(_on_stage_signal)
 
-## ボス・中ボスの WARNING が出たら、背景の群れは画面の外へ去っていく
+## ボス・中ボスの WARNING が出たら、背景の群れは画面の外へ去っていく。
+## "sky_phase" が来たら、奥行きの場面にして(1回目だけ)、このフェーズの敵の影を集める
 func _on_stage_signal(signal_name : String, _text : String) -> void:
 	if signal_name == "warning" and _swarm:
 		_swarm.scatter()
+		_plan.clear()
+		_slot_used.fill(false)
+	elif signal_name == "sky_phase":
+		start_depth()
+		_assemble()
+
+## 平らな背景から、奥行きの場面へ移る(背景が奥へ倒れ、筒のように曲がり、風の筋とともに加速する)
+func start_depth(instant : bool = false) -> void:
+	if _depth_started:
+		return
+	_depth_started = true
+	if _swarm:
+		_swarm.ambient = false # 適当に飛び回る群れは出さない(影はフェーズの敵だけ)
+	if instant:
+		_depth = 1.0
+		return
+	var tween := create_tween()
+	tween.tween_property(self, "_depth", 1.0, depth_transition_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	# 風を浴びて加速する: 風の筋が強く吹いて、おさまる
+	var streaks := DashStreaks.new()
+	get_tree().current_scene.add_child(streaks)
+	streaks.z_index = background_z + 5 # 背景より手前、敵・弾・自機より奥
+	var wind := streaks.create_tween()
+	wind.tween_property(streaks, "amount", 0.8, depth_transition_time * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	wind.tween_property(streaks, "amount", 0.0, depth_transition_time * 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	wind.tween_callback(streaks.queue_free)
+
+## このフェーズ(次の WARNING まで)に出てくるザコ敵を調べて、影の待機の予定を作る
+func _assemble() -> void:
+	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+	if runner == null or _swarm == null:
+		return
+	for entry in runner.upcoming_spawns("warning"):
+		var event : SpawnEvent = entry["event"]
+		var info := _info(event.enemy_scene)
+		if info["texture"] == null:
+			continue
+		var handoff := _handoff_point(event, info)
+		_staged_events[event] = true
+		_plan.append({"event": event, "time": entry["time"], "launch_at": float(entry["time"]) - launch_time,
+			"texture": info["texture"], "scale": info["scale"], "count": mini(event.unit_count(), max_shadow_units),
+			"handoff": (handoff - _view.get_center()) / _view.size, "approach": event.emerge == 1,
+			"group": {}, "slot": -1, "launched": false, "skipped": false})
+
+## 敵が最初に見える場所(ワールド座標)。影はここへ飛んでいって、本物の敵と入れ替わる
+func _handoff_point(event : SpawnEvent, info : Dictionary) -> Vector2:
+	var view := _view
+	var axis := view.get_center().x
+	var mirror := func(p : Vector2) -> Vector2:
+		return Vector2(axis * 2.0 - p.x, p.y) if event.mirror_x else p
+	if event.flight_curve:
+		var first : Vector2 = event.flight_curve.center + event.flight_curve.point(0.0) + event.offset
+		return Vector2(first.x, view.position.y + 10.0)
+	var pattern : MovePattern = event.move_pattern if event.move_pattern else info["pattern"]
+	var start := Vector2(axis, view.position.y - 40.0)
+	var target := Vector2(axis, view.position.y + view.size.y * 0.25)
+	if pattern:
+		start = pattern.start_position
+		target = start
+		for step in pattern.steps:
+			if step.mode != MoveStep.Mode.CHASE:
+				target = start + step.target if step.relative else step.target
+			break
+	start = mirror.call(start + event.offset)
+	target = mirror.call(target + event.offset)
+	match event.emerge:
+		1: # 背景から近づいてくる: 最初に向かう地点の、少し上
+			return target + Vector2(0.0, -30.0)
+		2: # 背景の下から上へ抜ける: 画面の下のほう
+			return Vector2(target.x, view.end.y - view.size.y * 0.15)
+	# ふつう: 画面の外の出現位置を、画面のふちに寄せた場所(そこから入ってくる)
+	var inner := view.grow(-12.0)
+	return start.clamp(inner.position, inner.end)
+
+## 影の待機の予定を進める: 空いた場所に次のグループを呼び、時刻が来たグループを送り出す
+func _update_plan(now : float) -> void:
+	for i in range(_plan.size() - 1, -1, -1):
+		var item := _plan[i]
+		var group : Dictionary = item["group"]
+		if item["skipped"] or (item["launched"] and (group.is_empty() or group.get("state", "") == "done")):
+			_plan.remove_at(i)
+	for item in _plan:
+		if item["skipped"] or item["launched"]:
+			continue
+		var left : float = item["launch_at"] - now
+		if (item["group"] as Dictionary).is_empty():
+			if left < 0.8:
+				item["skipped"] = true # 間に合わない
+				continue
+			var slot := _free_slot()
+			if slot < 0:
+				continue
+			_slot_used[slot] = true
+			item["slot"] = slot
+			# 下・左・右から順に入ってくる(時間がなければ、待機する場所にそのまま浮かび上がる)
+			var from := SLOTS[slot]
+			if left >= 3.0:
+				match _entry_turn % 3:
+					0: from = Vector2(SLOTS[slot].x * 1.6, 0.85)
+					1: from = Vector2(-0.95, SLOTS[slot].y + 0.25)
+					_: from = Vector2(0.95, SLOTS[slot].y + 0.25)
+				_entry_turn += 1
+			item["group"] = _swarm.stage_group(item["texture"], item["scale"] * hold_scale, item["count"], SLOTS[slot], from)
+		elif left <= 0.0:
+			item["launched"] = true
+			_slot_used[item["slot"]] = false
+			var seconds := maxf(float(item["time"]) - now, 0.4)
+			var arrive : float = item["scale"] * (0.3 if item["approach"] else 0.75)
+			_swarm.launch_group(item["group"], item["handoff"], seconds, arrive, not item["approach"])
+			_try_roll(signf((item["handoff"] as Vector2).x))
+
+func _free_slot() -> int:
+	var free : Array[int] = []
+	for i in SLOTS.size():
+		if not _slot_used[i]:
+			free.append(i)
+	return -1 if free.is_empty() else free.pick_random()
+
+## グループが襲ってくるときに、筒を回す(間隔があいていれば)。向きは、襲ってくる側へ
+func _try_roll(side : float) -> void:
+	if _depth < 0.5 or _time - _last_roll < roll_cooldown or _roll_t >= 0.0:
+		return
+	_last_roll = _time
+	_roll_t = 0.0
+	_roll_from = _roll_offset
+	_roll_dir = side if side != 0.0 else (-1.0 if randf() < 0.5 else 1.0)
 
 ## 敵のシーンの絵・大きさ・移動パターン(影を作るために、1回だけ調べて覚えておく)
 var _scene_info : Dictionary = {}
@@ -190,7 +409,7 @@ func _info(scene : PackedScene) -> Dictionary:
 	return info
 
 func _on_enemy_incoming(event : SpawnEvent, seconds : float) -> void:
-	if _swarm == null or event.enemy_scene == null:
+	if _swarm == null or event.enemy_scene == null or _staged_events.has(event):
 		return
 	var info := _info(event.enemy_scene)
 	var pattern : MovePattern = event.move_pattern if event.move_pattern else info["pattern"]
@@ -204,7 +423,7 @@ func _on_enemy_incoming(event : SpawnEvent, seconds : float) -> void:
 	var points : Array[Vector2] = []
 	for i in event.unit_count():
 		var world := base + event.offset + event.offset_step * i
-		points.append(_swarm.to_local(world))
+		points.append(screen_to_local((world - _view.get_center()) / _view.size))
 	_swarm.foreshadow(info["texture"], points, seconds, info["scale"])
 
 func _make_clouds(coverage : float, opacity : float) -> ColorRect:
@@ -250,25 +469,52 @@ func _process(delta : float) -> void:
 	_flow_low += slant * low_speed * speed * delta
 	_flow_high += slant * high_speed * speed * delta
 	_flow_sea += tan(_heading) * sea_speed * speed * delta
+	# ロール(筒を回す): ゆっくり加速して回り、ゆっくり止まる。回っているあいだは傾いて、筒がさらに曲がる
+	_roll_pulse = 0.0
+	if _roll_t >= 0.0:
+		_roll_t += delta / maxf(roll_time, 0.1)
+		var w := smoothstep(0.0, 1.0, minf(_roll_t, 1.0))
+		_roll_offset = _roll_from + _roll_dir * roll_amount * w
+		_roll_pulse = sin(PI * minf(_roll_t, 1.0))
+		if _roll_t >= 1.0:
+			_roll_t = -1.0
+	_tilt = depth_tilt * _depth
+	_curve = depth_curve * _depth + roll_curve_boost * _roll_pulse * _depth
+	_projection.set_shader_parameter("tilt", _tilt)
+	_projection.set_shader_parameter("curve", _curve)
+	_projection.set_shader_parameter("haze", depth_haze * _depth)
+	_projection.set_shader_parameter("edge_shade", depth_edge_shade * _depth)
 	(_side.material as ShaderMaterial).set_shader_parameter("scroll", _side_scroll)
 	(_low.material as ShaderMaterial).set_shader_parameter("scroll", _low_scroll)
 	(_high.material as ShaderMaterial).set_shader_parameter("scroll", _high_scroll)
-	(_side.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 0.5 + _flow_side_layer)
-	(_low.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 1.0 + _flow_low)
-	(_high.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 1.7 + _flow_high)
+	(_side.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 0.5 + _flow_side_layer + _roll_offset * 0.6)
+	(_low.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 1.0 + _flow_low + _roll_offset * 0.8)
+	(_high.material as ShaderMaterial).set_shader_parameter("drift", _yaw * 1.7 + _flow_high + _roll_offset * 1.0)
 	if _swarm:
 		_swarm.scroll_speed = speed
 		_swarm.quiet = swarm_after_time > 0.0 and (runner == null or runner.stage_time < swarm_after_time)
 	_follow_view()
+	if runner and not _plan.is_empty():
+		_update_plan(runner.stage_time)
 
 ## カメラに映っている範囲の真ん中に、背景を回して・傾けて置く
 func _follow_view() -> void:
 	var view := CameraView.visible_rect(self)
-	var k := motion_strength
-	_size = view.size * oversize
-	_rig.global_position = view.get_center()
+	_view = view
+	# 奥行きの場面では、ゆっくりした回転・傾きを弱めて、筒のロールを主役にする
+	var k := motion_strength * lerpf(1.0, depth_calm, _depth)
+	_size = (view.size * oversize).round()
+	var vp_size := Vector2i(_size)
+	if _vp.size != vp_size:
+		_vp.size = vp_size
+	# 背景の絵(SubViewport)を、画面いっぱいに映す
+	_screen.global_position = view.get_center()
+	_screen.scale = view.size / _size
+	_projection.set_shader_parameter("oversize", Vector2(oversize, oversize))
+	_rig.position = _size * 0.5
 	# ロール(ゆっくり大きく + 少し速く小さく)と、傾き(奥行き)と、ほんの少しの遠近(寄ったり離れたり)
-	_rig.rotation = deg_to_rad(roll_deg) * k * (0.7 * sin(_time * 0.19) + 0.3 * sin(_time * 0.47 + 1.3)) - _heading * 0.35 # 進む向きへ少し傾く
+	_rig.rotation = deg_to_rad(roll_deg) * k * (0.7 * sin(_time * 0.19) + 0.3 * sin(_time * 0.47 + 1.3)) - _heading * 0.35 \
+		+ deg_to_rad(roll_bank_deg) * _roll_pulse * _roll_dir * _depth # 筒を回すときは、回る向きへ傾く
 	_rig.skew = skew_amount * k * sin(_time * 0.15 + 0.7)
 	var zoom := 1.0 + 0.05 * k * sin(_time * 0.23 + 0.4)
 	_rig.scale = Vector2(zoom, zoom)
@@ -281,7 +527,7 @@ func _follow_view() -> void:
 		_sea.scale = Vector2(s, s)
 		_sea.position = corner
 		# 縦に繰り返す絵を下へ流し、旋回にあわせて少し横へずらす
-		_sea.region_rect = Rect2(_yaw * 0.3 * frame_w + _flow_sea / s, -_sea_offset / s, frame_w, _size.y / s)
+		_sea.region_rect = Rect2((_yaw * 0.3 + _roll_offset * 0.4) * frame_w + _flow_sea / s, -_sea_offset / s, frame_w, _size.y / s)
 	for rect in [_side, _low, _high]:
 		rect.position = corner
 		rect.size = _size
@@ -290,3 +536,24 @@ func _follow_view() -> void:
 		material.set_shader_parameter("aspect", _size.x / maxf(_size.y, 1.0))
 	if _swarm:
 		_swarm.area = Rect2(corner, _size)
+
+# ---------------------------------------------------------------- 画面と背景の対応(sky_projection.gdshader と同じ式)
+
+## 画面の点(画面の真ん中を 0 とした割合。幅・高さ = 1)が、背景の群れ(BackgroundSwarm)のどこに映るか
+func screen_to_local(ratio : Vector2) -> Vector2:
+	var v := ratio.y / (1.0 + _tilt * ratio.y)
+	var xc := ratio.x * (1.0 - _tilt * v)
+	var u := xc
+	if _curve > 0.001:
+		u = asin(clampf(xc * _curve, -1.0, 1.0)) / _curve
+	var px := Vector2(u, v) * _view.size + _size * 0.5
+	return _rig.transform.affine_inverse() * px
+
+## 背景の群れの点(ローカル座標)が、画面のどこに映るか(ワールド座標)
+func local_to_screen(local : Vector2) -> Vector2:
+	var px := _rig.transform * local - _size * 0.5
+	var u := px.x / _view.size.x
+	var v := px.y / _view.size.y
+	var xc := sin(u * _curve) / _curve if _curve > 0.001 else u
+	var d := 1.0 - _tilt * v
+	return _view.get_center() + Vector2(xc / d, v / d) * _view.size
