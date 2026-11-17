@@ -122,6 +122,8 @@ func _arrive() -> void:
 	var streaks := _make_streaks()
 	streaks.amount = 1.0
 	await get_tree().process_frame # ScoreSystem などの準備(call_deferred)が終わってから
+	if not is_inside_tree():
+		return
 	StageCarry.apply(get_tree())
 	await get_tree().create_timer(arrive_hold_time, false).timeout
 	# 霧がちぎれるように消えていき、霧の中から自機が現れる

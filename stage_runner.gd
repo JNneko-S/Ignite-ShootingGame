@@ -17,6 +17,8 @@ signal stage_cleared
 signal stage_signal(signal_name : String, text : String)
 ## is_boss の SpawnEvent で敵を出したときに出る(BossGauge が受け取る)
 signal boss_spawned(enemy : Enemy, boss_name : String, phase_thresholds : Array[float])
+## ステージの最後のボスを倒した瞬間に出る(このあと爆発の演出 → stage_cleared)
+signal final_boss_defeated
 
 @export var stage : StageData
 @export var autostart : bool = true
@@ -177,6 +179,7 @@ func _on_final_boss_died(_boss : Enemy) -> void:
 	if _finished:
 		return
 	_finished = true # これより後のイベントは進めない
+	final_boss_defeated.emit()
 	EnemyShooter.hold_fire(final_boss_clear_delay + 10.0)
 	EnemyBullet.vanish_all(get_tree(), _boss.global_position)
 	for node in get_tree().get_nodes_in_group("enemy"):
@@ -240,6 +243,10 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		if hp:
 			hp.max_hp = event.hp_override
 			hp.hp = event.hp_override
+	if event.power_drop_chance >= 0.0:
+		for child in enemy.get_children():
+			if child is ItemDrop and child.item_scene != null:
+				child.chance = event.power_drop_chance
 	if event.tag != "":
 		register_tag(enemy, event.tag)
 	if event.is_boss:

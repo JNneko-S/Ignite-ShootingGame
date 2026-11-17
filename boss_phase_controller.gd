@@ -220,6 +220,8 @@ func _summon_with_cut_in(runner : StageRunner, camera : StageCamera, entries : A
 		# 出てきた援護が突っ込んで止まり、汽笛(ファーン)が鳴り終わるまで見せる
 		await get_tree().process_frame
 		await get_tree().physics_frame
+		if not is_inside_tree():
+			return
 		var mover : TrainBossMover = null
 		for node in get_tree().get_nodes_in_group("stage_support"):
 			if not before.has(node):

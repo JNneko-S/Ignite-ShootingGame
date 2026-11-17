@@ -195,6 +195,8 @@ func _set_blink(elapsed : float, total : float) -> void:
 ## 自分から親をたどって、表示を妨げているノードがないか出力する
 func _debug_report() -> void:
 	await get_tree().process_frame
+	if not is_inside_tree():
+		return
 	print("[IgniteVisual] 発動 First縁半径=%.1fpx 倍率=%.3f grow=%.2f" % [_first_radius_px, _scale_factor, _grow])
 	var node : Node = self
 	while node and node is CanvasItem:

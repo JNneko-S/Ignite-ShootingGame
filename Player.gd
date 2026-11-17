@@ -108,6 +108,8 @@ var graze_radius_scale : float = 1.0:
 @export var hitbox_display_radius : float = 3.0
 ## 矢印キーを、移動のキーに追加する(WASD は Input Map から外せる)
 @export var add_arrow_keys : bool = true
+## スティックをこの割合まで倒すと全速(1 なら、いっぱいに倒したときだけ全速)
+@export_range(0.3, 1.0, 0.05) var stick_full_ratio : float = 0.9
 
 @export_group("イグナイト入力")
 ## 長押しで「全レベル消費」になるまでの時間(秒)。それより前に離すと、単押し(1レベル消費)
@@ -186,6 +188,8 @@ signal lock_speed_changed(level : int)
 
 ## イグナイトを発動できる状態か(Lv1以上で、発動中でない)。GameManager が毎フレーム設定する
 var ignite_available : bool = false
+## true のあいだ、イグナイトを使えない(ボス撃破〜クリアの演出中。GameManager が決める)
+var ignite_locked : bool = false
 enum HoldState { IDLE, HOLDING, DONE }
 var _hold_state : HoldState = HoldState.IDLE
 var _hold_time : float = 0.0
@@ -242,10 +246,7 @@ func _physics_process(delta: float) -> void:
 
 	_update_ignite_input(delta)
 
-	var dir := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
-	# ゲームパッドのスティックは、少し倒しただけでも全速で動く(キーボードと同じ速さにそろえる。遅く動くのは低速移動で)
-	if dir != Vector2.ZERO:
-		dir = dir.normalized()
+	var dir := move_input()
 	var speed := move_speed * level_move_scale
 	if is_focusing:
 		speed *= focus_speed_multiplier
@@ -554,6 +555,7 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
 	if _is_alive:
 		HitStop.apply(get_tree(), HitStop.PLAYER_HIT) # 撃たれた瞬間に、一瞬止まる
+		Rumble.play(Rumble.PLAYER_HIT) # ゲームパッドが震える
 		start_invincibility(hit_invincible_time)
 		if hit_flame:
 			hit_flame.burst(hit_position, hit_direction) # イグナイトが残っている: 撃たれた向きの先へ炎が噴き出す
@@ -581,6 +583,7 @@ func die() -> void:
 		return
 	_is_alive = false
 	HitStop.apply(get_tree(), HitStop.PLAYER_DEATH) # 撃墜の瞬間に、少し長く止まる
+	Rumble.play(Rumble.PLAYER_DEATH)
 	set_igniting(false)
 	_cancel_ignite_hold()
 	reset_shot_power()
@@ -658,6 +661,9 @@ func set_igniting(on : bool) -> void:
 func _update_ignite_input(delta : float) -> void:
 	if not InputMap.has_action("UI_Ignite"):
 		return
+	if ignite_blocked():
+		_cancel_ignite_hold()
+		return
 	var pressed := Input.is_action_pressed("UI_Ignite")
 	match _hold_state:
 		HoldState.IDLE:
@@ -680,6 +686,10 @@ func _update_ignite_input(delta : float) -> void:
 			if not pressed:
 				_hold_state = HoldState.IDLE
 
+## 演出中で、イグナイトを使えないか(出撃・ステージの切り替え・カメラだけ別を向く場面など、自機を止めている演出と、ボス撃破〜クリアの演出)
+func ignite_blocked() -> bool:
+	return ignite_locked or not is_physics_processing() or has_meta("camera_frozen")
+
 func _cancel_ignite_hold() -> void:
 	_hold_state = HoldState.IDLE
 	_set_charge(0.0)
@@ -696,6 +706,21 @@ func _draw() -> void:
 			48, Color(1.0, 0.6, 0.2, 0.9), 3.0)
 
 # ---------------------------------------------------------------- 操作・表示の補助
+
+## 移動の入力(長さ 0〜1)。
+##   キーボード・十字キー: 押した向きへ、まっすぐ全速(斜めも全速)。スティックのずれが混ざらないよう、押しているあいだはスティックを見ない
+##   スティック          : 倒した向きへ、倒した分だけの速さ(Stick Full Ratio 以上倒すと全速)
+func move_input() -> Vector2:
+	var digital := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
+	if digital != Vector2.ZERO:
+		return digital.normalized()
+	if not InputMap.has_action("UI_StickLeft"):
+		return Vector2.ZERO
+	var stick := Input.get_vector("UI_StickLeft", "UI_StickRight", "UI_StickUp", "UI_StickDown")
+	if stick == Vector2.ZERO:
+		return stick
+	var amount := clampf(stick.length() / maxf(stick_full_ratio, 0.01), 0.0, 1.0)
+	return stick.normalized() * amount
 
 ## 移動のアクションに、矢印キーを足す(すでにあれば何もしない)
 func _add_arrow_keys() -> void:

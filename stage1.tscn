@@ -6,6 +6,8 @@
 
 [node name="ScrollTest" unique_id=2065326320 instance=ExtResource("base")]
 graze_per_levels = Array[float]([10.0, 12.0, 14.0])
+first_ignite_item_scale = 3
+ignite_hint_after = 16.0
 burn_max_radius = Array[float]([40.0, 60.0, 80.0, 100.0, 0.0])
 burn_final_radius = Array[float]([0.0, 0.0, 0.0, 0.0, 120.0])
 post_ignite_invincible_time = 1.2

@@ -13,6 +13,9 @@ class_name SpawnEvent
 @export var shot_patterns : Array[ShotPattern] = []
 ## 0 より大きければ、敵のHPをこの値にする
 @export var hp_override : int = 0
+## 0 以上なら、この敵がパワーアップを落とす確率(0〜1)を、敵のシーンの値の代わりに使う。1 なら確定で落とす。
+## -1 なら、敵のシーンのまま(パワーアップを落とさない敵には効かない)
+@export_range(-1.0, 1.0, 0.05) var power_drop_chance : float = -1.0
 ## 待機イベントで「この敵が全滅するまで待つ」と指定するための名前(例: midboss, boss)
 @export var tag : String = ""
 

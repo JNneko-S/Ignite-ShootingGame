@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://kvf6owigycv1"]
+
+[ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://player.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://ckgsvcihgntb" path="res://GameScene/Player/vespa_player.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://b85j0qulfkw8x" path="res://Assets/VESPα.png" id="3_tex"]
+[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="4_center"]
+[ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="5_counter"]
+
+[node name="Player" unique_id=257047966 node_paths=PackedStringArray("center_hit_sound", "counter_sound") instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+vulcan_interval = 0.08
+vulcan_damage = 6.0
+vulcan_speed = 800.0
+vulcan_muzzle = Vector2(11, -6)
+vulcan_jitter = 4.0
+vulcan_scale = 0.6
+vulcan_alpha = 0.75
+sniper_interval = 0.5
+sniper_damage = 90.0
+sniper_speed = 1500.0
+sniper_scale = Vector2(0.5, 2)
+sniper_color = Color(0.85, 0.55, 1.6, 1)
+center_hit_sound = NodePath("CenterHitSound")
+graze_boost_time = 0.3
+graze_boost_scale = 1.5
+graze_boost_color = Color(0.55, 1.3, 1.6, 1)
+option_positions = Array[Vector2]([Vector2(-16, 6), Vector2(16, 6), Vector2(-34, 12), Vector2(34, 12)])
+inner_angles = Array[float]([-6.0, -2.0, 3.0, 8.0, 14.0, 20.0])
+outer_angles = Array[float]([-13.0, -5.0, 6.0, 16.0, 25.0, 35.0])
+option_turn_time = 0.2
+option_vulcan_interval = 0.12
+option_vulcan_damage = 9.0
+option_sniper_damage = 10.0
+counter_shots = 3
+counter_shot_damage = 8.0
+counter_shot_gap = 0.05
+pre_window = 0.08
+pre_window_lv0 = 0.03
+post_window = 0.15
+post_window_lv0 = 0.05
+counter_invincible_time = 0.6
+counter_text_color = Color(0.8, 0.6, 1, 1)
+counter_sound = NodePath("CounterSound")
+hit_invincible_time = 1.5
+use_level_scales = false
+
+[node name="Sprite2D" parent="." index="2" unique_id=1093960595]
+position = Vector2(0, 2)
+scale = Vector2(0.07, 0.07)
+texture = ExtResource("3_tex")
+
+[node name="GrazeArea" parent="." index="6" unique_id=1058524215]
+focus_multiplier = 1.2
+
+[node name="MotionTilt" parent="." index="17" unique_id=501000030]
+perspective = 2360.0
+
+[node name="CenterHitSound" type="AudioStreamPlayer" parent="." index="18" unique_id=257047967]
+stream = ExtResource("4_center")
+volume_db = -8.0
+
+[node name="CounterSound" type="AudioStreamPlayer" parent="." index="19" unique_id=257047968]
+stream = ExtResource("5_counter")
+volume_db = -4.0
+pitch_scale = 0.8
+
+[editable path="Ignite"]
+[editable path="Hurtbox"]

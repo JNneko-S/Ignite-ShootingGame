@@ -71,6 +71,11 @@ var _pending : Array[float] = []
 var _orbit_radius : float = 0.0
 var _orbit_speed : float = 150.0
 var _orbit_spread : float = 14.0
+## 左右から撃つバルカンの機体(VESPA): 撃つ位置の横のずれ(0 ならバルカンでない)・ぶれ(度)と、ゲージの Lv ごとの子機の向き(内側・外側)
+var _vulcan_x : float = 0.0
+var _vulcan_jitter : float = 4.0
+var _inner_angles : Array = []
+var _outer_angles : Array = []
 var _has_beam : bool = false
 var _beam_half : float = 14.0
 var _label_font : Font = preload("res://Assets/Fonts/micronian.ttf")
@@ -86,7 +91,7 @@ func _ready() -> void:
 	_label.z_index = 5 # 弾・子機より手前
 	add_child(_label)
 	_defaults = {"ship_game_scale": ship_game_scale, "fire_interval": fire_interval, "shot_angles": shot_angles.duplicate(),
-		"option_angles": option_angles.duplicate()}
+		"option_angles": option_angles.duplicate(), "option_slots": option_slots.duplicate()}
 	_build_options()
 
 ## 選んだ機体の撃ち方に合わせる(機体の自機のシーンから、ゲーム中の値を読む)。
@@ -96,6 +101,8 @@ func configure(ship_data : ShipData) -> void:
 	fire_interval = _defaults.get("fire_interval", fire_interval)
 	shot_angles.assign(_defaults.get("shot_angles", shot_angles))
 	option_angles.assign(_defaults.get("option_angles", option_angles))
+	option_slots.assign(_defaults.get("option_slots", option_slots))
+	_vulcan_x = 0.0
 	_orbit_radius = 0.0
 	_pellet_count = 0
 	if ship_data == null or ship_data.player_scene == null:
@@ -104,7 +111,7 @@ func configure(ship_data : ShipData) -> void:
 	var sprite := player.get_node_or_null("Sprite2D") as Sprite2D
 	if sprite:
 		ship_game_scale = sprite.scale.x
-	_has_beam = "parallel_offsets_5" in player and not ("pellet_count" in player)
+	_has_beam = "parallel_offsets_5" in player and not ("pellet_count" in player) and not ("vulcan_interval" in player)
 	if _has_beam and not player.parallel_offsets_5.is_empty():
 		_beam_half = absf(float(player.parallel_offsets_5[0]))
 	if "pellet_count" in player:
@@ -122,6 +129,13 @@ func configure(ship_data : ShipData) -> void:
 			_orbit_speed = player.orbit_speed
 			_orbit_spread = player.option_way_spread
 		option_angles.assign(player.option_angles)
+	if "vulcan_interval" in player:
+		_vulcan_x = absf(player.vulcan_muzzle.x)
+		_vulcan_jitter = player.vulcan_jitter
+		fire_interval = player.vulcan_interval * 1.5 # プレビューは少し間引く
+		option_slots.assign(player.option_positions)
+		_inner_angles = Array(player.inner_angles)
+		_outer_angles = Array(player.outer_angles)
 	player.free()
 
 ## 機体を切り替えたとき: 飛んでいる弾を消して、子機を機体の位置に戻す
@@ -222,6 +236,16 @@ func _process(delta : float) -> void:
 
 func _volley(k : float) -> void:
 	var from := _ship_position() + muzzle_offset * k
+	if _vulcan_x > 0.0:
+		# バルカン(VESPA): 左右から、少しぶれて撃つ。子機はゲージの Lv で向きが変わる(Lv1 は内向きで交わり、Lv5 はワイド)
+		for side in [-1.0, 1.0]:
+			_spawn_bullet(from + Vector2(_vulcan_x * side, 10.0) * k, randf_range(-_vulcan_jitter, _vulcan_jitter), bullet_color, k)
+		for i in _options.size():
+			var table := _outer_angles if i >= 2 else _inner_angles
+			var out : float = float(_at(table, _level, 0.0))
+			var left : bool = option_slots[i % option_slots.size()].x < 0.0
+			_spawn_bullet(_options[i].position, -out if left else out, option_bullet_color, k)
+		return
 	if _pellet_count <= 0 and not (_has_beam and _level >= 5): # Lv5 の PHOENIX はビーム(_draw で描く)
 		for angle in shot_angles:
 			_spawn_bullet(from, angle, bullet_color, k)

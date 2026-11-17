@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ShipData" format=3 uid="uid://bec6dx0n5uyvi"]
+
+[ext_resource type="Script" uid="uid://dbsvtggbtigus" path="res://Resources/Ships/ship_data.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b85j0qulfkw8x" path="res://Assets/VESPα.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://kvf6owigycv1" path="res://GameScene/Player/vespa.tscn" id="3_player"]
+
+[resource]
+script = ExtResource("1_script")
+ship_name = "VESPA"
+subtitle = "弾をかすめて狙撃し、当たる瞬間に返すカウンターの機体"
+description = "カウンター性能に特化させた不死鳥三号機。
+通常はバルカンで攻撃、低速移動はスナイパーへ切り替わる。
+弾が当たる瞬間にイグナイトを押せば、被弾を無効にしてゲージを使わずに反撃する。
+ショット: 左右のバルカン / 低速移動: 貫通するスナイパー"
+texture = ExtResource("2_tex")
+preview_scale = 0.106
+icon_scale = 0.069
+player_scene = ExtResource("3_player")

@@ -190,6 +190,9 @@ func _physics_process(_delta : float) -> void:
 func _spawn_flare() -> void:
 	var flare := IgniteFlare.new()
 	flare.setup(params, collision_mask, flare_radius_base + flare_radius_per_level * _level, flare_life, chain_window)
+	# イグナイトの円と同じく、敵・ボス・弾より手前に出す(ステージの直下に置くので、何もしないと z 0 でボスの下に隠れる)
+	flare.z_as_relative = false
+	flare.z_index = draw_z - 1
 	get_tree().current_scene.add_child(flare)
 	flare.global_position = global_position
 	_flares.append(flare)
@@ -212,5 +215,7 @@ func _on_area_entered(area : Area2D) -> void:
 func _debug_report() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	if not is_inside_tree():
+		return
 	print("[IgniteAura] monitoring=%s mask=%d 半径=%.0f 重なっているArea=%d個" % [
 		monitoring, collision_mask, _radius, get_overlapping_areas().size()])

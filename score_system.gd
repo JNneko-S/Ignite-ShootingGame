@@ -169,6 +169,8 @@ var kill_count : int = 0
 var item_chain : int = 0
 ## 今の発動で焼いた弾の数(発動していなければ、直前の発動の数)
 var burn_count : int = 0
+## 焼いた弾が落とすスコアアイテムの倍率(数も点も)。GameManager が、ステージ最初のイグナイトだけ大きくする
+var burn_item_scale : int = 1
 var _burning : bool = false
 
 var _next_extend : int = 0
@@ -312,6 +314,8 @@ func _drop_boss_items_later(enemy : Enemy, bonus : int) -> void:
 
 ## at の位置(画面の上半分に寄せる。下すぎると拾えないので)に、ボスの勲章とアイテムを出す
 func _drop_boss_items(at : Vector2, bonus : int) -> void:
+	if not is_inside_tree() or get_tree().current_scene == null:
+		return # シーンを読み直す・閉じるときに、ボスと一緒に消えた(勲章は出さない)
 	var ref : CanvasItem = player if is_instance_valid(player) else get_tree().current_scene as CanvasItem
 	var view := CameraView.visible_rect(ref) if ref else Rect2(at - Vector2(224, 300), Vector2(448, 597))
 	at = Vector2(clampf(at.x, view.position.x + 60.0, view.end.x - 60.0),
@@ -324,6 +328,8 @@ func _drop_boss_items(at : Vector2, bonus : int) -> void:
 	if boss_small_items > 0:
 		items.append_array(spawn_items(at, boss_small_item_value * boss_small_items, boss_small_items, 2.4))
 	await get_tree().create_timer(boss_drop_collect_delay).timeout
+	if not is_inside_tree():
+		return
 	for item in items:
 		if is_instance_valid(item):
 			item.collect_now()
@@ -414,7 +420,8 @@ func _check_close_grazes() -> void:
 ## 焼いた弾の位置に、スコアアイテムを出す。level: 今の発動で消費したレベル。
 ## アイテムは Burn Item Hold Time 秒その場にとどまってから、自動で自機へ吸い寄せられる
 func spawn_burn_item(at : Vector2, level : int) -> void:
-	for item in spawn_items(at, burn_points_per_level * maxi(level, 1), 1, 0.5):
+	var extra := maxi(burn_item_scale, 1)
+	for item in spawn_items(at, burn_points_per_level * maxi(level, 1) * extra, extra, 0.5 + 0.25 * (extra - 1)):
 		item.hold(burn_item_hold_time)
 	if _burning:
 		burn_count += 1

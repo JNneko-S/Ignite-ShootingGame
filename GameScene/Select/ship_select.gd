@@ -24,12 +24,12 @@ class_name ShipSelect
 @export_group("難易度(EASY, NORMAL, HARD の順)")
 @export var difficulty_names : Array[String] = ["EASY", "NORMAL", "HARD"]
 ## 説明の欄の、見出しの下に出る短い説明
-@export var difficulty_subtitles : Array[String] = ["はじめての人向け", "標準の難しさ", "上級者向け"]
+@export var difficulty_subtitles : Array[String] = ["はじめての人向け", "慣れた人向け", "上級者向け"]
 ## 説明の欄に出す説明
 @export var difficulty_texts : Array[String] = [
-	"イグナイトゲージが通常より多く、グレイズできる範囲も広い。\nまた、いくらかゲージ回復が早くなっているぞ。\nシューティングのルーキーなら、ここからスタートしよう。",
-	"グレイズでゲージを溜め、イグナイトで焼き払う。\nこのゲームのちょうどいい難易度に設定されている。\n訓練された君に向けての挑戦状だ。",
-	"通常より少ないゲージで出撃し、グレイズできる範囲が狭い。\nまた、ゲージの貯めやすさもいくらか難しくなっている。\n帰りの切符はどこにあるのだろう？",
+	"イグナイトゲージが通常より多く、グレイズできる範囲も広い。\nまた、いくらかゲージ回復が早くなっているぞ。\n何もSTGを知らないルーキーなら、ここからスタートしよう。",
+	"グレイズでゲージを溜め、イグナイトで焼き払う。\nこのゲームのちょうどいい難易度に設定されている。\n様々なSTGを通って訓練された君に向けての挑戦状だ。",
+	"通常より少ないゲージで出撃し、グレイズできる範囲が狭い。\nまた、ゲージの貯めやすさもいくらか難しくなっている。\n行き先は地獄、地獄帰りの切符は用意されていない。",
 ]
 ## 掲示板の文字の色
 @export var difficulty_colors : Array[Color] = [Color(0.35, 1.0, 0.4), Color(1.0, 0.62, 0.12), Color(1.0, 0.22, 0.15)]
@@ -138,16 +138,16 @@ func _process(delta : float) -> void:
 	_icon.position = _icon_base + Vector2(0.0, sin(_time * 2.4 + 1.0) * 1.5)
 	match _step:
 		Step.SHIP:
-			if _pressed(["UI_Left", "ui_left"]):
+			if _pressed(["UI_Left", "UI_StickLeft", "ui_left"]):
 				_change_ship(-1)
-			elif _pressed(["UI_Right", "ui_right"]):
+			elif _pressed(["UI_Right", "UI_StickRight", "ui_right"]):
 				_change_ship(1)
 			elif _pressed(["UI_Shoot", "ui_accept"]):
 				_to_difficulty()
 		Step.DIFFICULTY:
-			if _pressed(["UI_Left", "ui_left"]):
+			if _pressed(["UI_Left", "UI_StickLeft", "ui_left"]):
 				_change_difficulty(-1)
-			elif _pressed(["UI_Right", "ui_right"]):
+			elif _pressed(["UI_Right", "UI_StickRight", "ui_right"]):
 				_change_difficulty(1)
 			elif _pressed(["UI_Shoot", "ui_accept"]):
 				_launch()

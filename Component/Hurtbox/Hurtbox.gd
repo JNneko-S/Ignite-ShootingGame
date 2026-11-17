@@ -24,15 +24,14 @@ func _scaled_damage(hitbox : Hitbox) -> int:
 	var damage := hitbox.damage
 	if not (hitbox is Bullet) or hitbox.damage_source_type != Hitbox.DamageSourceType.Player:
 		return damage
+	var base : float = (hitbox as Bullet).damage_against(self) # 中心ねらいの弾は、当たった所で威力が変わる
 	var player := get_tree().get_first_node_in_group("player")
 	if player == null or not player.has_method("close_damage_scale_at"):
-		return damage
+		return maxi(roundi(base), 1)
 	var bonus : float = player.close_damage_scale_at(global_position)
-	if bonus == 1.0:
-		return damage
-	var scaled := damage * bonus
+	var scaled := base * bonus
 	var whole := floori(scaled)
-	return whole + (1 if randf() < scaled - whole else 0)
+	return maxi(whole + (1 if randf() < scaled - whole else 0), 1)
 
 func apply_extra_damage(amount : float) -> void:
 	recieved_damage.emit(amount, Vector2.ZERO)

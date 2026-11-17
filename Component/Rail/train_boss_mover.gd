@@ -154,7 +154,7 @@ func _start() -> void:
 			span = child.span
 	_watch_phase.call_deferred()
 	await get_tree().physics_frame # 車両の絵の位置(ワールド)が決まってから測る
-	if not is_instance_valid(_enemy):
+	if not is_inside_tree() or not is_instance_valid(_enemy):
 		return
 	_measure()
 	if _wagons.is_empty():

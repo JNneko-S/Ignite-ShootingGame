@@ -116,6 +116,8 @@ func _volley(token : int, pattern : ShotPattern) -> void:
 	while elapsed < length and running(token):
 		# 1フレームずつ進める(ポーズ中は進めない)
 		await get_tree().physics_frame
+		if not is_inside_tree():
+			return # ポーズからやり直したときなど、ステージごと消えた
 		if get_tree().paused:
 			continue
 		var dt := get_physics_process_delta_time()

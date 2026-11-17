@@ -59,6 +59,15 @@ signal score_changed(score : int)
 @export var game_over_scene : PackedScene = preload("res://GameScene/UI/game_over.tscn")
 ## ポーズ画面(ルートが PauseMenu)。空ならポーズできない
 @export var pause_scene : PackedScene = preload("res://GameScene/UI/pause_menu.tscn")
+## オンなら、まだイグナイトを使ったことがないプレイヤーに、弾が迫ったときボタンを一度だけ教える(IgniteHint)
+@export var show_ignite_hint : bool = true
+## ヒントを出し始めてよいステージの時間(秒)。1面は、グレイズを覚える最初の場面では出さない
+@export var ignite_hint_after : float = 0.0
+## オンなら、EASY のときに遊び方の案内(グレイズ・レベル・被弾・イグナイト)を出す(EasyGuide)
+@export var show_easy_guide : bool = true
+## このステージで最初のイグナイトだけ、焼いた弾が落とすスコアアイテムをこの倍(数も点も)にする。
+## 1 ならふつう。1面で、初めて押したときのご褒美を大きくする
+@export var first_ignite_item_scale : int = 1
 
 @export_group("被弾時の補給アイテム")
 ## 散らばるアイテムのシーン(ルートが IgniteItem)。見た目はこのシーンの Sprite2D で変える
@@ -200,6 +209,17 @@ func _ready() -> void:
 	player.damaged.connect(_on_player_damaged)
 	player.respawned.connect(_on_player_respawned)
 	player.game_over.connect(_on_game_over)
+	if show_ignite_hint and not TutorialProgress.ignite_used():
+		var hint := IgniteHint.new()
+		hint.player = player
+		hint.show_after = ignite_hint_after
+		add_child(hint)
+	if show_easy_guide and difficulty == Difficulty.EASY:
+		var guide := EasyGuide.new()
+		guide.player = player
+		# イグナイトの案内は、イグナイトのヒントと同じ時間から(決まっていなければ 12 秒)
+		guide.ignite_time = ignite_hint_after if ignite_hint_after > 0.0 else 12.0
+		add_child(guide)
 	if pause_scene:
 		var pause := pause_scene.instantiate() as PauseMenu
 		pause.player = player
@@ -209,6 +229,13 @@ func _ready() -> void:
 	debug_panel.game_manager = self
 	add_child(debug_panel)
 	player.ignite_requested.connect(_on_ignite_requested)
+	# ステージの最後のボスを倒したら、クリアの演出が終わるまでイグナイトを使えない
+	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+	if runner:
+		runner.final_boss_defeated.connect(_lock_ignite)
+		runner.stage_cleared.connect(_lock_ignite)
+	if player.has_signal("counter_requested"):
+		player.connect("counter_requested", _on_counter_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
 	if player.ignite_aura:
 		player.ignite_aura.burned.connect(_on_bullet_burned)
@@ -329,6 +356,8 @@ func _apply_level_stats() -> void:
 
 ## 発動の要求。単押し(full=false)は1レベル、長押し(full=true)は全レベルを消費する
 func _on_ignite_requested(full : bool) -> void:
+	if player.ignite_blocked():
+		return # 演出中は使えない
 	if player.is_igniting or ignite.level < 1:
 		if debug_ignite:
 			print("[Ignite] 発動できません: 発動中=%s / レベル=%d" % [player.is_igniting, ignite.level])
@@ -339,6 +368,20 @@ func _on_ignite_requested(full : bool) -> void:
 	if full and used >= IgniteGauge.MAX_LEVEL:
 		full_use_count += 1
 	_start_ignite_effect(used)
+
+## 演出に入った: これ以降、イグナイトを使えない(溜めている途中なら取り消す)
+func _lock_ignite() -> void:
+	if is_instance_valid(player):
+		player.ignite_locked = true
+		player._cancel_ignite_hold()
+
+## カウンター型(VESPA)のカウンターが決まった: ゲージを使わずに Lv1 のイグナイトを出す(発動中なら、そのまま)
+func _on_counter_requested() -> void:
+	if player.ignite_blocked():
+		return
+	if player.is_igniting:
+		return
+	_start_ignite_effect(1)
 
 func _start_ignite_effect(levels : int) -> void:
 	var max_radius : float = _at_level(burn_max_radius, levels - 1)
@@ -357,8 +400,10 @@ func _start_ignite_effect(levels : int) -> void:
 	_extended = false
 	ignite_level_in_use = levels
 	ignite_activation_count += 1
+	TutorialProgress.mark_ignite_used()
 	if score_system:
 		score_system.begin_burn() # 焼いた弾の数を、0 から数え直す
+		score_system.burn_item_scale = first_ignite_item_scale if ignite_activation_count == 1 else 1
 	EnemyBullet.set_chain_allowed(levels >= chain_min_level)
 	player.set_igniting(true)
 	if player.ignite_aura:

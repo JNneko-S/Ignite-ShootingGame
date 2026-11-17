@@ -47,15 +47,21 @@ var blocked : bool = false
 ## true のあいだは撃たない(列車ボスの押し出す弾幕(PushBarrage)が、援護がいないときに止めるなど)。Enabled・Blocked とは別に、外の部品が決める
 var suppressed : bool = false
 
-## この時刻(Time.get_ticks_msec)まで、全ての敵が撃たない(自機の復活直後など)
-static var _hold_fire_until_msec : int = 0
+## 撃たせないようにしている数(hold_fire のタイマーが残っている数)。0 より大きいあいだ、全ての敵が撃たない(自機の復活直後など)
+static var _hold_fire_count : int = 0
 
-## 全ての敵を、seconds 秒のあいだ撃たせない。すでにもっと長く止めていれば、そのまま
+## 全ての敵を、seconds 秒のあいだ撃たせない。重なったら、いちばん長いものが終わるまで止まる。
+## ゲームの時間で数える(ポーズ中は進まず、ヒットストップ中はゆっくり進む)
 static func hold_fire(seconds : float) -> void:
-	_hold_fire_until_msec = maxi(_hold_fire_until_msec, Time.get_ticks_msec() + int(seconds * 1000.0))
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null or seconds <= 0.0:
+		return
+	_hold_fire_count += 1
+	await tree.create_timer(seconds, false).timeout
+	_hold_fire_count = maxi(_hold_fire_count - 1, 0)
 
 static func is_holding_fire() -> bool:
-	return Time.get_ticks_msec() < _hold_fire_until_msec
+	return _hold_fire_count > 0
 
 ## 雑魚の砲口か(-1 = まだ調べていない)。EASY で、雑魚の弾をさらに遅くするのに使う
 var _zako : int = -1
@@ -156,7 +162,8 @@ func _run_sequence() -> void:
 ## pattern を1回分(Start Delay → Shot Count 発 → Pause)だけ撃つ。Loop は見ない
 func _run_once(pattern : ShotPattern, generation : int) -> void:
 	if not DifficultyTuning.allows(pattern):
-		await get_tree().process_frame
+		if is_inside_tree():
+			await get_tree().process_frame
 		return
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())

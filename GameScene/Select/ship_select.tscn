@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://ci2bvdxf7l7c1" path="res://GameScene/Select/selector_ring.gd" id="7_ring"]
 [ext_resource type="Resource" uid="uid://duv3lueav186n" path="res://Resources/Ships/bastion.tres" id="8_bastion"]
 [ext_resource type="Resource" uid="uid://2udwwk4uk82w" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
+[ext_resource type="Resource" uid="uid://bec6dx0n5uyvi" path="res://Resources/Ships/vespa.tres" id="8_vespa"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="9_font"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
 [ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="11_confirm"]
@@ -47,7 +48,7 @@ font_color = Color(0.9, 0.93, 0.97, 1)
 
 [node name="ShipSelect" type="Node" unique_id=792165094 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music", "spark_sound")]
 script = ExtResource("1_select")
-ships = Array[ExtResource("2_trkis")]([ExtResource("8_phoenix"), ExtResource("8_bastion")])
+ships = Array[ExtResource("2_trkis")]([ExtResource("8_phoenix"), ExtResource("8_bastion"), ExtResource("8_vespa")])
 move_sound = NodePath("MoveSound")
 confirm_sound = NodePath("ConfirmSound")
 back_sound = NodePath("BackSound")

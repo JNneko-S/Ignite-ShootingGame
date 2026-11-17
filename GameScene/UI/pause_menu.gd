@@ -67,9 +67,9 @@ func _process(delta : float) -> void:
 		return # 隠しコマンドの入力中は、メニューを動かさない(Shift + Space で決定しないように)
 	if _pressed([pause_action]):
 		_close_menu()
-	elif _pressed(["UI_Forward", "ui_up"]):
+	elif _pressed(["UI_Forward", "UI_StickUp", "ui_up"]):
 		_select(_index - 1)
-	elif _pressed(["UI_Back", "ui_down"]):
+	elif _pressed(["UI_Back", "UI_StickDown", "ui_down"]):
 		_select(_index + 1)
 	elif _pressed(["UI_Shoot", "ui_accept"]):
 		_decide()
