@@ -38,6 +38,9 @@ var graze_radius_scale : float = 1.0:
 @export var shot_damage : float = 10.0
 ## 威力の倍率(どこから撃っても同じ)
 @export var shot_power : float = 1.2
+## 近づいて撃つと、ショットの威力がこの倍率になる(敵との距離が Close Damage Distance 以内のとき)
+@export var close_damage_scale : float = 1.1
+@export var close_damage_distance : float = 96.0
 ## ショットの弾速(px/秒)。自機の移動速度(Lv5で約375)より十分速くすること
 @export var shot_speed : float = 900.0
 ## true なら、前進している速度の分だけ弾速を足す。縦に動いても、弾の間隔が一定になり、重ならない
@@ -240,6 +243,9 @@ func _physics_process(delta: float) -> void:
 	_update_ignite_input(delta)
 
 	var dir := Input.get_vector("UI_Left", "UI_Right", "UI_Forward", "UI_Back")
+	# ゲームパッドのスティックは、少し倒しただけでも全速で動く(キーボードと同じ速さにそろえる。遅く動くのは低速移動で)
+	if dir != Vector2.ZERO:
+		dir = dir.normalized()
 	var speed := move_speed * level_move_scale
 	if is_focusing:
 		speed *= focus_speed_multiplier
@@ -507,6 +513,12 @@ func power_up_shot() -> void:
 	shot_stage_changed.emit(shot_stage)
 
 ## ショット強化を全て失う(被弾・死亡時)
+## 敵(の当たり判定)が at にあるときの、近距離のショットの倍率。遠ければ 1
+func close_damage_scale_at(at : Vector2) -> float:
+	if not _is_alive or close_damage_scale == 1.0:
+		return 1.0
+	return close_damage_scale if global_position.distance_to(at) <= close_damage_distance else 1.0
+
 func reset_shot_power() -> void:
 	if shot_stage == 0:
 		return
@@ -541,6 +553,7 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	damaged.emit()
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
 	if _is_alive:
+		HitStop.apply(get_tree(), HitStop.PLAYER_HIT) # 撃たれた瞬間に、一瞬止まる
 		start_invincibility(hit_invincible_time)
 		if hit_flame:
 			hit_flame.burst(hit_position, hit_direction) # イグナイトが残っている: 撃たれた向きの先へ炎が噴き出す
@@ -567,6 +580,7 @@ func die() -> void:
 	if not _is_alive:
 		return
 	_is_alive = false
+	HitStop.apply(get_tree(), HitStop.PLAYER_DEATH) # 撃墜の瞬間に、少し長く止まる
 	set_igniting(false)
 	_cancel_ignite_hold()
 	reset_shot_power()

@@ -86,6 +86,12 @@ func play() -> void:
 
 func _play_big(body : Node2D) -> void:
 	_disable(body)
+	var is_boss : bool = body.get("boss_reach_time") != null and float(body.get("boss_reach_time")) >= 0.0
+	var is_midboss : bool = body.get("is_midboss") == true
+	if is_boss:
+		HitStop.apply(get_tree(), HitStop.BOSS_KILL) # ボスを倒した瞬間に、ぐっと止まる
+	elif is_midboss:
+		HitStop.apply(get_tree(), HitStop.MIDBOSS_KILL)
 	if burn_bullets:
 		get_tree().call_group("enemy_bullet", "burn") # 画面の敵弾は燃えて消える
 	if drift != Vector2.ZERO:
@@ -115,6 +121,9 @@ func _play_big(body : Node2D) -> void:
 	Explosion.spawn(tree, Explosion.EXPLOSIVE, center, big_scale)
 	if big_sound:
 		SoundManager.play(big_sound)
+	if is_boss:
+		HitStop.apply(tree, HitStop.BOSS_FINISH)
+		HitStop.flash(tree) # 画面が白く光る(ボスだけ)
 	Explosion.spawn(tree, Explosion.WAVE, center, big_scale * 0.8)
 	for i in 8:
 		Explosion.spawn(tree, Explosion.ZAKO, center + Vector2.from_angle(TAU * i / 8.0) * rect.size.length() * 0.25, big_scale * 0.5)

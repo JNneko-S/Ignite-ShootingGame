@@ -129,7 +129,7 @@ layout_mode = 0
 offset_top = 312.0
 offset_right = 336.0
 offset_bottom = 326.0
-text = "U/D: SELECT   SHOT: OK   ESC: RESUME"
+text = "U/D: SELECT   SHOT: OK   ESC/START: RESUME"
 label_settings = SubResource("ls_hint")
 horizontal_alignment = 1
 

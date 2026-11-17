@@ -257,7 +257,7 @@ func _change_difficulty(direction : int) -> void:
 	_show_difficulty()
 
 func _show_difficulty() -> void:
-	_hint.text = "L/R: SELECT   SHOT: LAUNCH   E: BACK"
+	_hint.text = "L/R: SELECT   SHOT: LAUNCH   IGNITE: BACK"
 	if _difficulty == BLACKSWAN:
 		_board.set_text("< BLACKSWAN >", false)
 		_desc_title.text = "BLACKSWAN"
@@ -370,6 +370,7 @@ func _launch() -> void:
 	_step = Step.LAUNCH
 	SoundManager.play(confirm_sound, 1.2)
 	RunConfig.has_selection = true
+	RunConfig.consecutive_game_overs = 0
 	_stop_music()
 	var blackswan := _difficulty == BLACKSWAN
 	RunConfig.difficulty = 2 if blackswan else _difficulty # ブラックスワン戦は HARD 固定

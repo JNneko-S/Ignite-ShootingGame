@@ -86,6 +86,17 @@ var _cloud_material : ShaderMaterial
 var _cable_reach : float = 1.0
 var _scroll : float = 0.0
 var _speed : float = 0.0
+## 演出を飛ばしたか、終わったか。飛ばしたあとに、待っていた続きが動かないようにする
+var _done : bool = false
+## 演出で使っている Tween(飛ばすときに止める)
+var _tweens : Array[Tween] = []
+var _spawn : Vector2
+var _playing_time : float = 0.0
+
+## 次のステージ開始で、演出を飛ばす(ゲームオーバーからのやり直しで使う)
+static var skip_next : bool = false
+## 演出を飛ばすボタン(Input Map のアクション名)
+const SKIP_ACTION : StringName = &"UI_Shoot"
 
 func _ready() -> void:
 	_cloud_material = _clouds.material as ShaderMaterial
@@ -107,6 +118,10 @@ func _begin() -> void:
 		_cloud_material = null
 		set_process(false)
 		return
+	if skip_next:
+		skip_next = false # ゲームオーバーからのやり直しでは、出撃の演出を飛ばす
+		_finish()
+		return
 	if DebugTools.skip_intro_once:
 		DebugTools.skip_intro_once = false # デバッグパネルのジャンプでは、出撃の演出を飛ばす
 		_finish()
@@ -117,6 +132,12 @@ func _begin() -> void:
 	_play()
 
 func _process(delta : float) -> void:
+	if not _done and _cloud_material and player and not player.is_physics_processing():
+		_playing_time += delta
+		# 演出の途中でショットを押すと、飛ばしてすぐ始める(押しっぱなしの誤爆を避けて、少し待ってから受け付ける)
+		if _playing_time > 0.25 and InputMap.has_action(SKIP_ACTION) and Input.is_action_just_pressed(SKIP_ACTION):
+			_skip()
+			return
 	if _cloud_material:
 		_scroll += _speed * delta
 		_cloud_material.set_shader_parameter("scroll", _scroll)
@@ -136,14 +157,19 @@ func _play() -> void:
 
 	# 自機は演出のあいだ動かさず(撃たず)、見えないようにしておく
 	var spawn := player.global_position
+	_spawn = spawn
 	player.set_physics_process(false)
 	player.visible = false
 	_speed = cloud_speed
 
 	# 1〜2. 雲と風が流れ、ゲートが開く
 	await get_tree().create_timer(clouds_only_time).timeout
+	if _done:
+		return
 	_gate_sparkle.emitting = true # 開くゲートのまわりで、星がまたたく
 	await _gate.open_gate(gate_open_time).finished
+	if _done:
+		return
 
 	# 3. ゲートから母艦が現れる(小さく光った状態から、大きくなりながら上がる)
 	_gate.flash()
@@ -151,16 +177,20 @@ func _play() -> void:
 	_mothership.visible = true
 	for thruster in _thrusters:
 		thruster.emitting = true
-	var emerge := create_tween().set_parallel(true)
+	var emerge := _tween().set_parallel(true)
 	emerge.tween_property(_mothership, "scale", Vector2.ONE, emerge_time)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	emerge.tween_property(_mothership, "global_position", stop, emerge_time)\
 		.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	emerge.tween_property(_mothership, "modulate", Color.WHITE, emerge_time * 0.6)
 	await get_tree().create_timer(emerge_time * 0.5).timeout
+	if _done:
+		return
 	_gate.close_gate()
 	_gate_sparkle.emitting = false
 	await emerge.finished
+	if _done:
+		return
 
 	# 4. ワイヤーで自機を吊り下ろして、切り離す
 	player.global_position = _anchor_center() + Vector2(0.0, 10.0)
@@ -169,17 +199,21 @@ func _play() -> void:
 	_cable_reach = 1.0
 	for cable in _cables:
 		cable.visible = true
-	var lower := create_tween()
+	var lower := _tween()
 	lower.tween_property(player, "modulate:a", 1.0, 0.25)
 	lower.parallel().tween_property(player, "global_position", spawn, lower_time)\
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await lower.finished
+	if _done:
+		return
 	_detach(spawn)
 	await get_tree().create_timer(hold_time).timeout
+	if _done:
+		return
 
 	# 5. 母艦が加速して去り、雲と風が薄れて流れ去る
 	var half_height := _ship_sprite.texture.get_height() * _ship_sprite.scale.y * 0.5
-	var depart := create_tween().set_parallel(true)
+	var depart := _tween().set_parallel(true)
 	depart.tween_property(_mothership, "global_position:y", area.position.y - half_height - 40.0, depart_time)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	depart.tween_property(_mothership, "scale", Vector2.ONE * depart_scale, depart_time)
@@ -193,6 +227,8 @@ func _play() -> void:
 	for thruster in _thrusters:
 		thruster.speed_scale = 1.6 # 去りぎわに、噴射を強める
 	await depart.finished
+	if _done:
+		return
 
 	# 6. 操作を返して、ステージを始める
 	_finish()
@@ -213,13 +249,15 @@ func _detach(spawn : Vector2) -> void:
 	# 切り離された自機のまわりで、星がまたたく
 	_detach_twinkle.global_position = spawn
 	_detach_twinkle.emitting = true
-	get_tree().create_timer(0.8).timeout.connect(func() -> void: _detach_twinkle.emitting = false)
+	get_tree().create_timer(0.8).timeout.connect(func() -> void:
+		if is_instance_valid(_detach_twinkle):
+			_detach_twinkle.emitting = false)
 
-	var retract := create_tween().set_parallel(true)
+	var retract := _tween().set_parallel(true)
 	retract.tween_property(self, "_cable_reach", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	for cable in _cables:
 		retract.tween_property(cable, "modulate:a", 0.0, 0.35)
-	var bob := create_tween()
+	var bob := _tween()
 	bob.tween_property(player, "global_position", spawn + Vector2(0.0, 6.0), 0.12).set_ease(Tween.EASE_OUT)
 	bob.tween_property(player, "global_position", spawn, 0.25).set_trans(Tween.TRANS_SINE)
 
@@ -239,16 +277,45 @@ func _update_cables() -> void:
 		var hook := player.global_position + Vector2(cable_hook.x * side, cable_hook.y)
 		_cables[i].points = PackedVector2Array([top, top.lerp(hook, _cable_reach)])
 
-func _finish() -> void:
+## 演出で使う Tween を作る(飛ばすときに止められるように覚えておく)
+func _tween() -> Tween:
+	var tween := create_tween()
+	_tweens.append(tween)
+	return tween
+
+## ショットで演出を飛ばす: 自機を定位置に置いてすぐ始め、雲や母艦はさっと消す
+func _skip() -> void:
+	for tween in _tweens:
+		if tween.is_valid():
+			tween.kill()
+	_tweens.clear()
+	if player:
+		player.global_position = _spawn
+	_finish(0.25)
+
+## 出撃の演出を終えて、ステージを始める。fade_time があれば、演出の雲や母艦をその時間で消していく
+func _finish(fade_time : float = 0.0) -> void:
+	if _done:
+		return
+	_done = true
 	if player:
 		player.visible = true
 		player.modulate.a = 1.0
 		player.set_physics_process(true)
 	# 演出のノードは、もう使わないので消す(このノード自身は残す)
+	if fade_time > 0.0:
+		var fade := create_tween()
+		fade.tween_property(self, "modulate:a", 0.0, fade_time)
+		fade.tween_callback(_clear_children)
+	else:
+		_clear_children()
+	if stage_runner:
+		stage_runner.start()
+	finished.emit()
+
+func _clear_children() -> void:
 	for child in get_children():
 		child.queue_free()
 	_cloud_material = null
 	set_process(false)
-	if stage_runner:
-		stage_runner.start()
-	finished.emit()
+	modulate.a = 1.0

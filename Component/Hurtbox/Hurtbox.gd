@@ -15,8 +15,24 @@ signal recieved_damage(damage : int)
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:
 		last_hitbox = hitbox
-		recieved_damage.emit(hitbox.damage)
+		recieved_damage.emit(_scaled_damage(hitbox))
 		hitbox.damage_dealt.emit(self)
+
+## 自機のショットは、自機が近くにいるほど強くなる(Player.close_damage_scale_at)。
+## ダメージは整数なので、端数は確率で切り上げて、平均が倍率どおりになるようにする
+func _scaled_damage(hitbox : Hitbox) -> int:
+	var damage := hitbox.damage
+	if not (hitbox is Bullet) or hitbox.damage_source_type != Hitbox.DamageSourceType.Player:
+		return damage
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null or not player.has_method("close_damage_scale_at"):
+		return damage
+	var bonus : float = player.close_damage_scale_at(global_position)
+	if bonus == 1.0:
+		return damage
+	var scaled := damage * bonus
+	var whole := floori(scaled)
+	return whole + (1 if randf() < scaled - whole else 0)
 
 func apply_extra_damage(amount : float) -> void:
 	recieved_damage.emit(amount, Vector2.ZERO)

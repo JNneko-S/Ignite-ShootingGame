@@ -6,21 +6,29 @@
 
 [node name="Player" unique_id=257047965 instance=ExtResource("1_base")]
 script = ExtResource("2_script")
+close_damage_scale = 1.2
 pellet_count = 7
-pellet_spread = 60.0
+pellet_spread = 40.0
 pellet_speed = 700.0
 pellet_life = 0.4
 pellet_damage = 8.0
 pellet_bursts = Array[int]([1, 1, 1, 3, 3, 5])
 pellet_intervals = Array[float]([0.2, 0.2, 0.2, 0.2, 0.16, 0.16])
 pellet_burst_gap = 0.04
+pellet_dps = Array[float]([280.0, 280.0, 280.0, 470.0, 660.0, 760.0])
 pellet_scale = 0.75
 pellet_alpha = 0.7
+orbit_radius = 36.0
+orbit_speed = 150.0
+option_way_spread = 14.0
 option_angles = Array[float]([-45.0, 45.0, -70.0, 70.0])
 option_interval = 0.1
 option_damage = 8.0
 ignite_shot_scale = 2.0
 ignite_pellet_size = 1.4
+reflect_damage_scale = 2.0
+after_ignite_graze_scale = 2.0
+after_ignite_tint = Color(0.6, 0.95, 1.4, 1)
 hit_clear_radius = 40.0
 hit_invincible_time = 1.5
 use_level_scales = false

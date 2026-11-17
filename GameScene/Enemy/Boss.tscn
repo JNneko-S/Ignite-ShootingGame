@@ -11,7 +11,7 @@
 radius = 18.0
 
 [sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_d3hfb"]
-points = PackedVector2Array(-133, -80, -183, 261, -299, 90, -308, -73, -326, -260, 331, -265, 332, -231, 326, -158, 310, -70, 291, 89, 182, 261, 132, -71, 4, 236)
+points = PackedVector2Array(-326, -260, 331, -265, 332, -231, 326, -158, 291, 89, 182, 261, -183, 261, -299, 90)
 
 [sub_resource type="Resource" id="step_0"]
 script = ExtResource("7_efmfp")

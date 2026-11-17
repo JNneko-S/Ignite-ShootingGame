@@ -82,8 +82,8 @@ signal score_changed(score : int)
 @export_group("レベルによる能力(Lv0〜Lv5の順)")
 ## 移動速度の倍率。高レベルほど速い
 @export var move_speed_scales : Array[float] = [1.0, 1.05, 1.1, 1.15, 1.2, 1.25]
-## ショットの威力の倍率。低レベルほど強い
-@export var shot_power_scales : Array[float] = [1.5, 1.4, 1.3, 1.2, 1.1, 1.0]
+## ショットの威力の倍率。高レベルほど強い(全ステージ共通)
+@export var shot_power_scales : Array[float] = [1.0, 1.1, 1.2, 1.3, 1.4, 1.45]
 
 @export_group("エンディング条件(エンドB)")
 ## エンドBの選択条件①: 点火の使用回数(Lv5を長押しで全消費した回数)がこれ以上
@@ -297,7 +297,7 @@ func _on_game_over() -> void:
 		return
 	var screen := game_over_scene.instantiate() as GameOverScreen
 	add_child(screen)
-	screen.play(score_system.score if score_system else score)
+	screen.play(score_system.score if score_system else score, int(difficulty))
 
 ## 復活: ゲージは開始レベルに戻る
 func _on_player_respawned() -> void:

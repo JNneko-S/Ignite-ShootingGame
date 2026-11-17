@@ -86,6 +86,9 @@ var _on : bool = true
 var _time : float = 0.0
 ## 文字が掲示板に収まらないときは、右から左へ流し続ける
 var _scrolling : bool = false
+## 点滅やちらつきを始めるたびに増やす。古い点滅は、これが変わったら止まる
+var _anim_id : int = 0
+var _marquee : Tween
 
 func _ready() -> void:
 	_build_columns()
@@ -155,20 +158,35 @@ func run_marquee(speed : float = 70.0) -> void:
 	var cols := _board_cols()
 	var center := floorf((cols - _columns.size()) / 2.0)
 	_offset = cols
+	if _marquee and _marquee.is_valid():
+		_marquee.kill()
 	var tween := create_tween()
+	_marquee = tween
 	tween.tween_property(self, "_offset", center, (cols - center) / maxf(speed, 1.0))
 	await tween.finished
 
+## 流れている文字を、すぐ真ん中に止める
+func stop_marquee() -> void:
+	if _marquee and _marquee.is_valid():
+		_marquee.custom_step(9999.0)
+
 ## count 回、消えて点く
 func blink(count : int = 3, off_time : float = 0.12, on_time : float = 0.2) -> void:
+	_anim_id += 1
+	var id := _anim_id
 	for i in count:
 		_on = false
 		await get_tree().create_timer(off_time).timeout
+		if id != _anim_id:
+			return
 		_on = true
 		await get_tree().create_timer(on_time).timeout
+		if id != _anim_id:
+			return
 
 ## 電源が落ちるように、ちらついてから消える
 func flicker_off(count : int = 4) -> void:
+	_anim_id += 1
 	for i in count:
 		_on = false
 		await get_tree().create_timer(randf_range(0.02, 0.06)).timeout

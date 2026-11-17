@@ -9,8 +9,8 @@ class_name PauseMenu
 ## 上下で選び、ショットで決める。
 ## ゲームオーバーの画面が出ているあいだと、自機がいないときは開かない。
 
-## ポーズの切り替え(Input Map のアクション名。ui_cancel は Esc)
-@export var pause_action : StringName = &"ui_cancel"
+## ポーズの切り替え(Input Map のアクション名。UI_Pause は Esc とゲームパッドの START)。
+@export var pause_action : StringName = &"UI_Pause"
 ## 機体選択の画面のシーン
 @export_file("*.tscn") var ship_select_scene : String = "res://GameScene/Select/ship_select.tscn"
 ## 閉まるシャッター(shutter.tscn)
@@ -162,6 +162,7 @@ func _decide() -> void:
 		Item.RESUME:
 			_close_menu()
 		Item.RETRY:
+			StageIntro.skip_next = true # やり直しは、出撃の演出を飛ばす
 			_leave(get_tree().current_scene.scene_file_path, true)
 		Item.SHIP_SELECT:
 			_leave(ship_select_scene, false)

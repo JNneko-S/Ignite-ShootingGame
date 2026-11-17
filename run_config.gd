@@ -10,3 +10,7 @@ static var has_selection : bool = false
 static var difficulty : int = 1
 ## 選んだ機体
 static var ship : ShipData = null
+## 続けてゲームオーバーになった回数(ステージをクリアするか、機体選択から出撃し直すと 0 に戻る)
+static var consecutive_game_overs : int = 0
+## この回数続けてゲームオーバーになったら、やり直しのときに難易度を1つ下げる
+const EASE_AFTER_GAME_OVERS : int = 5

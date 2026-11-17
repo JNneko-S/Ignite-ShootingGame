@@ -43,16 +43,28 @@ var _started : bool = false
 var _can_retry : bool = false
 var _prompt_blink : Tween
 var _fx_defaults : Dictionary = {}
+var _retrying : bool = false
+var _difficulty : int = 1
+## 難易度を下げてやり直すか
+var _ease_down : bool = false
+
+const DIFFICULTY_NAMES : Array[String] = ["EASY", "NORMAL", "HARD"]
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS # ゲームを止めたあとも動く
 	visible = false
 
-## ゲームオーバーを始める。score は最後のスコア
-func play(score : int) -> void:
+## ゲームオーバーを始める。score は最後のスコア、difficulty は今の難易度(0 = EASY)
+func play(score : int, difficulty : int = 1) -> void:
 	if _started:
 		return
 	_started = true
+	# 続けて何回もゲームオーバーになったら、やり直しのときに難易度を1つ下げる
+	RunConfig.consecutive_game_overs += 1
+	_difficulty = difficulty
+	_ease_down = RunConfig.consecutive_game_overs >= RunConfig.EASE_AFTER_GAME_OVERS and difficulty > 0
+	if _ease_down:
+		_prompt_label.text = "PRESS SHOT TO RETRY ON %s" % DIFFICULTY_NAMES[difficulty - 1]
 	_fade_music()
 	await _wait(appear_delay)
 	_layout()
@@ -79,20 +91,8 @@ func play(score : int) -> void:
 	await shutter.finished
 
 	get_tree().paused = true # ゲームを止める
-	await _wait(0.3)
-
-	# 電光掲示板が点いて、GAME OVER が流れてくる
-	_board.visible = true
-	_board.scale = Vector2(1.0, 0.0)
-	var pop := create_tween()
-	pop.tween_property(_board, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	await pop.finished
-	SoundManager.play(board_sound)
-	await _board.run_marquee(marquee_speed)
-	await _board.blink(blink_count)
-
+	# ここからは、GAME OVER が流れている途中でも、ショットですぐやり直せる
 	_score_label.visible = true
-	await _wait(0.4)
 	_prompt_label.visible = true
 	for key in _GLITCH:
 		_fx_default(key) # 乱す前の値を覚えておく
@@ -100,10 +100,28 @@ func play(score : int) -> void:
 	_prompt_blink.tween_property(_prompt_label, "modulate:a", 0.15, 0.5)
 	_prompt_blink.tween_property(_prompt_label, "modulate:a", 1.0, 0.5)
 	_can_retry = true
+	await _wait(0.15)
+	if _retrying:
+		return
+
+	# 電光掲示板が点いて、GAME OVER が流れてくる
+	_board.visible = true
+	_board.scale = Vector2(1.0, 0.0)
+	var pop := create_tween()
+	pop.tween_property(_board, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await pop.finished
+	if _retrying:
+		return
+	SoundManager.play(board_sound)
+	await _board.run_marquee(marquee_speed)
+	if _retrying:
+		return
+	_board.blink(blink_count)
 
 func _process(_delta : float) -> void:
 	if _can_retry and InputMap.has_action(retry_action) and Input.is_action_just_pressed(retry_action):
 		_can_retry = false
+		_retrying = true
 		_retry()
 
 ## やり直し: 映像が乱れて掲示板が消え、ステージを読み直してから、シャッターが開いて新しいステージが見える
@@ -120,9 +138,16 @@ func _retry() -> void:
 	_board.flicker_off()
 	await _wait(glitch_time + 0.15)
 
+	# 次のステージは、出撃の演出を飛ばしてすぐ始める。続けて負けたときは、難易度を1つ下げる
+	StageIntro.skip_next = true
+	if _ease_down:
+		RunConfig.has_selection = true
+		RunConfig.difficulty = _difficulty - 1
+		RunConfig.consecutive_game_overs = 0
 	# ステージを読み直す。この画面は、読み直しても消えないように、ステージの外(ルート)へ移しておく
 	reparent(get_tree().root)
 	get_tree().paused = false
+	HitStop.reset()
 	Engine.time_scale = 1.0
 	get_tree().reload_current_scene()
 	await get_tree().process_frame

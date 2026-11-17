@@ -45,7 +45,6 @@ var _wave_age : float = -1.0
 var _wave_radius : float = 0.0
 var _edge_strength : float = 0.0 # 0〜1。発動中は 1、消えるときに 0 へ
 var _fade_tween : Tween
-var _hitstop_token : int = 0
 
 func _ready() -> void:
 	top_level = true
@@ -137,14 +136,7 @@ func _draw() -> void:
 
 ## 一瞬だけ、ゲームの時間をほぼ止める
 func _hitstop() -> void:
-	if hitstop_time <= 0.0:
-		return
-	_hitstop_token += 1
-	var token := _hitstop_token
-	Engine.time_scale = hitstop_scale
-	await get_tree().create_timer(hitstop_time, true, false, true).timeout # 実際の時間で数える
-	if token == _hitstop_token: # 続けて発動したときは、最後のものが戻す
-		Engine.time_scale = 1.0
+	HitStop.apply(get_tree(), hitstop_time, hitstop_scale)
 
 func _exit_tree() -> void:
-	Engine.time_scale = 1.0
+	HitStop.reset()

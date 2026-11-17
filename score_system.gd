@@ -153,7 +153,7 @@ signal burn_finished(count : int)
 
 @export_group("残機")
 ## この点数ごとに残機が 1 増える
-@export var extend_every : int = 100000000
+@export var extend_every : int = 10000000
 
 @export_group("ハイスコア")
 @export var save_path : String = "user://score.cfg"
@@ -533,6 +533,7 @@ func item_chain_multiplier() -> float:
 # ---------------------------------------------------------------- ステージクリア
 
 func _on_stage_cleared() -> void:
+	RunConfig.consecutive_game_overs = 0 # クリアしたら、続けてのゲームオーバーは数え直し
 	var lines : Array = []
 	var deaths := game_manager.death_count if game_manager else 0
 	if deaths == 0:
