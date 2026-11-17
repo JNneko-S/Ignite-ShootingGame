@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="base"]
+[ext_resource type="Script" path="res://Component/Boss/fly_away.gd" id="fly_away"]
+
+[node name="BlackSwanKaiIntro" unique_id=724143726 instance=ExtResource("base")]
+
+[node name="FlyAway" type="Node" parent="." unique_id=1830000001]
+script = ExtResource("fly_away")
+stay_time = 10.0

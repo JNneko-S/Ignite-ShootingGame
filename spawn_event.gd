@@ -49,6 +49,18 @@ class_name SpawnEvent
 ## 1体でも画面の外へ逃げたら出ない(Count が 2 以上のときだけ)
 @export var formation_bonus : int = 0
 
+@export_group("背景から出てくる")
+## 0: ふつうに出る / 1: 背景から近づいてくる(小さく暗い姿から大きく濃くなって前に出る) /
+## 2: 背景の下から上へ飛び去ってから、上から入り直す(BackgroundEmerge)
+@export_enum("ふつう", "近づいてくる", "上へ抜けて入り直す") var emerge : int = 0
+## 背景から出てくるまでの時間(秒)
+@export var emerge_time : float = 1.2
+
+@export_group("数式の飛び方")
+## 設定すると、移動パターンの代わりに、この曲線(円・バラ曲線・星形など)に沿って飛ぶ。
+## 何機かで出して Phase Step で曲線の上に等間隔に並べると、編隊で図形を描ける
+@export var flight_curve : FlightCurve
+
 func unit_count() -> int:
 	return maxi(count, 1)
 

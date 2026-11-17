@@ -46,6 +46,7 @@ boss_music = ExtResource("music_boss2")
 
 [node name="StageTransition" type="Node" parent="." unique_id=1780000002]
 script = ExtResource("stage_transition")
+next_stage = "res://stage3.tscn"
 
 [node name="SpeedLines" type="Node2D" parent="." unique_id=1790000001]
 script = ExtResource("speed_lines")

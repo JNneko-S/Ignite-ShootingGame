@@ -42,6 +42,13 @@ const PLAYTEST_EXPIRE : float = 60.0
 ## ステージの経過時間(秒)。待機中は進まない。開始前は start_delay 分だけマイナス
 var stage_time : float = 0.0
 var scroll_multiplier : float = 1.0
+## 背景から出てくる敵(SpawnEvent の Emerge)が来る、この秒数前に enemy_incoming を出す(背景に影を出すため)
+@export var foreshadow_lead : float = 10.0
+## 背景から出てくる敵が、もうすぐ来る(seconds 秒後)。SkyBackground が、背景に同じ編隊の影を出す
+signal enemy_incoming(event : SpawnEvent, seconds : float)
+var _foreshadow_next : int = 0
+## 何機かでまとめて出てくるボスの、全機の HP の合計(SpawnEvent ごと)
+var _squads : Dictionary = {}
 
 var _entries : Array[Dictionary] = []
 var _next : int = 0
@@ -111,6 +118,7 @@ func start() -> void:
 			set_scroll_speed(last_scroll.speed_multiplier, 0.0)
 		if last_camera and StageCamera.of(self):
 			StageCamera.of(self).change(last_camera.mode, last_camera.lane, 0.0)
+	_foreshadow_next = _next
 	_running = true
 	stage_started.emit()
 	if debug_log:
@@ -157,6 +165,12 @@ func _physics_process(delta : float) -> void:
 		return
 
 	stage_time += delta
+	# 背景から出てくる敵が来る少し前に、知らせる(背景に影を出す)
+	while _foreshadow_next < _entries.size() and _entries[_foreshadow_next]["time"] <= stage_time + foreshadow_lead:
+		var ahead := _entries[_foreshadow_next]
+		_foreshadow_next += 1
+		if ahead["unit"] == 0 and ahead["event"] is SpawnEvent and ahead["event"].emerge > 0:
+			enemy_incoming.emit(ahead["event"], ahead["time"] - stage_time)
 	while _next < _entries.size() and _entries[_next]["time"] <= stage_time:
 		var entry := _entries[_next]
 		_next += 1
@@ -240,6 +254,18 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		if hp:
 			hp.max_hp = event.hp_override
 			hp.hp = event.hp_override
+	if event.flight_curve:
+		# 数式の曲線に沿って飛ぶ(敵がツリーに入る前に付けて、移動パターンの代わりにする)
+		var flight := CurveFlight.new()
+		flight.curve = event.flight_curve
+		flight.unit_index = unit_index
+		enemy.add_child(flight)
+	if event.emerge > 0:
+		# 背景から出てくる(敵がツリーに入る前に付けて、移動パターンを預かる)
+		var emerge := BackgroundEmerge.new()
+		emerge.mode = event.emerge as BackgroundEmerge.Mode
+		emerge.time = event.emerge_time
+		enemy.add_child(emerge)
 	if event.tag != "":
 		register_tag(enemy, event.tag)
 	if event.is_boss:
@@ -268,7 +294,20 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 			parent = layer
 	parent.add_child(enemy)
 	_track_formation(event, enemy)
-	if event.is_boss:
+	if event.is_boss and event.unit_count() > 1:
+		# 何機かでまとめて出てくるボス(ブラックスワンズなど): ゲージは全機の HP の合計にする(1機倒しても消えないように)
+		var squad : SquadHP = _squads.get(event)
+		var first := squad == null or not is_instance_valid(squad)
+		if first:
+			squad = SquadHP.new()
+			squad.name = "SquadHP"
+			add_child(squad)
+			_squads[event] = squad
+		squad.add_member(enemy)
+		enemy.set_meta(&"squad_hp", squad)
+		if first:
+			boss_spawned.emit(enemy, event.boss_name, event.boss_phase_thresholds)
+	elif event.is_boss:
 		boss_spawned.emit(enemy, event.boss_name, event.boss_phase_thresholds)
 	if debug_log:
 		print("[Stage] t=%.1f 出現 %s #%d" % [stage_time, enemy.name, unit_index])

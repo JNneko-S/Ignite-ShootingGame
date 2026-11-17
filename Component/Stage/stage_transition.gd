@@ -18,11 +18,14 @@ class_name StageTransition
 @export_file("*.tscn") var next_stage : String = ""
 ## クリアしてから霧が出始めるまでの時間(秒。クリアのボーナス表示のあいだ)
 @export var clear_wait : float = 4.0
+## クリアのボーナス表示は、この秒数たったら、ショットで先へ進める(待たされないように)
+@export var clear_skip_after : float = 1.0
+@export var skip_action : StringName = &"UI_Shoot"
 ## 霧が降りてくる時間・覆われたまま飛ぶ時間(秒)
 @export var fog_in_time : float = 2.0
-@export var fog_hold_time : float = 1.5
+@export var fog_hold_time : float = 0.6
 ## 次のステージで、霧の中を飛ぶ時間・霧が晴れる時間・自機が最初の位置へ降りる時間(秒)
-@export var arrive_hold_time : float = 1.0
+@export var arrive_hold_time : float = 0.5
 @export var fog_out_time : float = 2.0
 @export var descend_time : float = 1.3
 ## 霧の中を飛ぶときの、自機の高さ(画面の上 = 0、下 = 1)
@@ -61,7 +64,7 @@ func _connect() -> void:
 # ---------------------------------------------------------------- 出ていく
 
 func _on_stage_cleared() -> void:
-	await get_tree().create_timer(clear_wait, false).timeout
+	await _wait_or_skip(clear_wait, clear_skip_after)
 	if not is_inside_tree():
 		return
 	var player := StageCarry.find_player(get_tree())
@@ -143,6 +146,16 @@ func _arrive() -> void:
 			runner.start()
 
 # ---------------------------------------------------------------- 共通
+
+## seconds 秒待つ。skip_after 秒たってからショットを押したら、そこで終わる
+func _wait_or_skip(seconds : float, skip_after : float) -> void:
+	var t := 0.0
+	var tree := get_tree()
+	while t < seconds and is_inside_tree():
+		await tree.process_frame
+		t += get_process_delta_time()
+		if t >= skip_after and InputMap.has_action(skip_action) and Input.is_action_just_pressed(skip_action):
+			return
 
 func _make_fog() -> FogOverlay:
 	var fog := FogOverlay.new()

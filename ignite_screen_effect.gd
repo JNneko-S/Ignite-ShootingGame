@@ -139,12 +139,7 @@ func _draw() -> void:
 func _hitstop() -> void:
 	if hitstop_time <= 0.0:
 		return
-	_hitstop_token += 1
-	var token := _hitstop_token
-	Engine.time_scale = hitstop_scale
-	await get_tree().create_timer(hitstop_time, true, false, true).timeout # 実際の時間で数える
-	if token == _hitstop_token: # 続けて発動したときは、最後のものが戻す
-		Engine.time_scale = 1.0
+	HitStop.play(get_tree(), hitstop_time, hitstop_scale) # 被弾やボス撃破の止めと重なっても、正しく戻る
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0

@@ -162,7 +162,7 @@ func _physics_process(delta : float) -> void:
 		_held = false
 	var net := _net_speed()
 	global_position.y += net * delta
-	_cars = _cars.filter(func(c : Node2D) -> bool: return is_instance_valid(c))
+	_cars.assign(_cars.filter(func(c) -> bool: return is_instance_valid(c))) # 消えた車両は、型を付けた引数に渡すとエラーになる
 	if _cars.is_empty():
 		_finish()
 		return
@@ -180,7 +180,7 @@ func _physics_process(delta : float) -> void:
 
 ## 壊れていない車両の数
 func alive_cars() -> int:
-	return _cars.filter(func(c : Node2D) -> bool: return is_instance_valid(c) and not (c is Enemy and (c as Enemy).is_wreck())).size()
+	return _cars.filter(func(c) -> bool: return is_instance_valid(c) and not (c is Enemy and (c as Enemy).is_wreck())).size()
 
 ## 中ボスが来る前などに、急いで画面の外へ去る(速さを上げる)。まだ入ってきていない列車は、そのまま消える
 func hurry() -> void:

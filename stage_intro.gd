@@ -84,6 +84,16 @@ var _thrusters : Array[GPUParticles2D] = []
 var _cloud_material : ShaderMaterial
 ## ワイヤーの、自機側の端がどこまで伸びているか(1 = 自機まで、0 = 母艦の付け根まで巻き上げた)
 var _cable_reach : float = 1.0
+## 演出の途中か・飛ばしたか(飛ばしたら、残りの手順は何もしない)
+var _playing : bool = false
+var _skipped : bool = false
+var _play_age : float = 0.0
+## 演出で使っている tween(飛ばしたときに止める)と、自機の最初の位置
+var _tweens : Array[Tween] = []
+var _spawn : Vector2
+var _skip_layer : CanvasLayer
+## このボタンで演出を飛ばせる
+@export var skip_action : StringName = &"UI_Shoot"
 var _scroll : float = 0.0
 var _speed : float = 0.0
 
@@ -117,6 +127,12 @@ func _begin() -> void:
 	_play()
 
 func _process(delta : float) -> void:
+	if _playing:
+		_play_age += delta
+		# ショットで飛ばせる(押しっぱなしで始めた人がすぐ飛ばさないよう、少し待ってから受け付ける)
+		if _play_age > 0.3 and InputMap.has_action(skip_action) and Input.is_action_just_pressed(skip_action):
+			_skip()
+			return
 	if _cloud_material:
 		_scroll += _speed * delta
 		_cloud_material.set_shader_parameter("scroll", _scroll)
@@ -136,14 +152,19 @@ func _play() -> void:
 
 	# 自機は演出のあいだ動かさず(撃たず)、見えないようにしておく
 	var spawn := player.global_position
+	_spawn = spawn
+	_playing = true
+	_show_skip_hint()
 	player.set_physics_process(false)
 	player.visible = false
 	_speed = cloud_speed
 
 	# 1〜2. 雲と風が流れ、ゲートが開く
 	await get_tree().create_timer(clouds_only_time).timeout
+	if _skipped: return
 	_gate_sparkle.emitting = true # 開くゲートのまわりで、星がまたたく
-	await _gate.open_gate(gate_open_time).finished
+	await _track(_gate.open_gate(gate_open_time)).finished
+	if _skipped: return
 
 	# 3. ゲートから母艦が現れる(小さく光った状態から、大きくなりながら上がる)
 	_gate.flash()
@@ -151,16 +172,18 @@ func _play() -> void:
 	_mothership.visible = true
 	for thruster in _thrusters:
 		thruster.emitting = true
-	var emerge := create_tween().set_parallel(true)
+	var emerge := _tw().set_parallel(true)
 	emerge.tween_property(_mothership, "scale", Vector2.ONE, emerge_time)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	emerge.tween_property(_mothership, "global_position", stop, emerge_time)\
 		.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	emerge.tween_property(_mothership, "modulate", Color.WHITE, emerge_time * 0.6)
 	await get_tree().create_timer(emerge_time * 0.5).timeout
+	if _skipped: return
 	_gate.close_gate()
 	_gate_sparkle.emitting = false
 	await emerge.finished
+	if _skipped: return
 
 	# 4. ワイヤーで自機を吊り下ろして、切り離す
 	player.global_position = _anchor_center() + Vector2(0.0, 10.0)
@@ -169,17 +192,19 @@ func _play() -> void:
 	_cable_reach = 1.0
 	for cable in _cables:
 		cable.visible = true
-	var lower := create_tween()
+	var lower := _tw()
 	lower.tween_property(player, "modulate:a", 1.0, 0.25)
 	lower.parallel().tween_property(player, "global_position", spawn, lower_time)\
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await lower.finished
+	if _skipped: return
 	_detach(spawn)
 	await get_tree().create_timer(hold_time).timeout
+	if _skipped: return
 
 	# 5. 母艦が加速して去り、雲と風が薄れて流れ去る
 	var half_height := _ship_sprite.texture.get_height() * _ship_sprite.scale.y * 0.5
-	var depart := create_tween().set_parallel(true)
+	var depart := _tw().set_parallel(true)
 	depart.tween_property(_mothership, "global_position:y", area.position.y - half_height - 40.0, depart_time)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	depart.tween_property(_mothership, "scale", Vector2.ONE * depart_scale, depart_time)
@@ -193,6 +218,7 @@ func _play() -> void:
 	for thruster in _thrusters:
 		thruster.speed_scale = 1.6 # 去りぎわに、噴射を強める
 	await depart.finished
+	if _skipped: return
 
 	# 6. 操作を返して、ステージを始める
 	_finish()
@@ -213,13 +239,15 @@ func _detach(spawn : Vector2) -> void:
 	# 切り離された自機のまわりで、星がまたたく
 	_detach_twinkle.global_position = spawn
 	_detach_twinkle.emitting = true
-	get_tree().create_timer(0.8).timeout.connect(func() -> void: _detach_twinkle.emitting = false)
+	get_tree().create_timer(0.8).timeout.connect(func() -> void:
+		if is_instance_valid(_detach_twinkle): # 飛ばしたときは、もう消えている
+			_detach_twinkle.emitting = false)
 
-	var retract := create_tween().set_parallel(true)
+	var retract := _tw().set_parallel(true)
 	retract.tween_property(self, "_cable_reach", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	for cable in _cables:
 		retract.tween_property(cable, "modulate:a", 0.0, 0.35)
-	var bob := create_tween()
+	var bob := _tw()
 	bob.tween_property(player, "global_position", spawn + Vector2(0.0, 6.0), 0.12).set_ease(Tween.EASE_OUT)
 	bob.tween_property(player, "global_position", spawn, 0.25).set_trans(Tween.TRANS_SINE)
 
@@ -239,7 +267,50 @@ func _update_cables() -> void:
 		var hook := player.global_position + Vector2(cable_hook.x * side, cable_hook.y)
 		_cables[i].points = PackedVector2Array([top, top.lerp(hook, _cable_reach)])
 
+func _tw() -> Tween:
+	var tween := create_tween()
+	_tweens.append(tween)
+	return tween
+
+func _track(tween : Tween) -> Tween:
+	if tween:
+		_tweens.append(tween)
+	return tween
+
+## 演出を飛ばす: 動いている tween を止めて、自機を最初の位置に置き、すぐステージを始める
+func _skip() -> void:
+	if _skipped or not _playing:
+		return
+	_skipped = true
+	for tween in _tweens:
+		if tween and tween.is_valid():
+			tween.kill()
+	_tweens.clear()
+	if player:
+		player.global_position = _spawn
+	_finish()
+
+## 画面の右下に「SKIP >>」を出す(押せることが分かるように)
+func _show_skip_hint() -> void:
+	_skip_layer = CanvasLayer.new()
+	_skip_layer.layer = 40
+	add_child(_skip_layer)
+	var label := Label.new()
+	label.text = "SKIP >>"
+	label.add_theme_font_override("font", preload("res://Assets/Fonts/micronian.ttf"))
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 4)
+	label.modulate.a = 0.0
+	label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	label.position = get_viewport().get_visible_rect().size - Vector2(70, 22)
+	_skip_layer.add_child(label)
+	var fade := label.create_tween()
+	fade.tween_interval(0.4)
+	fade.tween_property(label, "modulate:a", 0.8, 0.3)
+
 func _finish() -> void:
+	_playing = false
 	if player:
 		player.visible = true
 		player.modulate.a = 1.0
