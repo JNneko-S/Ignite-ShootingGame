@@ -9,6 +9,6 @@ bullet_scene = ExtResource("2")
 start_delay = 0.8
 shot_count = 3
 interval = 0.12
-pause = 1.0
+loop = false
 aim_once_per_burst = true
 bullet_speed = 165.0

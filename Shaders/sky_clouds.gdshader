@@ -50,6 +50,12 @@ uniform vec2 light_dir = vec2(0.75, -0.55);
 uniform float light_reach = 0.3;
 // 1 なら、雲の塊の濃さを白黒で出す(調整用)
 uniform float debug_view = 0.0;
+// 描く場所(画面の px)→ 雲の置き場(回転・傾けた背景の中の座標)の変換。SkyBackground が毎フレーム入れる。
+// 四角形は回さずに描画範囲いっぱいに置き、回転・傾き・寄りはここで座標だけ変える
+// (四角形ごと回すと、ずれたところで描画範囲の端が見えて、雲が切れてしまう)
+uniform vec2 inv_x = vec2(1.0, 0.0);
+uniform vec2 inv_y = vec2(0.0, 1.0);
+uniform vec2 inv_o = vec2(0.0, 0.0);
 
 float hash(vec2 p) {
 	// sin を使うハッシュは GPU によって精度が落ちるので、fract だけで作る
@@ -106,9 +112,20 @@ float fullness(vec2 p, float edge, float bias) {
 	return clamp((m - edge) / 0.45, 0.0, 1.0);
 }
 
+// 雲を左右に寄せるための濃さの足し引き。こぶの真ん中(雲の座標)の、画面の左右の位置で決める。
+// 描いている点の位置で決めると、1つのこぶが点ごとに出たり消えたりして、まっすぐ切れた形(ギザギザ)になる
+float side_bias_at(vec2 c) {
+	if (side_bias == 0.0) {
+		return 0.0;
+	}
+	float x = c.x / max(aspect * cloud_scale, 0.0001) - drift;
+	float side = 1.0 - smoothstep(0.0, side_width, min(x, 1.0 - x));
+	return side_bias * (side - 0.5);
+}
+
 // 1段ぶんのこぶを調べて、この点を覆うこぶのうち、いちばん上のものを best に入れる。
 // best = (上にある度合い, 色の明るさ 0〜1, こぶのふちで光と反対側か 0/1, 1 = 見つかった)
-void puff_layer(vec2 p, float freq, float size, float lift, float min_full, float max_full, float edge, float bias, float seed, inout vec4 best) {
+void puff_layer(vec2 p, float freq, float size, float lift, float min_full, float max_full, float edge, float seed, inout vec4 best) {
 	vec2 i = floor(p * freq);
 	vec2 light = normalize(light_dir);
 	for (int y = -1; y <= 1; y++) {
@@ -116,6 +133,7 @@ void puff_layer(vec2 p, float freq, float size, float lift, float min_full, floa
 			vec2 cell = i + vec2(float(x), float(y));
 			vec2 jitter = hash2(cell + seed);
 			vec2 center = (cell + 0.1 + jitter * 0.8) / freq;
+			float bias = side_bias_at(center);
 			float full = fullness(center, edge, bias);
 			// この段のこぶは、塊の決まった深さ(芯〜ふち)にだけ置く
 			if (full <= min_full || full > max_full) {
@@ -146,24 +164,25 @@ void puff_layer(vec2 p, float freq, float size, float lift, float min_full, floa
 }
 
 void fragment() {
-	// ドット絵のマスに揃える
-	vec2 cell = floor(UV * rect_size / pixel_size) * pixel_size / rect_size;
+	// ドット絵のマスに揃える(マスは画面に対してまっすぐ。回っている背景でも、マスは斜めにならない)
+	vec2 px = (floor(UV * rect_size / pixel_size) + 0.5) * pixel_size;
+	// 画面の点 → 雲の置き場(回転・傾けた背景の中。真ん中が 0)→ 0〜1 の位置(背景の外にはみ出してもよい)
+	vec2 local = inv_x * px.x + inv_y * px.y + inv_o;
+	vec2 cell = local / rect_size + 0.5;
 	vec2 p = vec2((cell.x + drift) * aspect, cell.y) * cloud_scale + vec2(0.0, -scroll * cloud_scale);
 	// 形を少しゆがめて、こぶの並びが格子に見えないように
 	p += (vec2(noise(p * 2.3 + 3.1), noise(p * 2.3 + 8.3)) - 0.5) * 0.08;
 
-	float side = 1.0 - smoothstep(0.0, side_width, min(cell.x, 1.0 - cell.x));
-	float bias = side_bias * (side - 0.5);
 	float edge = mix(1.1, 0.35, coverage);
 
 	// 大きなこぶ(芯)・中くらいのこぶ・小さなこぶ(ふち)を重ねる
 	vec4 best = vec4(-1.0, 0.0, 0.0, 0.0);
-	puff_layer(p, puff_density * 1.2, 0.95, 1.0, 0.4, 1.01, edge, bias, 0.0, best);
-	puff_layer(p, puff_density * 1.8, 1.1, 0.85, 0.15, 0.75, edge, bias, 11.0, best);
-	puff_layer(p, puff_density * 2.9, 1.05, 0.7, 0.07, 0.38, edge, bias, 23.0, best);
+	puff_layer(p, puff_density * 1.2, 0.95, 1.0, 0.4, 1.01, edge, 0.0, best);
+	puff_layer(p, puff_density * 1.8, 1.1, 0.85, 0.15, 0.75, edge, 11.0, best);
+	puff_layer(p, puff_density * 2.9, 1.05, 0.7, 0.07, 0.38, edge, 23.0, best);
 
 	if (debug_view > 0.5) {
-		float f = fullness(p, edge, bias);
+		float f = fullness(p, edge, side_bias_at(p));
 		COLOR = vec4(vec3(f), 1.0);
 	} else if (best.w < 0.5) {
 		COLOR = vec4(sky_color.rgb, sky_alpha * opacity);

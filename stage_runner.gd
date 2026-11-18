@@ -28,6 +28,9 @@ signal final_boss_defeated
 @export var enemy_parent : Node
 ## true なら、最後のイベントのあと、敵が全滅した時点で stage_cleared を出す
 @export var auto_finish : bool = true
+## 中ボスを倒したら、かならず落とすアイテム(オプション)。空なら落とさない。
+## 中ボスのシーンに、すでに同じアイテムを出す ItemDrop があれば、そちらを確定にする(2個にはしない)
+@export var midboss_drop_scene : PackedScene = preload("res://GameScene/Item/power_up_option.tscn")
 ## スクロールさせる Parallax2D。空なら、シーン内から自動で探す
 @export var parallax_layers : Array[Parallax2D] = []
 
@@ -213,6 +216,23 @@ func _physics_process(delta : float) -> void:
 ## ステージの最後のボス(Boss Time Bonus の敵)を倒した: 残っている敵は去らせて、ボスの爆発が終わったらクリアにする
 @export var final_boss_clear_delay : float = 3.0
 
+## 中ボスに、オプションの確定ドロップを付ける(ステージで雑魚のドロップを切っていても出す)
+func _add_midboss_drop(enemy : Enemy) -> void:
+	if midboss_drop_scene == null:
+		return
+	for child in enemy.get_children():
+		if child is TrainRewards and child.power_up_scene != null:
+			return # 列車のごほうびで、もうパワーアップを落とす
+		if child is ItemDrop and child.item_scene and child.item_scene.resource_path == midboss_drop_scene.resource_path:
+			child.chance = 1.0
+			child.always = true
+			return
+	var drop := ItemDrop.new()
+	drop.name = "MidbossDrop"
+	drop.item_scene = midboss_drop_scene
+	drop.always = true
+	enemy.add_child(drop)
+
 func _on_final_boss_died(_boss : Enemy) -> void:
 	if _finished:
 		return
@@ -308,6 +328,7 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.died.connect(_on_final_boss_died) # ステージの最後のボスを倒したら、ほかの敵が残っていてもクリア
 	elif event.is_boss:
 		enemy.is_midboss = true # ゲージは出すが時間ボーナスのない敵 = 中ボス
+		_add_midboss_drop(enemy)
 	# 段階の切り替え: ボスのシーンに BossPhaseController があれば、そちらを使う(SpawnEvent の Phases は使わない)
 	var has_controller := enemy.get_children().any(func(n : Node) -> bool: return n is BossPhaseController)
 	if not event.phases.is_empty() and not has_controller:

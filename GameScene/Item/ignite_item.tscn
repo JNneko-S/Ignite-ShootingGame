@@ -5,7 +5,7 @@
 
 [node name="IgniteItem" type="Node2D" unique_id=837305511]
 script = ExtResource("1_item")
-assist_radius = 1.0
+assist_radius = 44.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1649346057]
 texture_filter = 1

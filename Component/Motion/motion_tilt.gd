@@ -36,6 +36,13 @@ enum FaceMode { NONE, LEAN, FULL }
 @export var bank_sharpness : float = 7.0
 ## 遠近感の強さ(px)。小さいほど立体的(シェーダーの focal)
 @export var perspective : float = 140.0
+## 0 より大きければ、遠近感の強さを「絵(Texture)の横幅 × この値」にする(Perspective の代わり)。
+## 絵の大きさが違っても、同じくらいの立体感になる(自機 PHOENIX は 99px で 220 なので、約 2.2)。
+## アニメーションで絵が差し替わっても、その絵の幅に合わせ直す
+@export var perspective_per_width : float = 0.0
+## オンなら、親の直下にある Sprite2D をすべて(Target と一緒に)同じロールで傾ける。
+## 何枚も重ねて1機を作っているボス向け。別の Material を持っている絵は傾けない
+@export var all_sprites : bool = false
 
 const SHADER := preload("res://Component/Motion/bank_tilt.gdshader")
 
@@ -51,6 +58,10 @@ var _face : float = 0.0 # 絵に足している回転
 var _roll : float = 0.0
 ## 親が物理フレームで動く(CharacterBody2D)か
 var _physics_owner : bool = false
+## 遠近感の強さを決めたときの、絵の1コマの幅
+var _focal_width : float = -1.0
+## All Sprites で足した絵のマテリアル
+var _extra_materials : Array[ShaderMaterial] = []
 
 func _ready() -> void:
 	_owner2d = get_parent() as Node2D
@@ -80,6 +91,38 @@ func _setup_material() -> void:
 		return
 	_material.set_shader_parameter("focal", perspective)
 	target.material = _material
+	if all_sprites and _owner2d:
+		for child in _owner2d.get_children():
+			var sprite := child as Sprite2D
+			if sprite and sprite != target and sprite.material == null:
+				# 絵ごとに別のマテリアルにする(1つを共有すると、まとめて描かれて頂点がずれ、部品がばらばらになる)。
+				# 傾き・遠近は、毎フレーム同じ値を入れる
+				var copy := _material.duplicate() as ShaderMaterial
+				sprite.material = copy
+				_extra_materials.append(copy)
+	_update_focal()
+
+## マテリアル全部(Target と、All Sprites で足した絵)に、同じ値を入れる
+func _set_all(param : StringName, value : Variant) -> void:
+	_material.set_shader_parameter(param, value)
+	for extra in _extra_materials:
+		extra.set_shader_parameter(param, value)
+
+## Perspective Per Width のとき、今の絵の幅から、遠近感の強さを決め直す
+func _update_focal() -> void:
+	if _material == null or perspective_per_width <= 0.0:
+		return
+	var sprite := target as Sprite2D
+	if sprite == null or sprite.texture == null:
+		return
+	# コマの幅ではなく、絵全体の幅で決める(hframes で横に並んだ絵は、シェーダーの中の座標が絵全体の大きさになる。
+	# コマの幅で決めると遠近が強くなりすぎて、重ねた部品がばらばらにずれる)
+	var width := float(sprite.texture.get_width())
+	if sprite.region_enabled:
+		width = sprite.region_rect.size.x
+	if absf(width - _focal_width) > 0.5:
+		_focal_width = width
+		_set_all(&"focal", width * perspective_per_width)
 
 func _process(delta : float) -> void:
 	_step(delta)
@@ -131,6 +174,7 @@ func _step(delta : float) -> void:
 
 	# ロール: 曲がる内側へ倒れる + 横へ流れる向きへ倒れる
 	if _material:
+		_update_focal() # アニメーションで絵が差し替わったとき
 		var side_axis := Vector2.RIGHT.rotated(target.global_rotation) # 絵の +x の向き(画面上)
 		var side := 0.0
 		if moving:
@@ -139,4 +183,4 @@ func _step(delta : float) -> void:
 		var limit_roll := deg_to_rad(bank_max_deg)
 		wanted = clampf(wanted, -limit_roll, limit_roll)
 		_roll = lerpf(_roll, wanted, 1.0 - exp(-bank_sharpness * delta))
-		_material.set_shader_parameter("roll", _roll)
+		_set_all(&"roll", _roll)

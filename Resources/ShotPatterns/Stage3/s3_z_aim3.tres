@@ -6,8 +6,9 @@
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
-start_delay = 0.6
-shot_count = 2
+start_delay = 1.0
+loop = false
+shot_count = 1
 interval = 0.15
 pause = 1.0
 bullet_count = 3

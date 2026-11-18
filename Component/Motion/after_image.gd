@@ -7,16 +7,19 @@ class_name AfterImage
 @export var target : Sprite2D
 ## この速さ(px/秒)より速いときだけ、残像を出す
 @export var min_speed : float = 160.0
-## 残像を出す間隔と、消えるまでの時間(秒)
-@export var interval : float = 0.03
-@export var lifetime : float = 0.3
+## 残像を出す間隔(秒)と、少なくともこれだけ(px)動いてから次を出す。速く動いても、残像が重なって柱にならない
+@export var interval : float = 0.04
+@export var min_spacing : float = 18.0
+## 消えるまでの時間(秒)。長いと、速く動いたときに残像が長い柱のように残る
+@export var lifetime : float = 0.16
 ## 残像の色(少し赤く光らせる)
-@export var color : Color = Color(1.8, 1.1, 0.7, 0.85)
+@export var color : Color = Color(1.8, 1.1, 0.7, 0.6)
 
 var _owner2d : Node2D
 var _last_pos : Vector2
 var _started : bool = false
 var _wait : float = 0.0
+var _last_ghost : Vector2
 
 func _ready() -> void:
 	_owner2d = get_parent() as Node2D
@@ -36,7 +39,10 @@ func _physics_process(delta : float) -> void:
 	_wait -= delta
 	if speed < min_speed or _wait > 0.0 or not target.is_visible_in_tree():
 		return
+	if pos.distance_to(_last_ghost) < min_spacing:
+		return
 	_wait = interval
+	_last_ghost = pos
 	_spawn()
 
 func _spawn() -> void:

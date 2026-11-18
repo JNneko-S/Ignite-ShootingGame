@@ -20,6 +20,8 @@ class_name SkyBackground
 
 const CLOUD_SHADER := preload("res://Shaders/sky_clouds.gdshader")
 const PROJECTION_SHADER := preload("res://Shaders/sky_projection.gdshader")
+## 空と海を、描画範囲の何倍の大きさで描くか(背景を回転・傾けても、端が描画範囲の中に入らないように)
+const UNDER_MARGIN : float = 1.8
 
 @export_group("空")
 ## 空の色(上・真ん中・下)。日が沈んだあとの、青い夕暮れ(下ほど霞んで、藤色がかる)
@@ -197,8 +199,11 @@ func _ready() -> void:
 	_vp.add_child(_rig)
 	# 1. 空
 	var gradient := Gradient.new()
-	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
-	gradient.colors = PackedColorArray([sky_top, sky_middle, sky_bottom])
+	# 空と海は、回転・傾けても端が見えないように、描画範囲より UNDER_MARGIN 倍大きく描く。
+	# 色の並びは、まん中の(描画範囲ぶんの)ところで、元と同じになるようにする
+	var inner := func(o : float) -> float: return (o * 1.0 + (UNDER_MARGIN - 1.0) * 0.5) / UNDER_MARGIN
+	gradient.offsets = PackedFloat32Array([0.0, inner.call(0.0), inner.call(0.55), inner.call(1.0), 1.0])
+	gradient.colors = PackedColorArray([sky_top, sky_top, sky_middle, sky_bottom, sky_bottom])
 	var gradient_texture := GradientTexture2D.new()
 	gradient_texture.gradient = gradient
 	gradient_texture.fill_from = Vector2(0.5, 0.0)
@@ -440,7 +445,11 @@ func _make_clouds(coverage : float, opacity : float) -> ColorRect:
 	material.set_shader_parameter("sky_alpha", 0.0) # 雲の隙間から、下が見える
 	material.set_shader_parameter("opacity", opacity)
 	rect.material = material
-	_rig.add_child(rect)
+	# 四角形は、回転・傾けた背景(_rig)の動きを打ち消す台に載せて、描画範囲にまっすぐ・いっぱいに置く。
+	# 回転・傾き・寄りは、シェーダーが座標で付ける(四角形ごと回すと、端が描画範囲の中に入って雲が切れる)
+	var holder := Node2D.new()
+	holder.add_child(rect)
+	_rig.add_child(holder)
 	return rect
 
 ## 背景の敵の群れ(雲のあいだを飛ぶ)
@@ -522,21 +531,29 @@ func _follow_view() -> void:
 	var zoom := 1.0 + 0.05 * k * sin(_time * 0.23 + 0.4)
 	_rig.scale = Vector2(zoom, zoom)
 	var corner := -_size * 0.5
-	_sky.position = corner
-	_sky.size = _size
+	var under := _size * UNDER_MARGIN # 空と海は大きめに描く(回転・傾けても端が見えないように)
+	_sky.position = -under * 0.5
+	_sky.size = under
 	if _sea:
 		var frame_w := _sea_frame_w
 		var s := maxf(_size.x / frame_w, sea_scale)
 		_sea.scale = Vector2(s, s)
-		_sea.position = corner
-		# 縦に繰り返す絵を下へ流し、旋回にあわせて少し横へずらす
-		_sea.region_rect = Rect2((_yaw * 0.3 + _roll_offset * 0.4) * frame_w + _flow_sea / s, -_sea_offset / s, frame_w, _size.y / s)
+		_sea.position = -under * 0.5
+		# 縦に繰り返す絵を下へ流し、旋回にあわせて少し横へずらす。
+		# 大きく描いたぶん、元の描画範囲の左上が、元と同じ絵の場所になるように始点をずらす
+		var extra := (under - _size) * 0.5 / s
+		_sea.region_rect = Rect2((_yaw * 0.3 + _roll_offset * 0.4) * frame_w + _flow_sea / s - extra.x, -_sea_offset / s - extra.y, under.x / s, under.y / s)
+	var inverse := _rig.transform.affine_inverse() # 描画範囲の px → 背景の中の座標
 	for rect in [_side, _low, _high]:
-		rect.position = corner
+		(rect.get_parent() as Node2D).transform = inverse # _rig の動きを打ち消す
+		rect.position = Vector2.ZERO
 		rect.size = _size
 		var material := rect.material as ShaderMaterial
 		material.set_shader_parameter("rect_size", _size)
 		material.set_shader_parameter("aspect", _size.x / maxf(_size.y, 1.0))
+		material.set_shader_parameter("inv_x", inverse.x)
+		material.set_shader_parameter("inv_y", inverse.y)
+		material.set_shader_parameter("inv_o", inverse.origin)
 	if _swarm:
 		_swarm.area = Rect2(corner, _size)
 

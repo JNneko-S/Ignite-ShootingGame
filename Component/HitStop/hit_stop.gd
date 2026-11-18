@@ -37,6 +37,14 @@ static func apply(tree : SceneTree, time : float, time_scale : float = 0.05) -> 
 		_active = false
 		Engine.time_scale = _base_scale
 
+## apply と同じ(ステージ3側のコードからの呼び方)
+static func play(tree : SceneTree, seconds : float, time_scale : float = 0.05) -> void:
+	apply(tree, seconds, time_scale)
+
+## 止めているところか
+static func is_active() -> bool:
+	return _active
+
 ## ヒットストップの途中で、シーンを読み直すときなどに、すぐ元の速さへ戻す
 static func reset() -> void:
 	if _active:

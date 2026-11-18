@@ -1,61 +1,35 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://t26vdwy8qwct"]
 
-[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Bl_0.png" id="tex"]
-[ext_resource type="Script" uid="uid://dnmayr1mexgt2" path="res://Component/Hitbox/contact_hitbox.gd" id="contact_hitbox"]
+[ext_resource type="Texture2D" uid="uid://dw561gp3yjm2y" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/makebead-256x256.png" id="3_2i5xt"]
 [ext_resource type="Script" uid="uid://8otilot8gaq8" path="res://Component/Boss/afterburner_dive.gd" id="afterburner_dive"]
+[ext_resource type="Script" uid="uid://dp85fp6w51s3i" path="res://Component/Motion/motion_tilt.gd" id="bank_motion_tilt"]
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" uid="uid://dnmayr1mexgt2" path="res://Component/Hitbox/contact_hitbox.gd" id="contact_hitbox"]
 [ext_resource type="Script" uid="uid://daaea4ckwspdv" path="res://Component/Boss/fighter_mover.gd" id="fighter_mover"]
 [ext_resource type="Script" uid="uid://cloo6hvvho0ws" path="res://Component/FSM/StateMachine.gd" id="fsm"]
+[ext_resource type="Resource" uid="uid://jjb13q8cqh76" path="res://Resources/MovePatterns/Stage3/m3_swans_enter.tres" id="move"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_5way.tres" id="p_5way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross.tres" id="p_cross"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="AudioStream" uid="uid://cq6dud8jkv8ec" path="res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3" id="snd_ignite"]
 [ext_resource type="Script" uid="uid://dnpu43at3w1sf" path="res://Component/Boss/States/cross_fire_state.gd" id="st_cross"]
 [ext_resource type="Script" uid="uid://hlk5r7h3h1bl" path="res://Component/Boss/States/boss_dive_state.gd" id="st_dive"]
 [ext_resource type="Script" uid="uid://ds7744w0iej0f" path="res://Component/Boss/States/boss_shoot_state.gd" id="st_shoot"]
-[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_5way.tres" id="p_5way"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross.tres" id="p_cross"]
-[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_swans_enter.tres" id="move"]
-[ext_resource type="AudioStream" uid="uid://cq6dud8jkv8ec" path="res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3" id="snd_ignite"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Bl_0.png" id="anim_tex_0_0"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Bl_1.png" id="anim_tex_0_1"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Bl_2.png" id="anim_tex_0_2"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Bl_3.png" id="anim_tex_0_3"]
-
-[sub_resource type="RectangleShape2D" id="body_shape"]
-size = Vector2(58, 70)
 
 [sub_resource type="RectangleShape2D" id="ram_shape"]
-size = Vector2(22, 30)
+size = Vector2(110, 78)
 
-[sub_resource type="Animation" id="IdleAnim"]
-resource_name = "idle"
-length = 0.4
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("anim_tex_0_0"), ExtResource("anim_tex_0_1"), ExtResource("anim_tex_0_2"), ExtResource("anim_tex_0_3")]
-}
-
-[sub_resource type="AnimationLibrary" id="IdleAnimLib"]
-_data = {
-&"idle": SubResource("IdleAnim")
-}
+[sub_resource type="RectangleShape2D" id="body_shape"]
+size = Vector2(106, 60)
 
 [node name="BlackSwans" unique_id=1820000001 groups=["black_swans"] instance=ExtResource("base")]
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]
 texture_filter = 1
-scale = Vector2(2.4, 2.4)
-texture = ExtResource("tex")
+scale = Vector2(0.58, 0.58)
+texture = ExtResource("3_2i5xt")
 hframes = 1
 
 [node name="RamHitbox" type="Area2D" parent="Sprite2D" index="0" unique_id=1820000002]
@@ -67,18 +41,20 @@ damage = 1
 damage_source_type = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/RamHitbox" index="0" unique_id=1820000003]
+position = Vector2(1, -15)
 shape = SubResource("ram_shape")
 
 [node name="EngineL" type="Marker2D" parent="Sprite2D" index="1" unique_id=1820000004]
-position = Vector2(-6, 15)
+position = Vector2(-32, 77)
 
 [node name="EngineR" type="Marker2D" parent="Sprite2D" index="2" unique_id=1820000005]
-position = Vector2(6, 15)
+position = Vector2(33, 77)
 
 [node name="Tail" type="Marker2D" parent="Sprite2D" index="3" unique_id=1820000006]
-position = Vector2(0, 17)
+position = Vector2(0, 62)
 
-[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+[node name="CollisionShape2D" parent="Hurtbox" parent_id_path=PackedInt32Array(1184106570) index="0" unique_id=38672095]
+position = Vector2(-1, -12)
 shape = SubResource("body_shape")
 
 [node name="HPComponent" parent="." index="3" unique_id=2079593739]
@@ -89,15 +65,15 @@ hp = 5000
 patterns = Array[ExtResource("shot_script")]([ExtResource("p_5way")])
 autostart = false
 
-[node name="CannonL" parent="." unique_id=1820000007 instance=ExtResource("shooter_scene")]
+[node name="CannonL" parent="." index="9" unique_id=1820000007 instance=ExtResource("shooter_scene")]
 position = Vector2(-22, 26)
 autostart = false
 
-[node name="CannonR" parent="." unique_id=1820000008 instance=ExtResource("shooter_scene")]
+[node name="CannonR" parent="." index="10" unique_id=1820000008 instance=ExtResource("shooter_scene")]
 position = Vector2(22, 26)
 autostart = false
 
-[node name="AfterburnerDive" type="Node" parent="." unique_id=1820000009 node_paths=PackedStringArray("engines", "ram_hitbox", "tail_marker", "sound")]
+[node name="AfterburnerDive" type="Node" parent="." index="11" unique_id=1820000009 node_paths=PackedStringArray("engines", "ram_hitbox", "tail_marker", "sound")]
 script = ExtResource("afterburner_dive")
 engines = [NodePath("../Sprite2D/EngineL"), NodePath("../Sprite2D/EngineR")]
 ram_hitbox = NodePath("../Sprite2D/RamHitbox")
@@ -107,27 +83,27 @@ flame_length = 300.0
 flame_width = 26.0
 sound = NodePath("IgniteSound")
 
-[node name="IgniteSound" type="AudioStreamPlayer" parent="AfterburnerDive" unique_id=1820000010]
+[node name="IgniteSound" type="AudioStreamPlayer" parent="AfterburnerDive" index="0" unique_id=1820000010]
 stream = ExtResource("snd_ignite")
 volume_db = -8.0
 
-[node name="StateMachine" type="Node" parent="." unique_id=1820000011 node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." index="12" unique_id=1820000011 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("fsm")
 initial_state = NodePath("Intro")
 
-[node name="Intro" type="Node" parent="StateMachine" unique_id=1820000012]
+[node name="Intro" type="Node" parent="StateMachine" index="0" unique_id=1820000012]
 script = ExtResource("st_shoot")
 duration = 2.8
 next_state = "Barrage"
 
-[node name="Barrage" type="Node" parent="StateMachine" unique_id=1820000013 node_paths=PackedStringArray("shooters")]
+[node name="Barrage" type="Node" parent="StateMachine" index="1" unique_id=1820000013 node_paths=PackedStringArray("shooters")]
 script = ExtResource("st_shoot")
 shooters = [NodePath("../../EnemyShooterComponent")]
 duration = 4.0
 next_state = "CrossFire"
 wait_clear_before_phase = 0
 
-[node name="CrossFire" type="Node" parent="StateMachine" unique_id=1820000014 node_paths=PackedStringArray("shooters")]
+[node name="CrossFire" type="Node" parent="StateMachine" index="2" unique_id=1820000014 node_paths=PackedStringArray("shooters")]
 script = ExtResource("st_cross")
 shooters = [NodePath("../../CannonL"), NodePath("../../CannonR")]
 cross_fire = ExtResource("p_cross")
@@ -139,19 +115,26 @@ exclusive_group = &"black_swans"
 next_state = "Dive"
 wait_clear_before_phase = 0
 
-[node name="Dive" type="Node" parent="StateMachine" unique_id=1820000015 node_paths=PackedStringArray("dive")]
+[node name="Dive" type="Node" parent="StateMachine" index="3" unique_id=1820000015 node_paths=PackedStringArray("dive")]
 script = ExtResource("st_dive")
 dive = NodePath("../../AfterburnerDive")
 exclusive_group = &"black_swans"
 next_state = "Barrage"
 wait_clear_before_phase = 0
 
-[node name="FighterMover" type="Node" parent="." unique_id=1820000016 node_paths=PackedStringArray("dive")]
+[node name="FighterMover" type="Node" parent="." index="13" unique_id=1820000016 node_paths=PackedStringArray("dive")]
 script = ExtResource("fighter_mover")
-dive = NodePath("../AfterburnerDive")
 start_delay = 3.0
+dive = NodePath("../AfterburnerDive")
 range_x = 60.0
 
-[node name="IdleAnimation" type="AnimationPlayer" parent="." unique_id=1820000100]
-libraries/ = SubResource("IdleAnimLib")
-autoplay = &"idle"
+[node name="MotionTilt" type="Node" parent="." index="14" unique_id=1840000201]
+script = ExtResource("bank_motion_tilt")
+face_mode = 0
+bank_max_deg = 40.0
+bank_per_turn = 0.0
+bank_per_side = 40.0
+bank_side_speed = 150.0
+bank_sharpness = 12.0
+perspective_per_width = 2.2
+all_sprites = true

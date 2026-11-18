@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bdkbwpsi3jir"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_q8iuh"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_bomber_split.tres" id="3"]
 
 [resource]
@@ -13,5 +14,6 @@ pause = 0.0
 aim_at_player = false
 bullet_speed = 10.0
 split_time = 0.9
-split_follow_direction = false
 split_pattern = ExtResource("3")
+split_follow_direction = false
+split_across_motion = true

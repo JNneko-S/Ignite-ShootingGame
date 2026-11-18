@@ -581,7 +581,6 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	_flash_hit()
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
 	if _is_alive:
-		HitStop.apply(get_tree(), HitStop.PLAYER_HIT) # 撃たれた瞬間に、一瞬止まる
 		Rumble.play(Rumble.PLAYER_HIT) # ゲームパッドが震える
 		start_invincibility(hit_invincible_time)
 		if hit_flame:
@@ -624,7 +623,6 @@ func die() -> void:
 	if not _is_alive:
 		return
 	_is_alive = false
-	HitStop.apply(get_tree(), HitStop.PLAYER_DEATH) # 撃墜の瞬間に、少し長く止まる
 	Rumble.play(Rumble.PLAYER_DEATH)
 	set_igniting(false)
 	_cancel_ignite_hold()

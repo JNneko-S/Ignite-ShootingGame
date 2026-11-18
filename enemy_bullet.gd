@@ -41,6 +41,8 @@ var _mirror : bool = false # 左右反転して出た敵の弾(曲がる向き�
 var _split_pattern : ShotPattern # 割れる設定を持つパターン(この弾を撃ったパターン)
 var _split_in : float = -1.0 # 割れるまでの残り秒数。マイナスなら割れない
 var _split_depth : int = 0
+## 撃った敵が、撃ったときに動いていた向き(ラジアン)。Split Across Motion の弾幕で、割れる向きの基準にする。NAN なら使わない
+var split_heading : float = NAN
 
 ## 画面からこれより遠くへ行った弾は消す(px)
 const FAR_AWAY_DISTANCE : float = 700.0
@@ -114,8 +116,10 @@ func _split() -> void:
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var aim := (player.global_position - global_position).angle() if player else Vector2.DOWN.angle()
 	var fallback : PackedScene = load(scene_file_path) if scene_file_path != "" else null
-	EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror,
-			ShotMath.split_turn(_split_pattern, direction.angle()), _split_depth + 1)
+	var turn := ShotMath.split_turn(_split_pattern, direction.angle())
+	if _split_pattern.split_across_motion and not is_nan(split_heading) and not child.aim_at_player:
+		turn = split_heading - Vector2.DOWN.angle() # 撃った敵の進む向きを基準にする(2発・180度なら、進む向きと直角に割れる)
+	EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror, turn, _split_depth + 1)
 	# 割れた場所が一瞬光る
 	if parent:
 		var flash := Sprite2D.new()

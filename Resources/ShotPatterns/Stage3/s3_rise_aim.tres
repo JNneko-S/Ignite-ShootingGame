@@ -7,7 +7,7 @@
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
 start_delay = 1.5
-pause = 1.2
+loop = false
 bullet_count = 3
 spread_angle = 24.0
 bullet_speed = 150.0

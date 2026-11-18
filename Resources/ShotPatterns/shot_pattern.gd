@@ -123,3 +123,7 @@ enum TimingUnit {
 ## オンなら、割れた弾幕の向きの基準を、割れる前の弾の進む向きにする(Split Pattern の Aim At Player がオフのとき)。
 ## オフなら、基準は真下。Aim At Player がオンなら、割れた場所から自機を狙う
 @export var split_follow_direction : bool = true
+## オンなら、割れた弾幕の向きの基準を、撃った敵がそのとき動いていた向きにする(Split Follow Direction より優先)。
+## 割れたあとが「2発・180度」なら、縦に動く敵が置いた弾は横に、横に動く敵が置いた弾は縦に割れる。
+## 撃ったときに敵が止まっていたら、Split Follow Direction の決まりに戻る
+@export var split_across_motion : bool = false

@@ -10,11 +10,11 @@ signal collected(amount : float)
 
 @export_group("拾う")
 ## 自機との距離がこれ以下になったら拾える(px)
-@export var pickup_radius : float = 16.0
+@export var pickup_radius : float = 22.0
 ## 出てから拾えるようになるまでの時間(秒)。被弾した瞬間に、その場で拾ってしまわないように
 @export var pickup_delay : float = 0.5
 ## 0 より大きければ、自機がこの距離まで近づくと、少しだけ寄ってくる(px)。0 なら全く寄らない
-@export var assist_radius : float = 0.0
+@export var assist_radius : float = 44.0
 
 @export_group("動き")
 ## 散らばったあと、止まるまでの減速(px/秒²)

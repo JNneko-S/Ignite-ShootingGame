@@ -233,15 +233,41 @@ func _can_fire() -> bool:
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
-	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored(), deg_to_rad(turn_degrees))
+	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored(), deg_to_rad(turn_degrees),
+			0, _motion_heading() if pattern.split_across_motion else NAN)
 	fired.emit()
+
+## この砲口が、いま動いている向き(ラジアン)。止まっていれば NAN
+func _motion_heading() -> float:
+	var now := global_position
+	var frame := Engine.get_physics_frames()
+	if _motion_frame < 0 or frame - _motion_frame > 2:
+		# 前の位置を知らない: 次から測る
+		_motion_pos = now
+		_motion_frame = frame
+		return NAN
+	if frame != _motion_frame:
+		var step := now - _motion_pos
+		if step.length() > 0.05:
+			_motion_dir = step
+		_motion_pos = now
+		_motion_frame = frame
+	return _motion_dir.angle() if _motion_dir != Vector2.ZERO else NAN
+
+func _physics_process(_delta : float) -> void:
+	_motion_heading() # 毎フレーム、動いた向きを測っておく(Split Across Motion の弾幕で使う)
+
+var _motion_pos : Vector2
+var _motion_frame : int = -1
+var _motion_dir : Vector2 = Vector2.ZERO
 
 ## pattern の shot_index 発目の弾を、origin から出す。EnemyShooter・分裂弾・撃ち返し弾(RevengeShooter)が使う。
 ## 弾の並べ方(角度・列弾・ばらつき)は、プレビューと同じ ShotMath で計算する。
 ## fallback_scene: pattern に弾シーンがないときの弾 / turn: 全ての弾の向きを、この角度(ラジアン)だけ回す(分裂弾用)
 ## split_depth: 何回割れてできた弾か(分裂弾の段階の上限に使う)
 static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, origin : Vector2,
-		parent : Node, fallback_scene : PackedScene, mirror : bool = false, turn : float = 0.0, split_depth : int = 0) -> void:
+		parent : Node, fallback_scene : PackedScene, mirror : bool = false, turn : float = 0.0, split_depth : int = 0,
+		split_heading : float = NAN) -> void:
 	var scene := pattern.bullet_scene if pattern.bullet_scene else fallback_scene
 	if scene == null:
 		push_warning("EnemyShooter: 弾シーンが未設定です")
@@ -262,6 +288,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 			bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
 		if bullet.has_method("set_split"):
 			bullet.set_split(pattern, bullet_mirror, split_depth)
+			if not is_nan(split_heading) and "split_heading" in bullet:
+				bullet.split_heading = split_heading
 
 ## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する
 func _is_mirrored() -> bool:

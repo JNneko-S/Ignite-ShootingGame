@@ -16,7 +16,12 @@ signal collected(kind : Kind)
 
 @export_group("拾う")
 ## 自機との距離がこれ以下になったら拾える(px)
-@export var pickup_radius : float = 18.0
+@export var pickup_radius : float = 28.0
+## 自機がこの距離まで近づくと、自機へ吸い寄せられる(px)。0 なら寄らない
+@export var magnet_radius : float = 72.0
+## 吸い寄せの加速(px/秒²)と最高速(px/秒)
+@export var magnet_accel : float = 1400.0
+@export var magnet_max_speed : float = 600.0
 ## 出てから拾えるようになるまでの時間(秒)
 @export var pickup_delay : float = 0.3
 
@@ -32,6 +37,9 @@ signal collected(kind : Kind)
 @export var bob_amount : float = 3.0
 ## 画面の下から出たら消える。画面の左右の端からは出ない(px の余白)
 @export var screen_margin : float = 12.0
+## 出てからこの秒数たっても拾われず、画面に残っていたら、点滅して消える(画面に残り続けないように)。
+## 物理の処理が止まっていても数えるように、ゲームの時間のタイマーで数える
+@export var max_lifetime : float = 18.0
 
 @export_group("見た目")
 ## Sprite2D の hframes が 2 以上なら、コマを順番に送る(コマ/秒。0 なら送らない)
@@ -43,6 +51,7 @@ var _push_x : float = 0.0 # 横に散らばる勢い(だんだん弱まる)
 var _base_x : float = NAN # 揺れの中心。最初の物理フレームで、今の位置から決める
 var _phase : float = 0.0
 var _done : bool = false
+var _magnet_speed : float = 0.0 # 吸い寄せの今の速さ(0 なら吸い寄せていない)
 
 @onready var _sprite : Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
 
@@ -55,6 +64,22 @@ func _ready() -> void:
 	scale = Vector2.ZERO
 	create_tween().tween_property(self, "scale", Vector2.ONE, 0.2)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if max_lifetime > 0.0:
+		get_tree().create_timer(max_lifetime, false).timeout.connect(_expire)
+
+## 寿命が来た: 拾われていなければ、点滅して消える
+func _expire() -> void:
+	if _done or not is_inside_tree():
+		return
+	if _age < max_lifetime * 0.5:
+		# 物理の処理が止まっていて、落ちずに残っていた(原因を調べるための知らせ)
+		push_warning("PowerUpItem: 動かないまま残っていたので消します(age=%.1f / pos=%s / done=%s)" % [_age, global_position, _done])
+	_done = true
+	var tween := create_tween()
+	for i in 6:
+		tween.tween_property(self, "modulate:a", 0.15, 0.08)
+		tween.tween_property(self, "modulate:a", 1.0, 0.08)
+	tween.tween_callback(queue_free)
 
 ## 散らばらせる(add_child の前でも後でもよい)。x は横の速さ、up は上へ跳ねる速さ(px/秒)
 func launch(x : float, up : float) -> void:
@@ -72,6 +97,21 @@ func _physics_process(delta : float) -> void:
 	_age += delta
 	if is_nan(_base_x):
 		_base_x = global_position.x
+	# 自機が近くにいたら、吸い寄せられて拾われる(一度寄りはじめたら、離れても追いかける)
+	if _age >= pickup_delay and magnet_radius > 0.0:
+		var near := get_tree().get_first_node_in_group("player") as Player
+		if near and near.visible and near._is_alive:
+			var distance := global_position.distance_to(near.global_position)
+			if _magnet_speed > 0.0 or distance <= magnet_radius:
+				_magnet_speed = minf(_magnet_speed + magnet_accel * delta, magnet_max_speed)
+				global_position = global_position.move_toward(near.global_position, _magnet_speed * delta)
+				_base_x = global_position.x
+				_rise = 0.0
+				if global_position.distance_to(near.global_position) <= pickup_radius:
+					_collect(near)
+				return
+		else:
+			_magnet_speed = 0.0
 	# 上へ跳ねてから、ゆっくり落ちる。左右に揺れる
 	_rise = move_toward(_rise, -fall_speed, 260.0 * delta)
 	_base_x += _push_x * delta
