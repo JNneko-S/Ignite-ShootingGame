@@ -22,10 +22,10 @@ const CLOUD_SHADER := preload("res://Shaders/sky_clouds.gdshader")
 const PROJECTION_SHADER := preload("res://Shaders/sky_projection.gdshader")
 
 @export_group("空")
-## 空の色(上・真ん中・下)。夕暮れ
-@export var sky_top : Color = Color(0.55, 0.36, 0.58)
-@export var sky_middle : Color = Color(0.98, 0.62, 0.45)
-@export var sky_bottom : Color = Color(1.0, 0.84, 0.62)
+## 空の色(上・真ん中・下)。日が沈んだあとの、青い夕暮れ(下ほど霞んで、藤色がかる)
+@export var sky_top : Color = Color(0.38, 0.46, 0.66)
+@export var sky_middle : Color = Color(0.46, 0.56, 0.72)
+@export var sky_bottom : Color = Color(0.6, 0.56, 0.64)
 
 @export_group("海")
 ## はるか下の海の絵(縦につながる絵)。空なら出さない
@@ -38,12 +38,12 @@ const PROJECTION_SHADER := preload("res://Shaders/sky_projection.gdshader")
 @export var sea_scale : float = 1.0
 @export var sea_speed : float = 24.0
 ## 海の色(夕日の色に寄せて、霞ませる)
-@export var sea_tint : Color = Color(0.55, 0.5, 0.7, 0.22)
+@export var sea_tint : Color = Color(0.4, 0.48, 0.7, 0.25)
 
 @export_group("雲")
-## 雲の色(白くて夕日がかった色)と、影の色
-@export var cloud_color : Color = Color(1.0, 0.95, 0.9)
-@export var cloud_shadow : Color = Color(0.96, 0.7, 0.6)
+## 雲の日なたの色(夕日の桃色)と、陰の色(藤色)。中間や暗い陰の色は、シェーダー(sky_clouds)の設定
+@export var cloud_color : Color = Color(0.96, 0.66, 0.52)
+@export var cloud_shadow : Color = Color(0.69, 0.5, 0.53)
 ## 一番下の雲(左右に寄った雲): 量・流れる速さ・不透明度・左右に寄せる強さ
 @export var side_coverage : float = 0.4
 @export var side_speed : float = 0.07
@@ -235,6 +235,7 @@ func _ready() -> void:
 	side_material.set_shader_parameter("side_bias", side_bias)
 	side_material.set_shader_parameter("side_width", 0.42) # 背景を大きく描くぶん、端の雲を広めに
 	side_material.set_shader_parameter("cloud_scale", 1.3)
+	side_material.set_shader_parameter("puff_density", 12.0) # 大きく描く層ほど、こぶを細かくして、こぶの大きさをそろえる
 	# 4. 背景の敵の群れ
 	_swarm = BackgroundSwarm.new()
 	_swarm.quiet = swarm_after_time > 0.0
@@ -243,6 +244,8 @@ func _ready() -> void:
 	# 5・6. 中層・上層の雲
 	_low = _make_clouds(low_coverage, low_opacity)
 	_high = _make_clouds(high_coverage, high_opacity)
+	# 上の雲は薄いので、小さなこぶの集まりにして、ひとつの塊(卵のような形)に見えないようにする
+	(_high.material as ShaderMaterial).set_shader_parameter("puff_density", 15.0)
 	_follow_view()
 	_connect_runner.call_deferred()
 
