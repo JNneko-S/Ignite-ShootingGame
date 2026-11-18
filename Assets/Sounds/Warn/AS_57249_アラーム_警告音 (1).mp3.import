@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bb05wh1umnrrj"
+path="res://.godot/imported/AS_57249_アラーム_警告音 (1).mp3-34633613307dc496271692ac82d000fe.mp3str"
+
+[deps]
+
+source_file="res://Assets/Sounds/Warn/AS_57249_アラーム_警告音 (1).mp3"
+dest_files=["res://.godot/imported/AS_57249_アラーム_警告音 (1).mp3-34633613307dc496271692ac82d000fe.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

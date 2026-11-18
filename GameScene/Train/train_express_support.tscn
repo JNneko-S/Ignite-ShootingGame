@@ -19,6 +19,7 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_3way5.tres" id="fl_3way"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_firework.tres" id="fl_fire"]
 
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
 [node name="TrainExpressSupport" instance=ExtResource("base")]
 
 [node name="ScoreReward" parent="."]
@@ -37,48 +38,78 @@ rush_sound = ExtResource("tackle")
 
 [node name="Gun_m_top" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_m_mid" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w3_l" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([ExtResource("an_a2_snake")])
 
 [node name="Gun_w3_r" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([ExtResource("an_a2_snake")])
 
 [node name="Gun_w3_c1" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w3_c2" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w2_a" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w2_b" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w2_c" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w2_d" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w1_l" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w1_r" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w1_p1" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w1_p2" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="Gun_w1_p3" parent="."]
 pause_scale = 1.0
+another_replace = true
+another_patterns = Array[ExtResource("shot")]([])
 
 [node name="TrainRewards" type="Node" parent="."]
 script = ExtResource("rewards")

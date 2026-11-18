@@ -63,6 +63,11 @@ func _ready() -> void:
 	# 当たったら消える(自機に当たっても、反射弾が敵に当たっても)
 	damage_dealt.connect(_on_damage_dealt)
 	area_entered.connect(_on_area_entered)
+	# ANOTHER: 弾がとても多いので、当たり判定を半分の大きさにする(形の資源は共有なので、ノードの大きさで縮める)
+	if HazardRank.active:
+		for child in get_children():
+			if child is CollisionShape2D or child is CollisionPolygon2D:
+				child.scale *= HazardRank.BULLET_HITBOX_SCALE
 	# 画面外に出たら消える
 	var notifier := VisibleOnScreenNotifier2D.new()
 	add_child(notifier)
@@ -108,6 +113,20 @@ func set_split(pattern : ShotPattern, mirror : bool = false, depth : int = 0) ->
 		_split_pattern = null
 		_split_in = -1.0
 
+## 割れた弾幕を、割れた場所から順番に出す(割れた弾はすぐ消えるので、出すのは親に置いた小さなノードが続ける)
+static func _emit_sequence(parent : Node, pattern : ShotPattern, aim : float, at : Vector2, fallback : PackedScene,
+		mirror : bool, turn : float, depth : int) -> void:
+	var emitter := Node.new()
+	parent.add_child(emitter)
+	for i in pattern.shot_count:
+		if not is_instance_valid(emitter) or not emitter.is_inside_tree():
+			return
+		EnemyShooter.spawn_bullets(pattern, i, aim, at, parent, fallback, mirror, turn, depth)
+		if i < pattern.shot_count - 1:
+			await emitter.get_tree().create_timer(maxf(pattern.interval, 0.01), false).timeout
+	if is_instance_valid(emitter):
+		emitter.queue_free()
+
 ## 割れて、Split Pattern の弾を出し、自分は消える
 func _split() -> void:
 	_split_in = -1.0
@@ -119,7 +138,11 @@ func _split() -> void:
 	var turn := ShotMath.split_turn(_split_pattern, direction.angle())
 	if _split_pattern.split_across_motion and not is_nan(split_heading) and not child.aim_at_player:
 		turn = split_heading - Vector2.DOWN.angle() # 撃った敵の進む向きを基準にする(2発・180度なら、進む向きと直角に割れる)
-	EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror, turn, _split_depth + 1)
+	if child.shot_count > 1 and parent:
+		# 割れた場所から、Interval ごとに1発ずつ順番に出す(Rotate Per Shot で回せば、渦を巻いて出てくる)
+		_emit_sequence(parent, child, aim, global_position, fallback, _mirror, turn, _split_depth + 1)
+	else:
+		EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror, turn, _split_depth + 1)
 	# 割れた場所が一瞬光る
 	if parent:
 		var flash := Sprite2D.new()

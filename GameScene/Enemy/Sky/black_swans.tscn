@@ -92,6 +92,7 @@ script = ExtResource("fsm")
 initial_state = NodePath("Intro")
 
 [node name="Intro" type="Node" parent="StateMachine" index="0" unique_id=1820000012]
+another_next_state = "CrossFire"
 script = ExtResource("st_shoot")
 duration = 2.8
 next_state = "Barrage"
@@ -116,6 +117,7 @@ next_state = "Dive"
 wait_clear_before_phase = 0
 
 [node name="Dive" type="Node" parent="StateMachine" index="3" unique_id=1820000015 node_paths=PackedStringArray("dive")]
+another_next_state = "ARest"
 script = ExtResource("st_dive")
 dive = NodePath("../../AfterburnerDive")
 exclusive_group = &"black_swans"
@@ -138,3 +140,8 @@ bank_side_speed = 150.0
 bank_sharpness = 12.0
 perspective_per_width = 2.2
 all_sprites = true
+
+[node name="ARest" type="Node" parent="StateMachine"]
+script = ExtResource("st_shoot")
+duration = 1.6
+next_state = "CrossFire"

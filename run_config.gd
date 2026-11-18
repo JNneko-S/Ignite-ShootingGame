@@ -6,8 +6,10 @@ class_name RunConfig
 
 ## 機体選択の画面を通って出撃したか(通っていなければ、シーンの設定のまま)
 static var has_selection : bool = false
-## 選んだ難易度(0 = EASY, 1 = NORMAL, 2 = HARD)
+## 選んだ難易度(0 = EASY, 1 = NORMAL, 2 = HARD, 3 = ANOTHER)
 static var difficulty : int = 1
+## 隠し難易度 ANOTHER の番号(弾幕は HARD を元に、ハザードランクで強くなる)
+const ANOTHER : int = 3
 ## 選んだ機体
 static var ship : ShipData = null
 ## 続けてゲームオーバーになった回数(ステージをクリアするか、機体選択から出撃し直すと 0 に戻る)

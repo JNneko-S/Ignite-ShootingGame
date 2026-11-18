@@ -1,11 +1,16 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cni5d1mw43ym8"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="4_jg75v"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross_black.tres" id="black_ver"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 start_delay = 0.0
 shot_count = 40
 interval = 0.08

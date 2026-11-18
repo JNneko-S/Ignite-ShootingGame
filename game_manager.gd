@@ -140,6 +140,8 @@ func _enter_tree() -> void:
 	if RunConfig.has_selection:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
 	DifficultyTuning.level = int(difficulty)
+	# 隠し難易度 ANOTHER: 弾幕は HARD を元に、ハザードランクで強くなる
+	HazardRank.active = RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
 
 ## シーンを読み込んだ直後(まだツリーに入る前)に、選んだ機体へ入れ替える
 func _notification(what : int) -> void:
@@ -241,6 +243,17 @@ func _ready() -> void:
 		player.ignite_aura.burned.connect(_on_bullet_burned)
 	if lives_label:
 		lives_label.bind(player)
+	if HazardRank.active:
+		var hazard := HazardRank.new()
+		hazard.name = "HazardRank"
+		hazard.player = player
+		add_child(hazard)
+		if runner:
+			runner.final_boss_defeated.connect(HazardRank.on_boss_killed)
+			# ボス・中ボスと戦っているあいだは、グレイズでイグナイトが溜まりにくい
+			runner.boss_spawned.connect(func(enemy : Enemy, _name : String, _thresholds : Array[float]) -> void:
+				_hazard_bosses.append(enemy))
+	player.boost_changed.connect(_apply_level_stats)
 	_apply_level_stats()
 
 func _by_difficulty(values : Array):
@@ -269,11 +282,22 @@ func _on_player_graze_hit(_bullet_position : Vector2, density : int) -> void:
 	# イグナイトの効果中は、グレイズしてもゲージが増えない
 	if player.is_igniting:
 		return
+	ignite.graze_gain_scale = _graze_scale_now()
 	ignite.add_graze(density)
 	# 機体によっては、グレイズで入るゲージが多い(BASTION の被弾後など)
 	var gain := player.graze_gain_scale()
 	if gain > 1.0:
-		ignite.add_value((gain - 1.0) * (1.0 + density_bonus * maxi(density - 1, 0)))
+		ignite.add_value((gain - 1.0) * (1.0 + density_bonus * maxi(density - 1, 0)) * ignite.graze_gain_scale)
+
+## ANOTHER でボス・中ボスが生きているあいだのグレイズの溜まり方。1レベル上げるのに、グレイズが2倍要る。ほかは 1
+const HAZARD_BOSS_GRAZE_SCALE : float = 0.5
+var _hazard_bosses : Array = []
+
+func _graze_scale_now() -> float:
+	if not HazardRank.active:
+		return 1.0
+	_hazard_bosses = _hazard_bosses.filter(func(e) -> bool: return is_instance_valid(e) and not e._is_dead)
+	return HAZARD_BOSS_GRAZE_SCALE if not _hazard_bosses.is_empty() else 1.0
 
 ## 被弾: ゲージ(体力)が減る。0未満になったら死亡
 func _on_player_damaged() -> void:
@@ -349,7 +373,7 @@ func _apply_level_stats() -> void:
 	if player == null:
 		return
 	player.level_move_scale = _at_level(move_speed_scales, ignite.level) if player.use_level_scales else 1.0
-	player.level_power_scale = _at_level(shot_power_scales, ignite.level) if player.use_level_scales else 1.0
+	player.level_power_scale = (_at_level(shot_power_scales, ignite.level) if player.use_level_scales else 1.0) * player.boost_power_scale()
 	player.shot_look_level = ignite.level # ショットの見た目(Lv1〜5)。威力は変わらない
 
 # ---------------------------------------------------------------- イグナイト
@@ -365,6 +389,7 @@ func _on_ignite_requested(full : bool) -> void:
 	var used := ignite.consume_levels(ignite.level if full else 1)
 	if used <= 0:
 		return
+	HazardRank.on_ignite(full)
 	if full and used >= IgniteGauge.MAX_LEVEL:
 		full_use_count += 1
 	_start_ignite_effect(used)

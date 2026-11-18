@@ -38,6 +38,19 @@ static func shot_times(pattern : ShotPattern, until : float, seconds_per_beat : 
 static func time_unit(pattern : ShotPattern, seconds_per_beat : float) -> float:
 	return seconds_per_beat if pattern.timing_unit == ShotPattern.TimingUnit.BEATS else 1.0
 
+## 隙間(Gap Size)の真ん中が、何番目の弾の位置か(0 〜 count-1)。
+## Gap Position(-1 = 左端 / 0 = 真ん中 / 1 = 右端)を、Gap Wave で左右に揺らすか、Gap Random でばらばらにする
+static func gap_center(pattern : ShotPattern, shot_index : int, count : int) -> float:
+	var pos := pattern.gap_position
+	if pattern.gap_random:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash([pattern.random_seed, shot_index, "gap"])
+		pos = rng.randf_range(-1.0, 1.0)
+	elif pattern.gap_wave_amplitude != 0.0:
+		pos += pattern.gap_wave_amplitude * sin(TAU * shot_index / maxf(pattern.gap_wave_shots, 1.0))
+	pos = clampf(pos, -1.0, 1.0)
+	return (count - 1) * (pos + 1.0) * 0.5
+
 ## shot_index 回目の発射で出る、全ての弾。
 ## 1発ごとに {"angle": 向き(ラジアン), "speed_scale": 速さの倍率, "offset": 砲口からの出現位置} を返す。
 ## aim_angle は、砲口から自機への角度(aim_at_player のときだけ使う)。
@@ -46,12 +59,20 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 	var sign := -1.0 if mirror else 1.0
 	var base := aim_angle if pattern.aim_at_player else Vector2.DOWN.angle()
 	base += deg_to_rad(pattern.base_angle + rotation_degrees(pattern, shot_index)) * sign
+	if pattern.random_shot_angle > 0.0:
+		# 発射ごとに、弾幕全体の向きをランダムにずらす(列や扇の形は崩さない。砲身が暴れる弾幕)
+		var shot_rng := RandomNumberGenerator.new()
+		shot_rng.seed = hash([pattern.random_seed, shot_index, "shot"])
+		base += deg_to_rad(shot_rng.randf_range(-pattern.random_shot_angle, pattern.random_shot_angle)) * sign
 	var count := maxi(pattern.bullet_count, 1)
 	var lines := maxi(pattern.line_count, 1)
 	var is_ring := pattern.spread_angle >= 360.0
 	var has_random := pattern.random_angle > 0.0 or pattern.random_speed_ratio > 0.0
 	var result : Array[Dictionary] = []
+	var gap := gap_center(pattern, shot_index, count)
 	for i in count:
+		if pattern.gap_size > 0 and absf(i - gap) < pattern.gap_size * 0.5:
+			continue # 隙間(Gap): ここには弾を出さない
 		var spread := 0.0
 		if count > 1:
 			if is_ring:
@@ -67,6 +88,9 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 		for line in lines:
 			var angle := base + deg_to_rad(spread) * sign
 			var speed_scale := 1.0 + pattern.line_speed_ratio * line
+			if pattern.spiral_speed_ratio != 0.0 and count > 1:
+				# 渦巻き: 並びの順に少しずつ速くして、止まったときに、輪ではなく渦巻きの形になるようにする
+				speed_scale *= 1.0 + pattern.spiral_speed_ratio * float(i) / (count - 1)
 			if has_random:
 				var rng := RandomNumberGenerator.new()
 				rng.seed = hash([pattern.random_seed, shot_index, i, line])
@@ -75,6 +99,8 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 			result.append({
 				"angle": angle,
 				"speed_scale": speed_scale,
+				# 撃ち出すときだけの速さの倍率(発射ごとに Launch Speed Step ずつ増える。Motion の速度にはかからない)
+				"launch_scale": 1.0 + pattern.launch_speed_step * shot_index,
 				"flip": flip,
 				"offset": Vector2.from_angle(angle) * pattern.spawn_radius + Vector2.from_angle(base + PI / 2.0) * lateral * sign})
 	return result

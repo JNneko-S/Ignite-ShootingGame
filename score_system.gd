@@ -265,7 +265,8 @@ func on_enemy_killed(enemy : Enemy) -> void:
 		close_killed.emit(enemy.global_position)
 	_raise_graze_multiplier()
 	var ignite_multiplier := current_ignite_multiplier()
-	var points := float(reward.score_value) * graze_multiplier * ignite_multiplier * kill_style_multiplier(enemy)
+	# ANOTHER: ハザードランクの倍率を、グレイズの倍率に足す(ランク 50 ごとに +0.5)
+	var points := float(reward.score_value) * (graze_multiplier + HazardRank.score_bonus()) * ignite_multiplier * kill_style_multiplier(enemy)
 	if enemy.killed_by_reflect:
 		points *= reflect_kill_multiplier
 	# 点はその場で入らず、アイテムになって落ちる(種類は敵による。大きい敵ほど数が多い)

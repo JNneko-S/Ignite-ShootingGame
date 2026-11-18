@@ -124,7 +124,7 @@ func _check_summon(ratio : float) -> void:
 	if phases.is_empty() or _summoned.has(_index) or _hp.hp <= 0:
 		return
 	var phase := phases[_index]
-	if phase.summons.is_empty() or ratio > phase.summon_hp_ratio:
+	if phase.summons_for_difficulty().is_empty() or ratio > phase.summon_hp_ratio:
 		return
 	_summoned[_index] = true
 	_summon(phase)
@@ -155,7 +155,7 @@ func _summon_inner(phase : BossPhase) -> void:
 		if not is_inside_tree() or _hp.hp <= 0:
 			return
 	var entries : Array = []
-	for event in phase.summons:
+	for event in phase.summons_for_difficulty():
 		if event == null:
 			continue
 		for i in event.unit_count():
@@ -266,7 +266,7 @@ func _supports_alive() -> bool:
 func _resummon() -> void:
 	if phases.is_empty():
 		return
-	var events : Array = phases[_index].summons.filter(func(e) -> bool: return e != null)
+	var events : Array = phases[_index].summons_for_difficulty().filter(func(e) -> bool: return e != null)
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	var ground := RailGround.of(self)
 	if events.is_empty() or runner == null or ground == null:

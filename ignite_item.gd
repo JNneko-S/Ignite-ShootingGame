@@ -74,7 +74,7 @@ func _ready() -> void:
 func _physics_process(delta : float) -> void:
 	if _done:
 		return
-	_age += delta
+	_age += delta * (HazardRank.IGNITE_ITEM_FADE if HazardRank.active else 1.0) # ANOTHER: 2x faster fade
 	if _age >= lifetime:
 		queue_free()
 		return

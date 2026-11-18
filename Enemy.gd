@@ -190,6 +190,7 @@ func _die() -> void:
 		close_kill = score_system.is_close_kill(self)
 		ignite_kill = score_system.is_ignite_kill()
 	died.emit(self)
+	HazardRank.on_enemy_killed(self) # ANOTHER: 撃破数・中ボスで、ランクが上がる
 	get_tree().call_group("score_system", "on_enemy_killed", self)
 	ItemDrop.drop_all(self, global_position)
 	var death := DeathExplosion.of(self)

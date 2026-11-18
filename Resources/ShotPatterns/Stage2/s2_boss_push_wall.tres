@@ -1,13 +1,17 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bhg2ynp8w8apg"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="4_2328a"]
+[ext_resource type="Resource" uid="uid://cc8ibf33ksec1" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall_black.tres" id="black_ver"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 start_delay = 0.2
-interval = 0.1
 pause = 0.35
 bullet_count = 8
 spread_angle = 70.0

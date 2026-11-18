@@ -6,7 +6,8 @@
 [ext_resource type="Shader" path="res://GameScene/UI/game_over_screen_fx.gdshader" id="4_fx"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="5_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="6_beep"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="7_confirm"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="8_ui_select"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="9_ui_decide"]
 
 [sub_resource type="ShaderMaterial" id="mat_fx"]
 shader = ExtResource("4_fx")
@@ -134,12 +135,12 @@ label_settings = SubResource("ls_hint")
 horizontal_alignment = 1
 
 [node name="MoveSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_beep")
-volume_db = -10.0
+stream = ExtResource("8_ui_select")
+volume_db = -8.0
 
 [node name="ConfirmSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_confirm")
-volume_db = -8.0
+stream = ExtResource("9_ui_decide")
+volume_db = -6.0
 
 [node name="OpenSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_beep")

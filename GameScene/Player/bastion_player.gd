@@ -99,12 +99,12 @@ func _shoot(_delta : float) -> void:
 	if not Input.is_action_pressed("UI_Shoot") or not _is_alive:
 		return
 	if shoot_timer.time_left <= 0.0:
-		shoot_timer.start(option_interval)
+		shoot_timer.start(option_interval / boost_rate_scale())
 		_fire_options()
 	# ショットガンは、子機とは別の間隔で撃つ(Lv で間隔が変わる)
 	if _pellet_wait <= 0.0 and bullet_scene:
 		var level := clampi(shot_look_level, 0, 5)
-		_pellet_wait += _at(pellet_intervals, level, 0.2)
+		_pellet_wait += _at(pellet_intervals, level, 0.2) / boost_rate_scale()
 		if _pellet_wait < 0.0:
 			_pellet_wait = 0.0
 		SoundManager.play_on_channel(&"player_shot", shot_sound)
@@ -131,7 +131,7 @@ func _at(values : Array, index : int, fallback : float) -> float:
 	return float(values[clampi(index, 0, values.size() - 1)])
 
 func _power() -> float:
-	return ignite_shot_scale if is_igniting else 1.0
+	return (ignite_shot_scale if is_igniting else 1.0) * boost_power_scale()
 
 func _fire_shotgun(volley_damage : float) -> void:
 	var size := pellet_scale * (ignite_pellet_size if is_igniting else 1.0)

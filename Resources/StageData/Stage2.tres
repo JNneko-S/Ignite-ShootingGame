@@ -24,14 +24,227 @@
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_express.tscn" id="e19"]
 [ext_resource type="PackedScene" uid="uid://d2cow05163fxg" path="res://GameScene/Enemy/Zako/absorber.tscn" id="e20"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e21"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_rain.tres" id="e22"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_ring.tres" id="e23"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_spiral.tres" id="e24"]
+[ext_resource type="Resource" uid="uid://bggq55vfcl74b" path="res://Resources/ShotPatterns/Stage2/s2_bonus_rain.tres" id="e22"]
+[ext_resource type="Resource" uid="uid://chbp83cf2biqg" path="res://Resources/ShotPatterns/Stage2/s2_bonus_ring.tres" id="e23"]
+[ext_resource type="Resource" uid="uid://bcxqvmpehfv7w" path="res://Resources/ShotPatterns/Stage2/s2_bonus_spiral.tres" id="e24"]
 [ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="e25"]
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_limited.tscn" id="e26"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="e27"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_z_tank.tres" id="z_tank"]
+[ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
+[ext_resource type="Resource" uid="uid://bsnvi5b3qu5ki" path="res://Resources/ShotPatterns/Stage2/s2_z_tank.tres" id="z_tank"]
+
+[sub_resource type="Resource" id="ax1"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+mirror_x = true
+camera_lane = 0
+time = 13.5
+
+[sub_resource type="Resource" id="ax2"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.5
+camera_lane = 0
+time = 16.8
+
+[sub_resource type="Resource" id="ax3"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_fighter")])
+count = 6
+interval = 0.35
+camera_lane = 2
+time = 20.0
+
+[sub_resource type="Resource" id="ax4"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 3
+interval = 0.6
+alternate_mirror = true
+camera_lane = 2
+time = 23.0
+
+[sub_resource type="Resource" id="ax5"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+camera_lane = 0
+time = 24.0
+
+[sub_resource type="Resource" id="ax6"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.5
+mirror_x = true
+camera_lane = 0
+time = 26.8
+
+[sub_resource type="Resource" id="ax7"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+camera_lane = 2
+time = 29.0
+
+[sub_resource type="Resource" id="ax8"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_fighter")])
+count = 5
+interval = 0.5
+camera_lane = 1
+time = 33.0
+
+[sub_resource type="Resource" id="ax9"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 3
+interval = 0.6
+alternate_mirror = true
+camera_lane = 2
+time = 37.5
+
+[sub_resource type="Resource" id="ax10"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.5
+camera_lane = 0
+time = 48.0
+
+[sub_resource type="Resource" id="ax11"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+mirror_x = true
+camera_lane = 1
+time = 50.0
+
+[sub_resource type="Resource" id="ax12"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e11")
+count = 3
+interval = 0.6
+alternate_mirror = true
+camera_lane = 2
+time = 52.0
+
+[sub_resource type="Resource" id="ax13"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+mirror_x = true
+camera_lane = 0
+time = 54.0
+
+[sub_resource type="Resource" id="ax14"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.4
+mirror_x = true
+camera_lane = 2
+time = 55.0
+
+[sub_resource type="Resource" id="ax15"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+camera_lane = 1
+time = 57.0
+
+[sub_resource type="Resource" id="ax16"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_fighter")])
+count = 5
+interval = 0.5
+mirror_x = true
+camera_lane = 1
+time = 59.0
+
+[sub_resource type="Resource" id="ax17"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+count = 8
+interval = 0.35
+camera_lane = 0
+time = 61.0
+
+[sub_resource type="Resource" id="ax18"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.35
+time = 69.5
+
+[sub_resource type="Resource" id="ax19"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_fighter")])
+count = 8
+mirror_x = true
+time = 72.5
+
+[sub_resource type="Resource" id="ax20"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.35
+mirror_x = true
+time = 75.5
+
+[sub_resource type="Resource" id="ax21"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e23")])
+count = 9
+interval = 0.35
+mirror_x = true
+time = 78.0
+
+[sub_resource type="Resource" id="ax22"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e13")
+count = 5
+interval = 0.35
+mirror_x = true
+time = 80.5
+
+[sub_resource type="Resource" id="ax23"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_fighter")])
+count = 8
+time = 81.5
+
+[sub_resource type="Resource" id="ax24"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("e23")])
+count = 9
+interval = 0.35
+time = 84.0
+
+[sub_resource type="Resource" id="ax25"]
+script = ExtResource("e2")
+enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("z_tank")])
+count = 5
+interval = 0.6
+offset = Vector2(-120, 0)
+offset_step = Vector2(60, 0)
+time = 82.5
 
 [sub_resource type="Resource" id="s1"]
 script = ExtResource("e0")
@@ -969,6 +1182,8 @@ time = 94.5
 script = ExtResource("e27")
 stage_name = "Stage 2"
 events = Array[ExtResource("e4")]([SubResource("s1"), SubResource("s2"), SubResource("s3"), SubResource("s4"), SubResource("s5"), SubResource("s6"), SubResource("s7"), SubResource("n1"), SubResource("s8"), SubResource("s9"), SubResource("n2"), SubResource("s26"), SubResource("s27"), SubResource("s28"), SubResource("s29"), SubResource("s30"), SubResource("s31"), SubResource("s32"), SubResource("s33"), SubResource("s34"), SubResource("s35"), SubResource("s36"), SubResource("s37"), SubResource("m1"), SubResource("s38"), SubResource("s39"), SubResource("n3"), SubResource("s40"), SubResource("s41"), SubResource("s42"), SubResource("m2"), SubResource("s43"), SubResource("s44"), SubResource("s45"), SubResource("s46"), SubResource("s47"), SubResource("n4"), SubResource("s49"), SubResource("m3"), SubResource("s50"), SubResource("s51"), SubResource("s52"), SubResource("s53"), SubResource("n5"), SubResource("s54"), SubResource("s55"), SubResource("s56"), SubResource("s57"), SubResource("m4"), SubResource("s58"), SubResource("s59"), SubResource("n6"), SubResource("s60"), SubResource("s61"), SubResource("s62"), SubResource("s63"), SubResource("m5"), SubResource("s64"), SubResource("n7"), SubResource("s65"), SubResource("s66"), SubResource("s67"), SubResource("s68"), SubResource("s69"), SubResource("s70"), SubResource("s71"), SubResource("s72"), SubResource("s73"), SubResource("s74"), SubResource("s75"), SubResource("s76"), SubResource("s77"), SubResource("s78"), SubResource("m6"), SubResource("n8"), SubResource("s79"), SubResource("s80"), SubResource("s81"), SubResource("s82"), SubResource("s83"), SubResource("n10"), SubResource("s84"), SubResource("s85"), SubResource("s86"), SubResource("s87"), SubResource("m7"), SubResource("s88"), SubResource("s90"), SubResource("s91"), SubResource("s92"), SubResource("n9"), SubResource("s93"), SubResource("s94"), SubResource("s95"), SubResource("s96"), SubResource("s97"), SubResource("b1"), SubResource("s98"), SubResource("b2"), SubResource("b3"), SubResource("s99"), SubResource("b4"), SubResource("s100"), SubResource("b5"), SubResource("b6"), SubResource("b7"), SubResource("s101"), SubResource("s102"), SubResource("s103"), SubResource("s104"), SubResource("s105"), SubResource("s106")])
+another_events = Array[ExtResource("e4")]([SubResource("ax1"), SubResource("ax2"), SubResource("ax3"), SubResource("ax4"), SubResource("ax5"), SubResource("ax6"), SubResource("ax7"), SubResource("ax8"), SubResource("ax9"), SubResource("ax10"), SubResource("ax11"), SubResource("ax12"), SubResource("ax13"), SubResource("ax14"), SubResource("ax15"), SubResource("ax16"), SubResource("ax17"), SubResource("ax18"), SubResource("ax19"), SubResource("ax20"), SubResource("ax21"), SubResource("ax22"), SubResource("ax23"), SubResource("ax24"), SubResource("ax25")])
+another_zako_rate_ratio = null
 zako_power_drops = false
 train_clear_power_up = ExtResource("clear_power")
 train_clear_power_interval = 14.0

@@ -33,6 +33,21 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/SubShotEasy.tres" id="t_sub_easy"]
 [ext_resource type="Resource" uid="uid://ba7h4uf1jak66" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine.tres" id="t_washer"]
 
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_cage_net.tres" id="an_a1_cage_net"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor.tres" id="an_a1_corridor"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor_push.tres" id="an_a1_corridor_push"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_fence_l.tres" id="an_a1_fence_l"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_fence_r.tres" id="an_a1_fence_r"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_firework.tres" id="an_a1_firework"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_freeze_aim.tres" id="an_a1_freeze_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_gate_wall.tres" id="an_a1_gate_wall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_key_core.tres" id="an_a1_key_core"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_lattice.tres" id="an_a1_lattice"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_rampage.tres" id="an_a1_rampage"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_shell_bloom.tres" id="an_a1_shell_bloom"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_spiral_storm.tres" id="an_a1_spiral_storm"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_yfork_sweep.tres" id="an_a1_yfork_sweep"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(65, 80)
 
@@ -43,16 +58,25 @@ size = Vector2(93, 280)
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_freeze_aim")])
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("t_circle"), ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_corridor"), ExtResource("an_a1_corridor_push"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_lattice"), ExtResource("an_a1_yfork_sweep")])
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtResource("t_shot"), ExtResource("t_circle"), ExtResource("t_washer")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_rampage"), ExtResource("an_a1_spiral_storm"), ExtResource("an_a1_shell_bloom"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_lattice")])
 
 [sub_resource type="RectangleShape2D" id="top_body_shape"]
 size = Vector2(25.428572, 40)
@@ -161,23 +185,55 @@ size = Vector2(14, 14)
 [sub_resource type="Resource" id="left_p1"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a2_snake")])
+another_sequence = Array[ExtResource("shot_script")]([])
 
 [sub_resource type="Resource" id="left_p2"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a2_snake")])
+another_sequence = Array[ExtResource("shot_script")]([])
 
 [sub_resource type="Resource" id="side_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
 easy_patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub_easy")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([])
+
+[sub_resource type="Resource" id="left_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
+easy_patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub_easy")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a1_fence_l")])
+another_sequence = Array[ExtResource("shot_script")]([])
+
+[sub_resource type="Resource" id="right_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub"), ExtResource("t_sub2")])
+easy_patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub_easy")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a1_fence_r")])
+another_sequence = Array[ExtResource("shot_script")]([])
+
 
 [sub_resource type="Resource" id="right_p1"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub2")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a2_snake")])
+another_sequence = Array[ExtResource("shot_script")]([])
 
 [sub_resource type="Resource" id="right_p2"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("t_sub")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([ExtResource("an_a2_snake")])
+another_sequence = Array[ExtResource("shot_script")]([])
 
 [sub_resource type="Animation" id="Animation_31aup"]
 resource_name = "Idle"
@@ -544,11 +600,11 @@ texture = ExtResource("8_yoavu")
 
 [node name="EnemyShooterComponent2" parent="." index="10" unique_id=2117316622 instance=ExtResource("9_euyg5")]
 position = Vector2(-33, -49)
-phases = Array[ExtResource("shooter_phase")]([SubResource("left_p1"), SubResource("left_p2"), SubResource("side_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("left_p1"), SubResource("left_p2"), SubResource("left_p3")])
 
 [node name="EnemyShooterComponent3" parent="." index="11" unique_id=1006558765 instance=ExtResource("9_euyg5")]
 position = Vector2(30, -49)
-phases = Array[ExtResource("shooter_phase")]([SubResource("right_p1"), SubResource("right_p2"), SubResource("side_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("right_p1"), SubResource("right_p2"), SubResource("right_p3")])
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12" unique_id=1918571424]
 libraries/ = SubResource("AnimationLibrary_rgo3p")

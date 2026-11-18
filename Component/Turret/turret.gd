@@ -21,6 +21,10 @@ class_name Turret
 ## 正面の向き(度)。0 なら真下
 @export var rest_rotation : float = 0.0
 
+## 砲身を振る弾幕(Swing Barrel)を撃っているあいだ、砲身を回す速さ(度/秒)。正面から max_swing_angle 度まで振る
+@export var swing_speed : float = 720.0
+@export var max_swing_angle : float = 85.0
+
 @export_group("アニメーション")
 ## 撃ったときに再生する(子の AnimationPlayer の中の名前)。空なら再生しない
 @export var fire_animation : StringName = &"Fire"
@@ -32,6 +36,9 @@ var _anim : AnimationPlayer
 var _muzzle : Node2D
 ## この砲台を含む部位(EnemyPart)。壊れたら動かなくなる
 var _part : EnemyPart
+## 砲身を振る向き(ラジアン、親から見た角度)と、振り続ける残り時間
+var _swing_target : float = 0.0
+var _swing_left : float = 0.0
 
 func _ready() -> void:
 	rotation = deg_to_rad(rest_rotation)
@@ -56,7 +63,10 @@ func _ready() -> void:
 func _physics_process(delta : float) -> void:
 	if _part and _part.is_destroyed():
 		return # 壊れた砲台は、もう動かない
-	if aim_at_player:
+	if _swing_left > 0.0:
+		_swing_left -= delta
+		rotation = rotate_toward(rotation, _swing_target, deg_to_rad(swing_speed) * delta)
+	elif aim_at_player:
 		_aim(delta)
 	# 砲口を、回った砲身の先に合わせる
 	if shooter and _muzzle:
@@ -81,6 +91,12 @@ func get_parent_rotation() -> float:
 
 ## 撃つたびに、反動などのアニメーションを最初から再生する
 func _on_fired() -> void:
+	if shooter.last_fire_swing and not is_nan(shooter.last_fire_angle):
+		# 砲身を、撃った弾の向きへ振る(絵は下向きなので 90 度引く)
+		var rest := deg_to_rad(rest_rotation)
+		var wanted := shooter.last_fire_angle - PI / 2.0 - get_parent_rotation()
+		_swing_target = rest + clampf(wrapf(wanted - rest, -PI, PI), -deg_to_rad(max_swing_angle), deg_to_rad(max_swing_angle))
+		_swing_left = 0.35
 	if _anim == null or fire_animation == &"" or not _anim.has_animation(fire_animation):
 		return
 	_anim.stop()

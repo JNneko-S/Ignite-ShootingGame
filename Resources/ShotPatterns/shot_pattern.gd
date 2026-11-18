@@ -38,6 +38,14 @@ enum TimingUnit {
 @export var normal_version : ShotPattern
 ## EASY のときは、この弾幕の代わりに、こちらを撃つ(自動の調整はしない)
 @export var easy_version : ShotPattern
+## 隠し難易度 ANOTHER のときは、この弾幕の代わりに、こちらを撃つ。
+## ボス・中ボスは ANOTHER を選んだ時点から、雑魚はハザードランク 250 から。(ランクによる弾速の強化は、こちらにも掛かる)
+@export var another_version : ShotPattern
+## ANOTHER の裏(BLACK ANOTHER)の弾幕。ボス・中ボスは、ハザードランク 100 から、
+## または ANOTHER をクリアしたあとの二周目(BLACK ANOTHER)で、こちらを撃つ。なければ Another Version を撃つ
+@export var black_version : ShotPattern
+## オンなら、ANOTHER 専用に手で作った弾幕(ANOTHER では、ランクで撃つ頻度を上げすぎない)
+@export var another_made : bool = false
 
 @export_group("タイミング")
 ## Start Delay / Interval / Pause を、秒で数えるか拍で数えるか。
@@ -60,6 +68,11 @@ enum TimingUnit {
 ## 予告線は撃つ瞬間まで自機を追い、撃つ向きと同じになる。
 ## 撃つ前の待ち(Start Delay / Pause)がこれより短いときは、予告のぶんだけ長く待つ
 @export var warning_time : float = 0.0
+## 1 より大きければ、ボスがこの弾幕を順番に撃っているあいだ(休みも含む)、同じボスの「ゆずる弾幕」(Yields)の
+## 撃つ間隔と休みを、この倍率で長くする(濃い弾幕のあいだ、ほかの砲台をやさしくする)
+@export var soften_others : float = 1.0
+## オンなら、同じボスがやさしくさせる弾幕(Soften Others)を撃っているあいだ、撃つ間隔と休みを長くする
+@export var yields : bool = false
 
 @export_group("弾の並べ方")
 ## 1回の発射で出す弾の数
@@ -87,19 +100,41 @@ enum TimingUnit {
 ## 0 より大きければ、弾を同じ向きに平行に並べて撃つ(この間隔(px)で横に並べる。砲身が何本もある砲台など)。
 ## 広がり(Spread Angle)も使えるが、ふつうは 0 にする
 @export var parallel_spacing : float = 0.0
+## オンなら、撃つたびに、砲台(Turret)の砲身を弾の飛ぶ向きへ振る(砲身を振り回して撃つ弾幕)
+@export var swing_barrel : bool = false
 ## オンなら、左右に並んだ弾のうち片側の曲がり(Motion の Angular Velocity など)を左右反転する。
 ## 2way の弾を、左の弾は左へ、右の弾は右へ(または内側へ)曲げたいときに使う
 @export var mirror_curve_by_side : bool = false
+
+@export_group("隙間")
+## 0 より大きければ、並んだ弾(扇・平行の列)のうち、この数だけ続けて抜いて、くぐれる隙間を開ける
+@export var gap_size : int = 0
+## 隙間の位置(-1 = 左端 / 0 = 真ん中 / 1 = 右端。撃つ向きから見て)
+@export_range(-1.0, 1.0, 0.05) var gap_position : float = 0.0
+## 隙間の位置を、発射ごとに正弦波で左右に揺らす大きさ(Gap Position と同じ単位)と、1往復の発射数。
+## 壁を続けて撃つと、くねくね曲がる通り道になる
+@export var gap_wave_amplitude : float = 0.0
+@export var gap_wave_shots : int = 12
+## オンなら、隙間の位置を発射ごとにばらばらにする(Gap Wave より優先)
+@export var gap_random : bool = false
 
 @export_group("列弾")
 ## 同じ向きに、速さの違う弾を何発ずつ重ねるか(1 なら重ねない)
 @export var line_count : int = 1
 ## 列の1発ごとに、速さ(Motion の速度も含む)を何倍ずつ増やすか。例: 0.15 なら ×1.0, ×1.15, ×1.3 …
 @export var line_speed_ratio : float = 0.15
+## 並んだ弾(扇・輪)の、最初の弾から最後の弾へ、速さを少しずつ上げる割合。例: 1.5 なら最後の弾は ×2.5。
+## 輪で使い、減速して止めると、輪ではなく渦巻きの形に広がる
+@export var spiral_speed_ratio : float = 0.0
+## 発射ごとに、撃ち出す速さ(Bullet Speed)だけを、この割合ずつ増やす(Motion で決めた速さは変わらない)。
+## 減速して止める弾なら、止まる距離が発射ごとに少しずつ伸びて、だんだん大きくなる渦巻きになる
+@export var launch_speed_step : float = 0.0
 
 @export_group("ばらつき")
 ## 角度のばらつき(±度)
 @export var random_angle : float = 0.0
+## 発射ごとに、弾幕全体の向きをずらすばらつき(±度)。弾の並び(列・扇)は崩さず、まとめて向きが変わる
+@export var random_shot_angle : float = 0.0
 ## 速さのばらつき(±割合)。例: 0.1 なら ×0.9〜×1.1
 @export var random_speed_ratio : float = 0.0
 ## ばらつきの種。プレビューとゲームで、同じばらつき方になる
@@ -120,7 +155,8 @@ enum TimingUnit {
 @export_group("分裂")
 ## 撃ってからこの秒数で、弾が割れて Split Pattern の弾になる。0 なら割れない
 @export var split_time : float = 0.0
-## 割れたあとの弾幕。使うのは「弾の並べ方」「列弾」「ばらつき」「弾の性質」「弾の動き」と、その「分裂」(割れた弾がまた割れる。3段階まで)。
+## 割れたあとの弾幕。Shot Count が 2 以上なら、割れた場所から Interval ごとに1発ずつ順番に出す(Rotate Per Shot で渦を巻く)。
+## 使うのは「弾の並べ方」「列弾」「ばらつき」「弾の性質」「弾の動き」と、その「分裂」(割れた弾がまた割れる。3段階まで)。
 ## タイミングは使わない(割れた瞬間に1回だけ出る)。弾シーンが空なら、割れる前の弾と同じ見た目になる
 @export var split_pattern : ShotPattern
 ## オンなら、割れた弾幕の向きの基準を、割れる前の弾の進む向きにする(Split Pattern の Aim At Player がオフのとき)。

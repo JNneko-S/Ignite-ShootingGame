@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_mine_curtain_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("step")
+duration = 0.833
+turn_mode = 0
+turn_angle = 0.0
+target_speed = 0.0
+speed_trans = 1
+speed_ease = 1
+angular_velocity = 0.0
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("step")
+duration = 1.111
+turn_mode = 0
+turn_angle = 0.0
+change_speed = false
+speed_trans = 1
+speed_ease = 1
+angular_velocity = 0.0
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("step")
+duration = 1.389
+turn_mode = 3
+turn_angle = 0.0
+target_speed = 108.0
+speed_trans = 1
+speed_ease = 0
+angular_velocity = 0.0
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_stop")
+another_made = true
+black_version = ExtResource("black_ver")
+start_delay = 0.4
+shot_count = 50
+interval = 0.08
+pause = 0.828
+bullet_count = 2
+spread_angle = 180.0
+aim_at_player = false
+random_seed = 11
+line_count = 2
+line_speed_ratio = 0.5
+random_speed_ratio = 0.45
+bullet_speed = 187.2
+motion = Array[ExtResource("step")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])

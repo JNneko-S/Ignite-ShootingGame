@@ -9,6 +9,9 @@ class_name BossState
 
 ## このステートが終わったら移るステートの名前(StateMachine の子の名前。大文字小文字は区別しない)
 @export var next_state : String = ""
+## 空でなければ、難易度 ANOTHER のときは Next State の代わりに、このステートへ移る
+## (ANOTHER だけの攻撃の流れを、HARD の流れとは別に組む)
+@export var another_next_state : String = ""
 ## true なら、入ったときに、このボスの全ての砲口を止める(ほかの弾幕と一緒に撃たない)
 @export var stop_all_shooters : bool = true
 ## true なら、このステートの間、ボスは動き回らない(FighterMover が止まる)
@@ -53,7 +56,7 @@ func _run(_token_at_start : int) -> void:
 ## ステートが終わった: 次のステートへ
 func finish(token : int) -> void:
 	if token == _token and alive():
-		StateTransitioned.emit(self, next_state)
+		StateTransitioned.emit(self, another_next_state if HazardRank.active and another_next_state != "" else next_state)
 
 ## まだこのステートを続けてよいか(ボスが生きていて、ほかのステートに移っていない)
 func running(token : int) -> bool:

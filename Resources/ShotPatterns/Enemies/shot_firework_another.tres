@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://digfdypa3lf03"]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_0hp8o"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+
+[sub_resource type="Resource" id="step_0"]
+script = ExtResource("2")
+duration = 0.5
+target_speed = 50.0
+
+[sub_resource type="Resource" id="step_1"]
+script = ExtResource("2")
+duration = 1.2
+target_speed = 170.0
+speed_ease = 0
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("1_0hp8o")
+start_delay = 2.0
+shot_count = 4
+interval = 0.15
+loop = false
+bullet_count = 42
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 5.6
+line_count = 2
+line_speed_ratio = 0.35
+bullet_speed = 140.0
+motion = Array[ExtResource("2")]([SubResource("step_0"), SubResource("step_1")])

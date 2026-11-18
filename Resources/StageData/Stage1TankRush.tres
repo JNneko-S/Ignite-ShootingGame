@@ -22,8 +22,8 @@
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
 [ext_resource type="Resource" uid="uid://ds6sjihumi2wf" path="res://Resources/ShotPatterns/Stage1/s1_aim_3way.tres" id="s_aim_3way"]
 [ext_resource type="Resource" uid="uid://baqit7ar6353j" path="res://Resources/ShotPatterns/Stage1/s1_aim_single.tres" id="s_aim_single"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_graze_lane.tres" id="s_graze_lane"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_ignite_wall.tres" id="s_ignite_wall"]
+[ext_resource type="Resource" uid="uid://dsmnfqv4lr0mb" path="res://Resources/ShotPatterns/Stage1/s1_graze_lane.tres" id="s_graze_lane"]
+[ext_resource type="Resource" uid="uid://ciqnnmxorfut8" path="res://Resources/ShotPatterns/Stage1/s1_ignite_wall.tres" id="s_ignite_wall"]
 [ext_resource type="Resource" uid="uid://dinoq0tgh1iam" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
 

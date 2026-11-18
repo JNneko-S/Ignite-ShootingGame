@@ -27,6 +27,8 @@ var value : float = 0.0
 var level : int = MIN_LEVEL
 ## イグナイトで消費したレベルの累計(被弾で減った分は含まない)
 var levels_consumed_total : int = 0
+## グレイズで溜まる量の倍率(ANOTHER のボス戦中は 1/3 にする。弾がとても多く、撃ち放題にならないように)
+var graze_gain_scale : float = 1.0
 
 ## Lv n に到達するゲージの値
 func threshold(for_level : int) -> float:
@@ -54,7 +56,7 @@ func ratio() -> float:
 
 ## グレイズ1回分を加算する。density は GrazeArea 内の弾数(自分を含む)
 func add_graze(density : int = 1) -> void:
-	value = minf(value + 1.0 + density_bonus * maxi(density - 1, 0), max_value())
+	value = minf(value + (1.0 + density_bonus * maxi(density - 1, 0)) * graze_gain_scale, max_value())
 	_update()
 
 ## イグナイトの発動でレベルを count 個消費する。実際に消費した数を返す。

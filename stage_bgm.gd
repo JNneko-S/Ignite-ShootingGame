@@ -13,6 +13,10 @@ class_name StageBGM
 @export var stage_runner : StageRunner
 @export var stage_music : AudioStream
 @export var boss_music : AudioStream
+## 難易度 ANOTHER のときのボスの曲(どのステージも共通。空なら boss_music のまま)
+## ANOTHER のボスの曲の音量のずらし(dB)。この曲は小さめに聞こえるので、上げる
+@export var another_boss_volume_db : float = 5.0
+@export var another_boss_music : AudioStream = preload("res://Assets/Sounds/Music/Another/AS_1660520_ハードコア／サイバーパンクバトル・ループ.mp3")
 ## この名前の StageSignalEvent が来たら、道中の曲をフェードアウトして、ボスの曲を待つ
 @export var boss_signal_name : String = "warning"
 ## 道中の曲を消すのにかける時間(秒)
@@ -39,7 +43,7 @@ func _on_stage_signal(signal_name : String, _text : String) -> void:
 	if signal_name != boss_signal_name:
 		return
 	_boss_pending = true
-	if _is_playing(boss_music):
+	if _is_playing(_boss_music()):
 		return # もうボスの曲が流れている(中ボスのあとなど): 消さずに、そのまま流す
 	_kill_fade()
 	_fade = create_tween()
@@ -50,10 +54,18 @@ func _on_boss_spawned(_enemy : Enemy, _boss_name : String, _thresholds : Array[f
 	if not _boss_pending:
 		return # 中ボス
 	_boss_pending = false
-	if _is_playing(boss_music):
+	if _is_playing(_boss_music()):
 		return # 同じ曲を、頭から流し直さない
 	_kill_fade()
-	_play_music(boss_music)
+	_play_music(_boss_music())
+	if stream == another_boss_music and HazardRank.active:
+		volume_db = _base_volume + another_boss_volume_db
+
+## 今の難易度で流すボスの曲
+func _boss_music() -> AudioStream:
+	if HazardRank.active and another_boss_music != null:
+		return another_boss_music
+	return boss_music
 
 func _play_music(music : AudioStream) -> void:
 	if music == null:

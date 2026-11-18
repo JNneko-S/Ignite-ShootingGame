@@ -27,6 +27,16 @@
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Train/AS_1196077_貨物列車の橋梁通過音.mp3" id="x24"]
 [ext_resource type="Script" path="res://Component/Rail/train_rewards.gd" id="x25"]
 
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_bloom.tres" id="an_a2_bloom"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_converge_dash.tres" id="an_a2_converge_dash"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_gate_wall.tres" id="an_a2_gate_wall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_ignite_core.tres" id="an_a2_ignite_core"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_ignite_wall.tres" id="an_a2_ignite_wall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_rise_rain.tres" id="an_a2_rise_rain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_scissors.tres" id="an_a2_scissors"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_shotgun_accel.tres" id="an_a2_shotgun_accel"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_split_aim.tres" id="an_a2_split_aim"]
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
 
@@ -318,6 +328,9 @@ one_shot = true
 
 [node name="Gun_m_top" parent="." unique_id=1760000015 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x14"), ExtResource("x20")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_ignite_wall"), ExtResource("an_a2_ignite_core")])
+another_sequence = Array[ExtResource("x7")]([ExtResource("an_a2_gate_wall"), ExtResource("an_a2_converge_dash"), ExtResource("an_a2_split_aim"), ExtResource("an_a2_shotgun_accel")])
 
 [node name="Part_m_mid" type="Node2D" parent="VisualRoot" unique_id=1760000016 node_paths=PackedStringArray("shooters")]
 position = Vector2(-1, 210)
@@ -361,6 +374,8 @@ one_shot = true
 
 [node name="Gun_m_mid" parent="." unique_id=1760000024 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x16"), ExtResource("x19")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_scissors")])
 
 [node name="Part_w3_l" type="Node2D" parent="VisualRoot" unique_id=1760000025 node_paths=PackedStringArray("shooters")]
 position = Vector2(-19.5, 517.5)
@@ -404,6 +419,8 @@ one_shot = true
 
 [node name="Gun_w3_l" parent="." unique_id=1760000033 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_snake")])
 
 [node name="Part_w3_r" type="Node2D" parent="VisualRoot" unique_id=1760000034 node_paths=PackedStringArray("shooters")]
 position = Vector2(19.5, 517.5)
@@ -447,6 +464,8 @@ one_shot = true
 
 [node name="Gun_w3_r" parent="." unique_id=1760000042 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_snake")])
 
 [node name="Part_w3_c1" type="Node2D" parent="VisualRoot" unique_id=1760000043 node_paths=PackedStringArray("shooters")]
 position = Vector2(0, 594.5)
@@ -490,6 +509,8 @@ one_shot = true
 
 [node name="Gun_w3_c1" parent="." unique_id=1760000051 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_bloom")])
 
 [node name="Part_w3_c2" type="Node2D" parent="VisualRoot" unique_id=1760000052 node_paths=PackedStringArray("shooters")]
 position = Vector2(0, 651)
@@ -533,6 +554,8 @@ one_shot = true
 
 [node name="Gun_w3_c2" parent="." unique_id=1760000060 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([])
 
 [node name="Part_w2_a" type="Node2D" parent="VisualRoot" unique_id=1760000061 node_paths=PackedStringArray("shooters")]
 position = Vector2(-20.75, 816.5)
@@ -576,6 +599,8 @@ one_shot = true
 
 [node name="Gun_w2_a" parent="." unique_id=1760000069 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x20")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_rise_rain")])
 
 [node name="Part_w2_b" type="Node2D" parent="VisualRoot" unique_id=1760000070 node_paths=PackedStringArray("shooters")]
 position = Vector2(20.75, 816.5)
@@ -619,6 +644,8 @@ one_shot = true
 
 [node name="Gun_w2_b" parent="." unique_id=1760000078 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([])
 
 [node name="Part_w2_c" type="Node2D" parent="VisualRoot" unique_id=1760000079 node_paths=PackedStringArray("shooters")]
 position = Vector2(-20.75, 864)
@@ -662,6 +689,8 @@ one_shot = true
 
 [node name="Gun_w2_c" parent="." unique_id=1760000087 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_bloom")])
 
 [node name="Part_w2_d" type="Node2D" parent="VisualRoot" unique_id=1760000088 node_paths=PackedStringArray("shooters")]
 position = Vector2(20.75, 864)
@@ -705,6 +734,8 @@ one_shot = true
 
 [node name="Gun_w2_d" parent="." unique_id=1760000096 instance=ExtResource("x1")]
 patterns = Array[ExtResource("x7")]([ExtResource("x20")])
+another_replace = true
+another_patterns = Array[ExtResource("x7")]([])
 
 [node name="RailRider" type="Node" parent="." unique_id=1760000097]
 script = ExtResource("x21")

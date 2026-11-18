@@ -22,6 +22,14 @@ func _apply_damage(hitbox : Hitbox) -> void:
 ## ダメージは整数なので、端数は確率で切り上げて、平均が倍率どおりになるようにする
 func _scaled_damage(hitbox : Hitbox) -> int:
 	var damage := hitbox.damage
+	if hitbox is EnemyBullet and hitbox.damage_source_type == Hitbox.DamageSourceType.Player:
+		# イグナイトの反射弾: ANOTHER のボス・中ボスには、効きにくい(端数は確率で切り上げ)
+		var scale := HazardRank.reflect_damage_scale(self)
+		if scale < 1.0:
+			var scaled_reflect := damage * scale
+			var whole_reflect := floori(scaled_reflect)
+			return maxi(whole_reflect + (1 if randf() < scaled_reflect - whole_reflect else 0), 1)
+		return damage
 	if not (hitbox is Bullet) or hitbox.damage_source_type != Hitbox.DamageSourceType.Player:
 		return damage
 	var base : float = (hitbox as Bullet).damage_against(self) # 中心ねらいの弾は、当たった所で威力が変わる

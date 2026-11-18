@@ -1,5 +1,7 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bmo7rior0blr3"]
 
+[ext_resource type="Resource" uid="uid://8hyej804xk7f" path="res://Resources/ShotPatterns/Boss/BlackSwan/BullkanFirework2_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/BullkanFirework2_black.tres" id="black_ver"]
 [ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="b_accel"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
@@ -46,6 +48,8 @@ split_pattern = SubResource("ring")
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 start_delay = 0.8
 pause = 1.6
 spread_angle = 70.0

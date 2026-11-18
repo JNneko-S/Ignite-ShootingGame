@@ -84,6 +84,8 @@ var _loop_time : float = 0.0
 
 func _ready() -> void:
 	add_to_group("stage_runner")
+	if stage:
+		HazardRank.zako_rate_ratio = stage.another_zako_rate_ratio # ANOTHER: このステージの雑魚の撃つ頻度の上がり方
 	_collect_parallax()
 	_load_playtest()
 	# デバッグパネルの「ボスへジャンプ」など
@@ -151,7 +153,10 @@ func _load_playtest() -> void:
 func _build_entries() -> void:
 	_entries.clear()
 	var order := 0
-	for event in stage.events:
+	var events : Array[StageEvent] = stage.events.duplicate()
+	if HazardRank.active:
+		events.append_array(stage.another_events) # ANOTHER だけの追加の敵
+	for event in events:
 		if event == null:
 			continue
 		for i in event.unit_count():
@@ -278,6 +283,14 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 	if enemy == null:
 		push_error("StageRunner: enemy_scene のルートが Enemy(enemy.gd)ではありません")
 		return
+	# ANOTHER: ランクが上がると、編隊の一部(高いランクでは全部)が、ハザードの敵に置き換わる
+	var replaced := false
+	if HazardRank.active and _hazard_replaces(event, unit_index, enemy):
+		var substitute := (load(HAZARD_DRONE) as PackedScene).instantiate() as Enemy
+		substitute.pattern = enemy.pattern # 元の敵と同じ動き(SpawnEvent の Move Pattern があれば、下で上書き)
+		enemy.free()
+		enemy = substitute
+		replaced = true
 
 	if event.move_pattern:
 		enemy.pattern = event.move_pattern
@@ -293,7 +306,7 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.path_offset += view_offset
 		enemy.mirror_center_x = camera.home_x + (camera.get_screen_center_position().x - camera.global_position.x)
 
-	if not event.shot_patterns.is_empty():
+	if not event.shot_patterns.is_empty() and not replaced:
 		for node in enemy.find_children("*", "", true, false):
 			if node is EnemyShooter:
 				node.patterns = event.shot_patterns
@@ -302,6 +315,20 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		if hp:
 			hp.max_hp = event.hp_override
 			hp.hp = event.hp_override
+	if HazardRank.active:
+		# ANOTHER: 出てきた瞬間のランクで、硬さが決まる
+		var hp_node := enemy.get_node_or_null("HPComponent")
+		if hp_node:
+			var kind := HazardRank.Kind.BOSS if event.boss_time_bonus else (HazardRank.Kind.MIDBOSS if event.is_boss else HazardRank.Kind.ZAKO)
+			if replaced:
+				kind = HazardRank.Kind.HAZARD # 置き換わったドローンは、硬くしすぎない
+			if kind == HazardRank.Kind.BOSS or kind == HazardRank.Kind.MIDBOSS:
+				enemy.set_meta(&"hazard_boss", true) # 反射弾のダメージが減る(Hurtbox が見る)
+			var hp_scale := HazardRank.hp_scale(kind)
+			enemy.set_meta(&"hazard_hp_scale", hp_scale) # 部位で HP が決まる敵(列車など)は、PartsDefeat が部位にも掛ける
+			var scaled := maxi(roundi(hp_node.max_hp * hp_scale), 1)
+			hp_node.max_hp = scaled
+			hp_node.hp = scaled
 	if event.flight_curve:
 		# 数式の曲線に沿って飛ぶ(敵がツリーに入る前に付けて、移動パターンの代わりにする)
 		var flight := CurveFlight.new()
@@ -364,6 +391,42 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		boss_spawned.emit(enemy, event.boss_name, event.boss_phase_thresholds)
 	if debug_log:
 		print("[Stage] t=%.1f 出現 %s #%d" % [stage_time, enemy.name, unit_index])
+	# ANOTHER: 編隊の最後の1機のあとに、ランクに応じて機数を足す(5 段階ごとに +1 機)
+	if HazardRank.active and unit_index == event.unit_count() - 1 and _hazard_formation(event):
+		for k in HazardRank.extra_units():
+			var timer := get_tree().create_timer(maxf(event.interval, 0.15) * (k + 1), false)
+			timer.timeout.connect(spawn.bind(event, event.unit_count() + k))
+
+# ---------------------------------------------------------------- ANOTHER(ハザードランク)
+
+## 置き換えに使う、ハザードの敵
+const HAZARD_DRONE := "res://GameScene/Enemy/Hazard/hazard_drone.tscn" # (preload すると読み込みが循環するので、使うときに load)
+## 編隊ごとの、置き換える機の番号(最初の1機が出るときに決める)
+var _hazard_plan : Dictionary = {}
+
+## 編隊として数や置き換えを変えてよい出現か(ボス・中ボス、全滅ボーナスのある隊列、1〜2機は変えない)
+func _hazard_formation(event : SpawnEvent) -> bool:
+	return not event.is_boss and event.unit_count() >= 3 and event.formation_bonus <= 0
+
+## この機を、ハザードの敵に置き換えるか
+##   5 段階〜: 編隊のうち 1〜2 機 / 10 段階〜: 3〜5 機 / 15 段階〜: ときどき編隊まるごと
+func _hazard_replaces(event : SpawnEvent, unit_index : int, enemy : Enemy) -> bool:
+	if not _hazard_formation(event) or GroundUnit.is_ground(enemy):
+		return false
+	if unit_index == 0 or not _hazard_plan.has(event):
+		var count := event.unit_count() + HazardRank.extra_units()
+		var step := HazardRank.step()
+		var replace := 0
+		if step >= 15 and randf() < 0.35:
+			replace = count
+		elif step >= 10:
+			replace = randi_range(3, 5)
+		elif step >= 5:
+			replace = randi_range(1, 2)
+		var order := range(count)
+		order.shuffle()
+		_hazard_plan[event] = order.slice(0, mini(replace, count))
+	return unit_index in _hazard_plan[event]
 
 ## 全滅ボーナス: 隊列の全員がいなくなったときに、全員倒されていればボーナス
 func _track_formation(event : SpawnEvent, enemy : Enemy) -> void:

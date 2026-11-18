@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_eae3e"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_ad6ir"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedCrossFire_another.tres" id="another_ver"]
+
+[resource]
+script = ExtResource("2_ad6ir")
+bullet_scene = ExtResource("b_aim")
+warning_time = 0.6
+shot_count = 56
+interval = 0.05
+loop = false
+bullet_count = 7
+spread_angle = 80.0
+aim_once_per_burst = true
+random_angle = 0.2
+bullet_speed = 700.0
+metadata/_custom_type_script = "uid://ct8u3n22w477n"
+start_delay = 0.425

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall_another.tres" id="another_ver"]
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("2")
+start_delay = 0.17
+interval = 0.08
+pause = 0.188
+bullet_count = 15
+spread_angle = 99.0
+aim_at_player = false
+angle_wave_amplitude = 6.0
+angle_wave_shots = 12
+bullet_speed = 135.0
+line_count = 3
+line_speed_ratio = 0.15

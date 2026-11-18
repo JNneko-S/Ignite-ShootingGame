@@ -109,7 +109,7 @@ func _physics_process(delta : float) -> void:
 
 func _fall(delta : float) -> void:
 	_velocity.x = move_toward(_velocity.x, 0.0, side_drag * delta)
-	_velocity.y = minf(_velocity.y + gravity * delta, fall_speed)
+	_velocity.y = minf(_velocity.y + gravity * delta, fall_speed * HazardRank.item_fall_scale()) # ANOTHER: ランクで速く落ちる
 	global_position += _velocity * delta
 	# 画面の下へ落としたら、取り逃し
 	var area := CameraView.visible_rect(self)

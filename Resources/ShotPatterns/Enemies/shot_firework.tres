@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_0hp8o"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_firework_another.tres" id="another_ver"]
 
 [sub_resource type="Resource" id="step_0"]
 script = ExtResource("2")
@@ -18,6 +19,7 @@ speed_ease = 0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_0hp8o")
+another_version = ExtResource("another_ver")
 start_delay = 2.0
 shot_count = 3
 interval = 0.15

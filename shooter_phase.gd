@@ -9,6 +9,11 @@ class_name ShooterPhase
 ## 順番に撃つ弾幕(1つ撃ち終わったら Pause だけ待って次へ。最後まで行ったら最初に戻る)
 @export var sequence : Array[ShotPattern] = []
 
+@export_group("ANOTHER")
+## オンなら、ANOTHER のときは、Patterns / Sequence の代わりに、下の2つを撃つ(空なら、その段階は撃たない)
+@export var another_replace : bool = false
+@export var another_patterns : Array[ShotPattern] = []
+@export var another_sequence : Array[ShotPattern] = []
 @export_group("EASY")
 ## EASY のときは、Patterns の代わりに、こちらを撃つ(空なら、差し替えない)
 @export var easy_patterns : Array[ShotPattern] = []
@@ -17,8 +22,12 @@ class_name ShooterPhase
 
 ## この難易度で撃つ、同時に撃つ弾幕
 func patterns_for_difficulty() -> Array[ShotPattern]:
+	if another_replace and HazardRank.active:
+		return another_patterns
 	return easy_patterns if DifficultyTuning.is_easy() and not easy_patterns.is_empty() else patterns
 
 ## この難易度で撃つ、順番に撃つ弾幕
 func sequence_for_difficulty() -> Array[ShotPattern]:
+	if another_replace and HazardRank.active:
+		return another_sequence
 	return easy_sequence if DifficultyTuning.is_easy() and not easy_sequence.is_empty() else sequence

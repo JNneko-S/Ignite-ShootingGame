@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Model 1_1.png" id="tex1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Model 1_2.png" id="tex2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Model 1_3.png" id="tex3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Model 1_4.png" id="tex4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Model 1_5.png" id="tex5"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Hazard/hz_boomerang_ring.tres" id="pat_ring"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Hazard/hz_boomerang_back.tres" id="pat_back"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Hazard/m_hazard_carrier.tres" id="move"]
+[ext_resource type="Script" path="res://Component/Difficulty/boost_drop.gd" id="boost_drop"]
+
+[sub_resource type="RectangleShape2D" id="body_shape"]
+size = Vector2(96, 56)
+
+[sub_resource type="Animation" id="IdleAnim"]
+resource_name = "idle"
+length = 0.5
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("tex1"), ExtResource("tex2"), ExtResource("tex3"), ExtResource("tex4"), ExtResource("tex5")]
+}
+
+[sub_resource type="AnimationLibrary" id="IdleAnimLib"]
+_data = {
+&"idle": SubResource("IdleAnim")
+}
+
+[node name="HazardCarrier" unique_id=1850000101 instance=ExtResource("base")]
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+scale = Vector2(1.3, 1.3)
+texture = ExtResource("tex1")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("body_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 900
+hp = 900
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_ring"), ExtResource("pat_back")])
+
+[node name="BoostDrop" type="Node" parent="." unique_id=1850000102]
+script = ExtResource("boost_drop")
+
+[node name="IdleAnimation" type="AnimationPlayer" parent="." unique_id=1850000103]
+libraries/ = SubResource("IdleAnimLib")
+autoplay = &"idle"

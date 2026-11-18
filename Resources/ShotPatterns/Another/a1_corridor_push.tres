@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor_push_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_aim")
+another_made = true
+black_version = ExtResource("black_ver")
+start_delay = 0.2
+shot_count = 6
+interval = 0.55
+pause = 2.5
+bullet_count = 3
+spread_angle = 14.0
+aim_at_player = true
+bullet_speed = 122.4

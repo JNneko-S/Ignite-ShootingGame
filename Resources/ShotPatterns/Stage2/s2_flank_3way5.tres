@@ -1,16 +1,21 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dt2jory4r02ib"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="4_1374t"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_3way5_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_3way5_black.tres" id="black_ver"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 start_delay = 0.0
 shot_count = 5
 interval = 0.12
-pause = 0.0
 loop = false
+pause = 0.0
 bullet_count = 3
 spread_angle = 24.0
 bullet_speed = 170.0

@@ -6,15 +6,18 @@
 [ext_resource type="Script" uid="uid://bhfq8fhyle633" path="res://GameScene/Select/tech_panel.gd" id="6_panel"]
 [ext_resource type="Script" uid="uid://ci2bvdxf7l7c1" path="res://GameScene/Select/selector_ring.gd" id="7_ring"]
 [ext_resource type="Resource" uid="uid://duv3lueav186n" path="res://Resources/Ships/bastion.tres" id="8_bastion"]
-[ext_resource type="Resource" uid="uid://2udwwk4uk82w" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
+[ext_resource type="Resource" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
 [ext_resource type="Resource" uid="uid://bec6dx0n5uyvi" path="res://Resources/Ships/vespa.tres" id="8_vespa"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="9_font"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
-[ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="11_confirm"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/shutter.tscn" id="13_shutter_scene"]
 [ext_resource type="AudioStream" uid="uid://drqvi48px8sp1" path="res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3" id="14_spark"]
 [ext_resource type="AudioStream" uid="uid://bhh1h78p6hl0b" path="res://Assets/Sounds/Music/AS_1026032_SF系、メニュー画面向けエレクトロニカ.mp3" id="15_music"]
 [ext_resource type="Script" uid="uid://cwoy01a6k3y8" path="res://GameScene/Select/ship_preview_fire.gd" id="16_fire"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Warn/AS_1672827__アラーム＿警告＿音.mp3" id="17_an_alarm"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="18_ui_select"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="19_ui_decide"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="20_an_music"]
 
 [sub_resource type="LabelSettings" id="ls_name"]
 font = ExtResource("9_font")
@@ -46,7 +49,7 @@ line_spacing = 1.0
 font_size = 9
 font_color = Color(0.9, 0.93, 0.97, 1)
 
-[node name="ShipSelect" type="Node" unique_id=792165094 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music", "spark_sound")]
+[node name="ShipSelect" type="Node" unique_id=792165094 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music", "spark_sound", "another_alarm_sound")]
 script = ExtResource("1_select")
 ships = Array[ExtResource("2_trkis")]([ExtResource("8_phoenix"), ExtResource("8_bastion"), ExtResource("8_vespa")])
 move_sound = NodePath("MoveSound")
@@ -54,6 +57,8 @@ confirm_sound = NodePath("ConfirmSound")
 back_sound = NodePath("BackSound")
 music = NodePath("Music")
 spark_sound = NodePath("SparkSound")
+another_alarm_sound = NodePath("AnotherAlarm")
+another_music = ExtResource("20_an_music")
 
 [node name="Shutter" parent="." unique_id=1658499860 instance=ExtResource("13_shutter_scene")]
 
@@ -198,12 +203,12 @@ label_settings = SubResource("ls_small")
 horizontal_alignment = 1
 
 [node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=1837419916]
-stream = ExtResource("10_beep")
-volume_db = -10.0
+stream = ExtResource("18_ui_select")
+volume_db = -8.0
 
 [node name="ConfirmSound" type="AudioStreamPlayer" parent="." unique_id=738655468]
-stream = ExtResource("11_confirm")
-volume_db = -8.0
+stream = ExtResource("19_ui_decide")
+volume_db = -6.0
 
 [node name="BackSound" type="AudioStreamPlayer" parent="." unique_id=485129091]
 stream = ExtResource("10_beep")
@@ -218,3 +223,7 @@ pitch_scale = 1.6
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1076512167]
 stream = ExtResource("15_music")
 volume_db = -19.0
+
+[node name="AnotherAlarm" type="AudioStreamPlayer" parent="." unique_id=1311520401]
+stream = ExtResource("17_an_alarm")
+volume_db = -6.0

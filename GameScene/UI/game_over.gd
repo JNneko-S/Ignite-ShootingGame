@@ -30,6 +30,8 @@ class_name GameOverScreen
 ## シャッターが閉まった音と、掲示板が点いた音(シーンに置いた AudioStreamPlayer)
 @export var slam_sound : AudioStreamPlayer
 @export var board_sound : AudioStreamPlayer
+## やり直すと決めたとき(UI の決定音)
+@export var confirm_sound : AudioStreamPlayer
 
 @onready var _root : Control = $Root
 @onready var _top : ColorRect = $Root/ShutterTop
@@ -62,7 +64,7 @@ func play(score : int, difficulty : int = 1) -> void:
 	# 続けて何回もゲームオーバーになったら、やり直しのときに難易度を1つ下げる
 	RunConfig.consecutive_game_overs += 1
 	_difficulty = difficulty
-	_ease_down = RunConfig.consecutive_game_overs >= RunConfig.EASE_AFTER_GAME_OVERS and difficulty > 0
+	_ease_down = RunConfig.consecutive_game_overs >= RunConfig.EASE_AFTER_GAME_OVERS and difficulty > 0 and not HazardRank.active # ANOTHER は下げない
 	if _ease_down:
 		_prompt_label.text = "PRESS SHOT TO RETRY ON %s" % DIFFICULTY_NAMES[difficulty - 1]
 	_fade_music()
@@ -130,6 +132,7 @@ func _retry() -> void:
 		_prompt_blink.kill()
 	_score_label.visible = false
 	_prompt_label.visible = false
+	SoundManager.play(confirm_sound)
 	SoundManager.play(board_sound, 0.55)
 	# 映像が大きく乱れる
 	var glitch := create_tween().set_parallel(true)
@@ -140,6 +143,7 @@ func _retry() -> void:
 
 	# 次のステージは、出撃の演出を飛ばしてすぐ始める。続けて負けたときは、難易度を1つ下げる
 	StageIntro.skip_next = true
+	HazardRank.on_continue() # ANOTHER: ランクは下限まで戻る(下限はそのまま)
 	if _ease_down:
 		RunConfig.has_selection = true
 		RunConfig.difficulty = _difficulty - 1

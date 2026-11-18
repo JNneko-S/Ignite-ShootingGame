@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_jolse"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_85xu1"]
+[ext_resource type="Resource" uid="uid://dylw2a1eo77nq" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedShotgunReverse_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedShotgunReverse_black.tres" id="black_ver"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 
@@ -35,6 +37,8 @@ metadata/_custom_type_script = "uid://ct8u3n22w477n"
 [resource]
 script = ExtResource("2_85xu1")
 bullet_scene = ExtResource("b_split")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 bullet_count = 2
 spread_angle = 30.0
 split_time = 0.6

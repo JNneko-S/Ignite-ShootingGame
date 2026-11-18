@@ -62,6 +62,15 @@ enum Feint {
 @export var flame_hold : float = 0.8
 @export var flame_out_time : float = 0.5
 
+@export_group("ANOTHER: 一番下での前方攻撃")
+## 難易度 ANOTHER のとき、一番下まで突っ込んだところで止まり、この砲口から、段階ごとの弾幕(Bottom Patterns)を撃つ。
+## 撃ち終わってから点火して上がる。空なら撃たない
+@export var bottom_shooter : EnemyShooter
+## 段階ごとの弾幕(第一形態から。足りなければ最後のもの)
+@export var bottom_patterns : Array[ShotPattern] = []
+## 一番下で撃っている時間(秒)
+@export var bottom_fire_time : float = 2.6
+
 @export_group("フェイント")
 ## フェイントを入れる確率(0〜1)
 @export var feint_chance : float = 0.5
@@ -191,6 +200,9 @@ func _dive(feint : int) -> bool:
 		await _move(bottom, descend_time, descend_trans, descend_ease)
 	if not _alive():
 		return _abort()
+	await _fire_at_bottom()
+	if not _alive():
+		return _abort()
 	# 点火(ちらつく予告。まだ炎は当たらない)
 	await _ignite()
 	if not _alive():
@@ -224,6 +236,20 @@ func _dive(feint : int) -> bool:
 	await fade.finished
 	_resume_shooters(shooters)
 	return true
+
+## ANOTHER: 一番下で止まって、前方攻撃(段階ごとの弾幕)を撃つ。体当たりの当たりは、止まっているあいだは消す
+func _fire_at_bottom() -> void:
+	if not HazardRank.active or bottom_patterns.is_empty() or not is_instance_valid(bottom_shooter):
+		return
+	_set_ram(false)
+	var controller := _controller()
+	var index := clampi(controller.current_phase() if controller else 0, 0, bottom_patterns.size() - 1)
+	var pattern := bottom_patterns[index]
+	if pattern:
+		bottom_shooter.set_patterns([pattern])
+	await _wait(bottom_fire_time)
+	if is_instance_valid(bottom_shooter):
+		bottom_shooter.stop()
 
 ## 点火: 音と揺れ、炎が小さくちらつく
 func _ignite() -> void:

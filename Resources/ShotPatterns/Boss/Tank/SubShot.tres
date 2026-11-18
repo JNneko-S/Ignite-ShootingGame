@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_3tong"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3cyk5"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_uf758"]
+[ext_resource type="Resource" uid="uid://xpm43wbxjk10" path="res://Resources/ShotPatterns/Boss/Tank/SubShot_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/SubShot_black.tres" id="black_ver"]
 
 [sub_resource type="Resource" id="Resource_3oyle"]
 script = ExtResource("2_3cyk5")
@@ -16,6 +18,8 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_uf758")
 bullet_scene = ExtResource("1_3tong")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 shot_count = 30
 aim_at_player = false
 base_angle = -60.0

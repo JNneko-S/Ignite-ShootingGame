@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("step")
+duration = 1.25
+turn_mode = 0
+turn_angle = 0.0
+change_speed = false
+speed_trans = 1
+speed_ease = 1
+angular_velocity = 0.0
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("step")
+duration = 1.389
+turn_mode = 0
+turn_angle = 0.0
+target_speed = 230.4
+speed_trans = 4
+speed_ease = 0
+angular_velocity = 0.0
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_aim")
+another_made = true
+start_delay = 0.5
+shot_count = 3
+interval = 0.5
+pause = 0.899
+bullet_count = 36
+spread_angle = 50.0
+aim_at_player = true
+line_count = 3
+line_speed_ratio = 0.15
+bullet_speed = 43.2
+motion = Array[ExtResource("step")]([SubResource("st1"), SubResource("st2")])

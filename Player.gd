@@ -87,9 +87,14 @@ var graze_radius_scale : float = 1.0:
 ## オンなら、死んだときに、持っていたパワーアップ(子機・ロック速度)を全てアイテムとして落とす。
 ## 復活してから拾い直せる
 @export var drop_power_ups_on_death : bool = true
-## 落とすアイテムのシーン
-@export var power_up_option_scene : PackedScene = preload("res://GameScene/Item/power_up_option.tscn")
-@export var power_up_lock_scene : PackedScene = preload("res://GameScene/Item/power_up_lock.tscn")
+## 落とすアイテムのシーン(空なら、下の決まったシーンを使う)。
+## preload にしないこと: アイテムのスクリプト(PowerUpItem)が Player を参照しているので、
+## Player.gd から preload すると読み込みが循環し、アイテムのシーンがスクリプトなしで読み込まれてしまう
+## (動かず拾えない絵だけが画面に残る)
+@export var power_up_option_scene : PackedScene
+@export var power_up_lock_scene : PackedScene
+const POWER_UP_OPTION_PATH := "res://GameScene/Item/power_up_option.tscn"
+const POWER_UP_LOCK_PATH := "res://GameScene/Item/power_up_lock.tscn"
 
 @export_group("ショット強化(Lv5イグナイトで+1段階。被弾で失う)")
 ## way弾の角度の間隔(度)
@@ -219,6 +224,23 @@ signal ignite_charge_changed(ratio : float)
 ## イグナイトのON/OFFが切り替わった
 signal ignite_toggled(on : bool)
 signal shot_stage_changed(stage : int)
+## ANOTHER の強化(連射速度UP・威力UP)が変わった
+signal boost_changed
+
+## ANOTHER の強化アイテムの段階(0〜BOOST_MAX)。自爆しても失わない
+const BOOST_MAX : int = 5
+## 最大の段階での倍率(初期の何倍か)
+const BOOST_MAX_SCALE : float = 1.5
+var rate_boost : int = 0
+var power_boost : int = 0
+
+## 連射速度の倍率(撃つ間隔を、これで割る)
+func boost_rate_scale() -> float:
+	return 1.0 + (BOOST_MAX_SCALE - 1.0) * float(rate_boost) / BOOST_MAX
+
+## 威力の倍率
+func boost_power_scale() -> float:
+	return 1.0 + (BOOST_MAX_SCALE - 1.0) * float(power_boost) / BOOST_MAX
 
 func _ready() -> void:
 	add_to_group("player") # 敵の狙い撃ち用
@@ -273,7 +295,7 @@ func _shoot(_delta: float) -> void:
 	if bullet_scene == null:
 		return
 	var pattern := _shot_pattern()
-	shoot_timer.start(fire_interval * pattern["interval_scale"])
+	shoot_timer.start(fire_interval * pattern["interval_scale"] / boost_rate_scale())
 	if _is_alive:
 		SoundManager.play_on_channel(&"player_shot", shot_sound)
 	_fire_volley(pattern["angles"])
@@ -443,7 +465,26 @@ func current_lock_time() -> float:
 func apply_power_up(kind : PowerUpItem.Kind) -> bool:
 	match kind:
 		PowerUpItem.Kind.OPTION:
-			return add_option()
+			if add_option():
+				HazardRank.add(5, 5, "OPTION")
+				return true
+			return false
+		PowerUpItem.Kind.RATE:
+			if rate_boost >= BOOST_MAX:
+				return false
+			rate_boost += 1
+			HazardRank.add(3, 3, "RATE UP")
+			boost_changed.emit()
+			FloatingText.spawn(get_tree(), global_position + Vector2(0, -36), "Bullet Speed Up!", Color(0.45, 0.8, 1.0))
+			return true
+		PowerUpItem.Kind.POWER:
+			if power_boost >= BOOST_MAX:
+				return false
+			power_boost += 1
+			HazardRank.add(6, 6, "POWER UP")
+			boost_changed.emit()
+			FloatingText.spawn(get_tree(), global_position + Vector2(0, -36), "Damage Up!", Color(1.0, 0.6, 0.25))
+			return true
 		PowerUpItem.Kind.LOCK_SPEED:
 			return upgrade_lock_speed()
 	return false
@@ -480,10 +521,12 @@ func lose_options(count : int = -1) -> void:
 ## 持っているパワーアップを全て、アイテムにして周りに散らばらせる(子機は全て消え、ロック速度は最初に戻る)
 func _drop_power_ups() -> void:
 	var scenes : Array[PackedScene] = []
+	var option_scene : PackedScene = power_up_option_scene if power_up_option_scene else load(POWER_UP_OPTION_PATH)
+	var lock_scene : PackedScene = power_up_lock_scene if power_up_lock_scene else load(POWER_UP_LOCK_PATH)
 	for i in options.size():
-		scenes.append(power_up_option_scene)
+		scenes.append(option_scene)
 	for i in lock_speed_level:
-		scenes.append(power_up_lock_scene)
+		scenes.append(lock_scene)
 	lose_options(-1)
 	if lock_speed_level > 0:
 		lock_speed_level = 0
@@ -637,6 +680,7 @@ func die() -> void:
 		game_over.emit()
 		queue_free()
 		return
+	HazardRank.on_death(lives) # ANOTHER: 自爆でランクが下がる(残機が少ないほど大きく)
 	lives -= 1
 	lives_changed.emit(lives)
 	_respawn()

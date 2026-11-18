@@ -7,6 +7,7 @@
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="5_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1634288_ボン！爆発音_中_01.mp3" id="6_slam"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="7_beep"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="8_ui_decide"]
 
 [sub_resource type="ShaderMaterial" id="mat_top"]
 shader = ExtResource("3_shutter")
@@ -52,13 +53,14 @@ font_color = Color(0.85, 0.9, 1, 1)
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
-[node name="GameOver" type="CanvasLayer" node_paths=PackedStringArray("slam_sound", "board_sound")]
+[node name="GameOver" type="CanvasLayer" node_paths=PackedStringArray("slam_sound", "board_sound", "confirm_sound")]
 process_mode = 3
 layer = 100
 visible = false
 script = ExtResource("1_script")
 slam_sound = NodePath("SlamSound")
 board_sound = NodePath("BoardSound")
+confirm_sound = NodePath("ConfirmSound")
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -118,6 +120,10 @@ mouse_filter = 2
 stream = ExtResource("6_slam")
 volume_db = -4.0
 pitch_scale = 0.6
+
+[node name="ConfirmSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_ui_decide")
+volume_db = -6.0
 
 [node name="BoardSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_beep")

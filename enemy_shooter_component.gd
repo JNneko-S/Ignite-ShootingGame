@@ -36,6 +36,16 @@ signal fired
 @export var autostart : bool = true
 ## EASY のときは、Patterns の代わりに、こちらを撃つ(空なら差し替えない。Phases を使う砲口は、ShooterPhase の Easy Patterns を使う)
 @export var easy_patterns : Array[ShotPattern] = []
+## オンなら、ANOTHER のときは、Patterns / Sequence の代わりに、下の2つを撃つ(空なら撃たない)。
+## Phases を使う砲口は、ShooterPhase の Another の設定を使う
+@export var another_replace : bool = false
+@export var another_patterns : Array[ShotPattern] = []
+@export var another_sequence : Array[ShotPattern] = []
+
+## いちばん最近撃った弾の向き(ラジアン。全方位の弾幕など、向きがないときは NAN)。砲身を振る砲台が見る
+var last_fire_angle : float = NAN
+## いちばん最近撃った弾幕が、砲身を振る弾幕(Swing Barrel)か
+var last_fire_swing : bool = false
 
 ## 全ての弾の向きを、この角度(度)だけ回す。正で左回り(画面の左へ)。ボスのステートが、弾幕の向きを振るのに使う
 var turn_degrees : float = 0.0
@@ -92,6 +102,9 @@ func _ready() -> void:
 	if not phases.is_empty() and phases[0]:
 		patterns = phases[0].patterns_for_difficulty()
 		sequence = phases[0].sequence_for_difficulty()
+	elif another_replace and HazardRank.active:
+		patterns = another_patterns
+		sequence = another_sequence
 	elif DifficultyTuning.is_easy() and not easy_patterns.is_empty():
 		patterns = easy_patterns
 	if debug_log:
@@ -168,17 +181,21 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
+	_set_soften(pattern.soften_others) # この弾幕のあいだ、同じボスのゆずる弾幕をやさしくする
 	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
 	var burst_aim := _aim_angle()
 	for i in maxi(pattern.shot_count, 1):
 		if generation != _generation:
+			_set_soften(1.0)
 			return
 		if _can_fire():
 			_fire(pattern, i, burst_aim if pattern.aim_once_per_burst else _aim_angle())
 		await _wait(pattern.interval * unit)
 	if generation != _generation:
+		_set_soften(1.0)
 		return
 	await _wait(pattern.pause * unit * pause_scale)
+	_set_soften(1.0)
 
 ## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
 func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
@@ -194,6 +211,7 @@ func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
 func _run_pattern(pattern : ShotPattern) -> void:
 	if not DifficultyTuning.allows(pattern):
 		return # この難易度では撃たない弾幕
+	var original := pattern
 	pattern = DifficultyTuning.tune(pattern, is_zako()) # この難易度用に、数や速さを変えた写し(HARD ならそのまま)
 	var generation := _generation
 	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
@@ -213,12 +231,15 @@ func _run_pattern(pattern : ShotPattern) -> void:
 						Time.get_ticks_msec() / 1000.0, get_path(), shot_index, pattern.interval, pattern.pause,
 						pattern.resource_path if pattern.resource_path != "" else "(シーン内に埋め込み)"])
 			shot_index += 1
-			await _wait(pattern.interval * unit)
+			await _wait(pattern.interval * unit * (_soften_factor() if pattern.yields else 1.0))
 			if generation != _generation:
 				return
 		if not pattern.loop:
 			return
-		await _wait_with_warning(pattern, pattern.pause * unit * pause_scale, generation)
+		await _wait_with_warning(pattern, pattern.pause * unit * pause_scale * (_soften_factor() if pattern.yields else 1.0), generation)
+		# ANOTHER: ランクが変わっていたら、撃ち終わったところで、次の段階の弾幕(ANOTHER 用の弾幕)に切り替える
+		if HazardRank.active:
+			pattern = DifficultyTuning.tune(original, is_zako())
 
 func _can_fire() -> bool:
 	if not enabled or blocked or suppressed or is_holding_fire():
@@ -235,6 +256,13 @@ func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
 	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored(), deg_to_rad(turn_degrees),
 			0, _motion_heading() if pattern.split_across_motion else NAN)
+	last_fire_swing = pattern.swing_barrel
+	if pattern.swing_barrel:
+		# 弾の向きの平均(砲身を、そちらへ振る)
+		var sum := Vector2.ZERO
+		for shot in ShotMath.bullets(pattern, shot_index, aim_angle, _is_mirrored()):
+			sum += Vector2.from_angle(shot["angle"])
+		last_fire_angle = sum.angle() + deg_to_rad(turn_degrees) if sum.length() > 0.01 else NAN
 	fired.emit()
 
 ## この砲口が、いま動いている向き(ラジアン)。止まっていれば NAN
@@ -281,7 +309,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 		var offset : Vector2 = shot["offset"]
 		bullet.global_position = origin + offset.rotated(turn)
 		if bullet.has_method("setup"):
-			bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"], pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+			bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"] * shot.get("launch_scale", 1.0),
+					pattern.damage, pattern.bullet_accel * shot["speed_scale"])
 		# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
 		var bullet_mirror : bool = mirror != shot.get("flip", false)
 		if bullet.has_method("set_motion"):
@@ -290,6 +319,30 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 			bullet.set_split(pattern, bullet_mirror, split_depth)
 			if not is_nan(split_heading) and "split_heading" in bullet:
 				bullet.split_heading = split_heading
+
+## この砲口のボス(Enemy)。いなければ null
+func _owner_enemy() -> Enemy:
+	var node := get_parent()
+	while node:
+		if node is Enemy:
+			return node
+		node = node.get_parent()
+	return null
+
+## ほかの砲台をやさしくする倍率を、ボスに覚えさせる(1 で元に戻す)
+func _set_soften(factor : float) -> void:
+	var enemy := _owner_enemy()
+	if enemy == null:
+		return
+	if factor > 1.0:
+		enemy.set_meta(&"soften_others", factor)
+	elif enemy.has_meta(&"soften_others"):
+		enemy.remove_meta(&"soften_others")
+
+## 今、同じボスのほかの砲口が求めている、やさしくする倍率(なければ 1)
+func _soften_factor() -> float:
+	var enemy := _owner_enemy()
+	return float(enemy.get_meta(&"soften_others", 1.0)) if enemy else 1.0
 
 ## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する
 func _is_mirrored() -> bool:

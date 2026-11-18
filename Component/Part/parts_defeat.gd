@@ -76,6 +76,8 @@ func _ready() -> void:
 			if node is EnemyPart:
 				parts.append(node)
 	var total := 0
+	# ANOTHER: 出てきたときのランクで決まった硬さ(StageRunner が付ける)を、部位にも掛ける
+	var hazard_scale := float(_enemy.get_meta(&"hazard_hp_scale", 1.0))
 	if lock_parts_only:
 		_enemy.add_to_group("no_lock")
 	for part in parts:
@@ -83,14 +85,15 @@ func _ready() -> void:
 			part.add_to_group("lock_target")
 		# 中ボス: 本体の HP は部位の残りから決める / ボス: 部位に入ったダメージを本体へ
 		part.damage_to_body = 1.0 if revive_on_phase else 0.0
-		if not is_equal_approx(part_hp_scale, 1.0):
-			part.max_hp = maxi(roundi(part.max_hp * part_hp_scale), 1)
+		var part_scale := part_hp_scale * hazard_scale
+		if not is_equal_approx(part_scale, 1.0):
+			part.max_hp = maxi(roundi(part.max_hp * part_scale), 1)
 			part.hp = part.max_hp
 		total += part.max_hp
 	# 親の Enemy の _ready はまだなので、@onready の変数ではなく、ノードを直接見る
 	_hp = _enemy.get_node_or_null("HPComponent") as HPComponent
 	if revive_on_phase and body_hp > 0:
-		total = body_hp # ゲージは決まった値(部位は柔らかく、何度も直る)
+		total = roundi(body_hp * hazard_scale) # ゲージは決まった値(部位は柔らかく、何度も直る)
 	if _hp and total > 0:
 		_hp.max_hp = total
 		_hp.hp = total

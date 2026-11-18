@@ -22,6 +22,14 @@ const SIGNAL_NAME : String = "warning"
 ## 斜線が流れる速さ(px/秒)
 @export var stripe_speed : float = 60.0
 
+@export_group("警告音")
+## WARNING が出たときに鳴らす警告音(ループする音でもよい)。空なら鳴らさない
+@export var alarm_sound : AudioStream = preload("res://Assets/Sounds/Warn/AS_816725_アラーム_警告音（ループ） (1).mp3")
+@export var alarm_volume_db : float = -8.0
+## 警告音が何回うなったら止めるか、と、1回のうなりの長さ(秒)
+@export var alarm_cycles : int = 2
+@export var alarm_cycle_time : float = 1.23
+
 @onready var _root : Control = $Root
 @onready var _band : ColorRect = $Root/Band
 @onready var _title : Label = $Root/Band/Title
@@ -29,12 +37,17 @@ const SIGNAL_NAME : String = "warning"
 var _tween : Tween
 var _blink_tween : Tween
 var _stripe_width : float = 0.0
+var _alarm : AudioStreamPlayer
+var _alarm_tween : Tween
 
 func _ready() -> void:
 	_root.visible = false
 	# 斜線は画面幅の2倍ぶん並んでいて、1周分(画面幅)ずつ流すと、継ぎ目なくループする
 	_stripe_width = get_viewport().get_visible_rect().size.x
 	_connect_runner.call_deferred() # 全ノードの準備が終わってから探す
+	_alarm = AudioStreamPlayer.new()
+	_alarm.bus = SoundManager.SFX_BUS if AudioServer.get_bus_index(SoundManager.SFX_BUS) >= 0 else &"Master"
+	add_child(_alarm)
 
 func _connect_runner() -> void:
 	if stage_runner:
@@ -74,6 +87,22 @@ func show_warning(text : String = "") -> void:
 	_blink_tween = create_tween().set_loops()
 	_blink_tween.tween_property(_title, "modulate:a", 0.25, 0.25)
 	_blink_tween.tween_property(_title, "modulate:a", 1.0, 0.25)
+	_play_alarm()
+
+## 警告音を鳴らし、alarm_cycles 回うなったところで、すっと消す
+func _play_alarm() -> void:
+	if alarm_sound == null or alarm_cycles <= 0:
+		return
+	if _alarm_tween:
+		_alarm_tween.kill()
+	_alarm.stream = alarm_sound
+	_alarm.volume_db = alarm_volume_db
+	_alarm.play()
+	var fade := 0.12
+	_alarm_tween = create_tween()
+	_alarm_tween.tween_interval(maxf(alarm_cycles * alarm_cycle_time - fade, 0.0))
+	_alarm_tween.tween_property(_alarm, "volume_db", -60.0, fade)
+	_alarm_tween.tween_callback(_alarm.stop)
 
 func _process(delta : float) -> void:
 	if not _root.visible:

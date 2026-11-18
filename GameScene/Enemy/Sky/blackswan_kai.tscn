@@ -6,6 +6,19 @@
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_833267_フィルターが掛かったような爆破音.mp3" id="snd_pass"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_arrive"]
 
+[ext_resource type="Script" path="res://Component/Boss/States/cross_fire_state.gd" id="an3_st_cross"]
+[ext_resource type="Script" path="res://Component/Boss/States/boss_center_state.gd" id="an3_st_center"]
+[ext_resource type="Script" path="res://Component/Boss/States/boss_dive_state.gd" id="an3_st_dive"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="an3_shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/CrossFire.tres" id="an3_cross"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedCrossFire.tres" id="an3_aimed"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/swan_wing.tscn" id="an3_wing"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_windmill.tres" id="an3_a3_windmill"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_windmill_reverse.tres" id="an3_a3_windmill_reverse"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_link_sweep.tres" id="an3_a3_link_sweep"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_wings.tres" id="an3_a3_bloom_wings"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_wave.tres" id="an3_a3_bloom_wave"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_dome.tres" id="an3_a3_bloom_dome"]
 [sub_resource type="Animation" id="IdleAnim"]
 resource_name = "idle"
 length = 0.6
@@ -53,6 +66,7 @@ shift_max = Array[float]([30.0, 30.0, 30.0])
 feint_from_phase = 2
 
 [node name="Intro" parent="StateMachine" unique_id=601000005]
+another_next_state = "AWinder"
 duration = 5.0
 
 [node name="ShadowFlyby" parent="." unique_id=701000002]
@@ -70,3 +84,32 @@ autoplay = &"idle"
 [node name="AttackAnimation" type="Node" parent="." unique_id=1830000101 node_paths=PackedStringArray("sprites")]
 script = ExtResource("attack_anim")
 sprites = [NodePath("../Sprite2D2"), NodePath("../Sprite2D5")]
+
+[node name="AfterburnerDive" parent="." node_paths=PackedStringArray("bottom_shooter")]
+bottom_shooter = NodePath("../EnemyShooterComponent")
+bottom_patterns = Array[ExtResource("an3_shot")]([ExtResource("an3_a3_bloom_wings"), ExtResource("an3_a3_bloom_wave"), ExtResource("an3_a3_bloom_dome")])
+bottom_fire_time = 3.2
+
+[node name="AWinder" type="Node" parent="StateMachine" node_paths=PackedStringArray("shooters")]
+script = ExtResource("an3_st_cross")
+shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+cross_fire = ExtResource("an3_cross")
+aimed_cross_fire = ExtResource("an3_aimed")
+shift_steps = Array[float]([6.0, 6.0, 6.0])
+shift_max = Array[float]([30.0, 30.0, 30.0])
+feint_from_phase = 2
+next_state = "ACenter"
+
+[node name="ACenter" type="Node" parent="StateMachine" node_paths=PackedStringArray("shooter")]
+script = ExtResource("an3_st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("an3_shot")]([ExtResource("an3_a3_windmill"), ExtResource("an3_a3_windmill_reverse"), ExtResource("an3_a3_link_sweep")])
+fire_time = 9.0
+wing_scene = ExtResource("an3_wing")
+wing_from_phase = 2
+next_state = "ADive"
+
+[node name="ADive" type="Node" parent="StateMachine" node_paths=PackedStringArray("dive")]
+script = ExtResource("an3_st_dive")
+dive = NodePath("../../AfterburnerDive")
+next_state = "AWinder"

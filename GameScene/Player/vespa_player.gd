@@ -114,18 +114,18 @@ func _shoot(_delta : float) -> void:
 	var boosted := _graze_boosted()
 	if is_focusing:
 		if _sniper_wait <= 0.0:
-			_sniper_wait = sniper_interval
+			_sniper_wait = sniper_interval / boost_rate_scale()
 			SoundManager.play_on_channel(&"player_shot", shot_sound, 0.75)
 			_fire_sniper(global_position + muzzle_offset, Vector2.UP, sniper_damage, boosted, 1.0)
 	elif shoot_timer.time_left <= 0.0:
-		shoot_timer.start(vulcan_interval)
+		shoot_timer.start(vulcan_interval / boost_rate_scale())
 		SoundManager.play_on_channel(&"player_shot", shot_sound, 1.2, -4.0)
 		for side in [-1.0, 1.0]:
 			var at := global_position + Vector2(vulcan_muzzle.x * side, vulcan_muzzle.y)
 			var dir := Vector2.UP.rotated(deg_to_rad(randf_range(-vulcan_jitter, vulcan_jitter)))
 			_fire_vulcan(at, dir, vulcan_damage, boosted)
 	if _option_wait <= 0.0 and not options.is_empty():
-		_option_wait = sniper_interval if is_focusing else option_vulcan_interval
+		_option_wait = (sniper_interval if is_focusing else option_vulcan_interval) / boost_rate_scale()
 		_fire_options_vespa(boosted)
 
 func _graze_boosted() -> bool:
@@ -135,7 +135,7 @@ func _fire_vulcan(at : Vector2, dir : Vector2, damage : float, boosted : bool) -
 	var bullet : Bullet = bullet_scene.instantiate()
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = at
-	bullet.setup(dir, vulcan_speed, damage * (graze_boost_scale if boosted else 1.0), 0)
+	bullet.setup(dir, vulcan_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale(), 0)
 	bullet.scale = Vector2.ONE * vulcan_scale
 	_tint(bullet, boosted, vulcan_alpha)
 	return bullet
@@ -145,7 +145,7 @@ func _fire_sniper(at : Vector2, dir : Vector2, damage : float, boosted : bool, s
 	bullet.pierce = true # 貫通する(当たっても消えない)
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = at
-	bullet.setup(dir, sniper_speed, damage * (graze_boost_scale if boosted else 1.0), 0)
+	bullet.setup(dir, sniper_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale(), 0)
 	bullet.center_aim = true
 	bullet.center_hit.connect(_on_center_hit)
 	bullet.scale = sniper_scale * size

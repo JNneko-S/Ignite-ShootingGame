@@ -45,7 +45,11 @@ static func allows(pattern : ShotPattern) -> bool:
 ## この難易度用に調整した pattern(HARD や、調整しない弾幕なら、そのまま)
 ## zako: 雑魚の弾か(EASY で、さらに遅くする)
 static func tune(pattern : ShotPattern, zako : bool = false) -> ShotPattern:
-	if pattern == null or level >= HARD or pattern.has_meta("difficulty_tuned"):
+	if pattern == null or pattern.has_meta("difficulty_tuned"):
+		return pattern
+	if HazardRank.active:
+		return _tune_another(pattern, zako)
+	if level >= HARD:
 		return pattern
 	# 手で作った、難易度ごとの弾幕があれば、それを使う
 	if level == NORMAL and pattern.normal_version:
@@ -63,6 +67,57 @@ static func tune(pattern : ShotPattern, zako : bool = false) -> ShotPattern:
 	var tuned := _make(pattern, level, zako)
 	_cache[key] = tuned
 	return tuned
+
+## ANOTHER: HARD の弾幕を元に、ハザードランクの段階で強くする。
+## 弾幕の段階(HazardRank.barrage_tier)に応じて、手で作った ANOTHER 用(Another Version)か、
+## BLACK ANOTHER 用(Black Version。なければ ANOTHER 用)に差し替える。
+## 撃つ頻度(間・休み・最初の待ちが短くなる)と、弾の速さが上がる。ボス・中ボスは頻度の上がり方を控えめにする
+static func _tune_another(source : ShotPattern, zako : bool) -> ShotPattern:
+	var pattern := source
+	var tier := HazardRank.barrage_tier(not zako)
+	if tier == HazardRank.Tier.BLACK and source.black_version:
+		pattern = source.black_version
+	elif tier >= HazardRank.Tier.ANOTHER and source.another_version:
+		pattern = source.another_version
+	var step := HazardRank.step()
+	if step <= 0:
+		return pattern
+	var key := "A:%d:%d:%d:%.2f" % [pattern.get_instance_id(), step, int(zako), HazardRank.zako_rate_ratio]
+	if _cache.has(key):
+		return _cache[key]
+	var rate := HazardRank.fire_rate_scale(not zako)
+	if pattern != source or pattern.another_made:
+		# 手で作った ANOTHER 用の弾幕は、もともと濃いので、頻度はボスでは上げず、雑魚では上がり方を半分にする
+		rate = 1.0 if not zako else 1.0 + (rate - 1.0) * 0.5
+	var p := _scale_pattern(pattern, rate, HazardRank.bullet_speed_scale())
+	p.set_meta("difficulty_tuned", HARD + step)
+	_cache[key] = p
+	return p
+
+## 撃つ頻度を rate 倍、弾の速さを speed 倍にした写し(割れたあとの弾幕も、速さだけ同じように)
+static func _scale_pattern(source : ShotPattern, rate : float, speed : float) -> ShotPattern:
+	var p := source.duplicate(false) as ShotPattern
+	if rate > 1.0:
+		p.interval /= rate
+		p.pause /= rate
+		p.start_delay /= rate
+	p.bullet_speed *= speed
+	p.bullet_accel *= speed
+	var steps : Array[BulletStep] = []
+	for s in p.motion:
+		if s == null:
+			steps.append(s)
+			continue
+		var copy := s.duplicate(false) as BulletStep
+		copy.target_speed *= speed
+		copy.duration /= speed # 速くなったぶん、同じ距離で曲がる・止まる
+		steps.append(copy)
+	p.motion = steps
+	if p.split_time > 0.0:
+		p.split_time /= speed
+	if p.split_pattern:
+		p.split_pattern = _scale_pattern(p.split_pattern, 1.0, speed)
+	return p
 
 static func _make(source : ShotPattern, lvl : int, zako : bool = false) -> ShotPattern:
 	var p := source.duplicate(false) as ShotPattern

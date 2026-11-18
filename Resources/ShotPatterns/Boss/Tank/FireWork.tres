@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="3_jvvy8"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_sjnay"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="4_dcstt"]
+[ext_resource type="Resource" uid="uid://jytux7wjde6t" path="res://Resources/ShotPatterns/Boss/Tank/FireWork_another.tres" id="another_ver"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/FireWork_black.tres" id="black_ver"]
 [ext_resource type="Resource" uid="uid://d2pfvgn6s302b" path="res://Resources/ShotPatterns/Boss/Tank/FireWorkNormal.tres" id="normal_ver"]
 
 [sub_resource type="Resource" id="Resource_6wjy7"]
@@ -25,6 +27,8 @@ metadata/_custom_type_script = "uid://ct8u3n22w477n"
 script = ExtResource("3_sjnay")
 bullet_scene = ExtResource("3_jvvy8")
 normal_version = ExtResource("normal_ver")
+another_version = ExtResource("another_ver")
+black_version = ExtResource("black_ver")
 shot_count = 3
 interval = 2.5
 loop = false

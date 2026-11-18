@@ -8,6 +8,8 @@ class_name PowerUpItem
 enum Kind {
 	OPTION,     ## 子機(オプション)が1つ増える(最大 Player の Max Options まで)
 	LOCK_SPEED, ## ロックするまでの時間が短くなる(最大 Player の Lock Time Scales の段階まで)
+	RATE,       ## (ANOTHER)連射速度UP。5 段階まで。自爆しても失わない
+	POWER,      ## (ANOTHER)威力UP。5 段階まで。自爆しても失わない
 }
 
 signal collected(kind : Kind)
@@ -113,7 +115,7 @@ func _physics_process(delta : float) -> void:
 		else:
 			_magnet_speed = 0.0
 	# 上へ跳ねてから、ゆっくり落ちる。左右に揺れる
-	_rise = move_toward(_rise, -fall_speed, 260.0 * delta)
+	_rise = move_toward(_rise, -fall_speed * HazardRank.item_fall_scale(), 260.0 * delta) # ANOTHER: ランクで速く落ちる
 	_base_x += _push_x * delta
 	_push_x = move_toward(_push_x, 0.0, 160.0 * delta)
 	var area := CameraView.visible_rect(self)
@@ -156,6 +158,10 @@ func _draw() -> void:
 	if _sprite and _sprite.texture:
 		return
 	var color := Color(0.4, 1.0, 0.6) if kind == Kind.OPTION else Color(1.0, 0.45, 0.4)
+	if kind == Kind.RATE:
+		color = Color(0.4, 0.8, 1.0)
+	elif kind == Kind.POWER:
+		color = Color(1.0, 0.75, 0.25)
 	draw_circle(Vector2.ZERO, 10.0, Color(color, 0.25))
 	draw_rect(Rect2(-6, -5, 12, 10), color)
 	draw_rect(Rect2(-6, -5, 12, 10), Color.WHITE, false, 1.0)

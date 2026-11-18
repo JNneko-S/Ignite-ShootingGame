@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="1_6w3nd"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_jgawp"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_gunship_3way_r_another.tres" id="another_ver"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_6w3nd")
+another_version = ExtResource("another_ver")
 start_delay = 2.2
 pause = 0.8
 bullet_count = 3

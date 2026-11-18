@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" uid="uid://dw561gp3yjm2y" path="res://Assets/Full Shmup Asset Pack/RFJet Style Boss/makebead-256x256.png" id="tex"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_wing_column.tres" id="p_column"]
+
+[sub_resource type="RectangleShape2D" id="body_shape"]
+size = Vector2(106, 60)
+
+[node name="SwanWing" instance=ExtResource("base")]
+pattern = null
+
+[node name="Sprite2D" parent="." index="0"]
+texture_filter = 1
+scale = Vector2(0.58, 0.58)
+texture = ExtResource("tex")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(-1, -12)
+shape = SubResource("body_shape")
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 2500
+hp = 2500
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+position = Vector2(0, 30)
+patterns = Array[ExtResource("shot_script")]([ExtResource("p_column")])

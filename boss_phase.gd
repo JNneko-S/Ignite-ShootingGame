@@ -18,6 +18,12 @@ class_name BossPhase
 @export_group("呼び寄せ(援護)")
 ## この段階のあいだに出すもの(SpawnEvent / TrainEvent など。Time は呼び寄せてからの秒数)
 @export var summons : Array[StageEvent] = []
+## 難易度 ANOTHER のときは、Summons の代わりに、こちらを呼ぶ(空なら Summons のまま)
+@export var another_summons : Array[StageEvent] = []
+
+## この難易度で呼ぶ援護
+func summons_for_difficulty() -> Array[StageEvent]:
+	return another_summons if HazardRank.active and not another_summons.is_empty() else summons
 ## HPの割合がこれ以下になったら呼び寄せる。この段階の Hp Ratio 以上なら、段階に入ったときに呼ぶ。
 ## 例: 第一形態(Hp Ratio 1.0)で 0.83 なら、第一形態のHPが半分になったとき
 @export_range(0.0, 1.0, 0.01) var summon_hp_ratio : float = 1.0

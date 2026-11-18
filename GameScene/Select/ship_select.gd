@@ -36,12 +36,12 @@ class_name ShipSelect
 ## 最初に選んである難易度(前に選んだことがあれば、そちらを使う)
 @export_range(0, 2) var default_difficulty : int = 1
 
-@export_group("隠し難易度: ANOTHER(未実装)")
+@export_group("高難易度: ANOTHER")
 ## 難易度で HARD を選んだ状態で、右をこの回数押すと、ANOTHER が選べる(赤黒の画面になる)。0 なら出ない
-@export var another_secret_presses : int = 10
+@export var another_secret_presses : int = 12
 @export var another_name : String = "ANOTHER"
-@export var another_subtitle : String = "未実装"
-@export_multiline var another_text : String = "この難易度は、まだ実装されていません。\n今は選んでも出撃できません。"
+@export var another_subtitle : String = "危険度、測定不能。"
+@export_multiline var another_text : String = "あなたが取った行動に応じて、敵が際限なく強くなる。\n撃ち続け、拾い、焼くほど危険が増す鬼畜難易度。\nそこは地獄ですら生ぬるい。ここは、人の身で踏み入るべき場所ではない。"
 
 @export_group("音")
 ## 選ぶものを変えたとき・決めたとき・戻ったとき(シーンに置いた AudioStreamPlayer)
@@ -53,9 +53,13 @@ class_name ShipSelect
 @export var music_fade_time : float = 1.0
 ## バチンと火花が散ったとき
 @export var spark_sound : AudioStreamPlayer
+## ANOTHER が出た瞬間に鳴る警告音(火花の音の代わり)。空なら火花の音
+@export var another_alarm_sound : AudioStreamPlayer
+## ANOTHER を選んでいるあいだに流す曲(ループする)。空なら、ふつうの曲のまま
+@export var another_music : AudioStream
 
 enum Step { BOOT, SHIP, DIFFICULTY, LAUNCH }
-## 難易度の番号のうち、隠し難易度 ANOTHER(未実装。選んでも出撃できない)
+## 難易度の番号のうち、隠し難易度 ANOTHER(HARD を元に、ハザードランクで強くなる)
 const ANOTHER : int = 3
 const RED_LINE := Color(1.0, 0.13, 0.1)
 const RED_FILL := Color(0.02, 0.0, 0.0, 0.94)
@@ -86,11 +90,19 @@ var _icon_base : Vector2
 var _secret_presses : int = 0
 ## 赤黒にする前の色
 var _theme_saved : Dictionary = {}
+## ふつうの選択画面の曲(ANOTHER から戻すとき用)
+var _normal_music : AudioStream
 
 func _ready() -> void:
 	_board_color = _board.lit_color
 	_preview_base = _preview.position
 	_icon_base = _icon.position
+	# シャッターの材質は、シャッターのシーンを使うどの画面とも共有なので、この画面だけのものにする
+	# (しないと、ANOTHER で赤くした色が、次に選択画面へ戻ったときにも残る)
+	for shutter in [$Shutter/ShutterTop, $Shutter/ShutterBottom]:
+		shutter.material = shutter.material.duplicate()
+	if music:
+		_normal_music = music.stream
 	_difficulty = default_difficulty
 	if RunConfig.has_selection:
 		_difficulty = clampi(RunConfig.difficulty, 0, difficulty_names.size() - 1)
@@ -109,6 +121,13 @@ func _start_music() -> void:
 	if not music.finished.is_connected(music.play):
 		music.finished.connect(music.play)
 	music.play()
+
+## 選択画面の曲を、別の曲に差し替えて頭から流す(ANOTHER に入った・出たとき)
+func _switch_music(stream : AudioStream) -> void:
+	if music == null or stream == null or music.stream == stream:
+		return
+	music.stream = stream
+	_start_music()
 
 ## 曲を消していって止める(出撃するとき)
 func _stop_music() -> void:
@@ -228,13 +247,14 @@ func _change_difficulty(direction : int) -> void:
 	if _difficulty == ANOTHER:
 		if direction < 0:
 			# HARD に戻ると、色も元に戻る
-			_difficulty = difficulty_names.size() - 1
 			_secret_presses = 0
 			SoundManager.play(move_sound)
+			_difficulty = difficulty_names.size() - 1
 			_set_red_theme(false)
+			_switch_music(_normal_music)
 			_show_difficulty()
 		else:
-			SoundManager.play(back_sound)
+			SoundManager.play(back_sound) # これより先はない
 		return
 	var last := difficulty_names.size() - 1
 	if direction > 0 and _difficulty == last and another_secret_presses > 0:
@@ -262,7 +282,7 @@ func _show_difficulty() -> void:
 		_desc_title.text = another_name
 		_desc_sub.text = another_subtitle
 		_desc_text.text = another_text
-		_hint.text = "L: SELECT   IGNITE: BACK   (NOT AVAILABLE)"
+		_hint.text = "L: SELECT   SHOT: LAUNCH   IGNITE: BACK"
 		return
 	var d := clampi(_difficulty, 0, difficulty_names.size() - 1)
 	_board.lit_color = difficulty_colors[d] if d < difficulty_colors.size() else _board_color
@@ -277,7 +297,8 @@ func _show_difficulty() -> void:
 func _unlock_another() -> void:
 	_difficulty = ANOTHER
 	_secret_presses = 0
-	SoundManager.play(spark_sound)
+	SoundManager.play(another_alarm_sound if another_alarm_sound else spark_sound)
+	_switch_music(another_music)
 	# 白く光る
 	var flash := ColorRect.new()
 	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -298,8 +319,9 @@ func _unlock_another() -> void:
 	_shake(_ui_root, 6.0)
 	_set_red_theme(true)
 	_show_difficulty()
-	_board.flicker_off(3)
-	await get_tree().create_timer(0.3).timeout
+	# ちらついて消えるのを待ってから、点け直す(ちらつきの長さはランダムなので、時間で待つと、点けたあとに消えることがある)
+	await _board.flicker_off(3)
+	# (ちらついているあいだに HARD へ戻っていても、そのときの文字を点ける)
 	_board.show_now()
 	_board._on = true
 
@@ -359,6 +381,7 @@ func _to_ship() -> void:
 	if _difficulty == ANOTHER:
 		_difficulty = difficulty_names.size() - 1 # 機体の選択に戻ったら、ANOTHER は HARD に戻す
 		_set_red_theme(false)
+		_switch_music(_normal_music)
 	_secret_presses = 0
 	_board.lit_color = _board_color
 	_board.set_text(title_text)
@@ -367,21 +390,13 @@ func _to_ship() -> void:
 # ---------------------------------------------------------------- 出撃
 
 func _launch() -> void:
-	if _difficulty == ANOTHER:
-		# 未実装なので出撃しない: はじかれる音と、掲示板が揺れるだけ
-		SoundManager.play(back_sound)
-		_shake(_ui_root, 3.0)
-		_board.flicker_off(2)
-		await get_tree().create_timer(0.2).timeout
-		_board.show_now()
-		_board._on = true
-		return
 	_step = Step.LAUNCH
-	SoundManager.play(confirm_sound, 1.2)
+	SoundManager.play(confirm_sound)
 	RunConfig.has_selection = true
 	RunConfig.consecutive_game_overs = 0
 	_stop_music()
 	RunConfig.difficulty = _difficulty
+	HazardRank.reset_run() # ANOTHER のランクは、出撃するたびに 0 から
 	RunConfig.ship = ships[_ship_index_value] if not ships.is_empty() else null
 	await _board.set_text(launch_text, false)
 	await _board.blink(3, 0.1, 0.16)

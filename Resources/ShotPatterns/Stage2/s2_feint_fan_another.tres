@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_feint_fan_another.tres" id="another_ver"]
+
+[resource]
+script = ExtResource("1")
+bullet_scene = ExtResource("2")
+start_delay = 1.2
+pause = 1.4
+bullet_count = 9
+spread_angle = 120.0
+aim_at_player = false
+random_angle = 8.0
+bullet_speed = 85.0
+line_count = 2
+line_speed_ratio = 0.3

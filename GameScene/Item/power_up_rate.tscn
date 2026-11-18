@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://power_up_item.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/PowerUps/powerupC_combined_sprite.png" id="2_tex"]
+
+[node name="PowerUpRate" type="Node2D"]
+script = ExtResource("1_item")
+kind = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.55, 0.85, 1, 1)
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_tex")
+hframes = 5
+frame = 4

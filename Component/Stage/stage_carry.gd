@@ -17,6 +17,8 @@ static var ignite_value : float = 0.0
 static var shot_stage : int = 0
 static var option_count : int = 0
 static var lock_speed_level : int = 0
+static var rate_boost : int = 0
+static var power_boost : int = 0
 
 ## 今のステージの状態を覚える
 static func save(tree : SceneTree) -> void:
@@ -31,6 +33,8 @@ static func save(tree : SceneTree) -> void:
 		shot_stage = player.shot_stage
 		option_count = player.options.size()
 		lock_speed_level = player.lock_speed_level
+		rate_boost = player.rate_boost
+		power_boost = player.power_boost
 	if game_manager:
 		ignite_value = game_manager.ignite.value
 	pending = true
@@ -53,9 +57,14 @@ static func apply(tree : SceneTree) -> void:
 		for i in shot_stage:
 			player.power_up_shot()
 		for i in option_count:
-			player.add_option()
+			player.add_option() # 持ち越しなので、ANOTHER のランクは上げない(add_option はランクを上げない)
 		for i in lock_speed_level:
 			player.upgrade_lock_speed()
+		player.rate_boost = rate_boost
+		player.power_boost = power_boost
+		player.boost_changed.emit()
+	# ANOTHER: 次のステージに進んだので、ランクの下限が上がる
+	HazardRank.on_next_stage()
 	if game_manager:
 		game_manager._shown_level = 99 # 持ち越したレベルを入れるときは、LEVEL UP を出さない
 		game_manager.ignite.value = ignite_value
