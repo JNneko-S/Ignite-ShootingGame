@@ -37,6 +37,8 @@ var close_kill : bool = false
 var ignite_kill : bool = false
 ## 中ボスか(StageRunner が、ボスのゲージを出すがボスの時間ボーナスのない敵に入れる)。大きいスコアアイテムを落とす
 var is_midboss : bool = false
+## 同じ出現イベントで出た何体目か(0 から)。StageRunner が入れる
+var unit_index : int = 0
 ## 移動パターンの位置に足すずれ(SwayFollow が、背景の横揺れに合わせて入れる)。
 ## 移動パターンで動いている途中でも、このずれは保たれる
 var sway_offset : Vector2 = Vector2.ZERO

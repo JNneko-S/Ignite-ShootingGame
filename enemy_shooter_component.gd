@@ -199,7 +199,7 @@ func _run_pattern(pattern : ShotPattern) -> void:
 	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
-	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
+	await _wait_with_warning(pattern, (pattern.start_delay + _unit_delay(pattern)) * unit, generation)
 	var shot_index := 0
 	while generation == _generation:
 		var burst_aim := _aim_angle()
@@ -331,3 +331,14 @@ func _wait(seconds : float) -> void:
 	var tween := create_tween()
 	tween.tween_interval(seconds)
 	await tween.finished
+
+## Start Delay Per Unit のぶん、撃ち始めを遅らせる秒数(同じイベントで出た何体目か × この値)
+func _unit_delay(pattern : ShotPattern) -> float:
+	if pattern.start_delay_per_unit == 0.0:
+		return 0.0
+	var node := get_parent()
+	while node:
+		if node is Enemy:
+			return pattern.start_delay_per_unit * float(node.unit_index)
+		node = node.get_parent()
+	return 0.0

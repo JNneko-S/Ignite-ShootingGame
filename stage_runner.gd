@@ -283,6 +283,7 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		enemy.pattern = event.move_pattern
 	enemy.mirror_x = event.mirror_x != (event.alternate_mirror and unit_index % 2 == 1)
 	enemy.path_offset = event.offset + event.offset_step * unit_index
+	enemy.unit_index = unit_index
 	# カメラが横に動くステージ(StageCamera)では、座標は「今の画面」の座標として扱う
 	var view_offset := StageCamera.view_offset(self)
 	var camera := StageCamera.of(self)

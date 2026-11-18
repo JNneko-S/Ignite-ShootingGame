@@ -1,30 +1,35 @@
 [gd_resource type="Resource" script_class="StageData" format=3 uid="uid://c3y24ii5htao4"]
 
-[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="4_58da7"]
-[ext_resource type="Resource" uid="uid://cff51e5n3b6da" path="res://Resources/MovePatterns/Stage3/m3_bomber_sweep.tres" id="18_58da7"]
-[ext_resource type="Resource" uid="uid://xkpwo21qo13b" path="res://Resources/ShotPatterns/Stage3/s3_bomber_updown.tres" id="19_p15fs"]
+[ext_resource type="Script" path="res://boss_phase.gd" id="4_58da7"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_bomber_sweep.tres" id="18_58da7"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_bomber_updown.tres" id="19_p15fs"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_net_col_down.tres" id="23_s8xme"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_net_side.tres" id="24_5rnv4"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_net_row.tres" id="25_tf1j2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_net_vert.tres" id="26_x3gml"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_net_col_up.tres" id="27_do38r"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/bomber.tscn" id="bomber"]
-[ext_resource type="PackedScene" uid="uid://i131tu5hvwxs" path="res://GameScene/Enemy/Zako/armored.tscn" id="carrier"]
-[ext_resource type="PackedScene" uid="uid://dc0yogfaxm6ds" path="res://GameScene/Enemy/Zako/charger.tscn" id="charger"]
-[ext_resource type="Script" uid="uid://crc1qrjwhm4au" path="res://Resources/MovePatterns/flight_curve.gd" id="curve"]
-[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="data"]
-[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event"]
-[ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="formation"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/armored.tscn" id="carrier"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/charger.tscn" id="charger"]
+[ext_resource type="Script" path="res://Resources/MovePatterns/flight_curve.gd" id="curve"]
+[ext_resource type="Script" path="res://stage_data.gd" id="data"]
+[ext_resource type="Script" path="res://stage_event.gd" id="event"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/formation.tscn" id="formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="kai"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai_intro.tscn" id="kai_intro"]
-[ext_resource type="Resource" uid="uid://ujid7vd1nm36" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="m_rise"]
-[ext_resource type="Resource" uid="uid://b8puvsyq2gfeo" path="res://Resources/MovePatterns/Stage3/m3_side_dash.tres" id="m_side"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="m_rise"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_side_dash.tres" id="m_side"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_rise_aim.tres" id="p_rise"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_side_aim.tres" id="p_side"]
-[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll"]
+[ext_resource type="Script" path="res://scroll_speed_event.gd" id="scroll"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/flak_ship.tscn" id="ship"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal"]
-[ext_resource type="PackedScene" uid="uid://bdgkopm2s363s" path="res://GameScene/Enemy/Zako/sniper.tscn" id="sniper"]
-[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" path="res://stage_signal_event.gd" id="signal"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/sniper.tscn" id="sniper"]
+[ext_resource type="Script" path="res://spawn_event.gd" id="spawn"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/strike_gunship.tscn" id="strike"]
-[ext_resource type="PackedScene" uid="uid://t26vdwy8qwct" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="swans"]
-[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="swans"]
+[ext_resource type="Script" path="res://wait_clear_event.gd" id="wait"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
 
 [sub_resource type="Resource" id="e1"]
@@ -295,6 +300,247 @@ speed_multiplier = 2.0
 duration = 2.0
 time = 54.0
 
+[sub_resource type="Resource" id="Resource_y32b2"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-180, 0)
+time = 54.5
+
+[sub_resource type="Resource" id="Resource_2181a"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-60, 0)
+time = 54.5
+
+[sub_resource type="Resource" id="Resource_wq42m"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(60, 0)
+time = 54.5
+
+[sub_resource type="Resource" id="Resource_akd68"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(180, 0)
+time = 54.5
+
+[sub_resource type="Resource" id="Resource_ixama"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+time = 57.7
+
+[sub_resource type="Resource" id="Resource_fq7rf"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 90)
+time = 57.7
+
+[sub_resource type="Resource" id="Resource_8s5lw"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 180)
+time = 57.7
+
+[sub_resource type="Resource" id="Resource_lpk2e"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 270)
+time = 57.7
+
+[sub_resource type="Resource" id="Resource_kw1ew"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("27_do38r")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(180, 0)
+time = 60.9
+
+[sub_resource type="Resource" id="Resource_tnjie"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("27_do38r")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(60, 0)
+time = 60.9
+
+[sub_resource type="Resource" id="Resource_3frt2"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("27_do38r")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-60, 0)
+time = 60.9
+
+[sub_resource type="Resource" id="Resource_bwvay"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("27_do38r")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-180, 0)
+time = 60.9
+
+[sub_resource type="Resource" id="Resource_smf0q"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 270)
+mirror_x = true
+time = 61.3
+
+[sub_resource type="Resource" id="Resource_4olo3"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 180)
+mirror_x = true
+time = 61.3
+
+[sub_resource type="Resource" id="Resource_jbwio"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 90)
+mirror_x = true
+time = 61.3
+
+[sub_resource type="Resource" id="Resource_rxxra"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+mirror_x = true
+time = 61.3
+
+[sub_resource type="Resource" id="Resource_72j23"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-180, 0)
+time = 64.3
+
+[sub_resource type="Resource" id="Resource_mf72h"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(-60, 0)
+time = 64.3
+
+[sub_resource type="Resource" id="Resource_0xpx4"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(60, 0)
+time = 64.3
+
+[sub_resource type="Resource" id="Resource_jqv86"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("23_s8xme")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
+count = 10
+interval = 0.16
+offset = Vector2(180, 0)
+time = 64.3
+
+[sub_resource type="Resource" id="Resource_cqs6l"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+time = 64.7
+
+[sub_resource type="Resource" id="Resource_2ye6s"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 90)
+time = 64.7
+
+[sub_resource type="Resource" id="Resource_5o84p"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 180)
+time = 64.7
+
+[sub_resource type="Resource" id="Resource_yuf8c"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("bomber")
+move_pattern = ExtResource("25_tf1j2")
+shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
+count = 10
+interval = 0.12
+offset = Vector2(0, 270)
+time = 64.7
+
 [sub_resource type="Resource" id="e30"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
@@ -302,7 +548,7 @@ count = 4
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-time = 55.0
+time = 68.0
 
 [sub_resource type="Resource" id="e31"]
 script = ExtResource("spawn")
@@ -312,7 +558,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("p_side")])
 count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
-time = 56.0
+time = 69.0
 
 [sub_resource type="Resource" id="e32"]
 script = ExtResource("spawn")
@@ -323,7 +569,7 @@ count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
 mirror_x = true
-time = 56.3
+time = 69.3
 
 [sub_resource type="Resource" id="e33"]
 script = ExtResource("spawn")
@@ -334,7 +580,7 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-time = 57.5
+time = 70.5
 
 [sub_resource type="Resource" id="e34"]
 script = ExtResource("spawn")
@@ -343,7 +589,7 @@ count = 2
 interval = 0.0
 offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
-time = 59.0
+time = 72.0
 
 [sub_resource type="Resource" id="c5"]
 script = ExtResource("curve")
@@ -361,7 +607,7 @@ enemy_scene = ExtResource("bomber")
 count = 5
 interval = 0.0
 flight_curve = SubResource("c5")
-time = 60.0
+time = 73.0
 
 [sub_resource type="Resource" id="e36"]
 script = ExtResource("spawn")
@@ -370,7 +616,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("z_fighter")])
 count = 22
 interval = 0.16
 emerge = 1
-time = 62.0
+time = 75.0
 
 [sub_resource type="Resource" id="e37"]
 script = ExtResource("spawn")
@@ -381,20 +627,20 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-time = 63.5
+time = 76.5
 
 [sub_resource type="Resource" id="e38"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
 emerge = 1
 emerge_time = 1.0
-time = 65.0
+time = 78.0
 
 [sub_resource type="Resource" id="e39"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("carrier")
 offset = Vector2(80, 0)
-time = 67.5
+time = 80.5
 
 [sub_resource type="Resource" id="Resource_5rnv4"]
 script = ExtResource("spawn")
@@ -404,7 +650,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-time = 69.5
+time = 82.5
 
 [sub_resource type="Resource" id="Resource_tf1j2"]
 script = ExtResource("spawn")
@@ -415,7 +661,7 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-time = 71.7
+time = 84.7
 
 [sub_resource type="Resource" id="Resource_do38r"]
 script = ExtResource("spawn")
@@ -425,7 +671,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-time = 73.9
+time = 86.9
 
 [sub_resource type="Resource" id="Resource_x6uah"]
 script = ExtResource("spawn")
@@ -436,7 +682,7 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-time = 76.10000000000001
+time = 89.10000000000001
 
 [sub_resource type="Resource" id="Resource_770st"]
 script = ExtResource("spawn")
@@ -445,7 +691,7 @@ count = 6
 interval = 0.25
 offset = Vector2(-25, 0)
 offset_step = Vector2(60, 0)
-time = 76.5
+time = 89.5
 
 [sub_resource type="Resource" id="Resource_ueefj"]
 script = ExtResource("spawn")
@@ -455,7 +701,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-time = 78.30000000000001
+time = 91.30000000000001
 
 [sub_resource type="Resource" id="Resource_wm3d5"]
 script = ExtResource("spawn")
@@ -466,7 +712,7 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-time = 80.5
+time = 93.5
 
 [sub_resource type="Resource" id="Resource_s32yp"]
 script = ExtResource("spawn")
@@ -476,7 +722,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-time = 82.7
+time = 95.7
 
 [sub_resource type="Resource" id="e48"]
 script = ExtResource("spawn")
@@ -487,14 +733,14 @@ offset = Vector2(-110, 0)
 offset_step = Vector2(220, 0)
 emerge = 1
 emerge_time = 1.0
-time = 83.5
+time = 96.5
 
 [sub_resource type="Resource" id="e49"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("charger")
 count = 5
 interval = 0.35
-time = 84.0
+time = 97.0
 
 [sub_resource type="Resource" id="e50"]
 script = ExtResource("spawn")
@@ -505,17 +751,17 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-time = 85.5
+time = 98.5
 
 [sub_resource type="Resource" id="e51"]
 script = ExtResource("wait")
 timeout = 8.0
-time = 87.0
+time = 100.0
 
 [sub_resource type="Resource" id="e52"]
 script = ExtResource("signal")
 signal_name = "warning"
-time = 88.0
+time = 101.0
 
 [sub_resource type="Resource" id="e53"]
 script = ExtResource("spawn")
@@ -527,24 +773,24 @@ count = 3
 interval = 0.0
 offset = Vector2(-130, 0)
 offset_step = Vector2(130, 0)
-time = 90.0
+time = 103.0
 
 [sub_resource type="Resource" id="e54"]
 script = ExtResource("wait")
 tag = "midboss"
 timeout = 60.0
-time = 91.0
+time = 104.0
 
 [sub_resource type="Resource" id="sky_phase_3"]
 script = ExtResource("signal")
 signal_name = "sky_phase"
-time = 92.0
+time = 105.0
 
 [sub_resource type="Resource" id="e55"]
 script = ExtResource("scroll")
 speed_multiplier = 2.6
 duration = 2.0
-time = 93.0
+time = 106.0
 
 [sub_resource type="Resource" id="e56"]
 script = ExtResource("spawn")
@@ -555,7 +801,7 @@ offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
 emerge = 2
 emerge_time = 1.4
-time = 94.0
+time = 107.0
 
 [sub_resource type="Resource" id="e57"]
 script = ExtResource("spawn")
@@ -565,7 +811,7 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("p_side")])
 count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
-time = 95.0
+time = 108.0
 
 [sub_resource type="Resource" id="e58"]
 script = ExtResource("spawn")
@@ -576,7 +822,7 @@ count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
 mirror_x = true
-time = 95.3
+time = 108.3
 
 [sub_resource type="Resource" id="e59"]
 script = ExtResource("spawn")
@@ -587,7 +833,7 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-time = 96.5
+time = 109.5
 
 [sub_resource type="Resource" id="c7"]
 script = ExtResource("curve")
@@ -605,19 +851,19 @@ enemy_scene = ExtResource("bomber")
 count = 8
 interval = 0.0
 flight_curve = SubResource("c7")
-time = 97.5
+time = 110.5
 
 [sub_resource type="Resource" id="e61"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
 emerge = 1
 emerge_time = 1.0
-time = 99.5
+time = 112.5
 
 [sub_resource type="Resource" id="e62"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("carrier")
-time = 101.0
+time = 114.0
 
 [sub_resource type="Resource" id="e63"]
 script = ExtResource("spawn")
@@ -626,17 +872,17 @@ count = 2
 interval = 0.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(120, 0)
-time = 104.0
+time = 117.0
 
 [sub_resource type="Resource" id="e64"]
 script = ExtResource("wait")
 timeout = 8.0
-time = 106.0
+time = 119.0
 
 [sub_resource type="Resource" id="e65"]
 script = ExtResource("signal")
 signal_name = "warning"
-time = 107.0
+time = 120.0
 
 [sub_resource type="Resource" id="e66"]
 script = ExtResource("spawn")
@@ -646,14 +892,14 @@ is_boss = true
 boss_name = "ブラックスワン -改-"
 boss_phase_thresholds = Array[float]([0.66, 0.33])
 boss_time_bonus = true
-time = 110.0
+time = 123.0
 
 [sub_resource type="Resource" id="e67"]
 script = ExtResource("wait")
 tag = "boss"
-time = 111.0
+time = 124.0
 
 [resource]
 script = ExtResource("data")
 stage_name = "Stage 3"
-events = Array[ExtResource("event")]([SubResource("e1"), SubResource("e2"), SubResource("sky_phase_1"), SubResource("e3"), SubResource("e4"), SubResource("e5"), SubResource("e6"), SubResource("e7"), SubResource("e8"), SubResource("e9"), SubResource("e10"), SubResource("e11"), SubResource("e12"), SubResource("e13"), SubResource("Resource_58da7"), SubResource("Resource_p15fs"), SubResource("Resource_q7f36"), SubResource("Resource_x3gml"), SubResource("Resource_441jl"), SubResource("Resource_o7j5x"), SubResource("Resource_s8xme"), SubResource("e22"), SubResource("e23"), SubResource("e24"), SubResource("e25"), SubResource("e26"), SubResource("e27"), SubResource("e28"), SubResource("sky_phase_2"), SubResource("e29"), SubResource("e30"), SubResource("e31"), SubResource("e32"), SubResource("e33"), SubResource("e34"), SubResource("e35"), SubResource("e36"), SubResource("e37"), SubResource("e38"), SubResource("e39"), SubResource("Resource_5rnv4"), SubResource("Resource_tf1j2"), SubResource("Resource_do38r"), SubResource("Resource_x6uah"), SubResource("Resource_770st"), SubResource("Resource_ueefj"), SubResource("Resource_wm3d5"), SubResource("Resource_s32yp"), SubResource("e48"), SubResource("e49"), SubResource("e50"), SubResource("e51"), SubResource("e52"), SubResource("e53"), SubResource("e54"), SubResource("sky_phase_3"), SubResource("e55"), SubResource("e56"), SubResource("e57"), SubResource("e58"), SubResource("e59"), SubResource("e60"), SubResource("e61"), SubResource("e62"), SubResource("e63"), SubResource("e64"), SubResource("e65"), SubResource("e66"), SubResource("e67")])
+events = Array[ExtResource("event")]([SubResource("e1"), SubResource("e2"), SubResource("sky_phase_1"), SubResource("e3"), SubResource("e4"), SubResource("e5"), SubResource("e6"), SubResource("e7"), SubResource("e8"), SubResource("e9"), SubResource("e10"), SubResource("e11"), SubResource("e12"), SubResource("e13"), SubResource("Resource_58da7"), SubResource("Resource_p15fs"), SubResource("Resource_q7f36"), SubResource("Resource_x3gml"), SubResource("Resource_441jl"), SubResource("Resource_o7j5x"), SubResource("Resource_s8xme"), SubResource("e22"), SubResource("e23"), SubResource("e24"), SubResource("e25"), SubResource("e26"), SubResource("e27"), SubResource("e28"), SubResource("sky_phase_2"), SubResource("e29"), SubResource("Resource_y32b2"), SubResource("Resource_2181a"), SubResource("Resource_wq42m"), SubResource("Resource_akd68"), SubResource("Resource_ixama"), SubResource("Resource_fq7rf"), SubResource("Resource_8s5lw"), SubResource("Resource_lpk2e"), SubResource("Resource_kw1ew"), SubResource("Resource_tnjie"), SubResource("Resource_3frt2"), SubResource("Resource_bwvay"), SubResource("Resource_smf0q"), SubResource("Resource_4olo3"), SubResource("Resource_jbwio"), SubResource("Resource_rxxra"), SubResource("Resource_72j23"), SubResource("Resource_mf72h"), SubResource("Resource_0xpx4"), SubResource("Resource_jqv86"), SubResource("Resource_cqs6l"), SubResource("Resource_2ye6s"), SubResource("Resource_5o84p"), SubResource("Resource_yuf8c"), SubResource("e30"), SubResource("e31"), SubResource("e32"), SubResource("e33"), SubResource("e34"), SubResource("e35"), SubResource("e36"), SubResource("e37"), SubResource("e38"), SubResource("e39"), SubResource("Resource_5rnv4"), SubResource("Resource_tf1j2"), SubResource("Resource_do38r"), SubResource("Resource_x6uah"), SubResource("Resource_770st"), SubResource("Resource_ueefj"), SubResource("Resource_wm3d5"), SubResource("Resource_s32yp"), SubResource("e48"), SubResource("e49"), SubResource("e50"), SubResource("e51"), SubResource("e52"), SubResource("e53"), SubResource("e54"), SubResource("sky_phase_3"), SubResource("e55"), SubResource("e56"), SubResource("e57"), SubResource("e58"), SubResource("e59"), SubResource("e60"), SubResource("e61"), SubResource("e62"), SubResource("e63"), SubResource("e64"), SubResource("e65"), SubResource("e66"), SubResource("e67")])

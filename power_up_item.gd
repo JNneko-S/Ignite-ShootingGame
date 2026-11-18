@@ -142,12 +142,14 @@ func collect_now() -> void:
 
 func _collect(player : Player) -> void:
 	_done = true
-	player.apply_power_up(kind)
-	collected.emit(kind)
+	# 消える演出を先に始める(このあとの処理が途中で止まっても、絵がその場に残らないように)
 	var tween := create_tween().set_parallel(true)
 	tween.tween_property(self, "scale", Vector2(2.0, 2.0), 0.15)
 	tween.tween_property(self, "modulate:a", 0.0, 0.15)
 	tween.chain().tween_callback(queue_free)
+	get_tree().create_timer(0.5, true, false, true).timeout.connect(func(): if is_instance_valid(self): queue_free())
+	player.apply_power_up(kind)
+	collected.emit(kind)
 
 ## Sprite2D に Texture がないときの、代わりの見た目(子機は緑、ロックは赤)
 func _draw() -> void:

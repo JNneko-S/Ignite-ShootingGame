@@ -36,13 +36,12 @@ class_name ShipSelect
 ## 最初に選んである難易度(前に選んだことがあれば、そちらを使う)
 @export_range(0, 2) var default_difficulty : int = 1
 
-@export_group("デバッグ(今だけ): ブラックスワン戦")
-## 難易度で HARD を選んだ状態で、右をこの回数押すと、BLACKSWAN が選べる(赤黒の画面になる)。0 なら出ない
-@export var debug_secret_presses : int = 10
-## BLACKSWAN を選んで出撃したときのステージ(難易度は HARD 固定)
-@export_file("*.tscn") var debug_blackswan_stage : String = "res://blackswan_test.tscn"
-@export var debug_subtitle : String = "デバッグ用"
-@export_multiline var debug_text : String = "ブラックスワン戦をプレイできる。難易度はHARD固定。\n戦え！黒い胡鳥と赤い不死鳥！"
+@export_group("隠し難易度: ANOTHER(未実装)")
+## 難易度で HARD を選んだ状態で、右をこの回数押すと、ANOTHER が選べる(赤黒の画面になる)。0 なら出ない
+@export var another_secret_presses : int = 10
+@export var another_name : String = "ANOTHER"
+@export var another_subtitle : String = "未実装"
+@export_multiline var another_text : String = "この難易度は、まだ実装されていません。\n今は選んでも出撃できません。"
 
 @export_group("音")
 ## 選ぶものを変えたとき・決めたとき・戻ったとき(シーンに置いた AudioStreamPlayer)
@@ -56,8 +55,8 @@ class_name ShipSelect
 @export var spark_sound : AudioStreamPlayer
 
 enum Step { BOOT, SHIP, DIFFICULTY, LAUNCH }
-## 難易度の番号のうち、デバッグ用のブラックスワン戦
-const BLACKSWAN : int = 3
+## 難易度の番号のうち、隠し難易度 ANOTHER(未実装。選んでも出撃できない)
+const ANOTHER : int = 3
 const RED_LINE := Color(1.0, 0.13, 0.1)
 const RED_FILL := Color(0.02, 0.0, 0.0, 0.94)
 
@@ -83,7 +82,7 @@ var _board_color : Color
 var _time : float = 0.0
 var _preview_base : Vector2
 var _icon_base : Vector2
-## HARD で右を押した回数(デバッグ用)
+## HARD で右を押した回数(ANOTHER を出すため)
 var _secret_presses : int = 0
 ## 赤黒にする前の色
 var _theme_saved : Dictionary = {}
@@ -94,7 +93,7 @@ func _ready() -> void:
 	_icon_base = _icon.position
 	_difficulty = default_difficulty
 	if RunConfig.has_selection:
-		_difficulty = RunConfig.difficulty
+		_difficulty = clampi(RunConfig.difficulty, 0, difficulty_names.size() - 1)
 		var index := ships.find(RunConfig.ship)
 		_ship_index_value = maxi(index, 0)
 	if ships.is_empty():
@@ -226,7 +225,7 @@ func _to_difficulty() -> void:
 
 func _change_difficulty(direction : int) -> void:
 	_selector.pulse(direction)
-	if _difficulty == BLACKSWAN:
+	if _difficulty == ANOTHER:
 		if direction < 0:
 			# HARD に戻ると、色も元に戻る
 			_difficulty = difficulty_names.size() - 1
@@ -238,11 +237,11 @@ func _change_difficulty(direction : int) -> void:
 			SoundManager.play(back_sound)
 		return
 	var last := difficulty_names.size() - 1
-	if direction > 0 and _difficulty == last and debug_secret_presses > 0:
-		# デバッグ用: HARD で右を何回も押すと、ブラックスワン戦が出てくる
+	if direction > 0 and _difficulty == last and another_secret_presses > 0:
+		# HARD で右を何回も押すと、隠し難易度 ANOTHER が出てくる
 		_secret_presses += 1
-		if _secret_presses >= debug_secret_presses:
-			_unlock_blackswan()
+		if _secret_presses >= another_secret_presses:
+			_unlock_another()
 			return
 		SoundManager.play(back_sound, 1.0 + 0.05 * _secret_presses)
 		return
@@ -258,11 +257,12 @@ func _change_difficulty(direction : int) -> void:
 
 func _show_difficulty() -> void:
 	_hint.text = "L/R: SELECT   SHOT: LAUNCH   IGNITE: BACK"
-	if _difficulty == BLACKSWAN:
-		_board.set_text("< BLACKSWAN >", false)
-		_desc_title.text = "BLACKSWAN"
-		_desc_sub.text = debug_subtitle
-		_desc_text.text = debug_text
+	if _difficulty == ANOTHER:
+		_board.set_text("< %s >" % another_name, false)
+		_desc_title.text = another_name
+		_desc_sub.text = another_subtitle
+		_desc_text.text = another_text
+		_hint.text = "L: SELECT   IGNITE: BACK   (NOT AVAILABLE)"
 		return
 	var d := clampi(_difficulty, 0, difficulty_names.size() - 1)
 	_board.lit_color = difficulty_colors[d] if d < difficulty_colors.size() else _board_color
@@ -271,11 +271,11 @@ func _show_difficulty() -> void:
 	_desc_sub.text = difficulty_subtitles[d] if d < difficulty_subtitles.size() else ""
 	_desc_text.text = difficulty_texts[d] if d < difficulty_texts.size() else ""
 
-# ---------------------------------------------------------------- デバッグ: ブラックスワン戦
+# ---------------------------------------------------------------- 隠し難易度: ANOTHER
 
-## バチンと火花が散って、画面が赤と黒になり、BLACKSWAN が選べるようになる
-func _unlock_blackswan() -> void:
-	_difficulty = BLACKSWAN
+## バチンと火花が散って、画面が赤と黒になり、ANOTHER が選べるようになる
+func _unlock_another() -> void:
+	_difficulty = ANOTHER
 	_secret_presses = 0
 	SoundManager.play(spark_sound)
 	# 白く光る
@@ -356,8 +356,8 @@ func _to_ship() -> void:
 	_step = Step.SHIP
 	SoundManager.play(back_sound)
 	_selector.active = true
-	if _difficulty == BLACKSWAN:
-		_difficulty = difficulty_names.size() - 1 # 機体の選択に戻ったら、ブラックスワン戦は HARD に戻す
+	if _difficulty == ANOTHER:
+		_difficulty = difficulty_names.size() - 1 # 機体の選択に戻ったら、ANOTHER は HARD に戻す
 		_set_red_theme(false)
 	_secret_presses = 0
 	_board.lit_color = _board_color
@@ -367,13 +367,21 @@ func _to_ship() -> void:
 # ---------------------------------------------------------------- 出撃
 
 func _launch() -> void:
+	if _difficulty == ANOTHER:
+		# 未実装なので出撃しない: はじかれる音と、掲示板が揺れるだけ
+		SoundManager.play(back_sound)
+		_shake(_ui_root, 3.0)
+		_board.flicker_off(2)
+		await get_tree().create_timer(0.2).timeout
+		_board.show_now()
+		_board._on = true
+		return
 	_step = Step.LAUNCH
 	SoundManager.play(confirm_sound, 1.2)
 	RunConfig.has_selection = true
 	RunConfig.consecutive_game_overs = 0
 	_stop_music()
-	var blackswan := _difficulty == BLACKSWAN
-	RunConfig.difficulty = 2 if blackswan else _difficulty # ブラックスワン戦は HARD 固定
+	RunConfig.difficulty = _difficulty
 	RunConfig.ship = ships[_ship_index_value] if not ships.is_empty() else null
 	await _board.set_text(launch_text, false)
 	await _board.blink(3, 0.1, 0.16)
@@ -382,4 +390,4 @@ func _launch() -> void:
 		_ui_root.modulate.a = alpha
 		await get_tree().create_timer(0.04).timeout
 	await get_tree().create_timer(0.2).timeout
-	_shutter.change_scene_and_open(debug_blackswan_stage if blackswan else stage_scene)
+	_shutter.change_scene_and_open(stage_scene)

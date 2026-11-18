@@ -38,7 +38,7 @@ script = ExtResource("sky_background")
 sea_texture = ExtResource("sea_tex")
 sea_hframes = 3
 sea_region = Rect2i(0, 1020, 240, 1421)
-forward_after_time = 93.0
+forward_after_time = 106.0
 swarm_after_time = 14.0
 roll_amount = 2.0
 

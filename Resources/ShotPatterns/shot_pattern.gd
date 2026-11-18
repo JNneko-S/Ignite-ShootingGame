@@ -45,6 +45,9 @@ enum TimingUnit {
 @export var timing_unit : TimingUnit = TimingUnit.SECONDS
 ## 出現してから撃ち始めるまでの待ち時間(秒)
 @export var start_delay : float = 0.5
+## 同じイベントで出た何体目か(0, 1, 2…)× この秒数だけ、撃ち始めを遅らせる。
+## 列になって同じ道を飛ぶ敵が、同じ場所で撃って弾が1本の線にならないように、撃つ場所をずらす
+@export var start_delay_per_unit : float = 0.0
 ## 連射(バースト)1回あたりの発射数。1なら単発
 @export var shot_count : int = 1
 ## バースト内の発射間隔(秒)
