@@ -22,6 +22,8 @@ class_name DeathExplosion
 @export_group("連鎖爆発 → 大爆発")
 ## オンなら、連鎖爆発 → 大爆発してから終わる。ボスは StageRunner が is_boss の敵をオンにする
 @export var big : bool = false
+## 大爆発のはじめに、一瞬だけ時間を止める長さ(秒)
+@export var big_stop_time : float = 0.3
 ## 連鎖爆発を出す範囲(持ち主の位置からのずれ)。大きさが 0 なら、持ち主の Sprite2D の見た目の範囲を使う
 @export var area : Rect2 = Rect2()
 ## 連鎖爆発の回数と、かける時間(秒)

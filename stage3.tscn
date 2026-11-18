@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
+[ext_resource type="Resource" path="res://Resources/StageData/Stage3.tres" id="stage"]
+[ext_resource type="Script" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
+[ext_resource type="Script" path="res://Component/Stage/sky_background.gd" id="sky_background"]
+[ext_resource type="Script" path="res://Component/Camera/stage_camera.gd" id="stage_camera"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Sea Ice Stage/BG/Stage_Base_strip3.png" id="sea_tex"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_114335_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="music_stage3"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss3"]
+
+[node name="Stage3" unique_id=2065326320 instance=ExtResource("base")]
+graze_per_levels = Array[float]([8.0, 10.0, 12.0])
+
+[node name="StageRunner" parent="." unique_id=1973239994]
+stage = ExtResource("stage")
+debug_log = true
+
+[node name="Scroller" parent="." unique_id=944740712]
+visible = false
+process_mode = 4
+
+[node name="BackgroundSway" parent="." unique_id=418265093]
+process_mode = 4
+
+[node name="Camera2D" parent="." unique_id=1832352645]
+script = ExtResource("stage_camera")
+start_mode = 1
+
+[node name="StageIntro" parent="." unique_id=875853486]
+play_intro = false
+
+[node name="AudioStreamPlayer" parent="." unique_id=1308156288]
+stage_music = ExtResource("music_stage3")
+boss_music = ExtResource("music_boss3")
+
+[node name="SkyBackground" type="Node2D" parent="." unique_id=1800000001]
+script = ExtResource("sky_background")
+sea_texture = ExtResource("sea_tex")
+sea_hframes = 3
+sea_region = Rect2i(0, 1020, 240, 1421)
+forward_after_time = 93.0
+swarm_after_time = 14.0
+
+[node name="StageTransition" type="Node" parent="." unique_id=1800000002]
+script = ExtResource("stage_transition")

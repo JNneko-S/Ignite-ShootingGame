@@ -44,6 +44,23 @@ class_name CrossFireState
 ## ずらすのにかける時間(秒)。短いほど、直線がパッと切り替わる
 @export var shift_time : float = 0.12
 
+## 空でなければ、同じ名前のグループの仲間(ブラックスワンズなど)のうち、ワインダーを撃つのは1機ずつにする。
+## ほかの機が撃っているあいだは、撃たずに次のステートへ移る
+@export var exclusive_group : StringName = &""
+
+## グループごとに、今ワインダーを撃っている機
+static var _firing : Dictionary = {}
+
+@export_group("フェイント")
+## この段階(0 から)から、ずらす向きのフェイントを混ぜる(片側へずれ始めて、途中で逆へ一気にずれる)。-1 ならしない
+@export var feint_from_phase : int = -1
+## ずらすたびに、フェイントにする確率
+@export_range(0.0, 1.0, 0.05) var feint_chance : float = 0.35
+## フェイントで、見せかけの向きへずらす量(1回にずらす角度に対する割合)
+@export var feint_ratio : float = 0.6
+## 見せかけの向きで止まっている時間(秒)。このあと逆へずれる
+@export var feint_hold : float = 0.3
+
 @export_group("自機で決める")
 ## この段階から、1回の最初から自機でずらす向きを決める(それより前の段階は、後半だけ)
 @export var track_from_phase : int = 1
@@ -61,18 +78,42 @@ func _init() -> void:
 func _run(token : int) -> void:
 	if not running(token):
 		return
+	if not _claim():
+		finish(token) # 仲間が撃っている: 今回は撃たない
+		return
 	for volley in _plan():
 		await wait_bullets_clear(token) # 第一・第二形態は、前の弾が消えてから撃つ
 		if not running(token):
+			_release()
 			return
 		await _volley(token, volley)
 		if not running(token):
+			_release()
 			return
 		stop_shooters(shooters)
 		await wait(volley_gap)
 		if not running(token):
+			_release()
 			return
+	_release()
 	finish(token)
+
+## ワインダーを撃ってよいか(同じグループの、ほかの機が撃っていなければ、自分の番にする)
+func _claim() -> bool:
+	if exclusive_group == &"":
+		return true
+	var holder = _firing.get(exclusive_group)
+	if holder != null and is_instance_valid(holder) and holder != boss and holder.is_inside_tree() and holder.hp_component and holder.hp_component.hp > 0:
+		return false
+	_firing[exclusive_group] = boss
+	return true
+
+func _release() -> void:
+	if exclusive_group != &"" and _firing.get(exclusive_group) == boss:
+		_firing.erase(exclusive_group)
+
+func _exit_tree() -> void:
+	_release()
 
 ## 今の段階で撃つ順番(ShotPattern の並び)
 func _plan() -> Array[ShotPattern]:
@@ -113,6 +154,9 @@ func _volley(token : int, pattern : ShotPattern) -> void:
 	var seen_side := _player_side()
 	var timer := 0.0
 	var elapsed := 0.0
+	var feint_left := -1.0 # フェイント中: 逆へずれるまでの残り時間(秒)。-1 ならフェイントしていない
+	var feint_to := 0.0
+	var feint := feint_from_phase >= 0 and p >= feint_from_phase
 	while elapsed < length and running(token):
 		# 1フレームずつ進める(ポーズ中は進めない)
 		await get_tree().physics_frame
@@ -130,13 +174,24 @@ func _volley(token : int, pattern : ShotPattern) -> void:
 				# 自機が反対側へ移った: 次の間隔を待たず、少し早くずらす
 				seen_side = side
 				timer = maxf(timer, shift_interval - reaction)
-		if timer >= shift_interval:
+		if feint_left >= 0.0:
+			feint_left -= dt
+			if feint_left < 0.0:
+				target = feint_to # 見せかけの向きから、逆へ一気にずらす
+				direction = -direction
+		elif timer >= shift_interval:
 			timer = 0.0
 			if tracking and seen_side != 0.0:
 				direction = seen_side # 自機のいる側へずらす
 			if absf(target + direction * step) > limit + 0.01:
 				direction = -direction # 端まで行ったら逆へ
-			target = clampf(target + direction * step, -limit, limit)
+			if feint and randf() < feint_chance and absf(target - direction * step) <= limit + 0.01:
+				# フェイント: direction へ少しずれ始めて、Feint Hold 秒止まってから、逆へ1回分ずらす
+				feint_to = clampf(target - direction * step, -limit, limit)
+				target = clampf(target + direction * step * feint_ratio, -limit, limit)
+				feint_left = feint_hold + step * feint_ratio / maxf(rate, 0.01)
+			else:
+				target = clampf(target + direction * step, -limit, limit)
 		turn = move_toward(turn, target, rate * dt)
 		_set_turn(turn)
 

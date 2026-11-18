@@ -368,6 +368,9 @@ func _on_ignite_requested(full : bool) -> void:
 	if full and used >= IgniteGauge.MAX_LEVEL:
 		full_use_count += 1
 	_start_ignite_effect(used)
+	# Lv5 のイグナイト(全部使った)で、ショットが1段階強くなる(被弾すると失う)
+	if used >= IgniteGauge.MAX_LEVEL:
+		player.power_up_shot(true)
 
 ## 演出に入った: これ以降、イグナイトを使えない(溜めている途中なら取り消す)
 func _lock_ignite() -> void:

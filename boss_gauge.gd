@@ -72,6 +72,12 @@ func _connect_runner() -> void:
 		(node as StageRunner).boss_spawned.connect(_on_boss_spawned)
 
 func _on_boss_spawned(enemy : Enemy, boss_name : String, thresholds : Array[float]) -> void:
+	# 何機かでまとめて出てくるボスは、全機の HP の合計(SquadHP)につなぐ
+	if enemy.has_meta(&"squad_hp"):
+		var squad := enemy.get_meta(&"squad_hp") as SquadHP
+		if is_instance_valid(squad):
+			bind(squad, boss_name, thresholds, squad)
+			return
 	bind(enemy.hp_component, boss_name, thresholds, enemy)
 
 # ---------------------------------------------------------------- 組み立て

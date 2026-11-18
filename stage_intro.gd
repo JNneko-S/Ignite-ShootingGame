@@ -106,6 +106,16 @@ var _thrusters : Array[GPUParticles2D] = []
 var _cloud_material : ShaderMaterial
 ## アームの、自機側の端がどこまで伸びているか(1 = 自機まで、0 = 母艦の付け根まで巻き上げた)
 var _cable_reach : float = 1.0
+## 演出の途中か・飛ばしたか(飛ばしたら、残りの手順は何もしない)
+var _playing : bool = false
+var _skipped : bool = false
+var _play_age : float = 0.0
+## 演出で使っている tween(飛ばしたときに止める)と、自機の最初の位置
+var _tweens : Array[Tween] = []
+var _spawn : Vector2
+var _skip_layer : CanvasLayer
+## このボタンで演出を飛ばせる
+@export var skip_action : StringName = &"UI_Shoot"
 var _scroll : float = 0.0
 var _speed : float = 0.0
 ## 演出を飛ばしたか、終わったか。飛ばしたあとに、待っていた続きが動かないようにする

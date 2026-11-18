@@ -120,6 +120,9 @@ var graze_radius_scale : float = 1.0:
 @export_group("被弾")
 ## 被弾して生き残ったあとの無敵時間(秒)。点滅し、この間はグレイズもできない
 @export var hit_invincible_time : float = 3.0
+## 被弾したとき・やられたときに、一瞬だけ時間を止める長さ(秒)。何に当たったかが分かるように
+@export var hit_stop_time : float = 0.12
+@export var death_stop_time : float = 0.28
 
 @export_group("機体ごとの決まり(GameManager が読む)")
 ## オフなら、ゲージのLvによる威力・移動の速さの補正を使わない(どのLvでも同じ)
@@ -366,7 +369,8 @@ func is_locking_on() -> bool:
 
 ## 低速移動中、前方の扇の中の敵を、近い順に1体ずつロックしていく
 func _update_lock(delta : float) -> void:
-	lock_targets.assign(lock_targets.filter(func(t : Node2D) -> bool: return _can_keep_lock(t)))
+	# 消えた敵は、型を付けた引数に渡すとエラーになるので、先に取り除く
+	lock_targets.assign(lock_targets.filter(func(t) -> bool: return is_instance_valid(t) and _can_keep_lock(t)))
 	if not _is_lock_shooting() or not _is_alive:
 		lock_targets.clear()
 		_lock_timer = current_lock_time() # Shift を押した瞬間に、1体目はすぐロックする
@@ -506,12 +510,26 @@ func _fire_options() -> void:
 		var target : Node2D = lock_targets[i % lock_targets.size()] if locking else null
 		options[i].fire(bullet_scene, shot_speed, damage, target, lock_turn_rate)
 
-## ショットを1段階強化する(最大5段階)
-func power_up_shot() -> void:
-	if shot_stage >= MAX_SHOT_STAGE:
+## ショットの段階(power_up_shot)で撃ち方が変わる機体か。撃ち方が別の機体(BASTION など)は false にする
+func uses_shot_stage() -> bool:
+	return true
+
+## ショットを1段階強化する(最大5段階)。show_popup なら「SHOT UP!」を出して、自機を金色に光らせる
+func power_up_shot(show_popup : bool = false) -> void:
+	if shot_stage >= MAX_SHOT_STAGE or not uses_shot_stage():
 		return
 	shot_stage += 1
 	shot_stage_changed.emit(shot_stage)
+	if show_popup and is_inside_tree():
+		var text := "SHOT MAX!!" if shot_stage >= MAX_SHOT_STAGE else "SHOT UP! %d" % shot_stage
+		LevelUpPopup.show_text(get_tree(), global_position, text)
+		var sprite := get_node_or_null("Sprite2D") as CanvasItem
+		if sprite:
+			if not sprite.has_meta("base_self_modulate"):
+				sprite.set_meta("base_self_modulate", sprite.self_modulate)
+			var tween := sprite.create_tween()
+			tween.tween_property(sprite, "self_modulate", Color(2.6, 2.1, 0.8), 0.0)
+			tween.tween_property(sprite, "self_modulate", sprite.get_meta("base_self_modulate"), 0.5)
 
 ## ショット強化を全て失う(被弾・死亡時)
 ## 敵(の当たり判定)が at にあるときの、近距離のショットの倍率。遠ければ 1
@@ -525,6 +543,8 @@ func reset_shot_power() -> void:
 		return
 	shot_stage = 0
 	shot_stage_changed.emit(shot_stage)
+	if is_inside_tree():
+		LevelUpPopup.show_text(get_tree(), global_position + Vector2(0, 18), "SHOT DOWN")
 
 
 # ---------------------------------------------------------------- グレイズ
@@ -552,6 +572,13 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 	var hit_direction := _hit_direction()
 	var was_alive := _is_alive
 	damaged.emit()
+	# 一瞬止めて、自機を赤と白に光らせる(何に当たったか分かるように)。やられたときは長めに止めて、画面も光らせる
+	if _is_alive:
+		HitStop.play(get_tree(), hit_stop_time)
+	elif was_alive:
+		HitStop.play(get_tree(), death_stop_time)
+		ScreenFlash.play(get_tree(), 0.8)
+	_flash_hit()
 	# 死亡しなかったときは、点滅しながら無敵になる(無敵の間はグレイズもできない)
 	if _is_alive:
 		HitStop.apply(get_tree(), HitStop.PLAYER_HIT) # 撃たれた瞬間に、一瞬止まる
@@ -561,6 +588,21 @@ func _on_hurtbox_recieved_damage(_damage: int) -> void:
 			hit_flame.burst(hit_position, hit_direction) # イグナイトが残っている: 撃たれた向きの先へ炎が噴き出す
 	elif was_alive and hit_flame:
 		hit_flame.scatter(hit_position) # イグナイトがない: 爆発して炎が散る
+
+## 被弾した瞬間に、自機を赤 → 白 → 元の色に光らせる(ヒットストップ中も、実際の時間で進む)
+func _flash_hit() -> void:
+	var sprite := get_node_or_null("Sprite2D") as CanvasItem
+	if sprite == null:
+		return
+	if not sprite.has_meta("base_self_modulate"):
+		sprite.set_meta("base_self_modulate", sprite.self_modulate) # 機体ごとの元の色(BASTION は少し明るい)
+	var base : Color = sprite.get_meta("base_self_modulate")
+	var tween := sprite.create_tween().set_ignore_time_scale(true)
+	tween.tween_property(sprite, "self_modulate", Color(3.0, 0.7, 0.6), 0.0)
+	tween.tween_interval(0.05)
+	tween.tween_property(sprite, "self_modulate", Color(2.5, 2.5, 2.5), 0.0)
+	tween.tween_interval(0.05)
+	tween.tween_property(sprite, "self_modulate", base, 0.12)
 
 ## 被弾した弾が進んでいた向き(炎を飛ばす向き)。弾でなければ、当たったものから自機への向き
 func _hit_direction() -> Vector2:

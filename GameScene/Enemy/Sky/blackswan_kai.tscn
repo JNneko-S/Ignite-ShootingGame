@@ -1,0 +1,72 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://di60y0bpnpn6b" path="res://Resources/ShotPatterns/Boss/BlackSwan/BlackSwan.tscn" id="base"]
+[ext_resource type="Script" path="res://Component/Boss/boss_shadow_rush.gd" id="shadow_rush"]
+[ext_resource type="Script" path="res://Component/Motion/attack_animation.gd" id="attack_anim"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_833267_フィルターが掛かったような爆破音.mp3" id="snd_pass"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_arrive"]
+
+[sub_resource type="Animation" id="IdleAnim"]
+resource_name = "idle"
+length = 0.6
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D4:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="AnimationLibrary" id="IdleAnimLib"]
+_data = {
+&"idle": SubResource("IdleAnim")
+}
+
+[node name="BlackSwanKai" unique_id=724143726 instance=ExtResource("base")]
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 80000
+hp = 80000
+
+[node name="CrossFire" parent="StateMachine" unique_id=601000007]
+shift_steps = Array[float]([6.0, 6.0, 6.0])
+shift_max = Array[float]([30.0, 30.0, 30.0])
+feint_from_phase = 2
+
+[node name="Intro" parent="StateMachine" unique_id=601000005]
+duration = 5.0
+
+[node name="ShadowFlyby" parent="." unique_id=701000002]
+texture = null
+
+[node name="BossShadowRush" type="Node" parent="." unique_id=1830000010]
+script = ExtResource("shadow_rush")
+pass_sound = ExtResource("snd_pass")
+arrive_sound = ExtResource("snd_arrive")
+
+[node name="IdleAnimation" type="AnimationPlayer" parent="." unique_id=1830000100]
+libraries/ = SubResource("IdleAnimLib")
+autoplay = &"idle"
+
+[node name="AttackAnimation" type="Node" parent="." unique_id=1830000101 node_paths=PackedStringArray("sprites")]
+script = ExtResource("attack_anim")
+sprites = [NodePath("../Sprite2D2"), NodePath("../Sprite2D5")]

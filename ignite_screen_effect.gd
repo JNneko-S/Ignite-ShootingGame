@@ -136,7 +136,9 @@ func _draw() -> void:
 
 ## 一瞬だけ、ゲームの時間をほぼ止める
 func _hitstop() -> void:
-	HitStop.apply(get_tree(), hitstop_time, hitstop_scale)
+	if hitstop_time <= 0.0:
+		return
+	HitStop.play(get_tree(), hitstop_time, hitstop_scale) # 被弾やボス撃破の止めと重なっても、正しく戻る
 
 func _exit_tree() -> void:
 	HitStop.reset()

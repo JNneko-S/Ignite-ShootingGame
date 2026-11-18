@@ -260,6 +260,13 @@ func _set_pos(value : Vector2) -> void:
 	_pos = value
 	_enemy.global_position = value + _enemy._applied_sway # 横揺れのずれは、そのまま保つ
 
+## 当たり判定のない炎を、見た目だけ出す(登場・退場の演出用)。power は 0〜1。0 で消える
+func show_flame(power : float) -> void:
+	for flame in _flames:
+		if is_instance_valid(flame):
+			flame.hurt_power = 99.0 if power > 0.0 else 0.7 # 見た目だけのあいだは、どれだけ強くても当たらない
+	_set_power(power)
+
 func _set_power(value : float) -> void:
 	for flame in _flames:
 		if is_instance_valid(flame):

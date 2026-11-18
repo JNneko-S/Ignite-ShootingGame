@@ -21,6 +21,11 @@ uniform float aspect = 0.75;
 // ドット絵に合わせて、この大きさ(px)のマスで塗る。rect_size はスクリプトが設定する
 uniform float pixel_size = 2.0;
 uniform vec2 rect_size = vec2(448.0, 597.0);
+// 横の流れ(画面の幅 = 1)。旋回しているように、雲を横へずらす
+uniform float drift = 0.0;
+// 雲を画面の左右に寄せる強さ(0 で寄せない)と、寄せる幅(画面の幅に対する割合)
+uniform float side_bias = 0.0;
+uniform float side_width = 0.3;
 // 色の段階数(ドット絵らしく、階調を減らす)
 uniform float color_steps = 6.0;
 
@@ -53,12 +58,15 @@ float fbm(vec2 p) {
 void fragment() {
 	// ドット絵のマスに揃える
 	vec2 cell = floor(UV * rect_size / pixel_size) * pixel_size / rect_size;
-	vec2 p = vec2(cell.x * aspect, cell.y) * cloud_scale;
+	vec2 p = vec2((cell.x + drift) * aspect, cell.y) * cloud_scale;
 
 	// 手前の雲(速い)と奥の雲(遅い)を重ねて、流れに奥行きを出す
 	float front = fbm(p + vec2(0.0, -scroll * cloud_scale));
 	float back = fbm(p * 1.7 + vec2(5.2, -scroll * cloud_scale * 0.55));
 	float d = front * 0.65 + back * 0.35;
+	// 左右に寄せる: 端ほど雲が多く、真ん中ほど少なくする
+	float side = 1.0 - smoothstep(0.0, side_width, min(cell.x, 1.0 - cell.x));
+	d += side_bias * (side - 0.5);
 
 	float edge = 1.0 - coverage;
 	float density = smoothstep(edge, edge + 0.22, d);

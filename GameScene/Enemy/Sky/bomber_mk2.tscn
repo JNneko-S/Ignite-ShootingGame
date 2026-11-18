@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/bomber.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model0/0purple.png" id="tex"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_bomber_trail.tres" id="pat_trail"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_z_aim3.tres" id="pat_aim"]
+
+[node name="BomberMk2" unique_id=1810000001 instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." unique_id=430556030]
+texture = ExtResource("tex")
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 380
+hp = 380
+
+[node name="EnemyShooterComponent" parent="." unique_id=140393654]
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_trail"), ExtResource("pat_aim")])

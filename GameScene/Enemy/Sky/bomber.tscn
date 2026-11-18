@@ -1,0 +1,36 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model0/0midnight.png" id="tex"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_bomber_trail.tres" id="pat"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage3/m3_bomber_down.tres" id="move"]
+[ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
+
+[sub_resource type="CircleShape2D" id="body_shape"]
+radius = 28.0
+
+[node name="Bomber" unique_id=1810000001 instance=ExtResource("base")]
+pattern = ExtResource("move")
+
+[node name="Sprite2D" parent="." index="0" unique_id=430556030]
+texture_filter = 1
+texture = ExtResource("tex")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0" unique_id=38672095]
+position = Vector2(0, 0)
+shape = SubResource("body_shape")
+
+[node name="HPComponent" parent="." index="3" unique_id=2079593739]
+max_hp = 260
+hp = 260
+
+[node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat")])
+
+[node name="MotionTilt" type="Node" parent="." unique_id=1810000101]
+script = ExtResource("motion_tilt")
+face_mode = 2
+turn_sharpness = 7.0
+bank_per_turn = 30.0

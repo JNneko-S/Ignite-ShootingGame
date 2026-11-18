@@ -7,6 +7,7 @@ class_name StageBGM
 ##   StageSignalEvent の warning が来たら、道中の曲をフェードアウトする
 ##   そのあとボス(is_boss の敵)が出たら、ボスの曲をループで流す
 ##   (warning の前に出る is_boss の敵 = 中ボスでは、切り替えない)
+##   warning が来たときに、もうボスの曲が流れていたら(中ボス戦のあとなど)、フェードせずにそのまま流し続ける
 
 ## 未設定なら "stage_runner" グループから探す
 @export var stage_runner : StageRunner
@@ -38,6 +39,8 @@ func _on_stage_signal(signal_name : String, _text : String) -> void:
 	if signal_name != boss_signal_name:
 		return
 	_boss_pending = true
+	if _is_playing(boss_music):
+		return # もうボスの曲が流れている(中ボスのあとなど): 消さずに、そのまま流す
 	_kill_fade()
 	_fade = create_tween()
 	_fade.tween_property(self, "volume_db", -60.0, fade_out_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
@@ -47,6 +50,8 @@ func _on_boss_spawned(_enemy : Enemy, _boss_name : String, _thresholds : Array[f
 	if not _boss_pending:
 		return # 中ボス
 	_boss_pending = false
+	if _is_playing(boss_music):
+		return # 同じ曲を、頭から流し直さない
 	_kill_fade()
 	_play_music(boss_music)
 
@@ -58,6 +63,10 @@ func _play_music(music : AudioStream) -> void:
 	stream = music
 	volume_db = _base_volume
 	play()
+
+## その曲が、今ふつうの音量で流れているか
+func _is_playing(music : AudioStream) -> bool:
+	return music != null and stream == music and playing and volume_db > _base_volume - 1.0
 
 func _kill_fade() -> void:
 	if _fade:

@@ -183,6 +183,10 @@ func add_option() -> bool:
 func _is_lock_shooting() -> bool:
 	return false
 
+## ショットの段階は使わない(散弾の撃ち方は、イグナイトのレベルで変わる)
+func uses_shot_stage() -> bool:
+	return false
+
 func _on_hurtbox_recieved_damage(damage : int) -> void:
 	var will_hit := not (is_invincible() or DebugTools.invincible)
 	super._on_hurtbox_recieved_damage(damage)
