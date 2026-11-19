@@ -240,9 +240,16 @@ static func score_bonus() -> float:
 	return SCORE_BONUS_PER_50 * float(rank / 50) if active else 0.0
 
 ## 今撃つ弾幕の段階(boss = ボス・中ボスの砲口か)
+## 今のステージで、ランクに関係なく BLACK ANOTHER 用の弾幕を撃つか(StageRunner が、ステージの設定から入れる)
+## ANOTHER でなくても、敵弾の当たり判定を半分にする(HARD の最終面など。GameManager がステージごとに決める)
+static var small_bullet_hitbox : bool = false
+static var stage_force_black : bool = false
+
 static func barrage_tier(boss : bool) -> Tier:
 	if not active:
 		return Tier.HARD
+	if stage_force_black:
+		return Tier.BLACK
 	if boss:
 		return Tier.BLACK if black_loop or rank >= BLACK_BARRAGE_RANK else Tier.ANOTHER
 	return Tier.ANOTHER if black_loop or rank >= ANOTHER_BARRAGE_RANK else Tier.HARD

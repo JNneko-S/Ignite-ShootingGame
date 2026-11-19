@@ -82,7 +82,7 @@ static func _tune_another(source : ShotPattern, zako : bool) -> ShotPattern:
 	var step := HazardRank.step()
 	if step <= 0:
 		return pattern
-	var key := "A:%d:%d:%d:%.2f" % [pattern.get_instance_id(), step, int(zako), HazardRank.zako_rate_ratio]
+	var key := "A:%d:%d:%d:%.2f:%d" % [pattern.get_instance_id(), step, int(zako), HazardRank.zako_rate_ratio, int(HazardRank.stage_force_black)]
 	if _cache.has(key):
 		return _cache[key]
 	var rate := HazardRank.fire_rate_scale(not zako)

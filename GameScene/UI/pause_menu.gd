@@ -125,6 +125,8 @@ func _pressed(actions : Array) -> bool:
 
 ## 開いてよいか(ゲームオーバーなどで、ほかが止めているときは開かない)
 func _can_open() -> bool:
+	if IntroTutorial.active:
+		return false # 出撃のチュートリアル中は、ポーズのボタンでチュートリアルを飛ばす
 	return not get_tree().paused and is_instance_valid(player) and player.is_inside_tree()
 
 func _open_menu() -> void:

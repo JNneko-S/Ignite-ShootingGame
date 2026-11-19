@@ -1,21 +1,25 @@
 extends Node
 class_name TankTrainRaid
 ## (ANOTHER)1面ボスの戦車の追加ギミック。ボス(Enemy)の子に置く。
-## 第二形態(Active From Phase)から、Interval 秒ごとに次を繰り返す:
-##   1. 戦車から遠いほうの線路に、画面の下から列車が走ってきて、戦車の横で並走する
+## 第二形態(Active From Phase)から、主砲の弾幕が1つ終わるたびに(前の列車から Interval 秒たっていれば)次をする:
+##   1. 戦車から遠いほうの線路に、画面の下から列車が走ってきて、戦車の横で Run Time 秒並走する
 ##      (列車が来ているあいだ、戦車はその線路の側へ回り込まない: TankMover.blocked_side)
 ##   2. 戦車が砲弾を撃って列車に当てる
 ##   3. 車両が先頭から順に爆発し、それぞれから花火の弾幕(Burst Pattern)が出る
 ##   4. 残骸は画面の上へ流れて消える
-## 列車は飾り(当たり判定なし)。弾幕だけが危ない。
+## 車両は撃てる(1両 Car Hp)。並走しているあいだに壊した車両からは、花火が出ない。
+## 全車両を壊すと、戦車は砲弾を撃たない(花火を防げる)。
 
 ## この段階(0 = 第一形態)から列車が来る
 @export var active_from_phase : int = 1
-## 列車が来る間隔(秒)と、段階に入ってから最初の列車までの時間(秒)
-@export var interval : float = 14.0
-@export var first_delay : float = 2.5
+## 列車が来る最短の間隔(秒。前の列車がいなくなってから数える)。主砲の弾幕が終わったとき、これだけたっていれば来る
+@export var interval : float = 10.0
+## 車両1両の体力(全車両で、1本のショットを約4秒当て続けると壊れるくらい)
+@export var car_hp : int = 400
+## 車両の当たり判定の大きさ(画面の px)
+@export var car_hit_size : Vector2 = Vector2(44, 120)
 ## 車両の数
-@export var car_count : int = 4
+@export var car_count : int = 3
 ## 線路(2本のレールの真ん中)の位置。背景のスプライト(Ground Path)の絵の、左の端からの px。
 ## ボス戦の地面「Loop this at the end」(幅 240)の線路は、左から 46.5 / 67.5 / 165.5 / 186.5。
 ## 外側の2本を使う(内側の2本は、戦車の車体と重なる)。このうち戦車から遠いほうを使う
@@ -29,7 +33,7 @@ class_name TankTrainRaid
 @export var burst_pattern : ShotPattern = preload("res://Resources/ShotPatterns/Another/a1_raid_firework.tres")
 ## 走ってきて並走するまでの時間、並走している時間、砲弾が飛ぶ時間、車両が順に爆発する間隔(秒)
 @export var arrive_time : float = 1.6
-@export var run_time : float = 1.0
+@export var run_time : float = 5.0
 @export var shell_time : float = 0.35
 @export var chain_interval : float = 0.22
 
@@ -44,6 +48,8 @@ const WAGONS := [
 
 var _boss : Enemy
 var _running : bool = false
+## 前の列車がいなくなった時刻(ミリ秒)
+var _last_end_msec : int = -1000000
 
 func _ready() -> void:
 	_boss = get_parent() as Enemy
@@ -66,13 +72,20 @@ func _wait(seconds : float) -> void:
 		await get_tree().create_timer(seconds, false).timeout
 
 func _loop() -> void:
-	# 段階に入るまで待つ
-	while _alive() and _phase() < active_from_phase:
-		await _wait(0.25)
-	await _wait(first_delay)
-	while _alive():
-		await _raid()
-		await _wait(interval)
+	# 主砲の弾幕が1つ終わるたびに、列車を呼ぶか決める
+	var main := _boss.get_node_or_null("EnemyShooterComponent") as EnemyShooter
+	if main:
+		main.sequence_step_finished.connect(_on_barrage_finished)
+
+func _on_barrage_finished(_pattern : ShotPattern) -> void:
+	if _running or not _alive() or _phase() < active_from_phase:
+		return
+	if Time.get_ticks_msec() - _last_end_msec < interval * 1000.0:
+		return
+	_running = true
+	await _raid()
+	_running = false
+	_last_end_msec = Time.get_ticks_msec()
 
 func _mover() -> TankMover:
 	for child in _boss.get_children():
@@ -136,6 +149,7 @@ func _raid() -> void:
 		car.position = Vector2(0.0, i * car_h)
 		train.add_child(car)
 		cars.append(car)
+		_add_hurtbox(car)
 	get_tree().current_scene.add_child(train)
 	var length := car_count * car_h
 	train.global_position = Vector2(lane, view.end.y + 40.0)
@@ -144,20 +158,33 @@ func _raid() -> void:
 	var run := train.create_tween()
 	run.tween_property(train, "global_position:y", beside, arrive_time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	await run.finished
-	await _wait(run_time)
+	# 並走しているあいだ(全車両を壊したら、そこで終わり)
+	var waited := 0.0
+	while waited < run_time and _alive() and is_instance_valid(train) and _intact(cars) > 0:
+		await _wait(0.1)
+		waited += 0.1
 	if not _alive() or not is_instance_valid(train):
 		_clear_block(mover)
 		if is_instance_valid(train):
 			train.queue_free()
 		return
-	# 2. 戦車が砲弾を撃って、列車の先頭に当てる
-	await _fire_shell(_boss.global_position, cars[0].global_position)
-	# 3. 先頭から順に爆発して、花火の弾幕を出す
-	for car in cars:
-		if not is_instance_valid(car):
-			continue
-		_explode(car, s)
-		await _wait(chain_interval)
+	if _intact(cars) == 0:
+		# 全車両を壊した: 砲弾は撃たない(花火を防いだ)
+		FloatingText.spawn(get_tree(), train.global_position + Vector2(0.0, length * 0.5), "花火を阻止!", Color(0.6, 1.0, 0.6))
+	else:
+		# 2. 戦車が砲弾を撃って、残っている先頭の車両に当てる
+		var target : Sprite2D = cars[0]
+		for car in cars:
+			if _is_intact(car):
+				target = car
+				break
+		await _fire_shell(_boss.global_position, target.global_position)
+		# 3. 先頭から順に爆発して、花火の弾幕を出す(壊してあった車両からは出ない)
+		for car in cars:
+			if not _is_intact(car):
+				continue
+			_explode(car, s)
+			await _wait(chain_interval)
 	# 4. 残骸は画面の上へ流れて消える
 	if is_instance_valid(train):
 		var leave := train.create_tween()
@@ -165,6 +192,44 @@ func _raid() -> void:
 		leave.parallel().tween_property(train, "modulate:a", 0.35, 1.6)
 		leave.tween_callback(train.queue_free)
 	_clear_block(mover)
+
+## 車両に当たり判定を付ける。撃たれて体力がなくなったら、その車両は壊れる(花火を出さない)
+func _add_hurtbox(car : Sprite2D) -> void:
+	var hurtbox := (load("res://Component/Hurtbox/hurtbox.tscn") as PackedScene).instantiate() as Hurtbox
+	hurtbox.collision_layer = 64 # 敵の当たり(自機の弾が当たる)
+	hurtbox.collision_mask = 8
+	var shape := RectangleShape2D.new()
+	shape.size = car_hit_size / car.scale # 車両の絵は拡大されているので、画面の px に合わせる
+	hurtbox.get_node("CollisionShape2D").shape = shape
+	car.add_child(hurtbox)
+	car.set_meta("hp", car_hp)
+	hurtbox.recieved_damage.connect(func(damage) -> void: _on_car_damaged(car, hurtbox, int(damage)))
+
+func _on_car_damaged(car : Sprite2D, hurtbox : Hurtbox, damage : int) -> void:
+	if not is_instance_valid(car) or not _is_intact(car):
+		return
+	var hp : int = car.get_meta("hp", 0) - damage
+	car.set_meta("hp", hp)
+	if hp > 0:
+		# 当たっている合図: 一瞬白く光る
+		car.modulate = Color(1.8, 1.8, 1.8)
+		car.create_tween().tween_property(car, "modulate", Color.WHITE, 0.08)
+		return
+	# 壊れた: 小さく爆発して、壊れた絵にする。もう当たらない
+	car.set_meta("destroyed", true)
+	hurtbox.set_deferred("monitoring", false)
+	hurtbox.set_deferred("monitorable", false)
+	Explosion.spawn(get_tree(), Explosion.ZAKO, car.global_position, 1.6)
+	if car.has_meta("broken"):
+		car.texture = car.get_meta("broken")
+	else:
+		car.modulate = Color(0.35, 0.3, 0.3)
+
+func _is_intact(car : Sprite2D) -> bool:
+	return is_instance_valid(car) and not car.get_meta("destroyed", false)
+
+func _intact(cars : Array[Sprite2D]) -> int:
+	return cars.filter(func(c) -> bool: return _is_intact(c)).size()
 
 func _clear_block(mover : TankMover) -> void:
 	if is_instance_valid(mover):

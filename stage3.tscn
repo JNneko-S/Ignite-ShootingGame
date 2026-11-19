@@ -44,5 +44,6 @@ roll_amount = 2.0
 
 [node name="StageTransition" type="Node" parent="." index="15" unique_id=1800000002]
 script = ExtResource("stage_transition")
+next_stage = "res://stage4.tscn"
 
 [editable path="UI/ScoreUI"]

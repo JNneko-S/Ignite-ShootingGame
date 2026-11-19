@@ -6,8 +6,11 @@ class_name BackgroundEmerge
 ##              前に出たら、移動パターンの続き(2つ目のステップから)を動く
 ##   RISE     … 画面の下のほうの背景から、上へ飛び去る(遠ざかって小さくなる)。
 ##              そのあと、いつもの移動パターンで、画面の上から入り直してくる
+##   SCRAMBLE … 格納庫(背景の床)から緊急発進する(ステージ4)。床の上で機首を上へ向けて点火し、
+##              アフターバーナーを噴いて一気に飛び立ち(上がりながら大きく・明るくなる)、
+##              最初に向かう地点を少し行き過ぎてから、くるっと反転して襲ってくる。そのあと移動パターンの続きを動く
 
-enum Mode { NONE, APPROACH, RISE }
+enum Mode { NONE, APPROACH, RISE, SCRAMBLE }
 
 var mode : Mode = Mode.APPROACH
 ## 出てくるまでの時間(秒)
@@ -49,6 +52,8 @@ func _begin() -> void:
 	_enemy.scale = _scale * ghost_scale
 	if mode == Mode.APPROACH:
 		await _approach()
+	elif mode == Mode.SCRAMBLE:
+		await _scramble()
 	else:
 		await _rise()
 
@@ -73,6 +78,73 @@ func _approach() -> void:
 		_enemy._run_pattern()
 	elif _pattern == null or _pattern.steps.is_empty():
 		pass # その場に残る
+
+## 格納庫から緊急発進する。画面の外(下、または左右の端に近い地点なら横)の床から、
+## アフターバーナーを噴いて一気に飛び込んでくる。床に近い(低い)うちは暗く、上がるほど明るく大きくなる。
+## 最初に向かう地点を少し行き過ぎてから、くるっと反転して襲ってくる
+func _scramble() -> void:
+	var target := _first_target()
+	var view := CameraView.visible_rect(_enemy)
+	var center_x := view.get_center().x
+	var side := target.x - center_x
+	var pad : Vector2
+	if absf(side) > view.size.x * 0.28:
+		# 端に近い地点へ向かうときは、その側の画面の外から、斜めに飛び込む
+		pad = Vector2(view.position.x - 50.0 if side < 0.0 else view.end.x + 50.0, target.y + view.size.y * 0.4)
+	else:
+		pad = Vector2(target.x, view.end.y + 50.0) # 画面の下の外から
+	_enemy.global_position = pad
+	_enemy.z_index = 0 # 床(背景)より手前、ふつうの敵や弾より奥
+	var low_color := Color(0.22, 0.22, 0.3, 1.0) # 床に近い、影になった姿
+	_enemy.modulate = low_color
+	_enemy.scale = _scale * 0.6
+	var dir := (target - pad).normalized()
+	_enemy.rotation = dir.angle() - PI / 2.0 # 機首(ふだんは下向き)を、飛んでいく向きへ
+	var flame := AfterburnerFlame.new()
+	flame.root_offset = _tail_offset()
+	flame.amount = 0.8
+	_enemy.add_child(flame)
+	var launch := time * 0.8
+	var turn := maxf(time * 0.2, 0.18)
+	var overshoot := dir * 34.0
+	var tween := _enemy.create_tween()
+	# 発進: 一気に飛び込む(はじめから速く、行き過ぎるところでゆるむ)。上がりながら大きく、明るくなる
+	tween.tween_property(_enemy, "global_position", target + overshoot, launch).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(_enemy, "scale", _scale * 1.08, launch).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(_enemy, "modulate", _modulate, launch).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(flame, "amount", 1.0, launch * 0.3)
+	# 反転: くるっとこちらへ向き直る(画面の左右どちら側かで、回る向きを変える)
+	var from := _enemy.rotation
+	var diff := wrapf(_rotation - from, -PI, PI)
+	if absf(diff) > PI * 0.9:
+		diff = absf(diff) * (1.0 if side < 0.0 else -1.0) # 真後ろへ向き直るときは、画面の外側へ回る
+	var to := from + diff
+	tween.tween_property(_enemy, "rotation", to, turn).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(_enemy, "global_position", target, turn).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(_enemy, "scale", _scale, turn)
+	tween.parallel().tween_property(flame, "amount", 0.3, turn)
+	await tween.finished
+	if not is_instance_valid(_enemy):
+		return
+	_restore()
+	# 炎は少し残してから消す(反転のあとも、勢いが残っているように)
+	var fade := flame.create_tween()
+	fade.tween_property(flame, "amount", 0.0, 0.5)
+	fade.tween_callback(flame.queue_free)
+	if _pattern and _pattern.steps.size() > 1:
+		var rest := MovePattern.new()
+		rest.override_start_position = false
+		rest.steps.assign(_pattern.steps.slice(1))
+		_enemy.pattern = rest
+		_enemy._run_pattern()
+
+## 機体の後ろの端(機首の反対)までの距離。絵の大きさから求める
+func _tail_offset() -> float:
+	for node in _enemy.find_children("*", "Sprite2D", true, false):
+		var sprite := node as Sprite2D
+		if sprite.texture and sprite.visible:
+			return absf(sprite.get_rect().position.y * sprite.scale.y) * 0.8
+	return 12.0
 
 ## 背景の下のほうから上へ飛び去ってから、いつもの動きで上から入り直す
 func _rise() -> void:

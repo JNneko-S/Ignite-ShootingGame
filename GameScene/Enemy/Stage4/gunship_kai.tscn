@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/shot_gunship_3way_l_kai.tres" id="p1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/shot_gunship_3way_r_kai.tres" id="p2"]
+
+[node name="GunshipKai" instance=ExtResource("base")]
+modulate = Color(1, 0.72, 0.68, 1)
+
+[node name="HPComponent" parent="."]
+max_hp = 1800
+hp = 1800
+
+[node name="EnemyShooterComponent" parent="GunLeft"]
+patterns = Array[ExtResource("shot")]([ExtResource("p1")])
+
+[node name="EnemyShooterComponent" parent="GunRight"]
+patterns = Array[ExtResource("shot")]([ExtResource("p2")])

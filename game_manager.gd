@@ -140,6 +140,13 @@ func _enter_tree() -> void:
 	if RunConfig.has_selection:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
 	DifficultyTuning.level = int(difficulty)
+	# ステージによっては、弾幕だけ一段上の難易度として扱う(最終面など。ゲージなどは選んだ難易度のまま)
+	var runner := get_node_or_null("StageRunner")
+	HazardRank.small_bullet_hitbox = false
+	if runner and runner.get("stage"):
+		# HARD を選んだとき、ステージによっては ANOTHER と同じく敵弾の当たり判定を半分にする
+		HazardRank.small_bullet_hitbox = runner.stage.small_bullet_hitbox_hard and difficulty == Difficulty.HARD
+		DifficultyTuning.level = mini(DifficultyTuning.level + int(runner.stage.difficulty_step), DifficultyTuning.HARD)
 	# 隠し難易度 ANOTHER: 弾幕は HARD を元に、ハザードランクで強くなる
 	HazardRank.active = RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
 
@@ -205,6 +212,8 @@ func _ready() -> void:
 	if player == null:
 		push_warning("GameManager: Player が見つかりません")
 		return
+	# イグナイトのレベルが見て分かるオーラ(Lv0 では出ない)
+	IgniteLevelAura.attach(player, ignite)
 
 	player.graze_radius_scale = _by_difficulty(graze_radius_scales)
 	player.graze_hit.connect(_on_player_graze_hit)

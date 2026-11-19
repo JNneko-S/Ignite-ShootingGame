@@ -128,8 +128,8 @@ static func turned_heading(step : BulletStep, heading : float, position : Vector
 	match step.turn_mode:
 		BulletStep.TurnMode.ADD:
 			return heading + turn
-		BulletStep.TurnMode.AIM_PLAYER:
-			return (player - position).angle() + turn
+		BulletStep.TurnMode.AIM_PLAYER, BulletStep.TurnMode.AIM_GROUP:
+			return (player - position).angle() + turn # AIM_GROUP では、position に群れの真ん中が来る
 		BulletStep.TurnMode.ABSOLUTE:
 			return Vector2.DOWN.angle() + turn
 	return heading

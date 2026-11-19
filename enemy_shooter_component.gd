@@ -8,6 +8,8 @@ class_name EnemyShooter
 
 ## 撃った瞬間に出る(砲台の反動アニメーションなどに使う)
 signal fired
+## Sequence(順番に撃つ弾幕)の1つを撃ち終わった(休みに入る前)。ボスの仕掛け(列車など)が、弾幕の切れ目を知るのに使う
+signal sequence_step_finished(pattern : ShotPattern)
 
 @export var patterns : Array[ShotPattern] = []
 ## 順番に撃つ弾幕。1つ撃ち終わったら(Pause だけ待って)次へ進み、最後まで行ったら最初に戻る。
@@ -206,6 +208,7 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 		if softens:
 			_set_soften(1.0)
 		return
+	sequence_step_finished.emit(pattern)
 	await _wait(pattern.pause * unit * pause_scale)
 	together["on"] = false
 	if softens:
@@ -320,23 +323,42 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 		return
 	if parent == null:
 		return
+	# すだれなど(From Screen Top): 砲口の真上の、画面の上の外から出す(横の並びはそのまま)
+	var top_y := NAN
+	if pattern.from_screen_top and parent is CanvasItem:
+		top_y = CameraView.visible_rect(parent as CanvasItem).position.y - 16.0
+	# 集合弾(Cluster Layers): 1発の代わりに、ひし形に並んだ塊を出す(塊の中の位置のずれ)
+	var cluster : Array[Vector2] = [Vector2.ZERO]
+	if pattern.cluster_layers > 0:
+		cluster.clear()
+		var layers := pattern.cluster_layers
+		for i in range(-layers, layers + 1):
+			for j in range(-layers, layers + 1):
+				if absi(i) + absi(j) <= layers:
+					cluster.append(Vector2(i, j) * pattern.cluster_spacing)
 	for shot in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
-		var bullet : Node2D = scene.instantiate()
-		parent.add_child(bullet)
-		bullet.z_index = 5
-		var offset : Vector2 = shot["offset"]
-		bullet.global_position = origin + offset.rotated(turn)
-		if bullet.has_method("setup"):
-			bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"] * shot.get("launch_scale", 1.0),
-					pattern.damage, pattern.bullet_accel * shot["speed_scale"])
-		# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
-		var bullet_mirror : bool = mirror != shot.get("flip", false)
-		if bullet.has_method("set_motion"):
-			bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
-		if bullet.has_method("set_split"):
-			bullet.set_split(pattern, bullet_mirror, split_depth)
-			if not is_nan(split_heading) and "split_heading" in bullet:
-				bullet.split_heading = split_heading
+		for member in cluster:
+			var bullet : Node2D = scene.instantiate()
+			parent.add_child(bullet)
+			bullet.z_index = 5
+			var offset : Vector2 = shot["offset"]
+			var in_group : Vector2 = member.rotated(shot["angle"] + turn + PI * 0.25) # ひし形の角を、飛ぶ向きに合わせる
+			bullet.global_position = origin + offset.rotated(turn) + in_group
+			if "group_offset" in bullet:
+				bullet.group_offset = in_group
+			if not is_nan(top_y):
+				bullet.global_position.y = top_y
+			if bullet.has_method("setup"):
+				bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"] * shot.get("launch_scale", 1.0),
+						pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+			# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
+			var bullet_mirror : bool = mirror != shot.get("flip", false)
+			if bullet.has_method("set_motion"):
+				bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
+			if bullet.has_method("set_split"):
+				bullet.set_split(pattern, bullet_mirror, split_depth)
+				if not is_nan(split_heading) and "split_heading" in bullet:
+					bullet.split_heading = split_heading
 
 ## この砲口のボス(Enemy)。いなければ null
 func _owner_enemy() -> Enemy:

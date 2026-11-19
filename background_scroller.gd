@@ -48,6 +48,10 @@ var _looping : bool = false
 ## 繰り返しの絵の、下の端(このノードから見た y)と、1枚の大きさ(テクスチャの px)
 var _loop_bottom : float = 0.0
 var _loop_tile : Vector2 = Vector2.ONE
+## true のあいだは、自分では動かない(突入の演出などで、ほかのノードが position を動かす)
+var external_control : bool = false
+## arrive_at_time で動かすときの、区間のはじまりのステージ時刻(continue_to で次の区間へ進めたとき)
+var _segment_start_time : float = 0.0
 
 func _ready() -> void:
 	add_to_group("background_scroller")
@@ -61,12 +65,13 @@ func _process(delta : float) -> void:
 		position.y += scroll_speed * (_runner.scroll_multiplier if _runner else 1.0) * delta
 		_update_loop()
 		return
-	if is_at_top:
+	if is_at_top or external_control:
 		return
 
 	if arrive_at_time > 0.0:
 		var time := _runner.stage_time if _runner else 0.0
-		_set_progress(clampf(time / arrive_at_time, 0.0, 1.0))
+		var span := maxf(arrive_at_time - _segment_start_time, 0.001)
+		_set_progress(clampf((time - _segment_start_time) / span, 0.0, 1.0))
 	else:
 		var multiplier := _runner.scroll_multiplier if _runner else 1.0
 		var remaining := _end_y - position.y
@@ -133,6 +138,21 @@ func _initialize() -> void:
 		else:
 			position.y = minf(position.y + scroll_speed * _runner.scroll_multiplier * _runner.stage_time, _end_y)
 			progress = _progress_of(position.y)
+
+## 上の端に着いたあと(または external_control で動かしたあと)、今の位置から、さらに上の new_top まで流す。
+## ステージ時刻 arrive_time に着く(0 以下なら scroll_speed で進む)。new_top はこのノードから見た y
+func continue_to(new_top : float, arrive_time : float) -> void:
+	if not _initialized:
+		_initialize()
+	var view := CameraView.visible_rect(self)
+	var parent_y := (get_parent() as Node2D).global_position.y if get_parent() is Node2D else 0.0
+	_start_y = position.y
+	_end_y = maxf(view.position.y - parent_y - new_top * global_scale.y, _start_y)
+	_segment_start_time = _runner.stage_time if _runner else 0.0
+	arrive_at_time = arrive_time
+	progress = 0.0
+	is_at_top = false
+	external_control = false
 
 func _set_progress(value : float) -> void:
 	progress = value

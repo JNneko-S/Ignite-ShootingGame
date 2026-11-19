@@ -1,13 +1,17 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dmqmenn00xyd2"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("step")
 duration = 4.167
+turn_mode = 0
+turn_angle = 0.0
 change_speed = false
+speed_trans = 1
+speed_ease = 1
 angular_velocity = -30.0
 
 [resource]

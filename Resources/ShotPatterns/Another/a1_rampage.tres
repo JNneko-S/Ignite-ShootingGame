@@ -1,22 +1,25 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://b0x7yvk5x7ben"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Resource" uid="uid://ckv68dq3yn7b2" path="res://Resources/ShotPatterns/Another/a1_rampage_black.tres" id="black_ver"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_rampage_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("step")
 duration = 1.389
+turn_mode = 0
+turn_angle = 0.0
 target_speed = 216.0
 speed_trans = 5
 speed_ease = 2
+angular_velocity = 0.0
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_aim")
-black_version = ExtResource("black_ver")
 another_made = true
+black_version = ExtResource("black_ver")
 start_delay = 0.6
 shot_count = 25
 interval = 0.16
@@ -24,11 +27,11 @@ loop = false
 pause = 2.0
 warning_time = 0.6
 aim_at_player = false
+random_shot_angle = 75.0
+random_seed = 7
 swing_barrel = true
 line_count = 10
 line_speed_ratio = 0.1
-random_shot_angle = 75.0
-random_seed = 7
 bullet_speed = 7.2
 bullet_accel = 216.0
 motion = Array[ExtResource("step")]([SubResource("st1")])

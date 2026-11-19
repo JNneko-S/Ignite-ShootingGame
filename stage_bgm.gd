@@ -21,6 +21,8 @@ class_name StageBGM
 @export var boss_signal_name : String = "warning"
 ## 道中の曲を消すのにかける時間(秒)
 @export var fade_out_time : float = 2.0
+## オンなら、ステージの途中のボス(倒してもステージが終わらないボス)を倒したら、道中の曲に戻す(最終面の前半のボスなど)
+@export var resume_after_midboss : bool = false
 
 var _base_volume : float
 var _boss_pending : bool = false
@@ -58,8 +60,17 @@ func _on_boss_spawned(_enemy : Enemy, _boss_name : String, _thresholds : Array[f
 		return # 同じ曲を、頭から流し直さない
 	_kill_fade()
 	_play_music(_boss_music())
+	if resume_after_midboss and _enemy.boss_reach_time < 0.0:
+		_enemy.died.connect(_on_midboss_died, CONNECT_ONE_SHOT)
 	if stream == another_boss_music and HazardRank.active:
 		volume_db = _base_volume + another_boss_volume_db
+
+## 途中のボスを倒した: 少し待ってから、道中の曲を頭から流す
+func _on_midboss_died(_boss : Enemy) -> void:
+	_kill_fade()
+	_fade = create_tween()
+	_fade.tween_property(self, "volume_db", -60.0, 1.5)
+	_fade.tween_callback(func() -> void: _play_music(stage_music))
 
 ## 今の難易度で流すボスの曲
 func _boss_music() -> AudioStream:

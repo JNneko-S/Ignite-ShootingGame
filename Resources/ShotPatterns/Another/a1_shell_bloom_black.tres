@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://brskcmu7ljhpx"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_spread"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_spread"]
 
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
@@ -19,15 +19,17 @@ bullet_speed = 79.2
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
 another_made = true
+soften_others = 2.5
 start_delay = 0.4
 shot_count = 14
 interval = 0.45
 loop = false
 pause = 2.0
-soften_others = 2.5
-swing_barrel = true
+bullet_count = 1
+aim_at_player = true
 random_shot_angle = 35.0
 random_seed = 5
+swing_barrel = true
 bullet_speed = 187.2
 split_time = 1.25
 split_pattern = SubResource("split")

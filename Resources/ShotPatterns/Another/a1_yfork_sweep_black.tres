@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cufbt2b3lcpca"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_spread"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="b_split"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="b_spread"]
 
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
@@ -22,6 +22,7 @@ start_delay = 0.6
 shot_count = 109
 interval = 0.036
 pause = 1.725
+aim_at_player = true
 angle_wave_amplitude = 60.0
 angle_wave_shots = 40
 swing_barrel = true

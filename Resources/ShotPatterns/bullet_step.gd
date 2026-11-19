@@ -11,6 +11,7 @@ enum TurnMode {
 	ADD,        ## 今の向きから Turn Angle 度だけ回す
 	AIM_PLAYER, ## 自機の方を向く(Turn Angle 度のずれを足す)
 	ABSOLUTE,   ## Turn Angle 度の向きにする(0 = 真下、正の値は反時計回り)
+	AIM_GROUP,  ## 集合弾(Cluster Layers)の群れの真ん中から、自機の方を向く。群れの全部の弾が同じ向きになるので、形を崩さずに飛んでくる
 }
 
 ## この区間の長さ(秒)

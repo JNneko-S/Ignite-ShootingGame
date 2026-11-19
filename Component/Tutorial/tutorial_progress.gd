@@ -7,6 +7,25 @@ const SAVE_PATH : String = "user://progress.cfg"
 
 static var _loaded : bool = false
 static var _ignite_used : bool = false
+static var _intro_done : bool = false
+
+## 出撃のときの操作チュートリアル(雲の上)を、もう終えたか(スキップしたときも終えたことにする)
+static func intro_done() -> bool:
+	_load()
+	return _intro_done
+
+## 操作チュートリアルを終えた。次からは出さない
+static func mark_intro_done() -> void:
+	_load()
+	if _intro_done:
+		return
+	_intro_done = true
+	if DebugTools.used:
+		return
+	var config := ConfigFile.new()
+	config.load(SAVE_PATH)
+	config.set_value("tutorial", "intro_done", true)
+	config.save(SAVE_PATH)
 
 ## イグナイトを一度でも使ったことがあるか
 static func ignite_used() -> bool:
@@ -33,3 +52,4 @@ static func _load() -> void:
 	var config := ConfigFile.new()
 	if config.load(SAVE_PATH) == OK:
 		_ignite_used = bool(config.get_value("tutorial", "ignite_used", false))
+		_intro_done = bool(config.get_value("tutorial", "intro_done", false))

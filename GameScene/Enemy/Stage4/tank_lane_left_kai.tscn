@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_small_kai.tscn" id="base"]
+
+[node name="TankLaneLeftKai" instance=ExtResource("base")]
+
+[node name="GroundUnit" parent="."]
+drive_speed = 70.0
+drive_angle_deg = 90.0
+avoid_obstacles = false
+keep_off_roof = false
+cease_fire_below = 0.85

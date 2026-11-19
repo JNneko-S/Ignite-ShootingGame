@@ -1,15 +1,13 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_combo_aim_lines_black.tres" id="4_i1ig6"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="b_normal"]
-[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_normal")
 another_made = true
-with_patterns = Array[ExtResource("shot")]([ExtResource("4_i1ig6")])
 start_delay = 0.2
 shot_count = 190
 interval = 0.05

@@ -1,0 +1,78 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
+[ext_resource type="Resource" path="res://Resources/StageData/Stage4.tres" id="stage"]
+[ext_resource type="Script" uid="uid://g18nyoka7ga0" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Industy/BG.png" id="industy"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer0.png" id="nucleo0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer1.png" id="nucleo1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer2_strip6.png" id="nucleo2"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" path="res://Component/Stage/breach_sequence.gd" id="breach"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss4"]
+
+[node name="Stage4" instance=ExtResource("base")]
+
+[node name="StageRunner" parent="."]
+stage = ExtResource("stage")
+
+[node name="Scroller" parent="."]
+loop_sprite = null
+arrive_at_time = 106.0
+auto_detect_bounds = false
+manual_top = -6918.8
+manual_bottom = 0.0
+
+[node name="LoopThisAtTheEnd" parent="Scroller"]
+visible = false
+texture = null
+
+[node name="Sprite2D3" parent="Scroller"]
+position = Vector2(242, -3035.5)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("industy")
+
+[node name="Sprite2D" parent="Scroller/Sprite2D3"]
+texture = null
+
+[node name="Sprite2D2" parent="Scroller"]
+visible = false
+texture = null
+
+[node name="NucleoLayer0" type="Sprite2D" parent="Scroller"]
+z_index = -1
+position = Vector2(242, -12915.5)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("nucleo0")
+
+[node name="NucleoLayer1" type="Sprite2D" parent="Scroller"]
+z_index = -1
+position = Vector2(242, -12915.5)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("nucleo1")
+
+[node name="NucleoLayer2" type="Sprite2D" parent="Scroller"]
+z_index = -1
+position = Vector2(242, -12915.5)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("nucleo2")
+hframes = 6
+
+[node name="TextureCycle" type="Node" parent="Scroller/NucleoLayer2"]
+script = ExtResource("cycle")
+fps = 6.0
+
+[node name="AudioStreamPlayer" parent="."]
+stage_music = ExtResource("music_stage4")
+boss_music = ExtResource("music_boss4")
+resume_after_midboss = true
+
+[node name="StageTransition" type="Node" parent="."]
+script = ExtResource("stage_transition")
+
+[node name="BreachSequence" type="Node" parent="." node_paths=PackedStringArray("scroller")]
+script = ExtResource("breach")
+scroller = NodePath("../Scroller")
+
+[editable path="UI/ScoreUI"]

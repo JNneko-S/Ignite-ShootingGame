@@ -1,0 +1,199 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body1.png" id="body1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body2.png" id="body2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body3.png" id="body3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body4.png" id="body4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Head.png" id="head"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Lights1.png" id="light1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Lights2.png" id="light2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Lights3.png" id="light3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Lights4.png" id="light4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_wheels_plus_shadow1.png" id="wheel1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_wheels_plus_shadow2.png" id="wheel2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_wheels_plus_shadow3.png" id="wheel3"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" uid="uid://xfs58eu5fmdl" path="res://Component/Turret/turret.gd" id="turret"]
+[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" uid="uid://yff22184iv4j" path="res://boss_phase_controller.gd" id="phase_controller"]
+[ext_resource type="Script" uid="uid://bl0npb77xq02" path="res://Component/Sway/sway_follow.gd" id="sway_follow"]
+[ext_resource type="Script" uid="uid://bcedow6ffc4e5" path="res://Component/Boss/entrance_blast.gd" id="entrance_blast"]
+[ext_resource type="Script" uid="uid://cevf4t82eolb4" path="res://Component/Boss/tank_mover.gd" id="tank_mover"]
+[ext_resource type="AudioStream" uid="uid://67syoxefkh77" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_entrance"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/FireWork_kai.tres" id="k_firework"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Shot_kai.tres" id="k_shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/CircleStrike_kai.tres" id="k_circle"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/WashingMachine_kai.tres" id="k_washer"]
+[ext_resource type="Resource" uid="uid://b0gqtucbx8o5p" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge.tres" id="s_rage_converge"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_firework.tres" id="a_firework"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_gate_wall.tres" id="a_gate"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_cage_net.tres" id="a_cage"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_key_core.tres" id="a_key"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_yfork_sweep.tres" id="a_yfork"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor.tres" id="a_corridor"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor_push.tres" id="a_push"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_lattice.tres" id="a_lattice"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_spiral_storm.tres" id="a_storm"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_freeze_aim.tres" id="a_freeze"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_rampage.tres" id="a_rampage"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_shell_bloom.tres" id="a_bloom"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_diamond.tres" id="t_diamond"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_scatter.tres" id="t_scatter"]
+
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Lil_Cannon_L&R.png" id="lil_cannon"]
+[ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_vulcan.tres" id="r_vulcan"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_3way3.tres" id="r_3way"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(200, 230)
+
+[sub_resource type="Resource" id="main_p1"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("k_firework"), ExtResource("k_shot"), ExtResource("k_washer"), ExtResource("k_shot")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_firework"), ExtResource("a_gate"), ExtResource("a_cage"), ExtResource("a_key"), ExtResource("a_yfork")])
+
+[sub_resource type="Resource" id="main_p2"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("k_circle"), ExtResource("t_scatter"), ExtResource("k_shot"), ExtResource("k_firework"), ExtResource("t_scatter"), ExtResource("k_washer")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_corridor"), ExtResource("a_push"), ExtResource("t_scatter"), ExtResource("a_lattice"), ExtResource("a_storm"), ExtResource("t_scatter")])
+
+[sub_resource type="Resource" id="main_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("k_firework"), ExtResource("t_diamond"), ExtResource("k_shot"), ExtResource("k_circle"), ExtResource("t_diamond"), ExtResource("t_scatter"), ExtResource("k_washer")])
+another_replace = true
+another_patterns = Array[ExtResource("shot_script")]([])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_rampage"), ExtResource("t_diamond"), ExtResource("a_bloom"), ExtResource("t_diamond"), ExtResource("a_storm"), ExtResource("a_yfork"), ExtResource("t_scatter")])
+
+[sub_resource type="Resource" id="boss_phase_1"]
+script = ExtResource("boss_phase")
+
+[sub_resource type="Resource" id="boss_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.66
+
+[sub_resource type="Resource" id="boss_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.33
+boss_modulate = Color(1, 0.5, 0.45, 1)
+
+[node name="TankKaiBoss" instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." index="0"]
+visible = false
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 40000
+hp = 40000
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
+
+[node name="DeathExplosion" parent="." index="6"]
+area = Rect2(-110, -125, 220, 250)
+
+[node name="VisualRoot" type="Node2D" parent="."]
+z_index = 1
+scale = Vector2(3, 3)
+
+[node name="Wheels" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+texture = ExtResource("wheel1")
+
+[node name="TextureCycle" type="Node" parent="VisualRoot/Wheels"]
+script = ExtResource("cycle")
+textures = Array[Texture2D]([ExtResource("wheel1"), ExtResource("wheel2"), ExtResource("wheel3")])
+fps = 12.0
+
+[node name="Body" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+texture = ExtResource("body1")
+
+[node name="TextureCycle" type="Node" parent="VisualRoot/Body"]
+script = ExtResource("cycle")
+textures = Array[Texture2D]([ExtResource("body1"), ExtResource("body2"), ExtResource("body3"), ExtResource("body4")])
+fps = 8.0
+
+[node name="Lights" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+texture = ExtResource("light1")
+
+[node name="TextureCycle" type="Node" parent="VisualRoot/Lights"]
+script = ExtResource("cycle")
+textures = Array[Texture2D]([ExtResource("light1"), ExtResource("light2"), ExtResource("light3"), ExtResource("light4")])
+fps = 5.0
+ping_pong = true
+
+[node name="Cannon" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooter")]
+position = Vector2(-1.5, -9.5)
+script = ExtResource("turret")
+shooter = NodePath("../../EnemyShooterComponent")
+max_angle = 70.0
+
+[node name="Head" type="Sprite2D" parent="VisualRoot/Cannon"]
+texture_filter = 1
+position = Vector2(1.5, 9.5)
+texture = ExtResource("head")
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/Cannon"]
+position = Vector2(0, 23)
+
+[node name="RearCannonL" type="Sprite2D" parent="VisualRoot" node_paths=PackedStringArray("shooter")]
+texture_filter = 1
+position = Vector2(-24, -16)
+texture = ExtResource("lil_cannon")
+script = ExtResource("turret")
+shooter = NodePath("../../RearShooterL")
+turn_speed = 220.0
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/RearCannonL"]
+position = Vector2(0, 4)
+
+[node name="RearCannonR" type="Sprite2D" parent="VisualRoot" node_paths=PackedStringArray("shooter")]
+texture_filter = 1
+position = Vector2(24, -16)
+texture = ExtResource("lil_cannon")
+script = ExtResource("turret")
+shooter = NodePath("../../RearShooterR")
+turn_speed = 220.0
+
+[node name="Muzzle" type="Marker2D" parent="VisualRoot/RearCannonR"]
+position = Vector2(0, 4)
+
+[node name="RearShooterL" parent="." instance=ExtResource("shooter_scene")]
+sequence = Array[ExtResource("shot_script")]([ExtResource("r_vulcan"), ExtResource("r_3way")])
+
+[node name="RearShooterR" parent="." instance=ExtResource("shooter_scene")]
+sequence = Array[ExtResource("shot_script")]([ExtResource("r_3way"), ExtResource("r_vulcan")])
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase_controller")
+phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
+
+[node name="SwayFollow" type="Node" parent="."]
+script = ExtResource("sway_follow")
+
+[node name="EntranceBlast" type="Node" parent="." node_paths=PackedStringArray("sound")]
+script = ExtResource("entrance_blast")
+sound = NodePath("EntranceSound")
+
+[node name="EntranceSound" type="AudioStreamPlayer" parent="EntranceBlast"]
+stream = ExtResource("snd_entrance")
+volume_db = -8.0
+
+[node name="TankMover" type="Node" parent="."]
+script = ExtResource("tank_mover")
+forward_distance = 25.0
+side_distance = 90.0

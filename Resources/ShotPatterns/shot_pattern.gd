@@ -103,6 +103,14 @@ enum TimingUnit {
 @export var aim_once_per_burst : bool = false
 ## 弾を、砲口からこの距離(px)の円周上に出す。0 なら砲口から
 @export var spawn_radius : float = 0.0
+## オンなら、弾を砲口の高さではなく、画面の上の外から出す(横の位置は砲口からの並びのまま)。
+## すだれ(上から降ってくる縦の弾の列)に使う。真下(Base Angle 0、Aim At Player オフ)へ撃つ
+@export var from_screen_top : bool = false
+## 0 より大きければ、1発の代わりに、ひし形に並んだ弾の塊(集合弾)を撃つ。数は層の数で決まる(1 = 5発、2 = 13発、3 = 25発)。
+## 塊は、飛ぶ向きにひし形の角が来るように並ぶ。Motion の AIM_GROUP で、塊のまま向きを変えられる
+@export var cluster_layers : int = 0
+## 集合弾の弾と弾の間隔(px)
+@export var cluster_spacing : float = 9.0
 ## 0 より大きければ、弾を同じ向きに平行に並べて撃つ(この間隔(px)で横に並べる。砲身が何本もある砲台など)。
 ## 広がり(Spread Angle)も使えるが、ふつうは 0 にする
 @export var parallel_spacing : float = 0.0

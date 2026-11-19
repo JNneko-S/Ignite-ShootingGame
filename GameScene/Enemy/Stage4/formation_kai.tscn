@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/formation.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/shot_formation_aim_kai.tres" id="p1"]
+
+[node name="FormationKai" instance=ExtResource("base")]
+modulate = Color(1, 0.72, 0.68, 1)
+
+[node name="EnemyShooterComponent" parent="."]
+patterns = Array[ExtResource("shot")]([ExtResource("p1")])

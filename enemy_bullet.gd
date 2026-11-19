@@ -43,6 +43,8 @@ var _split_in : float = -1.0 # 割れるまでの残り秒数。マイナスな�
 var _split_depth : int = 0
 ## 撃った敵が、撃ったときに動いていた向き(ラジアン)。Split Across Motion の弾幕で、割れる向きの基準にする。NAN なら使わない
 var split_heading : float = NAN
+## 集合弾(ShotPattern の Cluster Layers)の、群れの真ん中からのずれ。群れで向きを変える(AIM_GROUP)ときに使う
+var group_offset : Vector2 = Vector2.ZERO
 
 ## 画面からこれより遠くへ行った弾は消す(px)
 const FAR_AWAY_DISTANCE : float = 700.0
@@ -64,7 +66,7 @@ func _ready() -> void:
 	damage_dealt.connect(_on_damage_dealt)
 	area_entered.connect(_on_area_entered)
 	# ANOTHER: 弾がとても多いので、当たり判定を半分の大きさにする(形の資源は共有なので、ノードの大きさで縮める)
-	if HazardRank.active:
+	if HazardRank.active or HazardRank.small_bullet_hitbox:
 		for child in get_children():
 			if child is CollisionShape2D or child is CollisionPolygon2D:
 				child.scale *= HazardRank.BULLET_HITBOX_SCALE
@@ -311,7 +313,10 @@ func _begin_step(index : int) -> void:
 		return
 	var player := get_tree().get_first_node_in_group("player") as Node2D if is_inside_tree() else null
 	var player_position := player.global_position if player else global_position + Vector2.DOWN
-	var heading := ShotMath.turned_heading(_motion[index], direction.angle(), global_position, player_position, _mirror)
+	var from := global_position
+	if _motion[index].turn_mode == BulletStep.TurnMode.AIM_GROUP:
+		from -= group_offset # 群れの真ん中から狙う(群れの弾が、みんな同じ向きになる)
+	var heading := ShotMath.turned_heading(_motion[index], direction.angle(), from, player_position, _mirror)
 	direction = Vector2.from_angle(heading)
 	rotation = heading + PI / 2.0
 

@@ -86,6 +86,7 @@ func _ready() -> void:
 	add_to_group("stage_runner")
 	if stage:
 		HazardRank.zako_rate_ratio = stage.another_zako_rate_ratio # ANOTHER: このステージの雑魚の撃つ頻度の上がり方
+		HazardRank.stage_force_black = stage.another_force_black # ANOTHER: 最終面は、最初から BLACK ANOTHER の弾幕
 	_collect_parallax()
 	_load_playtest()
 	# デバッグパネルの「ボスへジャンプ」など

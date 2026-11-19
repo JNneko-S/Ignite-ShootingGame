@@ -1,13 +1,18 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dwdlneudrwyu5"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="b_slow"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="b_slow"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("step")
 duration = 0.833
+turn_mode = 0
+turn_angle = 0.0
 target_speed = 21.6
+speed_trans = 1
+speed_ease = 1
+angular_velocity = 0.0
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("step")
@@ -15,13 +20,16 @@ duration = 0.833
 turn_mode = 1
 turn_angle = 90.0
 target_speed = 144.0
+speed_trans = 1
 speed_ease = 0
+angular_velocity = 0.0
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_slow")
 another_made = true
 start_delay = 0.8
+shot_count = 1
 pause = 0.901
 bullet_count = 39
 spread_angle = 360.0

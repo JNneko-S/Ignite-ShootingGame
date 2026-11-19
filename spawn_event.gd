@@ -54,8 +54,9 @@ class_name SpawnEvent
 
 @export_group("背景から出てくる")
 ## 0: ふつうに出る / 1: 背景から近づいてくる(小さく暗い姿から大きく濃くなって前に出る) /
-## 2: 背景の下から上へ飛び去ってから、上から入り直す(BackgroundEmerge)
-@export_enum("ふつう", "近づいてくる", "上へ抜けて入り直す") var emerge : int = 0
+## 2: 背景の下から上へ飛び去ってから、上から入り直す /
+## 3: 格納庫(背景の床)から、アフターバーナーを噴いて緊急発進し、反転して襲ってくる(BackgroundEmerge)
+@export_enum("ふつう", "近づいてくる", "上へ抜けて入り直す", "格納庫から発進する") var emerge : int = 0
 ## 背景から出てくるまでの時間(秒)
 @export var emerge_time : float = 1.2
 

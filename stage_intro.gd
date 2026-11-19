@@ -279,26 +279,45 @@ func _play() -> void:
 		return
 
 	# 6. 母艦が加速して画面の上へ飛び去り、雲と風が薄れて流れ去る
+	#    (EASY・NORMAL ではじめての出撃なら、母艦が去ったあと、雲が晴れる前に、雲の上で操作チュートリアルをする)
+	var tutorial_first := IntroTutorial.should_run() and player != null
 	var half_height := _ship_sprite.texture.get_height() * _ship_sprite.scale.y * depart_scale * 0.5
 	var depart := _tween().set_parallel(true)
-	depart.tween_property(_mothership, "global_position:y", area.position.y - half_height - 60.0, depart_time)\
-		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	depart.tween_property(_mothership, "global_position:y", area.position.y - half_height - 60.0, depart_time)		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	depart.tween_property(_mothership, "scale", Vector2.ONE * depart_scale, depart_time)
-	depart.tween_property(self, "_speed", clear_speed, clear_time)
-	depart.tween_method(_set_cloud_param.bind("coverage"), cloud_coverage, 0.0, clear_time)\
-		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	depart.tween_method(_set_cloud_param.bind("sky_alpha"), 1.0, 0.0, clear_time * 0.6)\
-		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	depart.tween_property(_wind, "modulate:a", 0.0, clear_time * 0.8)
-	depart.tween_property(_mist, "modulate:a", 0.0, clear_time * 0.6)
+	if not tutorial_first:
+		_clear_clouds(depart)
 	for thruster in _thrusters:
 		thruster.speed_scale = 2.0 # 去りぎわに、噴射を強める
 	await depart.finished
 	if _done:
 		return
+	if tutorial_first:
+		# 雲の上で操作チュートリアル(自機を動かせるあいだは、ショットで演出を飛ばす処理は働かない)
+		_show_ui()
+		player.set_physics_process(true)
+		var tutorial := IntroTutorial.new()
+		tutorial.player = player
+		get_tree().current_scene.add_child(tutorial)
+		await tutorial.run()
+		if _done:
+			return
+		var clear := _tween().set_parallel(true)
+		_clear_clouds(clear)
+		await clear.finished
+		if _done:
+			return
 
 	# 7. 操作を返して、ステージを始める
 	_finish()
+
+## 雲と風を薄れさせ、流れを遅くする(雲が晴れる)。tween は並列のもの
+func _clear_clouds(tween : Tween) -> void:
+	tween.tween_property(self, "_speed", clear_speed, clear_time)
+	tween.tween_method(_set_cloud_param.bind("coverage"), cloud_coverage, 0.0, clear_time)		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_method(_set_cloud_param.bind("sky_alpha"), 1.0, 0.0, clear_time * 0.6)		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(_wind, "modulate:a", 0.0, clear_time * 0.8)
+	tween.tween_property(_mist, "modulate:a", 0.0, clear_time * 0.6)
 
 ## 暗い画面・READY? の電光掲示板・白い光を、画面の手前に作る
 func _make_overlay() -> void:

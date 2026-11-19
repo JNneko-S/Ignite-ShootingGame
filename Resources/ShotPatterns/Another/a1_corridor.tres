@@ -1,37 +1,22 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c3m8aohms2fox"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Resource" uid="uid://bar3b2i102xjk" path="res://Resources/ShotPatterns/Another/a1_corridor_black.tres" id="black_ver"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-
-[sub_resource type="Resource" id="st1"]
-script = ExtResource("step")
-duration = 0.694
-
-[sub_resource type="Resource" id="st2"]
-script = ExtResource("step")
-duration = 0.278
-change_speed = false
-
-[sub_resource type="Resource" id="st3"]
-script = ExtResource("step")
-duration = 5.556
-turn_mode = 3
-target_speed = 79.2
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_corridor_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_stop")
-black_version = ExtResource("black_ver")
 another_made = true
+black_version = ExtResource("black_ver")
 start_delay = 0.3
-shot_count = 70
-pause = 0.454
-bullet_count = 2
-spread_angle = 180.0
+shot_count = 40
+interval = 0.1
+pause = 0.6
+bullet_count = 9
 aim_at_player = false
-line_count = 3
-line_speed_ratio = 0.45
-bullet_speed = 216.0
-motion = Array[ExtResource("step")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])
+parallel_spacing = 48.0
+from_screen_top = true
+gap_size = 3
+bullet_speed = 108.0
