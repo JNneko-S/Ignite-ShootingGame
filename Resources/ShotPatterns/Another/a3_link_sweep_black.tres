@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_combo_ring_black.tres" id="4_lspas"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="b_aim"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_aim")
 another_made = true
+with_patterns = Array[ExtResource("shot")]([ExtResource("4_lspas")])
 start_delay = 0.4
 shot_count = 10
 interval = 0.05
@@ -18,5 +20,4 @@ aim_at_player = false
 angle_wave_amplitude = 70.0
 angle_wave_shots = 8
 line_count = 2
-line_speed_ratio = 0.15
 bullet_speed = 180.0

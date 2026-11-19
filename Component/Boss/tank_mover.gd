@@ -34,6 +34,12 @@ var _anim : AnimationPlayer
 var _home : Vector2
 ## 移動の上の位置(横揺れのずれを除いた、ボスの位置)
 var _pos : Vector2
+## この側(-1 = 左 / 1 = 右)へは回り込まない(0 ならどちらへも)。TankTrainRaid が、列車の来ている線路の側を入れる
+var blocked_side : float = 0.0
+
+## ホーム(止まる場所)の x。動き始める前は今の位置
+func home_x() -> float:
+	return _home.x if _home != Vector2.ZERO else (_enemy.global_position.x if is_instance_valid(_enemy) else 0.0)
 
 func _ready() -> void:
 	_enemy = get_parent() as Enemy
@@ -56,6 +62,8 @@ func _run() -> void:
 		await _pause()
 		await _drive_to(_home, true)
 		await _pause()
+		if blocked_side != 0.0 and side == blocked_side:
+			side = -side # 列車が来ている線路の側へは行かない
 		# 横へ回り込む: 斜め前へ車体を向けて走り、正面を向いて下がる
 		var aside := _home + Vector2(side * side_distance, 0.0)
 		await _drive_to(aside + Vector2(0.0, forward_distance * 0.7), false)

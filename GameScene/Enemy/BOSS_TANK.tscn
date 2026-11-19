@@ -47,6 +47,10 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_shell_bloom.tres" id="an_a1_shell_bloom"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_spiral_storm.tres" id="an_a1_spiral_storm"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_yfork_sweep.tres" id="an_a1_yfork_sweep"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_ignite_crush.tres" id="an_a1_ignite_crush"]
+[ext_resource type="Script" path="res://Component/Boss/tank_train_raid.gd" id="tank_train_raid"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_spiral_aim.tres" id="an_a1_combo_spiral_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_rain_cross.tres" id="an_a1_combo_rain_cross"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(65, 80)
@@ -68,7 +72,7 @@ patterns = Array[ExtResource("shot_script")]([ExtResource("s_converge")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("t_circle"), ExtResource("t_shot"), ExtResource("t_washer"), ExtResource("t_shot"), ExtResource("t_firework_easy")])
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
-another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_corridor"), ExtResource("an_a1_corridor_push"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_lattice"), ExtResource("an_a1_yfork_sweep")])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_corridor"), ExtResource("an_a1_corridor_push"), ExtResource("an_a1_ignite_crush"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_lattice"), ExtResource("an_a1_combo_spiral_aim"), ExtResource("an_a1_yfork_sweep")])
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
@@ -76,7 +80,7 @@ patterns = Array[ExtResource("shot_script")]([ExtResource("s_rage_converge")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtResource("t_shot"), ExtResource("t_circle"), ExtResource("t_washer")])
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
-another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_rampage"), ExtResource("an_a1_spiral_storm"), ExtResource("an_a1_shell_bloom"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_lattice")])
+another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_rampage"), ExtResource("an_a1_combo_rain_cross"), ExtResource("an_a1_spiral_storm"), ExtResource("an_a1_shell_bloom"), ExtResource("an_a1_ignite_crush"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_lattice")])
 
 [sub_resource type="RectangleShape2D" id="top_body_shape"]
 size = Vector2(25.428572, 40)
@@ -630,3 +634,6 @@ script = ExtResource("tank_mover")
 
 [node name="BossScrollBoost" type="Node" parent="." unique_id=701000001]
 script = ExtResource("scroll_boost")
+
+[node name="TankTrainRaid" type="Node" parent="." unique_id=1900000001]
+script = ExtResource("tank_train_raid")

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c53k72amns4dg"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="1_03wkm"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_g6416"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_igk1s"]
+[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="4_fj081"]
+
+[sub_resource type="Resource" id="Resource_6lac8"]
+script = ExtResource("2_g6416")
+duration = 0.9
+target_speed = 25.0
+
+[sub_resource type="Resource" id="Resource_jpycg"]
+script = ExtResource("3_igk1s")
+bullet_scene = ExtResource("4_fj081")
+bullet_count = 12
+spread_angle = 360.0
+aim_at_player = false
+bullet_speed = 85.0
+bullet_accel = 40.0
+
+[resource]
+script = ExtResource("3_igk1s")
+bullet_scene = ExtResource("1_03wkm")
+another_made = true
+start_delay = 1.0
+pause = 2.6
+bullet_speed = 170.0
+motion = Array[ExtResource("2_g6416")]([SubResource("Resource_6lac8")])
+split_time = 1.0
+split_pattern = SubResource("Resource_jpycg")
+split_follow_direction = false

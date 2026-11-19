@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="1_42p6j"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_nj4f2"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_sx5sh"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_snipe_part.tres" id="4_a7bvh"]
+
+[resource]
+script = ExtResource("3_sx5sh")
+bullet_scene = ExtResource("1_42p6j")
+another_made = true
+with_patterns = Array[ExtResource("3_sx5sh")]([ExtResource("4_a7bvh")])
+start_delay = 0.3
+shot_count = 70
+interval = 0.07
+pause = 0.8
+bullet_count = 7
+spread_angle = 150.0
+aim_at_player = false
+angle_wave_amplitude = 34.0
+angle_wave_shots = 28
+line_count = 2
+line_speed_ratio = 0.25
+bullet_speed = 175.0

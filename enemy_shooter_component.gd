@@ -181,21 +181,35 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
-	_set_soften(pattern.soften_others) # この弾幕のあいだ、同じボスのゆずる弾幕をやさしくする
+	# この弾幕のあいだ、同じボスのゆずる弾幕をやさしくする(やさしくしない弾幕は、ほかの弾幕の設定を変えない。複合で一緒に撃つ弾幕など)
+	var softens := pattern.soften_others > 1.0
+	if softens:
+		_set_soften(pattern.soften_others)
+	# 複合: 一緒に撃つ弾幕(With Patterns)を、この弾幕が終わるまで重ねて撃つ
+	var together := {"on": true}
+	for companion in pattern.with_patterns:
+		if companion:
+			_run_companion(companion, generation, together)
 	await _wait_with_warning(pattern, pattern.start_delay * unit, generation)
 	var burst_aim := _aim_angle()
 	for i in maxi(pattern.shot_count, 1):
 		if generation != _generation:
-			_set_soften(1.0)
+			together["on"] = false
+			if softens:
+				_set_soften(1.0)
 			return
 		if _can_fire():
 			_fire(pattern, i, burst_aim if pattern.aim_once_per_burst else _aim_angle())
 		await _wait(pattern.interval * unit)
 	if generation != _generation:
-		_set_soften(1.0)
+		together["on"] = false
+		if softens:
+			_set_soften(1.0)
 		return
 	await _wait(pattern.pause * unit * pause_scale)
-	_set_soften(1.0)
+	together["on"] = false
+	if softens:
+		_set_soften(1.0)
 
 ## 譜面(BeatConductor)から、pattern の shot_index 発目を撃つ
 func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
@@ -214,6 +228,10 @@ func _run_pattern(pattern : ShotPattern) -> void:
 	var original := pattern
 	pattern = DifficultyTuning.tune(pattern, is_zako()) # この難易度用に、数や速さを変えた写し(HARD ならそのまま)
 	var generation := _generation
+	# 複合: 一緒に撃つ弾幕(With Patterns)も、同じあいだ撃ち続ける
+	for companion in pattern.with_patterns:
+		if companion:
+			_run_pattern(companion)
 	# Timing Unit が BEATS なら、鳴っている曲(MusicClock)のテンポで数える
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
@@ -395,3 +413,10 @@ func _unit_delay(pattern : ShotPattern) -> float:
 			return pattern.start_delay_per_unit * float(node.unit_index)
 		node = node.get_parent()
 	return 0.0
+
+## 複合の弾幕: 本体(順番に撃つ弾幕)が撃ち終わるまで、一緒に撃つ弾幕を1回分ずつ繰り返す
+func _run_companion(companion : ShotPattern, generation : int, together : Dictionary) -> void:
+	while together["on"] and generation == _generation and is_inside_tree():
+		await _run_once(companion, generation)
+		if is_inside_tree():
+			await get_tree().process_frame

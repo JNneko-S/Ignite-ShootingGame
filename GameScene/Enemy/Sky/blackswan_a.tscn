@@ -1,0 +1,143 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="base"]
+[ext_resource type="Script" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" path="res://Component/Boss/States/boss_center_state.gd" id="st_center"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_fan_p1.tres" id="fan1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_fan_p2.tres" id="fan2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_fan_p3.tres" id="fan3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_swirl_p1.tres" id="swirl1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_swirl_p2.tres" id="swirl2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_swirl_p3.tres" id="swirl3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_storm_p1.tres" id="storm1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_storm_p2.tres" id="storm2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_storm_p3.tres" id="storm3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_cluster_p1.tres" id="cluster1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_cluster_p2.tres" id="cluster2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_cluster_p3.tres" id="cluster3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_whip_p1.tres" id="whip1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_whip_p2.tres" id="whip2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_whip_p3.tres" id="whip3"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_cross_shell.tres" id="shell"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_cross_shell_ex.tres" id="shellex"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_wing_rail.tres" id="rail"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_curve_aim.tres" id="cv"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_curve_aim_ex.tres" id="cvex"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_curve_aim_snipe.tres" id="cvsn"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_curve_aim_needle.tres" id="cvnd"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_curve_aim_finale.tres" id="cvfin"]
+
+[sub_resource type="Resource" id="a_phase_1"]
+script = ExtResource("boss_phase")
+boss_modulate = Color(1, 0.62, 0.62, 1)
+
+[sub_resource type="Resource" id="a_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.66
+boss_modulate = Color(1, 0.5, 0.45, 1)
+
+[sub_resource type="Resource" id="a_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.33
+boss_modulate = Color(1, 0.36, 0.32, 1)
+
+[node name="BlackSwanA" unique_id=724143726 instance=ExtResource("base")]
+modulate = Color(1, 0.62, 0.62, 1)
+
+[node name="HPComponent" parent="." unique_id=2079593739]
+max_hp = 30000
+hp = 30000
+
+[node name="BossPhaseController" parent="." unique_id=601000003]
+phases = Array[ExtResource("boss_phase")]([SubResource("a_phase_1"), SubResource("a_phase_2"), SubResource("a_phase_3")])
+
+[node name="Intro" parent="StateMachine" unique_id=601000005]
+another_next_state = "XFan"
+duration = 4.0
+
+[node name="XFan" type="Node" parent="StateMachine" unique_id=1840000301 node_paths=PackedStringArray("shooter")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("fan1"), ExtResource("fan2"), ExtResource("fan3")])
+target_ratio = Vector2(0.5, 0.3)
+fire_time = 6.0
+next_state = "XStorm"
+
+[node name="XSwirl" type="Node" parent="StateMachine" unique_id=1840000302 node_paths=PackedStringArray("shooter")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("swirl1"), ExtResource("swirl2"), ExtResource("swirl3")])
+target_ratio = Vector2(0.5, 0.36)
+fire_time = 6.0
+next_state = "XCluster"
+
+[node name="XStorm" type="Node" parent="StateMachine" unique_id=1840000303 node_paths=PackedStringArray("shooter")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("storm1"), ExtResource("storm2"), ExtResource("storm3")])
+target_ratio = Vector2(0.5, 0.26)
+fire_time = 6.0
+next_state = "XCross"
+
+[node name="XCluster" type="Node" parent="StateMachine" unique_id=1840000304 node_paths=PackedStringArray("shooter")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("cluster1"), ExtResource("cluster2"), ExtResource("cluster3")])
+target_ratio = Vector2(0.5, 0.28)
+fire_time = 6.0
+next_state = "XRail"
+
+[node name="XWhip" type="Node" parent="StateMachine" unique_id=1840000305 node_paths=PackedStringArray("shooter")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("whip1"), ExtResource("whip2"), ExtResource("whip3")])
+target_ratio = Vector2(0.5, 0.4)
+fire_time = 6.0
+next_state = "XCrossEx"
+
+[node name="XCross" type="Node" parent="StateMachine" unique_id=1840000306 node_paths=PackedStringArray("shooter", "side_shooters")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("cv"), ExtResource("cv"), ExtResource("cvex")])
+target_ratio = Vector2(0.5, 0.3)
+fire_time = 6.5
+side_shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+side_patterns = Array[ExtResource("shot")]([ExtResource("shell"), ExtResource("shell"), ExtResource("shellex")])
+next_state = "XSwirl"
+
+[node name="XRail" type="Node" parent="StateMachine" unique_id=1840000307 node_paths=PackedStringArray("shooter", "side_shooters")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("cv"), ExtResource("cvnd"), ExtResource("cvnd")])
+target_ratio = Vector2(0.5, 0.32)
+fire_time = 6.5
+side_shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+side_patterns = Array[ExtResource("shot")]([ExtResource("rail"), ExtResource("rail"), ExtResource("rail")])
+next_state = "XWhip"
+
+[node name="XCrossEx" type="Node" parent="StateMachine" unique_id=1840000308 node_paths=PackedStringArray("shooter", "side_shooters")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("cvex"), ExtResource("cvsn"), ExtResource("cvsn")])
+target_ratio = Vector2(0.5, 0.3)
+fire_time = 6.5
+side_shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+side_patterns = Array[ExtResource("shot")]([ExtResource("shellex"), ExtResource("shellex"), ExtResource("shellex")])
+next_state = "XFinale"
+
+[node name="XFinale" type="Node" parent="StateMachine" unique_id=1840000309 node_paths=PackedStringArray("shooter", "side_shooters")]
+script = ExtResource("st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("shot")]([ExtResource("cvsn"), ExtResource("cvfin"), ExtResource("cvfin")])
+target_ratio = Vector2(0.5, 0.34)
+fire_time = 6.5
+side_shooters = [NodePath("../../Sprite2D6/CannonL"), NodePath("../../Sprite2D6/CannonR")]
+side_patterns = Array[ExtResource("shot")]([ExtResource("shell"), ExtResource("shellex"), ExtResource("shellex")])
+next_state = "AIgnite"
+
+[node name="ADive" parent="StateMachine"]
+next_state = "XFan"
+
+[node name="SwanUsurper" parent="."]
+trigger_phase = 99

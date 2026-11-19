@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://by3ibbe1uhyp0"]
+
+[ext_resource type="Resource" uid="uid://chtjjw1pat2it" path="res://Resources/ShotPatterns/Another/a1_raid_firework_black.tres" id="1_6dru1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="1_ywf2r"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_6dru1"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_x8dq4"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="4_6yf4s"]
+
+[sub_resource type="Resource" id="Resource_28gqs"]
+script = ExtResource("3_x8dq4")
+bullet_scene = ExtResource("4_6yf4s")
+bullet_count = 12
+spread_angle = 360.0
+aim_at_player = false
+line_count = 2
+line_speed_ratio = 0.4
+bullet_speed = 85.0
+
+[resource]
+script = ExtResource("3_x8dq4")
+bullet_scene = ExtResource("1_ywf2r")
+black_version = ExtResource("1_6dru1")
+another_made = true
+start_delay = 0.0
+loop = false
+bullet_count = 2
+spread_angle = 60.0
+bullet_speed = 150.0
+split_time = 0.75
+split_pattern = SubResource("Resource_28gqs")
+split_follow_direction = false

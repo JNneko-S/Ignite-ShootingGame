@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_eqnhq"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_7oibl"]
 [ext_resource type="Resource" uid="uid://br78t7xkn3mow" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike_another.tres" id="another_ver"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike_black.tres" id="black_ver"]
+[ext_resource type="Resource" uid="uid://bagtsbttp5yb5" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrike_black.tres" id="black_ver"]
 [ext_resource type="Resource" uid="uid://dow1fjiwxpna6" path="res://Resources/ShotPatterns/Boss/Tank/CircleStrikeNormal.tres" id="normal_ver"]
 
 [sub_resource type="Resource" id="Resource_emv7r"]

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="1_vr2i8"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3if7w"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_n0eg7"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_bomb.tres" id="4_qqp00"]
+
+[resource]
+script = ExtResource("3_n0eg7")
+bullet_scene = ExtResource("1_vr2i8")
+another_made = true
+with_patterns = Array[ExtResource("3_n0eg7")]([ExtResource("4_qqp00")])
+start_delay = 0.4
+shot_count = 4
+interval = 0.14
+bullet_count = 3
+spread_angle = 36.0
+aim_once_per_burst = true
+bullet_speed = 150.0

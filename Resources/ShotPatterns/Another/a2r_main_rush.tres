@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://x7xjd8bnjsy0"]
+
+[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="1_qa11t"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_x0l3t"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_fy4u5"]
+
+[sub_resource type="Resource" id="Resource_mw2ji"]
+script = ExtResource("2_x0l3t")
+duration = 0.7
+
+[sub_resource type="Resource" id="Resource_b6745"]
+script = ExtResource("2_x0l3t")
+duration = 0.5
+
+[sub_resource type="Resource" id="Resource_btoy7"]
+script = ExtResource("2_x0l3t")
+duration = 1.2
+turn_mode = 2
+target_speed = 125.0
+
+[resource]
+script = ExtResource("3_fy4u5")
+bullet_scene = ExtResource("1_qa11t")
+another_made = true
+start_delay = 3.0
+shot_count = 2
+interval = 0.35
+pause = 6.0
+bullet_count = 18
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 10.0
+bullet_speed = 140.0
+motion = Array[ExtResource("2_x0l3t")]([SubResource("Resource_mw2ji"), SubResource("Resource_b6745"), SubResource("Resource_btoy7")])

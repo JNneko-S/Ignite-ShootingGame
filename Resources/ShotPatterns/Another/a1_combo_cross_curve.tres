@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cxdjm0c7yianw"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="1_t20i2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_g15yh"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_t8h4w"]
+
+[sub_resource type="Resource" id="Resource_cdo2w"]
+script = ExtResource("2_g15yh")
+duration = 2.6
+change_speed = false
+angular_velocity = 42.0
+
+[resource]
+script = ExtResource("3_t8h4w")
+bullet_scene = ExtResource("1_t20i2")
+another_made = true
+shot_count = 10
+interval = 0.12
+pause = 0.9
+bullet_count = 2
+spread_angle = 110.0
+aim_at_player = false
+mirror_curve_by_side = true
+bullet_speed = 130.0
+motion = Array[ExtResource("2_g15yh")]([SubResource("Resource_cdo2w")])

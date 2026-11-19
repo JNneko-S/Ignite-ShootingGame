@@ -22,6 +22,9 @@ class_name BossCenterState
 ## 撃っている時間(秒)。撃ち終わってから、この時間だけ待って次へ(弾が流れていくのを待つ)
 @export var fire_time : float = 7.0
 @export var after_time : float = 1.2
+## 主砲と一緒に撃つ砲口(翼の大砲など)と、その段階ごとの弾幕(第一形態から。足りなければ最後のもの)。空なら撃たない
+@export var side_shooters : Array[EnemyShooter] = []
+@export var side_patterns : Array[ShotPattern] = []
 
 @export_group("連携")
 ## 呼ぶ仲間のシーン(ルートが Enemy)。空なら呼ばない
@@ -61,9 +64,17 @@ func _run(token : int) -> void:
 	var pattern := patterns[clampi(phase(), 0, patterns.size() - 1)]
 	if pattern:
 		shooter.set_patterns([pattern])
+	var side : ShotPattern = side_patterns[clampi(phase(), 0, side_patterns.size() - 1)] if not side_patterns.is_empty() else null
+	if side:
+		for s in side_shooters:
+			if is_instance_valid(s) and s.enabled:
+				s.set_patterns([side])
 	await wait(fire_time)
 	if is_instance_valid(shooter):
 		shooter.stop()
+	for s in side_shooters:
+		if is_instance_valid(s):
+			s.stop()
 	_dismiss_wings()
 	await wait(after_time)
 	finish(token)
@@ -72,6 +83,9 @@ func Exit() -> void:
 	super.Exit()
 	if is_instance_valid(shooter):
 		shooter.stop()
+	for s in side_shooters:
+		if is_instance_valid(s):
+			s.stop()
 	_dismiss_wings()
 
 ## 仲間を呼ぶ。画面の上の外から、決めた場所まで降りてくる

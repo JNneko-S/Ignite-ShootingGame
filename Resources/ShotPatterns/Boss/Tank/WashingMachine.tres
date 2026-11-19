@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="1_o0fgd"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_o0fgd"]
 [ext_resource type="Resource" uid="uid://dats2ornjqnpo" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine_another.tres" id="another_ver"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine_black.tres" id="black_ver"]
+[ext_resource type="Resource" uid="uid://3mwnl4jii13j" path="res://Resources/ShotPatterns/Boss/Tank/WashingMachine_black.tres" id="black_ver"]
 
 [sub_resource type="Resource" id="Resource_w401m"]
 script = ExtResource("1_gm14f")

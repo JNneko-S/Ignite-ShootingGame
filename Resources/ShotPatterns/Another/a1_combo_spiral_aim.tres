@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_spiral_aim_black.tres" id="1_mjvbo"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="1_ydse0"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_mjvbo"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_12c2u"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_aim_fan.tres" id="4_s3rlf"]
+
+[resource]
+script = ExtResource("3_12c2u")
+bullet_scene = ExtResource("1_ydse0")
+black_version = ExtResource("1_mjvbo")
+another_made = true
+with_patterns = Array[ExtResource("3_12c2u")]([ExtResource("4_s3rlf")])
+start_delay = 0.3
+shot_count = 50
+pause = 1.4
+bullet_count = 4
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 9.0
+line_count = 2
+line_speed_ratio = 0.3
+bullet_speed = 110.0

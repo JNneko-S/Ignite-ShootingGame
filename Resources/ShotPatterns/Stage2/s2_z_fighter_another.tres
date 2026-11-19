@@ -1,15 +1,17 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="2"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_wauxe"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
+another_made = true
 start_delay = 0.4
-pause = 0.765
-bullet_count = 5
-spread_angle = 31.6
+pause = 0.9
+bullet_count = 3
+spread_angle = 24.0
+line_count = 2
+line_speed_ratio = 0.2
 bullet_speed = 150.0
-shot_count = 2
-interval = 0.12

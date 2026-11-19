@@ -24,6 +24,7 @@ size = Vector2(110, 78)
 size = Vector2(106, 60)
 
 [node name="BlackSwans" unique_id=1820000001 groups=["black_swans"] instance=ExtResource("base")]
+another_hp_scale = 0.5
 pattern = ExtResource("move")
 
 [node name="Sprite2D" parent="." index="0" unique_id=430556030]

@@ -108,7 +108,7 @@ func set_split(pattern : ShotPattern, mirror : bool = false, depth : int = 0) ->
 	_mirror = mirror
 	if ShotMath.splits(pattern, depth):
 		_split_pattern = pattern
-		_split_in = pattern.split_time
+		_split_in = maxf(pattern.split_time + randf_range(-pattern.split_time_random, pattern.split_time_random), 0.05)
 	else:
 		_split_pattern = null
 		_split_in = -1.0

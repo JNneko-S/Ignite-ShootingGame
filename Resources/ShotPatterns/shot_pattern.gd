@@ -47,6 +47,12 @@ enum TimingUnit {
 ## オンなら、ANOTHER 専用に手で作った弾幕(ANOTHER では、ランクで撃つ頻度を上げすぎない)
 @export var another_made : bool = false
 
+@export_group("複合")
+## この弾幕と一緒に撃つ弾幕(複合の弾幕)。順番に撃つ(Sequence)ときは、この弾幕が撃ち終わる(Pause まで)まで重ねて撃ち、
+## 撃ち続ける(Patterns)ときは、同じあいだずっと撃つ。例) 渦巻き + 自機狙いの線(渦の隙間を狙いが通る)。
+## 一緒に撃つ弾幕にも With Patterns があれば、それも重ねて撃つ(重ねすぎに注意)
+@export var with_patterns : Array[ShotPattern] = []
+
 @export_group("タイミング")
 ## Start Delay / Interval / Pause を、秒で数えるか拍で数えるか。
 ## 拍なら、例えば Interval 0.5 = 8分音符ごと、Pause 2 = 2拍休み
@@ -155,6 +161,8 @@ enum TimingUnit {
 @export_group("分裂")
 ## 撃ってからこの秒数で、弾が割れて Split Pattern の弾になる。0 なら割れない
 @export var split_time : float = 0.0
+## 割れるまでの時間を、弾ごとに ± この秒数だけばらす(ばらばらの時間で破裂する)
+@export var split_time_random : float = 0.0
 ## 割れたあとの弾幕。Shot Count が 2 以上なら、割れた場所から Interval ごとに1発ずつ順番に出す(Rotate Per Shot で渦を巻く)。
 ## 使うのは「弾の並べ方」「列弾」「ばらつき」「弾の性質」「弾の動き」と、その「分裂」(割れた弾がまた割れる。3段階まで)。
 ## タイミングは使わない(割れた瞬間に1回だけ出る)。弾シーンが空なら、割れる前の弾と同じ見た目になる

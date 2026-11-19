@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("2_sioga")
 bullet_scene = ExtResource("b_cross")
-shot_count = 180
+shot_count = 120
 interval = 0.05
 loop = false
 bullet_count = 6

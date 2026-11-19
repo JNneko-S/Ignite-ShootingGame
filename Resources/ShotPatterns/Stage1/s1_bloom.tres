@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="1_0ry8w"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_bloom_another.tres" id="another_ver"]
+[ext_resource type="Resource" uid="uid://cij8govyce82l" path="res://Resources/ShotPatterns/Stage1/s1_bloom_another.tres" id="another_ver"]
 
 [sub_resource type="Resource" id="step_0"]
 script = ExtResource("2")

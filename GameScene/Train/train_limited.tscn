@@ -23,6 +23,27 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/boss_split_bomb.tres" id="x20"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_bonus_spiral.tres" id="x21"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_rain.tres" id="x22"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_deny_rain.tres" id="a2r_deny_rain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_deny_curtain.tres" id="a2r_deny_curtain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_deny_combo.tres" id="a2r_deny_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_line.tres" id="a2r_aim_line"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_fan.tres" id="a2r_aim_fan"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_burst_combo.tres" id="a2r_aim_burst_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_main_p0.tres" id="a2r_main_p0"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_main_p1.tres" id="a2r_main_p1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_main_p2.tres" id="a2r_main_p2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_mid_rails.tres" id="a2r_mid_rails"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_mid_rails_combo.tres" id="a2r_mid_rails_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_deny_curve.tres" id="a2r_deny_curve"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_deny_curve_fast.tres" id="a2r_deny_curve_fast"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_orbit.tres" id="a2r_aim_orbit"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_orbit_double.tres" id="a2r_aim_orbit_double"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_orbit_combo.tres" id="a2r_aim_orbit_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_sky_rain.tres" id="a2r_sky_rain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_sky_rain_dense.tres" id="a2r_sky_rain_dense"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_sky_rain_combo.tres" id="a2r_sky_rain_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_curtain_combo.tres" id="a2r_curtain_combo"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2r_aim_line_orbit_combo.tres" id="a2r_aim_line_orbit_combo"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_Main_strip7.png" id="x23"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_3.png" id="x24"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Train Boss/Wagon_2.png" id="x25"]
@@ -48,6 +69,7 @@
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_express_support.tscn" id="x45"]
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_rapid_support_p3.tscn" id="x46"]
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_express_support_p3.tscn" id="x47"]
+[ext_resource type="Script" path="res://Component/Boss/support_bomber_raid.gd" id="support_bomber_raid"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall.tres" id="push_a"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall_b.tres" id="push_b"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_push_wall_hard.tres" id="push_hard"]
@@ -272,328 +294,328 @@ _data = {
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x10"), ExtResource("x11")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_ignite_core")])
-another_sequence = Array[ExtResource("x7")]([ExtResource("an_a2_gate_wall"), ExtResource("an_a2_pendulum"), ExtResource("an_a2_split_aim")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p0")])
+another_sequence = Array[ExtResource("x7")]([])
 
 [sub_resource type="Resource" id="sp_m_top_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x12"), ExtResource("x11")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
-another_sequence = Array[ExtResource("x7")]([ExtResource("an_a2_gate_wall"), ExtResource("an_a2_rails"), ExtResource("an_a2_split_aim"), ExtResource("an_a2_shotgun_accel"), ExtResource("an_a2_converge_dash")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p1")])
+another_sequence = Array[ExtResource("x7")]([])
 
 [sub_resource type="Resource" id="sp_m_top_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x13"), ExtResource("x11")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
-another_sequence = Array[ExtResource("x7")]([ExtResource("an_a1_corridor"), ExtResource("an_a1_corridor_push"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a2_gate_wall"), ExtResource("an_a2_rails"), ExtResource("an_a2_shotgun_accel")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p2")])
+another_sequence = Array[ExtResource("x7")]([])
 
 [sub_resource type="Resource" id="sp_m_mid_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_converge_dash")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails")])
 
 [sub_resource type="Resource" id="sp_m_mid_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails")])
 
 [sub_resource type="Resource" id="sp_m_mid_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14"), ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails_combo")])
 
 [sub_resource type="Resource" id="sp_w3_l_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_snake")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curve")])
 
 [sub_resource type="Resource" id="sp_w3_l_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x16")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curve_fast")])
 
 [sub_resource type="Resource" id="sp_w3_l_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_combo")])
 
 [sub_resource type="Resource" id="sp_w3_r_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_snake")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curve")])
 
 [sub_resource type="Resource" id="sp_w3_r_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x16")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curve_fast")])
 
 [sub_resource type="Resource" id="sp_w3_r_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_combo")])
 
 [sub_resource type="Resource" id="sp_w3_c1_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_bloom")])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit")])
 
 [sub_resource type="Resource" id="sp_w3_c1_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_double")])
 
 [sub_resource type="Resource" id="sp_w3_c1_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19"), ExtResource("x20")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_combo")])
 
 [sub_resource type="Resource" id="sp_w3_c2_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit")])
 
 [sub_resource type="Resource" id="sp_w3_c2_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_double")])
 
 [sub_resource type="Resource" id="sp_w3_c2_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_combo")])
 
 [sub_resource type="Resource" id="sp_w2_a_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain")])
 
 [sub_resource type="Resource" id="sp_w2_a_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain_dense")])
 
 [sub_resource type="Resource" id="sp_w2_a_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain_combo")])
 
 [sub_resource type="Resource" id="sp_w2_b_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain")])
 
 [sub_resource type="Resource" id="sp_w2_b_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x16")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain_dense")])
 
 [sub_resource type="Resource" id="sp_w2_b_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_sky_rain_combo")])
 
 [sub_resource type="Resource" id="sp_w2_c_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w2_c_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x16")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w2_c_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_burst_combo")])
 
 [sub_resource type="Resource" id="sp_w2_d_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w2_d_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w2_d_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_burst_combo")])
 
 [sub_resource type="Resource" id="sp_w1_l_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curtain")])
 
 [sub_resource type="Resource" id="sp_w1_l_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curtain")])
 
 [sub_resource type="Resource" id="sp_w1_l_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_curtain_combo")])
 
 [sub_resource type="Resource" id="sp_w1_r_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curtain")])
 
 [sub_resource type="Resource" id="sp_w1_r_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_curtain")])
 
 [sub_resource type="Resource" id="sp_w1_r_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_curtain_combo")])
 
 [sub_resource type="Resource" id="sp_w1_p1_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line")])
 
 [sub_resource type="Resource" id="sp_w1_p1_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w1_p1_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line_orbit_combo")])
 
 [sub_resource type="Resource" id="sp_w1_p2_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x19")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit")])
 
 [sub_resource type="Resource" id="sp_w1_p2_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x21")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_double")])
 
 [sub_resource type="Resource" id="sp_w1_p2_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x12"), ExtResource("x21")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_orbit_combo")])
 
 [sub_resource type="Resource" id="sp_w1_p3_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line")])
 
 [sub_resource type="Resource" id="sp_w1_p3_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w1_p3_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line_orbit_combo")])
 
 [sub_resource type="Resource" id="sp_w0_a_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_rain")])
 
 [sub_resource type="Resource" id="sp_w0_a_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_rain")])
 
 [sub_resource type="Resource" id="sp_w0_a_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_deny_combo")])
 
 [sub_resource type="Resource" id="sp_w0_b_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line")])
 
 [sub_resource type="Resource" id="sp_w0_b_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x18")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w0_b_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x17")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_burst_combo")])
 
 [sub_resource type="Resource" id="sp_w0_c_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x22")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_line")])
 
 [sub_resource type="Resource" id="sp_w0_c_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x22")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_fan")])
 
 [sub_resource type="Resource" id="sp_w0_c_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x22"), ExtResource("x15")])
 another_replace = true
-another_patterns = Array[ExtResource("x7")]([])
+another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_aim_burst_combo")])
 
 [sub_resource type="Resource" id="sp_flank0_0"]
 script = ExtResource("x8")
@@ -1558,7 +1580,7 @@ fire_cue_time = 0.4
 hold_min = 4.5
 hold_max = 6.0
 move_speed = 170.0
-low_fire_limit = 0.7
+low_fire_limit = 0.75
 snap_to_next = true
 snap_delay = 0.4
 snap_time = 0.6
@@ -1589,3 +1611,6 @@ resummon_delay = 0.0
 [node name="PushBarrage" type="Node" parent="." unique_id=1760000190 node_paths=PackedStringArray("shooters")]
 script = ExtResource("push_script")
 shooters = [NodePath("../Gun_push_0"), NodePath("../Gun_push_1")]
+
+[node name="SupportBomberRaid" type="Node" parent="." unique_id=1900000101]
+script = ExtResource("support_bomber_raid")

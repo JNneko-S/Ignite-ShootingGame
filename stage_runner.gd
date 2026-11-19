@@ -325,8 +325,8 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 			if kind == HazardRank.Kind.BOSS or kind == HazardRank.Kind.MIDBOSS:
 				enemy.set_meta(&"hazard_boss", true) # 反射弾のダメージが減る(Hurtbox が見る)
 			var hp_scale := HazardRank.hp_scale(kind)
-			enemy.set_meta(&"hazard_hp_scale", hp_scale) # 部位で HP が決まる敵(列車など)は、PartsDefeat が部位にも掛ける
-			var scaled := maxi(roundi(hp_node.max_hp * hp_scale), 1)
+			enemy.set_meta(&"hazard_hp_scale", hp_scale * enemy.another_hp_scale) # 部位で HP が決まる敵(列車など)は、PartsDefeat が部位にも掛ける
+			var scaled := maxi(roundi(hp_node.max_hp * hp_scale * enemy.another_hp_scale), 1)
 			hp_node.max_hp = scaled
 			hp_node.hp = scaled
 	if event.flight_curve:

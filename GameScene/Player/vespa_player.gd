@@ -37,6 +37,24 @@ signal counter_requested
 ## 中心に当たったときの音(シーンに置いた AudioStreamPlayer)
 @export var center_hit_sound : AudioStreamPlayer
 
+@export_group("VESPA: レベルごとの強化(ゲージの Lv0〜Lv5 の順)")
+## スナイパーを1回に何発続けて撃つか(バースト)と、その間隔(秒)
+@export var sniper_bursts : Array[int] = [1, 1, 2, 2, 3, 3]
+@export var sniper_burst_gap : float = 0.06
+## スナイパーの威力の倍率
+@export var sniper_power_scales : Array[float] = [1.0, 1.0, 1.0, 1.2, 1.2, 1.4]
+## バルカンの威力の倍率と、撃つ間隔の倍率(小さいほど速い連射)
+@export var vulcan_power_scales : Array[float] = [1.0, 1.0, 1.2, 1.2, 1.2, 1.4]
+@export var vulcan_interval_scales : Array[float] = [1.0, 1.0, 1.0, 0.9, 0.9, 0.7]
+## 左右それぞれ、1回に何方向へ撃つか(2 なら 2way)と、その開き(度)
+@export var vulcan_ways : Array[int] = [1, 1, 1, 1, 2, 2]
+@export var vulcan_way_spread : float = 8.0
+
+@export_group("VESPA: カウンターの跳ね返し")
+## カウンターでイグナイトが出たとき、跳ね返す弾(反射弾)の威力の倍率。ANOTHER ではこちら。ふつうのイグナイトでは変わらない
+@export var counter_reflect_scale : float = 2.0
+@export var counter_reflect_scale_another : float = 3.0
+
 @export_group("VESPA: グレイズ中の強化")
 ## 最後のグレイズから、この秒数以内に撃った弾が強くなる
 @export var graze_boost_time : float = 0.3
@@ -90,6 +108,7 @@ var _game_time : float = 0.0
 var _last_graze_time : float = -100.0
 var _sniper_wait : float = 0.0
 var _option_wait : float = 0.0
+var _vulcan_wait : float = 0.0
 ## 子機の向きの今の Lv(なめらかに変える)
 var _angle_level : float = 1.0
 
@@ -104,6 +123,7 @@ func _physics_process(delta : float) -> void:
 	super._physics_process(delta)
 	_sniper_wait = maxf(_sniper_wait - delta, 0.0)
 	_option_wait = maxf(_option_wait - delta, 0.0)
+	_vulcan_wait = maxf(_vulcan_wait - delta, -0.05) if Input.is_action_pressed("UI_Shoot") and not is_focusing else 0.0
 	_angle_level = move_toward(_angle_level, float(clampi(shot_look_level, 0, 5)), delta * maxf(1.0, absf(_angle_level - shot_look_level)) / maxf(option_turn_time, 0.01))
 
 # ---------------------------------------------------------------- ショット
@@ -115,15 +135,19 @@ func _shoot(_delta : float) -> void:
 	if is_focusing:
 		if _sniper_wait <= 0.0:
 			_sniper_wait = sniper_interval / boost_rate_scale()
-			SoundManager.play_on_channel(&"player_shot", shot_sound, 0.75)
-			_fire_sniper(global_position + muzzle_offset, Vector2.UP, sniper_damage, boosted, 1.0)
-	elif shoot_timer.time_left <= 0.0:
-		shoot_timer.start(vulcan_interval / boost_rate_scale())
+			_fire_sniper_burst(boosted)
+	elif _vulcan_wait <= 0.0:
+		# 端数を次に持ち越す(1フレーム単位に切り上がらず、間隔の倍率がそのまま効く)
+		_vulcan_wait += vulcan_interval * _lv(vulcan_interval_scales, 1.0) / boost_rate_scale()
 		SoundManager.play_on_channel(&"player_shot", shot_sound, 1.2, -4.0)
 		for side in [-1.0, 1.0]:
 			var at := global_position + Vector2(vulcan_muzzle.x * side, vulcan_muzzle.y)
-			var dir := Vector2.UP.rotated(deg_to_rad(randf_range(-vulcan_jitter, vulcan_jitter)))
-			_fire_vulcan(at, dir, vulcan_damage, boosted)
+			var ways := maxi(int(_lv(vulcan_ways, 1.0)), 1)
+			for w in ways:
+				# 2way 以上: 外側へ開く(左の砲口は左へ、右は右へ)
+				var offset : float = 0.0 if ways == 1 else vulcan_way_spread * (float(w) / float(ways - 1)) * side
+				var dir := Vector2.UP.rotated(deg_to_rad(offset + randf_range(-vulcan_jitter, vulcan_jitter)))
+				_fire_vulcan(at, dir, vulcan_damage * _lv(vulcan_power_scales, 1.0), boosted)
 	if _option_wait <= 0.0 and not options.is_empty():
 		_option_wait = (sniper_interval if is_focusing else option_vulcan_interval) / boost_rate_scale()
 		_fire_options_vespa(boosted)
@@ -135,7 +159,7 @@ func _fire_vulcan(at : Vector2, dir : Vector2, damage : float, boosted : bool) -
 	var bullet : Bullet = bullet_scene.instantiate()
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = at
-	bullet.setup(dir, vulcan_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale(), 0)
+	bullet.setup(dir, vulcan_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale() * ignite_power_scale(), 0)
 	bullet.scale = Vector2.ONE * vulcan_scale
 	_tint(bullet, boosted, vulcan_alpha)
 	return bullet
@@ -145,7 +169,7 @@ func _fire_sniper(at : Vector2, dir : Vector2, damage : float, boosted : bool, s
 	bullet.pierce = true # 貫通する(当たっても消えない)
 	get_tree().current_scene.add_child(bullet)
 	bullet.global_position = at
-	bullet.setup(dir, sniper_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale(), 0)
+	bullet.setup(dir, sniper_speed, damage * (graze_boost_scale if boosted else 1.0) * boost_power_scale() * ignite_power_scale(), 0)
 	bullet.center_aim = true
 	bullet.center_hit.connect(_on_center_hit)
 	bullet.scale = sniper_scale * size
@@ -339,7 +363,45 @@ func _counter(hit_dir : Vector2) -> void:
 	FloatingText.spawn(get_tree(), global_position + Vector2(0, -26), "CRITICAL!", counter_text_color, 14)
 	if counter_sound:
 		SoundManager.play(counter_sound)
+	_boost_counter_reflect()
 	counter_requested.emit()
+	if not is_igniting and _reflect_base >= 0.0 and ignite_aura and ignite_aura.params:
+		ignite_aura.params.base_damage = _reflect_base # イグナイトが出なかった(演出中など)
 	# 弾が飛んできた方向(弾の進む向きの逆)へ撃ち返す
 	var toward := -hit_dir if hit_dir.length_squared() > 0.0001 else Vector2.UP
 	_counter_fire(toward.normalized())
+
+# ---------------------------------------------------------------- レベルごとの強化
+
+## 今のゲージの Lv での値(Lv0〜Lv5 の表から)
+func _lv(values : Array, fallback : float) -> float:
+	return _at(values, clampi(shot_look_level, 0, 5), fallback)
+
+## スナイパーを、今の Lv の数だけ続けて撃つ(2発目からは Sniper Burst Gap 秒ずつ遅らせる)
+func _fire_sniper_burst(boosted : bool) -> void:
+	var count := maxi(int(_lv(sniper_bursts, 1.0)), 1)
+	var damage := sniper_damage * _lv(sniper_power_scales, 1.0)
+	for n in count:
+		if n > 0:
+			await get_tree().create_timer(sniper_burst_gap, false).timeout
+			if not _is_alive or not is_focusing:
+				return
+		SoundManager.play_on_channel(&"player_shot", shot_sound, 0.75 + 0.06 * n)
+		_fire_sniper(global_position + muzzle_offset, Vector2.UP, damage, boosted, 1.0)
+
+# ---------------------------------------------------------------- カウンターの跳ね返し
+
+var _reflect_base : float = -1.0
+
+## カウンターで出たイグナイトのあいだだけ、反射弾の威力を上げる(終わったら戻す)
+func _boost_counter_reflect() -> void:
+	if ignite_aura == null or ignite_aura.params == null:
+		return
+	if _reflect_base < 0.0:
+		ignite_aura.params = ignite_aura.params.duplicate() # ほかの機体の設定は変えない
+		_reflect_base = ignite_aura.params.base_damage
+		ignite_toggled.connect(func(on : bool) -> void:
+			if not on and ignite_aura and ignite_aura.params:
+				ignite_aura.params.base_damage = _reflect_base)
+	var scale := counter_reflect_scale_another if HazardRank.active else counter_reflect_scale
+	ignite_aura.params.base_damage = _reflect_base * scale

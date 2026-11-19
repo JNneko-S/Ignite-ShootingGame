@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="3"]
 [ext_resource type="Resource" uid="uid://rbrb25uexlft" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge_another.tres" id="another_ver"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge_black.tres" id="black_ver"]
+[ext_resource type="Resource" uid="uid://rnml4di4axrm" path="res://Resources/ShotPatterns/Stage1/s1_boss_rage_converge_black.tres" id="black_ver"]
 
 [sub_resource type="Resource" id="step_0"]
 script = ExtResource("2")

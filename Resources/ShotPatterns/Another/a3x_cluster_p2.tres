@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="1_rwjer"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_gxvq0"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_ylay8"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="4_4ospr"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_ring_part.tres" id="5_a51sq"]
+
+[sub_resource type="Resource" id="Resource_ys5yt"]
+script = ExtResource("3_ylay8")
+bullet_scene = ExtResource("4_4ospr")
+bullet_count = 4
+spread_angle = 36.0
+aim_at_player = false
+line_count = 3
+line_speed_ratio = 0.16
+bullet_speed = 85.0
+
+[resource]
+script = ExtResource("3_ylay8")
+bullet_scene = ExtResource("1_rwjer")
+another_made = true
+with_patterns = Array[ExtResource("3_ylay8")]([ExtResource("5_a51sq")])
+start_delay = 0.4
+shot_count = 6
+interval = 0.5
+pause = 1.0
+bullet_count = 4
+spread_angle = 110.0
+aim_at_player = false
+angle_wave_amplitude = 25.0
+angle_wave_shots = 4
+bullet_speed = 150.0
+split_time = 0.7
+split_pattern = SubResource("Resource_ys5yt")

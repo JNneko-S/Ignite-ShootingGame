@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://41wf870rl0xy"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_ubm0n"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3q56u"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_1t7yt"]
+
+[sub_resource type="Resource" id="Resource_s4s4r"]
+script = ExtResource("2_3q56u")
+duration = 0.6
+
+[sub_resource type="Resource" id="Resource_lrk14"]
+script = ExtResource("2_3q56u")
+duration = 0.3
+
+[sub_resource type="Resource" id="Resource_l54m8"]
+script = ExtResource("2_3q56u")
+duration = 0.8
+turn_mode = 2
+target_speed = 200.0
+
+[resource]
+script = ExtResource("3_1t7yt")
+bullet_scene = ExtResource("1_ubm0n")
+another_made = true
+pause = 1.6
+bullet_count = 4
+spread_angle = 150.0
+aim_at_player = false
+bullet_speed = 150.0
+motion = Array[ExtResource("2_3q56u")]([SubResource("Resource_s4s4r"), SubResource("Resource_lrk14"), SubResource("Resource_l54m8")])

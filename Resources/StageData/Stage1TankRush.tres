@@ -86,7 +86,7 @@ time = 55.0
 [sub_resource type="Resource" id="wait_midboss"]
 script = ExtResource("wait_script")
 tag = "midboss"
-timeout = 40.0
+timeout = 120.0
 time = 57.0
 
 [sub_resource type="Resource" id="scroll_late"]

@@ -15,6 +15,8 @@ signal died(enemy : Enemy)
 @export var path_offset : Vector2 = Vector2.ZERO
 ## true なら、mirror_x のとき、見た目と子ノードの位置も左右反転する(砲口が左右逆になる)
 @export var mirror_visuals : bool = true
+## 難易度 ANOTHER のときだけ、HP をさらにこの倍にする(ランクによる硬さのあとに掛ける。1 なら変えない)
+@export var another_hp_scale : float = 1.0
 @export_group("壊れたあと(残骸)")
 ## 設定すると、倒されても消えずに、Sprite2D の絵をこれに替えて残骸として残る(列車の車両など)。
 ## 残骸は当たり判定がなくなり、撃たず、"enemy" グループからも外れる。消すのは持ち主(Train など)に任せる

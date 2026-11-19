@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
-[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="3"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="3"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("3")
+another_made = true
 start_delay = 0.8
-pause = 0.935
-bullet_count = 13
-spread_angle = 119.0
+pause = 1.0
+bullet_count = 11
+spread_angle = 110.0
+gap_size = 2
+gap_wave_amplitude = 0.5
+gap_wave_shots = 6
 bullet_speed = 105.0
-shot_count = 2
-interval = 0.12

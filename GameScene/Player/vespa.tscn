@@ -42,7 +42,6 @@ counter_invincible_time = 0.6
 counter_text_color = Color(0.8, 0.6, 1, 1)
 counter_sound = NodePath("CounterSound")
 hit_invincible_time = 1.5
-use_level_scales = false
 
 [node name="Sprite2D" parent="." index="2" unique_id=1093960595]
 position = Vector2(0, 2)

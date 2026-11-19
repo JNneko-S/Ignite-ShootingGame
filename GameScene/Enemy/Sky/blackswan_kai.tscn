@@ -19,6 +19,8 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_wings.tres" id="an3_a3_bloom_wings"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_wave.tres" id="an3_a3_bloom_wave"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_dome.tres" id="an3_a3_bloom_dome"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_ignite_crush.tres" id="an3_a3_ignite_crush"]
+[ext_resource type="Script" path="res://Component/Boss/swan_usurper.gd" id="swan_usurper"]
 [sub_resource type="Animation" id="IdleAnim"]
 resource_name = "idle"
 length = 0.6
@@ -57,8 +59,8 @@ _data = {
 [node name="BlackSwanKai" unique_id=724143726 instance=ExtResource("base")]
 
 [node name="HPComponent" parent="." unique_id=2079593739]
-max_hp = 80000
-hp = 80000
+max_hp = 40000
+hp = 40000
 
 [node name="CrossFire" parent="StateMachine" unique_id=601000007]
 shift_steps = Array[float]([6.0, 6.0, 6.0])
@@ -98,6 +100,7 @@ aimed_cross_fire = ExtResource("an3_aimed")
 shift_steps = Array[float]([6.0, 6.0, 6.0])
 shift_max = Array[float]([30.0, 30.0, 30.0])
 feint_from_phase = 2
+random_volleys = 2
 next_state = "ACenter"
 
 [node name="ACenter" type="Node" parent="StateMachine" node_paths=PackedStringArray("shooter")]
@@ -107,9 +110,21 @@ patterns = Array[ExtResource("an3_shot")]([ExtResource("an3_a3_windmill"), ExtRe
 fire_time = 9.0
 wing_scene = ExtResource("an3_wing")
 wing_from_phase = 2
+next_state = "AIgnite"
+
+[node name="AIgnite" type="Node" parent="StateMachine" unique_id=1830000201 node_paths=PackedStringArray("shooter")]
+script = ExtResource("an3_st_center")
+shooter = NodePath("../../EnemyShooterComponent")
+patterns = Array[ExtResource("an3_shot")]([ExtResource("an3_a3_ignite_crush")])
+target_ratio = Vector2(0.5, 0.25)
+fire_time = 1.2
+after_time = 1.6
 next_state = "ADive"
 
 [node name="ADive" type="Node" parent="StateMachine" node_paths=PackedStringArray("dive")]
 script = ExtResource("an3_st_dive")
 dive = NodePath("../../AfterburnerDive")
 next_state = "AWinder"
+
+[node name="SwanUsurper" type="Node" parent="." unique_id=1840000401]
+script = ExtResource("swan_usurper")

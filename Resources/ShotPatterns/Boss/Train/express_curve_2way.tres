@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="3"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Train/express_curve_2way_another.tres" id="another_ver"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/Train/express_curve_2way_black.tres" id="black_ver"]
+[ext_resource type="Resource" uid="uid://dt1qeu5junlat" path="res://Resources/ShotPatterns/Boss/Train/express_curve_2way_another.tres" id="another_ver"]
+[ext_resource type="Resource" uid="uid://col6j27k88eok" path="res://Resources/ShotPatterns/Boss/Train/express_curve_2way_black.tres" id="black_ver"]
 
 [sub_resource type="Resource" id="curve"]
 script = ExtResource("2")

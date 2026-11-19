@@ -1,17 +1,18 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="1_vmbjm"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_752s1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_752s1"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_vmbjm")
-start_delay = 1.8
-pause = 0.68
-bullet_count = 5
-spread_angle = 77.6
+another_made = true
+start_delay = 1.6
+pause = 0.75
+bullet_count = 4
+spread_angle = 66.0
 aim_at_player = false
-bullet_speed = 210.0
-shot_count = 2
-interval = 0.12
+line_count = 2
+line_speed_ratio = 0.2
+bullet_speed = 200.0

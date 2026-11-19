@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Bermuda.tscn" id="1_50b57"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_6kc2c"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_y6kru"]
+
+[resource]
+script = ExtResource("3_y6kru")
+bullet_scene = ExtResource("1_50b57")
+another_made = true
+start_delay = 0.9
+shot_count = 6
+interval = 0.2
+pause = 1.6
+bullet_count = 2
+aim_at_player = false
+parallel_spacing = 44.0
+bullet_speed = 130.0

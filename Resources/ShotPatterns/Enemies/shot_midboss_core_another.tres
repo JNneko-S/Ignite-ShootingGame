@@ -1,36 +1,36 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cq444hqlcxtw0"]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dhxpyy88xncoq"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_a1agy"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2"]
 
-[sub_resource type="Resource" id="step_0"]
+[sub_resource type="Resource" id="Resource_08p4p"]
 script = ExtResource("2")
 duration = 0.6
 
-[sub_resource type="Resource" id="step_1"]
+[sub_resource type="Resource" id="Resource_ptclx"]
 script = ExtResource("2")
-duration = 0.3
-change_speed = false
+duration = 0.35
 
-[sub_resource type="Resource" id="step_2"]
+[sub_resource type="Resource" id="Resource_2k17e"]
 script = ExtResource("2")
 duration = 0.9
 turn_mode = 2
-target_speed = 260.0
-speed_trans = 4
-speed_ease = 0
+target_speed = 250.0
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_a1agy")
+another_made = true
 start_delay = 3.0
-pause = 1.8
-bullet_count = 32
+shot_count = 2
+interval = 0.3
+pause = 1.9
+bullet_count = 28
 spread_angle = 360.0
 aim_at_player = false
-rotate_per_shot = 5.6
+rotate_per_shot = 6.4
 line_count = 2
-line_speed_ratio = 0.2
+line_speed_ratio = 0.25
 bullet_speed = 220.0
-motion = Array[ExtResource("2")]([SubResource("step_0"), SubResource("step_1"), SubResource("step_2")])
+motion = Array[ExtResource("2")]([SubResource("Resource_08p4p"), SubResource("Resource_ptclx"), SubResource("Resource_2k17e")])

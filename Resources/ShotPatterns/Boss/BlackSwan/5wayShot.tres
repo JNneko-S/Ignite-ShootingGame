@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="1_56ley"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="2_01ax5"]
 [ext_resource type="Resource" uid="uid://d3ydylbu2v4on" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot_another.tres" id="another_ver"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot_black.tres" id="black_ver"]
+[ext_resource type="Resource" uid="uid://r1dhy6t7lriq" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot_black.tres" id="black_ver"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 
 [sub_resource type="Resource" id="Resource_wwqqi"]

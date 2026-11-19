@@ -6,7 +6,7 @@ class_name DebugPanel
 ##   1 無敵 / 2 イグナイト Lv+1 / 3 Lv-1 / 4 全部最大(ゲージ・子機・ロック速度)
 ##   5 中ボスへ / 6 ボスへ(ステージを読み直して、その少し前から。出撃の演出はしない)
 ##   7 ボスを次の形態へ(最後の形態なら倒す) / 8 スロー(1 → 0.5 → 0.25) / 9 当たり判定の表示
-##   0 画面の弾を消す / - 画面の雑魚を倒す
+##   0 画面の弾を消す / - 画面の雑魚を倒す / P 次のステージへ(点数・残機・ゲージなどを持ち越して、霧を抜けて入る)
 ## パネルには、FPS・弾と敵の数・ステージの時間・ボスの HP などを出し続ける。
 
 ## ジャンプしたときに、中ボス・ボスが出る何秒前から始めるか
@@ -27,7 +27,7 @@ func _ready() -> void:
 	_box = ColorRect.new()
 	_box.color = Color(0.0, 0.03, 0.06, 0.78)
 	_box.position = Vector2(4, 64)
-	_box.size = Vector2(178, 250)
+	_box.size = Vector2(178, 262)
 	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_box)
 	_label = Label.new()
@@ -68,6 +68,7 @@ func _input(event : InputEvent) -> void:
 		KEY_9: _toggle_hitboxes()
 		KEY_0: _clear_bullets()
 		KEY_MINUS: _kill_zako()
+		KEY_P: _next_stage()
 		_: handled = false
 	if handled and viewport:
 		viewport.set_input_as_handled()
@@ -93,6 +94,7 @@ func _build_text() -> String:
 	lines.append("8 スロー: x%.2f" % SLOW_STEPS[_slow_index])
 	lines.append("9 当たり判定: %s" % ("ON" if get_tree().debug_collisions_hint else "OFF"))
 	lines.append("0 弾消し  - 雑魚を倒す")
+	lines.append("P 次のステージへ")
 	lines.append("")
 	lines.append("FPS %d  弾 %d  敵 %d" % [Engine.get_frames_per_second(),
 		get_tree().get_nodes_in_group("enemy_bullet").size(), get_tree().get_nodes_in_group("enemy").size()])
@@ -165,6 +167,25 @@ func _jump(boss : bool) -> void:
 	Engine.time_scale = 1.0 # 読み直すと、パネルのスローの表示も 1 倍に戻るので、合わせる
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+## 次のステージへ(StageTransition の Next Stage)。今の状態を持ち越して、霧の中から始める
+func _next_stage() -> void:
+	var scene := get_tree().current_scene
+	var next := ""
+	if scene:
+		for node in scene.find_children("*", "", true, false):
+			if node is StageTransition:
+				next = node.next_stage
+	if next == "":
+		_say("次のステージがありません")
+		return
+	DebugTools.used = true
+	Engine.time_scale = 1.0
+	get_tree().paused = false
+	StageCarry.save(get_tree())
+	StageCarry.arriving = true
+	StageCarry.cruise_height = 0.6
+	get_tree().change_scene_to_file(next)
 
 func _next_boss_phase() -> void:
 	var boss := _boss()

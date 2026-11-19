@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="1_vk7g1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_jqnji"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_f8820"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_ring_part.tres" id="4_1y370"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3x_needle_aim_black.tres" id="5_of857"]
+
+[sub_resource type="Resource" id="Resource_mnh7x"]
+script = ExtResource("2_jqnji")
+duration = 0.9
+angular_velocity = 80.0
+
+[sub_resource type="Resource" id="Resource_oydi3"]
+script = ExtResource("2_jqnji")
+duration = 0.4
+
+[sub_resource type="Resource" id="Resource_a46b7"]
+script = ExtResource("2_jqnji")
+turn_mode = 2
+target_speed = 150.0
+
+[resource]
+script = ExtResource("3_f8820")
+bullet_scene = ExtResource("1_vk7g1")
+another_made = true
+with_patterns = Array[ExtResource("3_f8820")]([ExtResource("4_1y370"), ExtResource("5_of857")])
+start_delay = 0.4
+shot_count = 8
+interval = 0.28
+pause = 1.2
+bullet_count = 14
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 13.0
+bullet_speed = 125.0
+motion = Array[ExtResource("2_jqnji")]([SubResource("Resource_mnh7x"), SubResource("Resource_oydi3"), SubResource("Resource_a46b7")])

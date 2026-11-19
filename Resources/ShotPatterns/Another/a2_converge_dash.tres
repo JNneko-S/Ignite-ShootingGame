@@ -1,51 +1,36 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cbam0ov722vgx"]
 
+[ext_resource type="Resource" uid="uid://bryq7fabtx5j" path="res://Resources/ShotPatterns/Another/a2_converge_dash_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_converge_dash_black.tres" id="black_ver"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="b_stop"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("step")
 duration = 0.694
-turn_mode = 0
-turn_angle = 0.0
-target_speed = 0.0
-speed_trans = 1
-speed_ease = 1
-angular_velocity = 0.0
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("step")
 duration = 0.486
-turn_mode = 0
-turn_angle = 0.0
 change_speed = false
-speed_trans = 1
-speed_ease = 1
-angular_velocity = 0.0
 
 [sub_resource type="Resource" id="st3"]
 script = ExtResource("step")
 duration = 0.972
 turn_mode = 2
-turn_angle = 0.0
 target_speed = 237.6
 speed_trans = 4
 speed_ease = 0
-angular_velocity = 0.0
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_stop")
-another_made = true
 black_version = ExtResource("black_ver")
-start_delay = 0.5
+another_made = true
 shot_count = 3
 interval = 0.3
 pause = 0.837
 bullet_count = 22
 spread_angle = 140.0
-aim_at_player = true
 bullet_speed = 172.8
 motion = Array[ExtResource("step")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])

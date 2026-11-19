@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Bermuda.tscn" id="1_81t27"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_rain_cross_black.tres" id="1_fxydv"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_fxydv"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_v2y6y"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_combo_cross_curve.tres" id="4_27n60"]
+
+[resource]
+script = ExtResource("3_v2y6y")
+bullet_scene = ExtResource("1_81t27")
+black_version = ExtResource("1_fxydv")
+another_made = true
+with_patterns = Array[ExtResource("3_v2y6y")]([ExtResource("4_27n60")])
+start_delay = 0.3
+shot_count = 30
+interval = 0.18
+bullet_count = 7
+aim_at_player = false
+angle_wave_amplitude = 5.0
+angle_wave_shots = 30
+parallel_spacing = 56.0
+bullet_speed = 145.0

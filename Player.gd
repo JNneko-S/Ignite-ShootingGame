@@ -92,6 +92,8 @@ var graze_radius_scale : float = 1.0:
 ## Player.gd から preload すると読み込みが循環し、アイテムのシーンがスクリプトなしで読み込まれてしまう
 ## (動かず拾えない絵だけが画面に残る)
 @export var power_up_option_scene : PackedScene
+## イグナイト中、ショット(子機も)の威力をこの倍にする。BASTION は、散弾の Ignite Shot Scale を使うので 1 にしておく
+@export var ignite_damage_scale : float = 1.5
 @export var power_up_lock_scene : PackedScene
 const POWER_UP_OPTION_PATH := "res://GameScene/Item/power_up_option.tscn"
 const POWER_UP_LOCK_PATH := "res://GameScene/Item/power_up_lock.tscn"
@@ -242,6 +244,10 @@ func boost_rate_scale() -> float:
 func boost_power_scale() -> float:
 	return 1.0 + (BOOST_MAX_SCALE - 1.0) * float(power_boost) / BOOST_MAX
 
+## イグナイト中のショットの威力の倍率(イグナイト中でなければ 1)
+func ignite_power_scale() -> float:
+	return ignite_damage_scale if is_igniting else 1.0
+
 func _ready() -> void:
 	add_to_group("player") # 敵の狙い撃ち用
 	if add_arrow_keys:
@@ -337,7 +343,7 @@ func _fire_volley(angles : Array) -> void:
 			return
 		# ロックしていなければ、前方に絞ったショット
 		angles = angles.map(func(a : float) -> float: return a * focus_spread_scale)
-	var damage := shot_damage * shot_power * level_power_scale
+	var damage := shot_damage * shot_power * level_power_scale * ignite_power_scale()
 	var look := _shot_look()
 	if look >= 2 and angles.size() == shot_angles.size():
 		_fire_parallel(look, roundi(damage) * angles.size())
@@ -449,7 +455,7 @@ func _fire_lock_volley() -> void:
 		bullet.global_position = global_position + muzzle_offset
 		var spread := (i - (count - 1) / 2.0) * 25.0
 		var direction := Vector2.UP.rotated(deg_to_rad(spread))
-		bullet.setup(direction, shot_speed, shot_damage * shot_power * level_power_scale * lock_damage_scale, 0)
+		bullet.setup(direction, shot_speed, shot_damage * shot_power * level_power_scale * lock_damage_scale * ignite_power_scale(), 0)
 		bullet.set_homing(target, lock_turn_rate)
 		bullet.modulate = lock_color.lerp(Color.WHITE, 0.4)
 
@@ -548,7 +554,7 @@ func _fire_options() -> void:
 	if options.is_empty():
 		return
 	var locking := is_locking_on()
-	var damage := shot_damage * shot_power * level_power_scale * (lock_damage_scale if locking else 1.0)
+	var damage := shot_damage * shot_power * level_power_scale * (lock_damage_scale if locking else 1.0) * ignite_power_scale()
 	for i in options.size():
 		var target : Node2D = lock_targets[i % lock_targets.size()] if locking else null
 		options[i].fire(bullet_scene, shot_speed, damage, target, lock_turn_rate)

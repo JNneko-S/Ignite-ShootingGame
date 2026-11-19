@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="b_massive"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("b_massive")
+another_made = true
+soften_others = 2.5
+start_delay = 0.6
+shot_count = 3
+interval = 0.25
+pause = 2.4
+bullet_count = 81
+spread_angle = 170.0
+aim_at_player = false
+rotate_per_shot = 0.7
+bullet_speed = 80.0

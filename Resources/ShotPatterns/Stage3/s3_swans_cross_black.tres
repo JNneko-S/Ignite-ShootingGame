@@ -1,19 +1,20 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3]
 
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="2"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross_another.tres" id="another_ver"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_mkojr"]
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("2")
+another_made = true
 start_delay = 0.0
 shot_count = 50
 interval = 0.08
 loop = false
-bullet_count = 6
-spread_angle = 64.0
+bullet_count = 4
+spread_angle = 48.0
 aim_at_player = false
+angle_wave_amplitude = 10.0
+angle_wave_shots = 22
 bullet_speed = 520.0
-angle_wave_amplitude = 5.0
-angle_wave_shots = 20
