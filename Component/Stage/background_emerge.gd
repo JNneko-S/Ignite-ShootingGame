@@ -100,7 +100,7 @@ func _scramble() -> void:
 	_enemy.scale = _scale * 0.6
 	var dir := (target - pad).normalized()
 	_enemy.rotation = dir.angle() - PI / 2.0 # 機首(ふだんは下向き)を、飛んでいく向きへ
-	var flame := AfterburnerFlame.new()
+	var flame := EmergeFlame.new()
 	flame.root_offset = _tail_offset()
 	flame.amount = 0.8
 	_enemy.add_child(flame)

@@ -1,77 +1,61 @@
 [gd_resource type="Resource" script_class="StageData" format=3]
 
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="22_awoan"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/carrier_kai.tscn" id="23_b06xr"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="24_p56hy"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_up.tres" id="26_tol12"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_diag.tres" id="27_4a3vo"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_kai_boss.tscn" id="32_vix8p"]
-[ext_resource type="PackedScene" path="res://GameScene/Prop/ignite_target.tscn" id="45_vix8p"]
-[ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="Script" path="res://stage_event.gd" id="event_script"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/formation_kai.tscn" id="e_formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/gunship_kai.tscn" id="e_gunship"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_heavy_kai.tscn" id="e_heavy"]
-[ext_resource type="PackedScene" uid="uid://dcaufucsn0tn5" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_squad_kai.tscn" id="e_squad"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_small_kai.tscn" id="e_tank"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/turret_ground_kai.tscn" id="e_turret"]
-[ext_resource type="Resource" uid="uid://d30fgjov0kkm7" path="res://Resources/MovePatterns/Stage1/m1_boss_enter.tres" id="m_boss_enter"]
-[ext_resource type="Resource" uid="uid://bk5oq6gb6334b" path="res://Resources/MovePatterns/Stage1/m1_comb.tres" id="m_graze_lane"]
-[ext_resource type="Resource" uid="uid://dvorcwn7qs45n" path="res://Resources/MovePatterns/Stage1/m1_wall_hold.tres" id="m_wall_hold"]
-[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="phase_script"]
-[ext_resource type="Script" uid="uid://dt7u5fluwbohj" path="res://prop_event.gd" id="prop_script"]
-[ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll_script"]
-[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
-[ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
-[ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn_script"]
-[ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage1/m1_wall_hold.tres" id="m_wall_hold"]
+[ext_resource type="Script" path="res://boss_phase.gd" id="phase_script"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" path="res://stage_signal_event.gd" id="signal_script"]
+[ext_resource type="Script" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="Script" path="res://stage_data.gd" id="stage_script"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_aim_3way_kai.tres" id="s_aim_3way"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_aim_single_kai.tres" id="s_aim_single"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_graze_lane_kai.tres" id="s_graze_lane"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_ignite_wall_kai.tres" id="s_ignite_wall"]
-[ext_resource type="Resource" uid="uid://dinoq0tgh1iam" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
-[ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
-
+[ext_resource type="Script" path="res://wait_clear_event.gd" id="wait_script"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bomber_kai.tscn" id="x4_1"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_lane_right_kai.tscn" id="x4_5"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_lane_left_kai.tscn" id="x4_6"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_boss_enter.tres" id="x4_9"]
-[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="xb_m_strike"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="xb_m_hold"]
-[sub_resource type="Resource" id="gunship_1_r"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_gunship")
-power_drop_chance = 1.0
-offset = Vector2(130, 0)
-time = 11.05
-
-[sub_resource type="Resource" id="gunship_2_c"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_gunship")
-power_drop_chance = 1.0
-time = 24.65
-
-[sub_resource type="Resource" id="gunship_3_l"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_gunship")
-offset = Vector2(-130, 0)
-time = 36.55
-
-[sub_resource type="Resource" id="gunship_4_c"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_gunship")
-time = 62.9
-
-[sub_resource type="Resource" id="gunship_5_r"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_gunship")
-offset = Vector2(130, 0)
-time = 79.05
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="xb_m_strike"]
 
 [sub_resource type="Resource" id="a_open_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("x4_1")
 hp_override = 2500
 count = 3
+interval = 1.0
 offset = Vector2(-130, 0)
 offset_step = Vector2(130, 0)
-interval = 1.0
 time = 0.85
+
+[sub_resource type="Resource" id="g_down_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 3
+interval = 0.8
+offset = Vector2(-60, 0)
+offset_step = Vector2(60, 0)
+time = 1.0
+
+[sub_resource type="Resource" id="g_down_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 4
+interval = 0.0
+offset = Vector2(-120, 0)
+offset_step = Vector2(80, -40)
+time = 5.5
 
 [sub_resource type="Resource" id="a_open_2"]
 script = ExtResource("spawn_script")
@@ -84,6 +68,28 @@ offset = Vector2(0, 40)
 alternate_mirror = true
 time = 7.65
 
+[sub_resource type="Resource" id="g_down_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_heavy")
+interval = 0.0
+time = 10.0
+
+[sub_resource type="Resource" id="gunship_1_r"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+power_drop_chance = 1.0
+offset = Vector2(130, 0)
+time = 11.05
+
+[sub_resource type="Resource" id="g_down_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 4
+interval = 0.6
+offset = Vector2(-150, 0)
+offset_step = Vector2(100, 0)
+time = 12.0
+
 [sub_resource type="Resource" id="a_a_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -92,6 +98,24 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_ignite_wall")]
 hp_override = 3000
 power_drop_chance = 0.0
 time = 14.45
+
+[sub_resource type="Resource" id="g_down_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 4
+interval = 0.0
+offset = Vector2(120, 0)
+offset_step = Vector2(-80, -40)
+time = 16.5
+
+[sub_resource type="Resource" id="g_down_6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_tank")
+count = 4
+interval = 0.6
+offset = Vector2(150, 0)
+offset_step = Vector2(-100, 0)
+time = 20.5
 
 [sub_resource type="Resource" id="a_a_2"]
 script = ExtResource("spawn_script")
@@ -104,6 +128,21 @@ offset = Vector2(0, 40)
 alternate_mirror = true
 time = 20.82
 
+[sub_resource type="Resource" id="g_down_7"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_squad")
+count = 5
+interval = 0.0
+offset = Vector2(-160, 0)
+offset_step = Vector2(80, -30)
+time = 24.5
+
+[sub_resource type="Resource" id="gunship_2_c"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+power_drop_chance = 1.0
+time = 24.65
+
 [sub_resource type="Resource" id="a_a_3"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -114,6 +153,28 @@ interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
 time = 28.05
+
+[sub_resource type="Resource" id="g_lane_0"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_5")
+count = 4
+interval = 0.9
+offset = Vector2(-230, 0)
+time = 32.56
+
+[sub_resource type="Resource" id="g_lane_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_6")
+count = 4
+interval = 0.9
+offset = Vector2(230, 0)
+time = 35.11
+
+[sub_resource type="Resource" id="gunship_3_l"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+offset = Vector2(-130, 0)
+time = 36.55
 
 [sub_resource type="Resource" id="a_a_4"]
 script = ExtResource("spawn_script")
@@ -126,6 +187,22 @@ offset = Vector2(0, 40)
 alternate_mirror = true
 time = 38.25
 
+[sub_resource type="Resource" id="g_lane_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_5")
+count = 4
+interval = 0.9
+offset = Vector2(-230, 0)
+time = 38.71
+
+[sub_resource type="Resource" id="g_lane_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_6")
+count = 4
+interval = 0.9
+offset = Vector2(230, 0)
+time = 46.92
+
 [sub_resource type="Resource" id="a_b_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -136,6 +213,41 @@ interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
 time = 51.0
+
+[sub_resource type="Resource" id="g_lane_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_5")
+count = 4
+interval = 0.9
+offset = Vector2(-230, 0)
+time = 51.26
+
+[sub_resource type="Resource" id="g_lane_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_6")
+count = 4
+interval = 0.9
+offset = Vector2(230, 0)
+time = 55.61
+
+[sub_resource type="Resource" id="g_turret_l"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(-210, 0)
+time = 61.53
+
+[sub_resource type="Resource" id="g_turret_r"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_turret")
+interval = 0.0
+offset = Vector2(210, 0)
+time = 61.53
+
+[sub_resource type="Resource" id="gunship_4_c"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+time = 62.9
 
 [sub_resource type="Resource" id="a_b_2"]
 script = ExtResource("spawn_script")
@@ -148,6 +260,15 @@ offset = Vector2(0, 40)
 alternate_mirror = true
 time = 64.6
 
+[sub_resource type="Resource" id="a_bomber_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+count = 2
+interval = 1.2
+offset = Vector2(-90, 0)
+offset_step = Vector2(180, 0)
+time = 70.0
+
 [sub_resource type="Resource" id="a_b_3"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -158,6 +279,21 @@ interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
 time = 74.8
+
+[sub_resource type="Resource" id="gunship_5_r"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+offset = Vector2(130, 0)
+time = 79.05
+
+[sub_resource type="Resource" id="a_bomber_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+count = 3
+interval = 1.0
+offset = Vector2(130, 0)
+offset_step = Vector2(-130, 0)
+time = 84.0
 
 [sub_resource type="Resource" id="a_b_4"]
 script = ExtResource("spawn_script")
@@ -181,159 +317,6 @@ offset = Vector2(0, 40)
 alternate_mirror = true
 time = 97.75
 
-[sub_resource type="Resource" id="g_down_1"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_tank")
-count = 3
-interval = 0.8
-offset = Vector2(-60, 0)
-offset_step = Vector2(60, 0)
-time = 1.0
-
-[sub_resource type="Resource" id="g_down_2"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_squad")
-count = 4
-interval = 0.0
-offset = Vector2(-120, 0)
-offset_step = Vector2(80, -40)
-time = 5.5
-
-[sub_resource type="Resource" id="g_down_3"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_heavy")
-count = 1
-interval = 0.0
-offset = Vector2(0, 0)
-offset_step = Vector2(0, 0)
-time = 10.0
-
-[sub_resource type="Resource" id="g_down_4"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_tank")
-count = 4
-interval = 0.6
-offset = Vector2(-150, 0)
-offset_step = Vector2(100, 0)
-time = 12.0
-
-[sub_resource type="Resource" id="g_down_5"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_squad")
-count = 4
-interval = 0.0
-offset = Vector2(120, 0)
-offset_step = Vector2(-80, -40)
-time = 16.5
-
-[sub_resource type="Resource" id="g_down_6"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_tank")
-count = 4
-interval = 0.6
-offset = Vector2(150, 0)
-offset_step = Vector2(-100, 0)
-time = 20.5
-
-[sub_resource type="Resource" id="g_down_7"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_squad")
-count = 5
-interval = 0.0
-offset = Vector2(-160, 0)
-offset_step = Vector2(80, -30)
-time = 24.5
-
-[sub_resource type="Resource" id="g_lane_0"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_5")
-count = 4
-interval = 0.9
-offset = Vector2(-230, 0)
-offset_step = Vector2(0, 0)
-time = 32.56
-
-[sub_resource type="Resource" id="g_lane_1"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_6")
-count = 4
-interval = 0.9
-offset = Vector2(230, 0)
-offset_step = Vector2(0, 0)
-time = 35.11
-
-[sub_resource type="Resource" id="g_lane_2"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_5")
-count = 4
-interval = 0.9
-offset = Vector2(-230, 0)
-offset_step = Vector2(0, 0)
-time = 38.71
-
-[sub_resource type="Resource" id="g_lane_3"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_6")
-count = 4
-interval = 0.9
-offset = Vector2(230, 0)
-offset_step = Vector2(0, 0)
-time = 46.92
-
-[sub_resource type="Resource" id="g_lane_4"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_5")
-count = 4
-interval = 0.9
-offset = Vector2(-230, 0)
-offset_step = Vector2(0, 0)
-time = 51.26
-
-[sub_resource type="Resource" id="g_lane_5"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_6")
-count = 4
-interval = 0.9
-offset = Vector2(230, 0)
-offset_step = Vector2(0, 0)
-time = 55.61
-
-[sub_resource type="Resource" id="g_turret_l"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_turret")
-count = 1
-interval = 0.0
-offset = Vector2(-210, 0)
-offset_step = Vector2(0, 0)
-time = 61.53
-
-[sub_resource type="Resource" id="g_turret_r"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("e_turret")
-count = 1
-interval = 0.0
-offset = Vector2(210, 0)
-offset_step = Vector2(0, 0)
-time = 61.53
-
-[sub_resource type="Resource" id="a_bomber_2"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_1")
-count = 2
-interval = 1.2
-offset = Vector2(-90, 0)
-offset_step = Vector2(180, 0)
-time = 70.0
-
-[sub_resource type="Resource" id="a_bomber_3"]
-script = ExtResource("spawn_script")
-enemy_scene = ExtResource("x4_1")
-count = 3
-interval = 1.0
-offset = Vector2(130, 0)
-offset_step = Vector2(-130, 0)
-time = 84.0
-
 [sub_resource type="Resource" id="s4_warning"]
 script = ExtResource("signal_script")
 signal_name = "warning"
@@ -343,10 +326,10 @@ time = 102.0
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("32_vix8p")
 move_pattern = ExtResource("x4_9")
+tag = "boss1"
 is_boss = true
 boss_name = "改 タンク"
 boss_phase_thresholds = Array[float]([0.66, 0.33])
-tag = "boss1"
 time = 105.0
 
 [sub_resource type="Resource" id="s4_wait_boss"]
@@ -363,27 +346,53 @@ time = 106.1
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
 move_pattern = ExtResource("xb_m_strike")
+hp_override = 80
 count = 6
 interval = 0.22
 offset = Vector2(-150, 0)
 offset_step = Vector2(60, 6)
 emerge = 3
 emerge_time = 0.95
-hp_override = 80
 time = 110.7
+
+[sub_resource type="Resource" id="Resource_ykof6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("22_awoan")
+count = 3
+interval = 0.0
+offset = Vector2(-120, 0)
+offset_step = Vector2(120, 0)
+time = 111.8
+
+[sub_resource type="Resource" id="Resource_6mecu"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("23_b06xr")
+interval = 0.0
+offset = Vector2(-90, 0)
+time = 112.5
 
 [sub_resource type="Resource" id="xb_s2"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
 move_pattern = ExtResource("xb_m_strike")
+hp_override = 80
 count = 6
 interval = 0.22
 offset = Vector2(150, 20)
 offset_step = Vector2(-60, 6)
 emerge = 3
 emerge_time = 0.95
-hp_override = 80
 time = 112.9
+
+[sub_resource type="Resource" id="Resource_2e3lj"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("24_p56hy")
+count = 3
+interval = 0.35
+offset_step = Vector2(0, 75)
+time = 113.8
 
 [sub_resource type="Resource" id="xb_g1"]
 script = ExtResource("spawn_script")
@@ -397,50 +406,112 @@ emerge = 3
 emerge_time = 1.3
 time = 114.3
 
+[sub_resource type="Resource" id="Resource_gr15q"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("26_tol12")
+count = 3
+interval = 0.0
+offset = Vector2(-150, 0)
+offset_step = Vector2(150, 0)
+time = 115.6
+
 [sub_resource type="Resource" id="xb_s3"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
 move_pattern = ExtResource("xb_m_strike")
+hp_override = 80
 count = 8
 interval = 0.16
 offset = Vector2(-30, 0)
 offset_step = Vector2(20, 4)
+alternate_mirror = true
 emerge = 3
 emerge_time = 0.85
-hp_override = 80
-alternate_mirror = true
 time = 116.7
 
-[sub_resource type="Resource" id="xb_b1"]
+[sub_resource type="Resource" id="Resource_qytox"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("x4_1")
-move_pattern = ExtResource("xb_m_hold")
-count = 2
-interval = 0.6
-offset = Vector2(-100, 0)
-offset_step = Vector2(200, 0)
-emerge = 3
-emerge_time = 1.5
+move_pattern = ExtResource("24_p56hy")
+count = 3
+interval = 0.35
+offset = Vector2(0, 40)
+offset_step = Vector2(0, 75)
+mirror_x = true
+time = 117.4
+
+[sub_resource type="Resource" id="Resource_mmh37"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("27_4a3vo")
+count = 3
+interval = 0.4
 time = 118.7
+
+[sub_resource type="Resource" id="Resource_un0oc"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("23_b06xr")
+interval = 0.0
+offset = Vector2(90, 0)
+time = 119.5
+
+[sub_resource type="Resource" id="Resource_hxx2c"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("22_awoan")
+count = 4
+interval = 0.0
+offset = Vector2(-180, 0)
+offset_step = Vector2(120, 0)
+time = 120.4
 
 [sub_resource type="Resource" id="xb_s4"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
 move_pattern = ExtResource("xb_m_strike")
+hp_override = 80
 count = 10
 interval = 0.13
 offset = Vector2(-160, 0)
 offset_step = Vector2(35, 3)
+alternate_mirror = true
 emerge = 3
 emerge_time = 0.8
-hp_override = 80
-alternate_mirror = true
 time = 121.2
+
+[sub_resource type="Resource" id="Resource_yo6tb"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("27_4a3vo")
+count = 3
+interval = 0.4
+mirror_x = true
+time = 122.6
+
+[sub_resource type="Resource" id="Resource_awcls"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("26_tol12")
+count = 4
+interval = 0.0
+offset = Vector2(-180, 0)
+offset_step = Vector2(120, 0)
+time = 123.8
+
+[sub_resource type="Resource" id="Resource_kc4qh"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("x4_1")
+move_pattern = ExtResource("24_p56hy")
+count = 4
+offset_step = Vector2(0, 70)
+mirror_x = true
+time = 125.2
 
 [resource]
 script = ExtResource("stage_script")
 stage_name = "Stage 4 ヌクレオ"
-events = Array[ExtResource("event_script")]([SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("a_open_1"), SubResource("a_open_2"), SubResource("a_a_1"), SubResource("a_a_2"), SubResource("a_a_3"), SubResource("a_a_4"), SubResource("a_b_1"), SubResource("a_b_2"), SubResource("a_b_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("g_down_3"), SubResource("g_down_4"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("g_down_7"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("a_bomber_2"), SubResource("a_bomber_3"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("xb_s2"), SubResource("xb_g1"), SubResource("xb_s3"), SubResource("xb_b1"), SubResource("xb_s4")])
+events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh")])
 difficulty_step = 1
 another_force_black = true
 small_bullet_hitbox_hard = true

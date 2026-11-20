@@ -1,30 +1,26 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bqs4fp86d5e74"]
 
+[ext_resource type="Resource" uid="uid://bjyktehc6yed8" path="res://Resources/ShotPatterns/Another/a1_spiral_storm_black.tres" id="black_ver"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_spiral_storm_black.tres" id="black_ver"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="b_curve"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("step")
 duration = 2.778
-turn_mode = 0
-turn_angle = 0.0
 change_speed = false
-speed_trans = 1
-speed_ease = 1
 angular_velocity = 25.0
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_curve")
-another_made = true
 black_version = ExtResource("black_ver")
-soften_others = 2.5
+another_made = true
 start_delay = 0.4
 shot_count = 70
 interval = 0.06
 pause = 1.69
+soften_others = 2.5
 bullet_count = 7
 spread_angle = 360.0
 aim_at_player = false

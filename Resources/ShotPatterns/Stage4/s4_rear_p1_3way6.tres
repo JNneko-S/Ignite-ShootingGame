@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="1_hckij"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_ip7nm"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="3_jkg30"]
+
+[resource]
+script = ExtResource("3_jkg30")
+bullet_scene = ExtResource("1_hckij")
+start_delay = 0.3
+shot_count = 6
+interval = 0.07
+pause = 0.55
+bullet_count = 3
+spread_angle = 26.0
+aim_once_per_burst = true
+bullet_speed = 220.0

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Hazard/hazard_carrier.tscn" id="base"]
+
+[node name="CarrierKai" unique_id=1850000101 instance=ExtResource("base")]
+
+[node name="BoostDrop" parent="." unique_id=1850000102]
+enabled = false
+
+[node name="ItemDrop" parent="." unique_id=301000003]
+chance = 0.0

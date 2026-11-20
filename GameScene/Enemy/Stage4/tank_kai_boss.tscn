@@ -47,6 +47,9 @@
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_vulcan.tres" id="r_vulcan"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_3way3.tres" id="r_3way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_p1_3way6.tres" id="r_p1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_p2_knife.tres" id="r_p2"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_p3_split.tres" id="r_p3"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(200, 230)
@@ -72,6 +75,18 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("k_firework"), ExtReso
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_rampage"), ExtResource("t_diamond"), ExtResource("a_bloom"), ExtResource("t_diamond"), ExtResource("a_storm"), ExtResource("a_yfork"), ExtResource("t_scatter")])
+
+[sub_resource type="Resource" id="rear_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_p1")])
+
+[sub_resource type="Resource" id="rear_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_p2")])
+
+[sub_resource type="Resource" id="rear_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_p3")])
 
 [sub_resource type="Resource" id="boss_phase_1"]
 script = ExtResource("boss_phase")
@@ -173,10 +188,10 @@ turn_speed = 220.0
 position = Vector2(0, 4)
 
 [node name="RearShooterL" parent="." instance=ExtResource("shooter_scene")]
-sequence = Array[ExtResource("shot_script")]([ExtResource("r_vulcan"), ExtResource("r_3way")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("rear_p1"), SubResource("rear_p2"), SubResource("rear_p3")])
 
 [node name="RearShooterR" parent="." instance=ExtResource("shooter_scene")]
-sequence = Array[ExtResource("shot_script")]([ExtResource("r_3way"), ExtResource("r_vulcan")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("rear_p1"), SubResource("rear_p2"), SubResource("rear_p3")])
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("phase_controller")

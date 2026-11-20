@@ -1,5 +1,5 @@
 extends Node2D
-class_name AfterburnerFlame
+class_name EmergeFlame
 ## 敵の後ろに出す、アフターバーナーの炎(コードで描く)。BackgroundEmerge の「発進」で使う。
 ## 炎は、親から見て -y の向き(機首の反対)へ伸びる。amount(0〜1)で長さと明るさが変わる
 
