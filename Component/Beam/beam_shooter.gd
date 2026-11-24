@@ -84,6 +84,18 @@ func start_beam() -> void:
 	_serial += 1
 	await _fire_once(_serial)
 
+## ボスが雑魚を呼んでいるあいだなど、外から黙らせる(true)・撃つのに戻す(false。Autostart なら、くり返しを始め直す)
+func set_silenced(on : bool) -> void:
+	if on == _silenced:
+		return
+	_silenced = on
+	if on:
+		stop_beam()
+	elif autostart and is_inside_tree():
+		_loop()
+
+var _silenced : bool = false
+
 ## 撃つのをやめる
 func stop_beam() -> void:
 	_serial += 1
@@ -110,7 +122,7 @@ func _fire_once(serial : int) -> void:
 	queue_redraw()
 
 func _can_fire() -> bool:
-	if _part_destroyed():
+	if _silenced or _part_destroyed():
 		return false
 	var enemy := _owner_enemy()
 	if enemy and enemy.hp_component.hp <= 0:

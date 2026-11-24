@@ -137,6 +137,11 @@ func _quake() -> void:
 func _escape() -> void:
 	var tree := get_tree()
 	EnemyShooter.release_fire() # 追ってくる敵は撃ってくる
+	# 脱出のあいだは、イグナイトを思いきり使えるように、ゲージを最大にする
+	var gm := tree.current_scene as GameManager
+	if gm and gm.ignite:
+		gm.ignite.value = gm.ignite.max_value()
+		gm.ignite._update(true)
 	var scroller := tree.get_first_node_in_group("background_scroller") as BackgroundScroller
 	var back : Tween = scroller.run_back(escape_time) if scroller else null
 	# 追ってくる敵(後ろ = 画面の上から)
@@ -248,6 +253,13 @@ func _pickup() -> void:
 	fade_white.tween_property(white, "color:a", 1.0, 2.0)
 	await fade_white.finished
 	await tree.create_timer(1.0, false).timeout
+	# ノーコンティニューの一周目なら、二周目(Another Round)へ: 自機と点数を覚えて、タイトルで合図を見せてから一面へ
+	if RunConfig.can_enter_second_loop():
+		StageCarry.save(tree)
+		RunConfig.loop = 2
+		if HazardRank.active:
+			HazardRank.start_black_loop() # ANOTHER の二周目は BLACK ANOTHER
+		TitleScreen.another_round_pending = true
 	SceneSwitcher.change(title_scene, 1.0)
 
 ## Bエンド: 回収されようとした瞬間に、変化が起きる。

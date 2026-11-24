@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 1.0
+shot_count = 10
+interval = 0.075
+pause = 0.7
+yields = true
+bullet_count = 2
+aim_at_player = false
+base_angle = 52.0
+random_angle = 32.0
+random_speed_ratio = 0.35
+random_seed = 17
+bullet_speed = 118.0

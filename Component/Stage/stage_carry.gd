@@ -9,6 +9,8 @@ static var pending : bool = false
 static var arriving : bool = false
 ## 霧の中を飛んでいた自機の高さ(画面の上 = 0、下 = 1)
 static var cruise_height : float = 0.6
+## 前のステージから、雲を抜けて降りてきたか(StageTransition の Through Clouds)。霧の代わりに雲の中から始める
+static var through_clouds : bool = false
 
 static var score : int = 0
 static var next_extend : int = 0

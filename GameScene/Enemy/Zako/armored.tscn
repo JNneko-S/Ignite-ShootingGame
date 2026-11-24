@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 [ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
 [ext_resource type="Script" path="res://Component/Motion/motion_tilt.gd" id="motion_tilt"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_zako_counter.tres" id="ex_ex_n_zako_counter"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(30, 30)
@@ -37,7 +38,7 @@ max_hp = 300
 hp = 300
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
-patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0"), ExtResource("ex_ex_n_zako_counter")])
 
 [node name="ItemDrop" parent="." unique_id=301000003]
 item_scene = ExtResource("drop")

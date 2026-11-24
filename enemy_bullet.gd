@@ -174,6 +174,9 @@ static func _emit_sequence(parent : Node, pattern : ShotPattern, aim : float, at
 func _split() -> void:
 	_split_in = -1.0
 	var parent := get_parent()
+	if _split_pattern.split_vanish or _split_pattern.split_pattern == null:
+		vanish(0.0) # 割れずに光って消える(巨大弾に吸い込まれる弾など)
+		return
 	var child := _split_pattern.split_pattern
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var aim := (player.global_position - global_position).angle() if player else Vector2.DOWN.angle()

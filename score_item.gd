@@ -3,7 +3,7 @@ class_name ScoreItem
 ## スコアアイテム。シーン(GameScene/Item/score_item.tscn)で使う。
 ## 敵を倒したとき・弾を焼いたとき・背景のオブジェクトを壊したときに出る。
 ##
-## 動き: その場で少し弾けたあと、下へ落ちていく。自機が触れるか、近くを通ると吸い寄せられて拾える。
+## 動き: いったん上へ跳ね上がり、てっぺんで止まってから、下へ落ちていく。自機が触れるか、近くを通ると吸い寄せられて拾える。
 ##       イグナイトの発動中は、焼いた弾の数だけ吸い寄せの範囲が広がる。
 ##       イグナイトを発動した瞬間に出ているアイテムは、距離に関係なく全部吸い寄せられる(1回だけ)。
 ##       画面の下へ落としてしまうと missed が出る(ScoreSystem はアイテムの連続取得を途切れさせる)。
@@ -32,8 +32,10 @@ enum Kind { SMALL, MEDIUM, LARGE, MEDAL }
 @export var draw_z : int = 3
 
 @export_group("落ちる")
-## 出た瞬間に弾ける速さ(px/秒)。上向きに弾けてから落ちる
-@export var pop_speed : float = 110.0
+## 出た瞬間に跳ね上がる速さ(px/秒)。必ず上向きに跳ね上がり、てっぺんで止まってから落ちてくる
+@export var pop_speed : float = 175.0
+## 跳ね上がる向きの、真上からの最大のずれ(度)。広がり(spread)が大きいほど、このずれに近づく
+@export var pop_max_angle : float = 32.0
 ## 重力(px/秒²)と、落ちる速さの上限(px/秒)
 @export var gravity : float = 260.0
 @export var fall_speed : float = 110.0
@@ -79,8 +81,9 @@ var _hold_left : float = 0.0
 func setup(player : Player, points : int, spread : float = 1.0) -> void:
 	_player = player
 	value = points
-	var angle := -PI / 2.0 + randf_range(-1.0, 1.0) * 1.1 * spread
-	_velocity = Vector2.from_angle(angle) * pop_speed * randf_range(0.6, 1.0) * maxf(spread, 0.4)
+	# いったん上へ跳ね上がってから、落ちてくる(広がりが大きくても、横や下へは飛ばさない)
+	var angle := -PI / 2.0 + deg_to_rad(randf_range(-1.0, 1.0) * pop_max_angle * clampf(spread, 0.3, 1.0))
+	_velocity = Vector2.from_angle(angle) * pop_speed * randf_range(0.8, 1.05) * clampf(spread, 0.75, 1.15)
 
 func _ready() -> void:
 	z_as_relative = false

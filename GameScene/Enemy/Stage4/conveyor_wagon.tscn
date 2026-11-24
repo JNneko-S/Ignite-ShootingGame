@@ -1,0 +1,61 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Script" path="res://Component/Ground/ground_unit.gd" id="ground"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Wagon/w_wagon_fan.tres" id="pat0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/Enemies/Wagon_Base.png" id="base_tex"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/Enemies/Wagon_Turret_Strip6.png" id="turret_tex"]
+
+[sub_resource type="RectangleShape2D" id="hurt_shape"]
+size = Vector2(30, 48)
+
+[node name="ConveyorWagon" instance=ExtResource("base")]
+modulate = Color(1, 0.82, 0.8, 1)
+scale = Vector2(1.7, 1.7)
+pattern = null
+
+[node name="Sprite2D" parent="." index="0"]
+z_index = 0
+texture_filter = 1
+texture = ExtResource("base_tex")
+hframes = 1
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(0, 0)
+shape = SubResource("hurt_shape")
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 260
+hp = 260
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+z_index = 0
+position = Vector2(0, 12)
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+
+[node name="DeathExplosion" parent="." index="6"]
+explosion_scale = 2.0
+
+[node name="ScoreReward" parent="." index="8"]
+score_value = 600
+
+[node name="Turret" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, 2)
+texture = ExtResource("turret_tex")
+hframes = 4
+
+[node name="TextureCycle" type="Node" parent="Turret"]
+script = ExtResource("cycle")
+fps = 8.0
+
+[node name="GroundUnit" type="Node" parent="."]
+script = ExtResource("ground")
+drive_speed = 42.0
+avoid_obstacles = false
+keep_off_roof = false
+hide_under_roof = false
+check_drive_path = false
+cease_fire_below = 0.75

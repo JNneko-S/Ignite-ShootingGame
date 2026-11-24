@@ -31,6 +31,14 @@ enum TimingUnit {
 ## この難易度より下では撃たない(0 = EASY から撃つ、1 = NORMAL から、2 = HARD だけ)。
 ## 弾幕(.tres)ごとの設定なので、同じ弾幕を使う、全ての敵で消える
 @export_range(0, 2) var min_difficulty : int = 0
+## この難易度より上では撃たない(0 = EASY だけ、1 = NORMAL まで、2 = HARD まで、3 = ANOTHER でも撃つ)。
+## 3 より小さくすると「限定弾幕」になり、Min Difficulty と合わせて、プレイヤーが選んだ難易度で決める
+## (最終面のように、弾幕だけ一段上の難易度として扱うステージでも、選んだ難易度のまま)。
+## 例) Min 1・Max 1 なら NORMAL を選んだときだけ撃つ。ANOTHER では、限定弾幕は撃たない
+@export_range(0, 3) var max_difficulty : int = 3
+## オンなら、この限定弾幕を撃つ難易度では、同じ砲口の「同時に撃つ弾幕(Patterns)」のほかの弾幕を撃たず、この弾幕に差し替える
+## (雑魚の弾幕を、難易度ごとに別物にするとき)
+@export var replaces_others : bool = false
 ## オンなら、NORMAL・EASY でも、数や速さを自動で調整しない(EASY 用に作った弾幕など)
 @export var skip_auto_tuning : bool = false
 ## NORMAL のときは、この弾幕の代わりに、こちらを撃つ(自動の調整はしない)。
@@ -120,6 +128,27 @@ enum TimingUnit {
 ## 2way の弾を、左の弾は左へ、右の弾は右へ(または内側へ)曲げたいときに使う
 @export var mirror_curve_by_side : bool = false
 
+@export_group("いくつもの砲口から(合体攻撃)")
+## 空でなければ、砲口の代わりに、砲口からこれだけずらした位置(px。左右反転した敵なら左右も反転)の全部から、同じ弾幕を同時に撃つ。
+## 主砲と副砲を合わせた攻撃を、1つの弾幕で撃つのに使う(撃つ時間が必ずそろう)。砲口そのものからも撃つなら (0, 0) を入れる。
+## 自機を狙う弾幕(Aim At Player)は、それぞれの位置から自機を狙う
+@export var muzzle_offsets : Array[Vector2] = []
+## オンなら、自機ではなく、砲口から Aim Point だけずれた1点へ向けて撃つ(ほかの砲口から撃つ弾を、1点へ集める)
+@export var aim_at_point : bool = false
+@export var aim_point : Vector2 = Vector2(0, 80)
+## 0 より大きく、Aim At Point がオンなら、弾はこの秒数でちょうど Aim Point に着いて止まるように、速さと減速が決まる
+## (Bullet Speed・Bullet Accel の代わり。Motion は使わない)。止まった弾は、Split で割らせるとよい
+@export var arrive_time : float = 0.0
+
+@export_group("形(多角形・花)")
+## 3 以上なら、輪(Spread Angle 360)を、この数の辺の多角形に広げる(角の弾ほど速くして、辺がまっすぐ並ぶ)
+@export var polygon_sides : int = 0
+## 多角形の向き(度)。0 なら、角が真下(撃つ向き)に来る
+@export var polygon_phase : float = 0.0
+## 1 以上なら、輪を、この数の花びらの花の形に広げる(花びらの先の弾ほど速い)。Petal Depth が花びらの深さ(0〜1)
+@export var petal_count : int = 0
+@export_range(0.0, 0.95, 0.05) var petal_depth : float = 0.4
+
 @export_group("隙間")
 ## 0 より大きければ、並んだ弾(扇・平行の列)のうち、この数だけ続けて抜いて、くぐれる隙間を開ける
 @export var gap_size : int = 0
@@ -176,6 +205,8 @@ enum TimingUnit {
 ## 加速度(px/秒²)。マイナスで減速(止まったらそこで止まる)。Motion を使うときは無視される
 @export var bullet_accel : float = 0.0
 @export var damage : float = 1.0
+## 弾の大きさの倍率(当たり判定も一緒に大きくなる)。2 以上で巨大弾。割れたあとの弾には掛からない
+@export var bullet_scale : float = 1.0
 
 @export_group("弾の動き")
 ## 撃ったあとの動きを、区間ごとに並べる(速度のイージング、向きの変更、曲がり)。
@@ -198,3 +229,6 @@ enum TimingUnit {
 ## 割れたあとが「2発・180度」なら、縦に動く敵が置いた弾は横に、横に動く敵が置いた弾は縦に割れる。
 ## 撃ったときに敵が止まっていたら、Split Follow Direction の決まりに戻る
 @export var split_across_motion : bool = false
+## オンなら、Split Time で割れずに、光って消える(Split Pattern はなくてよい)。
+## 1点に集めた弾が、巨大弾に吸い込まれて消えるように見せるのに使う
+@export var split_vanish : bool = false

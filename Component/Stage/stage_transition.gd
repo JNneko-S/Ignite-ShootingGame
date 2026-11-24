@@ -1,5 +1,7 @@
 extends Node
 class_name StageTransition
+## (新しく足したクラスは、エディタがクラス名を覚える前でも動くように、ファイルを直接読み込んで使う)
+const _CloudOverlay := preload("res://Component/Stage/cloud_overlay.gd")
 ## ステージとステージをつなぐ部品。ステージのシーンに置く。
 ##
 ## このステージをクリアしたとき(Next Stage を設定してあれば):
@@ -16,6 +18,9 @@ class_name StageTransition
 
 ## 次のステージのシーン。空なら、クリアしても次へは移らない
 @export_file("*.tscn") var next_stage : String = ""
+## 次のステージへ、霧ではなく雲を抜けて降りていく(雲の切れ間から、次のステージの地上が見えてくる)。
+## 出ていくステージで設定する。入ってくるステージは、前のステージがどちらだったかを StageCarry から知る
+@export var through_clouds : bool = false
 ## クリアしてから霧が出始めるまでの時間(秒。クリアのボーナス表示のあいだ)
 @export var clear_wait : float = 4.0
 ## クリアのボーナス表示は、この秒数たったら、ショットで先へ進める(待たされないように)
@@ -48,7 +53,8 @@ class_name StageTransition
 ## 霧のあいだに曲を消す時間(秒)
 @export var music_fade_time : float = 2.0
 
-var _fog : FogOverlay
+## 霧(FogOverlay)か、雲(CloudOverlay)。どちらも descend_to / descend / cover / dissolve で動かす
+var _fog
 
 func _ready() -> void:
 	_arrive.call_deferred()
@@ -80,7 +86,7 @@ func _on_stage_cleared() -> void:
 		glide.tween_property(player, "global_position", cruise, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_fade_music()
 	# 霧が画面の上のほうまで降りてきて、速さが上がっていく
-	_fog = _make_fog()
+	_fog = _make_fog(through_clouds)
 	var streaks := _make_streaks()
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	if runner:
@@ -105,7 +111,10 @@ func _on_stage_cleared() -> void:
 			camera.shake(4.0, 0.25)
 	await _fog.descend(fog_in_time * 0.6)
 	await get_tree().create_timer(fog_hold_time, false).timeout
+	if through_clouds:
+		_CloudOverlay.remember_colors(get_tree())
 	StageCarry.save(get_tree())
+	StageCarry.through_clouds = through_clouds
 	StageCarry.arriving = true
 	StageCarry.cruise_height = dash_height
 	SceneSwitcher.change(next_stage) # つなぎ目なく(霧の画面のまま)次のステージへ
@@ -124,8 +133,9 @@ func _arrive() -> void:
 		_lock_player(player)
 		_hide_in_fog(player) # 霧の中に隠れている
 		player.global_position = Vector2(view.get_center().x, view.position.y + view.size.y * StageCarry.cruise_height)
-	_fog = _make_fog()
+	_fog = _make_fog(StageCarry.through_clouds)
 	_fog.cover()
+	StageCarry.through_clouds = false
 	var streaks := _make_streaks()
 	streaks.amount = 1.0
 	await get_tree().process_frame # ScoreSystem などの準備(call_deferred)が終わってから
@@ -163,8 +173,8 @@ func _wait_or_skip(seconds : float, skip_after : float) -> void:
 		if t >= skip_after and InputMap.has_action(skip_action) and Input.is_action_just_pressed(skip_action):
 			return
 
-func _make_fog() -> FogOverlay:
-	var fog := FogOverlay.new()
+func _make_fog(clouds : bool = false) -> Node2D:
+	var fog : Node2D = _CloudOverlay.new() if clouds else FogOverlay.new()
 	get_tree().current_scene.add_child(fog)
 	return fog
 

@@ -18,6 +18,16 @@ class_name DifficultyTuning
 enum { EASY, NORMAL, HARD }
 
 static var level : int = HARD
+## プレイヤーが選んだ難易度(EASY / NORMAL / HARD)。弾幕だけ一段上に扱うステージ(最終面)でも変わらない。
+## 限定弾幕(ShotPattern の Max Difficulty が 3 より小さい弾幕)を撃つかどうかは、こちらで決める
+static var chosen_level : int = HARD
+## HARD を選んで、弾幕を一段上に扱うステージ(最終面)に来たときと、二周目で HARD の弾幕を撃つとき、true(GameManager が決める)。
+## NORMAL も HARD の弾幕になるので、HARD はさらに撃つ間を詰めて速くし、NORMAL との差を残す
+static var hard_plus : bool = false
+const HARD_PLUS_RATE := 1.18
+## 雑魚の撃つ間の倍率(ステージの Zako Fire Interval Scale。1 ならそのまま。GameManager が入れる)
+static var zako_interval_scale : float = 1.0
+const HARD_PLUS_SPEED := 1.06
 
 ## 同時に撃つ弾幕の数の上限(EASY, NORMAL, HARD の順。0 なら上限なし)
 const MAX_LAYERS : Array[int] = [1, 2, 0]
@@ -30,6 +40,17 @@ static var _cache : Dictionary = {}
 
 ## 同時に撃つ弾幕のうち、この難易度で撃つもの(前から上限の数まで)
 static func layers(list : Array[ShotPattern]) -> Array[ShotPattern]:
+	# 限定弾幕: この難易度で撃たない限定弾幕は、枠を使わない。撃つ限定弾幕が「差し替え」(Replaces Others)なら、それだけを撃つ
+	var replacing : Array[ShotPattern] = []
+	var kept : Array[ShotPattern] = []
+	for p in list:
+		if p and p.max_difficulty < 3:
+			if not allows(p):
+				continue
+			if p.replaces_others:
+				replacing.append(p)
+		kept.append(p)
+	list = replacing if not replacing.is_empty() else kept
 	var cap : int = MAX_LAYERS[clampi(level, 0, MAX_LAYERS.size() - 1)]
 	if cap <= 0 or list.size() <= cap:
 		return list
@@ -40,7 +61,17 @@ static func is_easy() -> bool:
 
 ## この難易度で、pattern を撃つか(Min Difficulty より下なら撃たない)
 static func allows(pattern : ShotPattern) -> bool:
-	return pattern != null and level >= pattern.min_difficulty
+	if pattern == null:
+		return false
+	if pattern.max_difficulty < 3:
+		# 限定弾幕: 選んだ難易度が Min 〜 Max のときだけ撃つ(ANOTHER は 3 として扱うので撃たない)
+		var c := chosen()
+		return c >= pattern.min_difficulty and c <= pattern.max_difficulty
+	return level >= pattern.min_difficulty
+
+## 選んだ難易度(ANOTHER なら 3)
+static func chosen() -> int:
+	return 3 if HazardRank.active else chosen_level
 
 ## この難易度用に調整した pattern(HARD や、調整しない弾幕なら、そのまま)
 ## zako: 雑魚の弾か(EASY で、さらに遅くする)
@@ -49,7 +80,31 @@ static func tune(pattern : ShotPattern, zako : bool = false) -> ShotPattern:
 		return pattern
 	if HazardRank.active:
 		return _tune_another(pattern, zako)
+	if zako and zako_interval_scale != 1.0:
+		# 道中の弾が多いステージ: 雑魚の撃つ間をのばしてから、難易度の調整をする
+		var key := "Z:%d:%d:%.2f:%d" % [pattern.get_instance_id(), level, zako_interval_scale, int(hard_plus)]
+		if not _cache.has(key):
+			var slow := pattern.duplicate(false) as ShotPattern
+			slow.interval *= zako_interval_scale
+			slow.pause *= zako_interval_scale
+			slow.start_delay *= zako_interval_scale
+			var tuned := _tune_level(slow, zako)
+			if tuned == slow or tuned.resource_path == "":
+				tuned.set_meta("difficulty_tuned", level) # 共有の .tres(Normal Version など)には印を付けない
+			_cache[key] = tuned
+		return _cache[key]
+	return _tune_level(pattern, zako)
+
+## 難易度(EASY / NORMAL / HARD)の調整だけをする
+static func _tune_level(pattern : ShotPattern, zako : bool) -> ShotPattern:
 	if level >= HARD:
+		if hard_plus and not pattern.skip_auto_tuning:
+			var key := "H+:%d:%d" % [pattern.get_instance_id(), int(zako)]
+			if not _cache.has(key):
+				var p := _scale_pattern(pattern, HARD_PLUS_RATE, HARD_PLUS_SPEED)
+				p.set_meta("difficulty_tuned", HARD)
+				_cache[key] = p
+			return _cache[key]
 		return pattern
 	# 手で作った、難易度ごとの弾幕があれば、それを使う
 	if level == NORMAL and pattern.normal_version:

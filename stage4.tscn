@@ -11,7 +11,9 @@
 [ext_resource type="Script" path="res://Component/Stage/breach_sequence.gd" id="breach"]
 [ext_resource type="Script" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
 [ext_resource type="Script" path="res://Component/Stage/ending_sequence.gd" id="ending"]
+[ext_resource type="Script" path="res://Component/Stage/nucleo_ambience.gd" id="ambience"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_final"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss4"]
 
 [node name="Stage4" instance=ExtResource("base")]
@@ -81,9 +83,14 @@ fps = 6.0
 stage_music = ExtResource("music_stage4")
 boss_music = ExtResource("music_boss4")
 resume_after_midboss = true
+boss_music_by_name = Dictionary[String, AudioStream]({
+"最終兵器 ヌクレオ": ExtResource("music_final")
+})
 
 [node name="StageTransition" type="Node" parent="."]
 script = ExtResource("stage_transition")
+dissolve_time = 4.5
+arrive_hold_time = 0.8
 
 [node name="BreachSequence" type="Node" parent="." node_paths=PackedStringArray("scroller")]
 script = ExtResource("breach")
@@ -92,5 +99,12 @@ next_arrive_time = 212.5
 
 [node name="EndingSequence" type="Node" parent="."]
 script = ExtResource("ending")
+
+[node name="BackgroundSway" parent="." node_paths=PackedStringArray("targets")]
+targets = [NodePath("../Scroller/Sprite2D3"), NodePath("../Scroller/Sprite2D2"), NodePath("../Scroller/LoopThisAtTheEnd"), NodePath("../Scroller/NucleoLayer0"), NodePath("../Scroller/NucleoLayer1"), NodePath("../Scroller/NucleoLayer2")]
+depth_scales = Array[float]([0.7, 1.0, 0.7, 0.7, 0.7, 0.7])
+
+[node name="NucleoAmbience" type="Node2D" parent="."]
+script = ExtResource("ambience")
 
 [editable path="UI/ScoreUI"]

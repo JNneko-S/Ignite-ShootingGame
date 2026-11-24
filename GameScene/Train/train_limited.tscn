@@ -90,6 +90,9 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_shotgun_accel.tres" id="an_a2_shotgun_accel"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_split_aim.tres" id="an_a2_split_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_e_worm.tres" id="ex_ex_e_worm"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_worm_twin.tres" id="ex_ex_n_worm_twin"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_sandworm.tres" id="ex_ex_h_sandworm"]
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
 
@@ -292,21 +295,21 @@ _data = {
 
 [sub_resource type="Resource" id="sp_m_top_0"]
 script = ExtResource("x8")
-patterns = Array[ExtResource("x7")]([ExtResource("x10"), ExtResource("x11")])
+patterns = Array[ExtResource("x7")]([ExtResource("x10"), ExtResource("x11"), ExtResource("ex_ex_e_worm"), ExtResource("ex_ex_n_worm_twin"), ExtResource("ex_ex_h_sandworm")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p0")])
 another_sequence = Array[ExtResource("x7")]([])
 
 [sub_resource type="Resource" id="sp_m_top_1"]
 script = ExtResource("x8")
-patterns = Array[ExtResource("x7")]([ExtResource("x12"), ExtResource("x11")])
+patterns = Array[ExtResource("x7")]([ExtResource("x12"), ExtResource("x11"), ExtResource("ex_ex_e_worm"), ExtResource("ex_ex_n_worm_twin"), ExtResource("ex_ex_h_sandworm")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p1")])
 another_sequence = Array[ExtResource("x7")]([])
 
 [sub_resource type="Resource" id="sp_m_top_2"]
 script = ExtResource("x8")
-patterns = Array[ExtResource("x7")]([ExtResource("x13"), ExtResource("x11")])
+patterns = Array[ExtResource("x7")]([ExtResource("x13"), ExtResource("x11"), ExtResource("ex_ex_e_worm"), ExtResource("ex_ex_n_worm_twin"), ExtResource("ex_ex_h_sandworm")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p2")])
 another_sequence = Array[ExtResource("x7")]([])

@@ -131,7 +131,7 @@ func _process(delta : float) -> void:
 	# 画面の揺れ
 	if _shake_power > 0.0 and is_instance_valid(_camera):
 		_shake_power = maxf(_shake_power - shake_strength * delta * 1.5, 0.0)
-		_camera.offset = _camera_base + Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * _shake_power
+		_camera.offset = _camera_base + Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * _shake_power * GameSettings.shake_scale()
 		if _shake_power <= 0.0:
 			_camera.offset = _camera_base
 

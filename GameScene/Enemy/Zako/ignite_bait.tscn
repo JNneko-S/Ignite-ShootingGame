@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/armored.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ig_bait_curtain.tres" id="p_curtain"]
+[ext_resource type="Script" path="res://Component/Score/ignite_bonus.gd" id="ignite_bonus"]
+
+[node name="IgniteBait" instance=ExtResource("base")]
+modulate = Color(1.0, 0.82, 0.45, 1)
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 700
+hp = 700
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+patterns = Array[ExtResource("shot_script")]([ExtResource("p_curtain")])
+
+[node name="IgniteBonus" type="Node" parent="."]
+script = ExtResource("ignite_bonus")

@@ -88,6 +88,8 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 		for line in lines:
 			var angle := base + deg_to_rad(spread) * sign
 			var speed_scale := 1.0 + pattern.line_speed_ratio * line
+			if is_ring and count > 1:
+				speed_scale *= shape_scale(pattern, deg_to_rad(spread))
 			if pattern.spiral_speed_ratio != 0.0 and count > 1:
 				# 渦巻き: 並びの順に少しずつ速くして、止まったときに、輪ではなく渦巻きの形になるようにする
 				speed_scale *= 1.0 + pattern.spiral_speed_ratio * float(i) / (count - 1)
@@ -104,6 +106,18 @@ static func bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, 
 				"flip": flip,
 				"offset": Vector2.from_angle(angle) * pattern.spawn_radius + Vector2.from_angle(base + PI / 2.0) * lateral * sign})
 	return result
+
+## 輪の中の向き rel(ラジアン。撃つ向きからのずれ)の弾の、速さの倍率。多角形(Polygon Sides)・花(Petal Count)の形にする
+static func shape_scale(pattern : ShotPattern, rel : float) -> float:
+	var k := 1.0
+	if pattern.polygon_sides >= 3:
+		# 正多角形の外周までの距離(角が 1、辺の真ん中が cos(π/n))。b は角から測った向き
+		var seg := TAU / float(pattern.polygon_sides)
+		var b := fposmod(rel - deg_to_rad(pattern.polygon_phase), seg)
+		k *= cos(seg * 0.5) / maxf(cos(b - seg * 0.5), 0.05)
+	if pattern.petal_count >= 1:
+		k *= 1.0 + pattern.petal_depth * cos(pattern.petal_count * rel)
+	return k
 
 ## shot_index 回目の発射での、基準角度の回転量(度)。渦巻き・反転・回転の加速・揺れを合わせたもの
 static func rotation_degrees(pattern : ShotPattern, shot_index : int) -> float:
@@ -132,6 +146,10 @@ static func turned_heading(step : BulletStep, heading : float, position : Vector
 			return (player - position).angle() + turn # AIM_GROUP では、position に群れの真ん中が来る
 		BulletStep.TurnMode.ABSOLUTE:
 			return Vector2.DOWN.angle() + turn
+		BulletStep.TurnMode.RANDOM:
+			if step.turn_angle == 0.0:
+				return randf() * TAU
+			return heading + randf_range(-absf(turn), absf(turn))
 	return heading
 
 ## 区間の曲がる速さ(ラジアン/秒)。mirror なら逆回り
@@ -213,11 +231,11 @@ const MAX_SPLIT_DEPTH : int = 3
 
 ## pattern の弾が、この深さで割れるか
 static func splits(pattern : ShotPattern, depth : int = 0) -> bool:
-	return pattern.split_pattern != null and pattern.split_time > 0.0 and depth < MAX_SPLIT_DEPTH
+	return (pattern.split_pattern != null or pattern.split_vanish) and pattern.split_time > 0.0 and depth < MAX_SPLIT_DEPTH
 
 ## 割れた弾幕を、どれだけ回すか(ラジアン)。heading は割れる前の弾の進む向き
 static func split_turn(pattern : ShotPattern, heading : float) -> float:
-	if pattern.split_follow_direction and not pattern.split_pattern.aim_at_player:
+	if pattern.split_pattern and pattern.split_follow_direction and not pattern.split_pattern.aim_at_player:
 		return heading - Vector2.DOWN.angle()
 	return 0.0
 
@@ -225,6 +243,8 @@ static func split_turn(pattern : ShotPattern, heading : float) -> float:
 ## 引数は bullet_position と同じ
 static func split_positions(pattern : ShotPattern, table : Array[Dictionary], angle : float, speed_scale : float,
 		age : float, origin : Vector2, player : Vector2, mirror : bool = false, depth : int = 0) -> PackedVector2Array:
+	if pattern.split_vanish and splits(pattern, depth) and age >= pattern.split_time:
+		return PackedVector2Array() # 光って消えた
 	if not splits(pattern, depth) or age < pattern.split_time:
 		return PackedVector2Array([bullet_position(pattern, table, angle, speed_scale, age, origin, player, mirror)])
 	# 割れる瞬間の位置と、進む向き(少し前の位置との差)

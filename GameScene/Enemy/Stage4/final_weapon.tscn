@@ -17,30 +17,28 @@
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_entrance"]
 [ext_resource type="Script" path="res://stage_event.gd" id="event_script"]
 [ext_resource type="Script" path="res://spawn_event.gd" id="spawn_script"]
-[ext_resource type="Script" path="res://train_event.gd" id="train_script"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_lance.tres" id="f_lance"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_bloom.tres" id="f_bloom"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_storm.tres" id="f_storm"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/FireWork_kai.tres" id="k_firework"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/WashingMachine_kai.tres" id="k_washer"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/g_heavy_fan_kai.tres" id="k_heavy_fan"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_center_spiral.tres" id="t_spiral"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_burst.tres" id="t_burst"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_triple_aim.tres" id="t_triple"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_flank_firework.tres" id="t_flank_fw"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_5way.tres" id="w_5way"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_cross.tres" id="w_cross"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_front_stream.tres" id="w_stream"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_flak_wall.tres" id="w_flak"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/formation_kai.tscn" id="e_formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bomber_kai.tscn" id="e_bomber"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/gunship_kai.tscn" id="e_gunship"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/swan_wing.tscn" id="e_swan_wing"]
-[ext_resource type="PackedScene" path="res://GameScene/Train/passing_train.tscn" id="e_train"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="m_strike"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="m_hold"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="m_bomber_down"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="m_bomber_side"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_cross_spiral.tres" id="g_cross_spiral"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_gatling_sweep.tres" id="g_gatling_sweep"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_shell_burst.tres" id="g_shell_burst"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_scissor.tres" id="g_scissor"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_star_burst.tres" id="g_star_burst"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_wing_needle.tres" id="g_wing_needle"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_wing_arc.tres" id="g_wing_arc"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_wing_rain.tres" id="g_wing_rain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_flak.tres" id="g_stack_flak"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_fountain.tres" id="g_stack_fountain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_mine.tres" id="g_stack_mine"]
 
 [sub_resource type="RectangleShape2D" id="body_shape"]
 size = Vector2(250, 120)
@@ -53,40 +51,40 @@ size = Vector2(30, 48)
 
 [sub_resource type="Resource" id="main_p1"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("t_spiral"), ExtResource("f_bloom"), ExtResource("f_lance"), ExtResource("k_washer")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("g_cross_spiral"), ExtResource("f_lance"), ExtResource("g_gatling_sweep"), ExtResource("f_bloom"), ExtResource("f_lance")])
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("t_burst"), ExtResource("f_bloom"), ExtResource("w_cross"), ExtResource("f_lance"), ExtResource("k_firework")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("g_scissor"), ExtResource("g_shell_burst"), ExtResource("f_bloom"), ExtResource("g_star_burst"), ExtResource("f_lance")])
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("f_storm")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("f_bloom"), ExtResource("k_firework"), ExtResource("f_lance"), ExtResource("t_burst")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("g_star_burst"), ExtResource("f_lance"), ExtResource("g_shell_burst"), ExtResource("f_bloom"), ExtResource("f_lance")])
 
 [sub_resource type="Resource" id="wing_p1"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_5way")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_wing_needle"), ExtResource("g_wing_arc")])
 
 [sub_resource type="Resource" id="wing_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_triple")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_wing_arc")])
 
 [sub_resource type="Resource" id="wing_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_stream")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_wing_rain")])
 
 [sub_resource type="Resource" id="stack_p1"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_heavy_fan")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_stack_flak"), ExtResource("g_stack_mine")])
 
 [sub_resource type="Resource" id="stack_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("t_flank_fw")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_stack_fountain")])
 
 [sub_resource type="Resource" id="stack_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_flak")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("g_stack_mine")])
 
 [sub_resource type="Resource" id="sum1_formation_l"]
 script = ExtResource("spawn_script")
@@ -124,24 +122,6 @@ offset = Vector2(-160, 0)
 offset_step = Vector2(320, 0)
 time = 20.0
 
-[sub_resource type="Resource" id="sum2_train_l"]
-script = ExtResource("train_script")
-train_scene = ExtResource("e_train")
-rail = -1
-speed = -260.0
-car_count = 4
-lane_x = -130.0
-time = 1.5
-
-[sub_resource type="Resource" id="sum2_train_r"]
-script = ExtResource("train_script")
-train_scene = ExtResource("e_train")
-rail = -1
-speed = -260.0
-car_count = 4
-lane_x = 130.0
-time = 9.0
-
 [sub_resource type="Resource" id="sum2_gunships"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
@@ -172,18 +152,6 @@ offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
 time = 2.0
 
-[sub_resource type="Resource" id="sum3_trains"]
-script = ExtResource("train_script")
-train_scene = ExtResource("e_train")
-rail = -1
-speed = -300.0
-car_count = 5
-count = 2
-interval = 0.0
-lane_x = -150.0
-lane_step = 300.0
-time = 12.0
-
 [sub_resource type="Resource" id="sum3_formation"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -201,17 +169,26 @@ time = 20.0
 [sub_resource type="Resource" id="boss_phase_1"]
 script = ExtResource("boss_phase")
 summons = Array[ExtResource("event_script")]([SubResource("sum1_formation_l"), SubResource("sum1_formation_r"), SubResource("sum1_bombers")])
+summon_between_attacks = true
+attacks_per_summon = 2
+
 
 [sub_resource type="Resource" id="boss_phase_2"]
 script = ExtResource("boss_phase")
 hp_ratio = 0.66
-summons = Array[ExtResource("event_script")]([SubResource("sum2_train_l"), SubResource("sum2_train_r"), SubResource("sum2_gunships"), SubResource("sum2_bombers")])
+summons = Array[ExtResource("event_script")]([SubResource("sum2_gunships"), SubResource("sum2_bombers")])
+summon_between_attacks = true
+attacks_per_summon = 2
+
 
 [sub_resource type="Resource" id="boss_phase_3"]
 script = ExtResource("boss_phase")
 hp_ratio = 0.33
 boss_modulate = Color(1, 0.6, 0.55, 1)
-summons = Array[ExtResource("event_script")]([SubResource("sum3_wings"), SubResource("sum3_trains"), SubResource("sum3_formation")])
+summons = Array[ExtResource("event_script")]([SubResource("sum3_wings"), SubResource("sum3_formation")])
+summon_between_attacks = true
+attacks_per_summon = 2
+
 
 [node name="FinalWeapon" instance=ExtResource("base")]
 
@@ -228,6 +205,7 @@ hp = 25000
 
 [node name="EnemyShooterComponent" parent="." index="4"]
 position = Vector2(0, 104)
+pause_scale = 0.8
 phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
 
 [node name="DeathExplosion" parent="." index="6"]

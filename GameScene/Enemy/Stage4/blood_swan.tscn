@@ -1,0 +1,97 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="base"]
+[ext_resource type="Script" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="Script" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/blood_swan_wing.tscn" id="e_wing"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_wing_hold.tres" id="m_wing"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_blood_lance.tres" id="bs_lance"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_crimson_fan.tres" id="bs_fan"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_blood_turncoat.tres" id="bs_turncoat"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_blood_rain.tres" id="bs_rain"]
+
+[sub_resource type="Resource" id="bs_main_p1"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("bs_lance"), ExtResource("bs_fan")])
+
+[sub_resource type="Resource" id="bs_main_p2"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("bs_turncoat"), ExtResource("bs_lance"), ExtResource("bs_fan")])
+
+[sub_resource type="Resource" id="bs_main_p3"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("bs_rain"), ExtResource("bs_turncoat"), ExtResource("bs_lance")])
+
+[sub_resource type="Resource" id="bs_wings"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wing")
+move_pattern = ExtResource("m_wing")
+count = 2
+interval = 0.0
+offset = Vector2(-168, 0)
+offset_step = Vector2(336, 0)
+time = 0.0
+
+[sub_resource type="Resource" id="bs_phase_1"]
+script = ExtResource("boss_phase")
+summons = Array[ExtResource("event_script")]([SubResource("bs_wings")])
+
+[sub_resource type="Resource" id="bs_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.66
+
+[sub_resource type="Resource" id="bs_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.33
+boss_modulate = Color(1, 0.4, 0.4, 1)
+
+[node name="BloodSwan" groups=["blood_swan"] instance=ExtResource("base")]
+modulate = Color(1, 0.55, 0.55, 1)
+
+[node name="HPComponent" parent="."]
+max_hp = 26000
+hp = 26000
+
+[node name="EnemyShooterComponent" parent="."]
+phases = Array[ExtResource("shooter_phase")]([SubResource("bs_main_p1"), SubResource("bs_main_p2"), SubResource("bs_main_p3")])
+
+[node name="Bullkan" parent="."]
+phases = Array[ExtResource("shooter_phase")]([])
+patterns = Array[ExtResource("shot_script")]([])
+
+[node name="Bullkan2" parent="."]
+phases = Array[ExtResource("shooter_phase")]([])
+patterns = Array[ExtResource("shot_script")]([])
+
+[node name="DummyL" parent="."]
+phases = Array[ExtResource("shooter_phase")]([])
+patterns = Array[ExtResource("shot_script")]([])
+
+[node name="DummyR" parent="."]
+phases = Array[ExtResource("shooter_phase")]([])
+patterns = Array[ExtResource("shot_script")]([])
+
+[node name="BossPhaseController" parent="."]
+phases = Array[ExtResource("boss_phase")]([SubResource("bs_phase_1"), SubResource("bs_phase_2"), SubResource("bs_phase_3")])
+
+[node name="Barrage" parent="StateMachine"]
+next_state = "Barrage2"
+duration = 7.0
+wait_clear_before_phase = 0
+
+[node name="Barrage2" parent="StateMachine"]
+next_state = "Dive"
+duration = 7.0
+wait_clear_before_phase = 0
+
+[node name="Dive" parent="StateMachine"]
+wait_clear_before_phase = 0
+
+[node name="AfterburnerDive" parent="."]
+bottom_patterns = Array[ExtResource("shot_script")]([])
+
+[node name="SwanUsurper" parent="."]
+trigger_phase = 99

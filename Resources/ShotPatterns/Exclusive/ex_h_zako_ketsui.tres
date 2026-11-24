@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+start_delay = 0.8
+shot_count = 1
+interval = 0.1
+pause = 1.87
+bullet_count = 4
+spread_angle = 44.0
+aim_at_player = true
+bullet_speed = 150.0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+replaces_others = true
+start_delay = 0.5
+shot_count = 3
+interval = 0.09
+pause = 1.7
+bullet_count = 1
+line_count = 3
+line_speed_ratio = 0.12
+aim_at_player = true
+bullet_speed = 235.0
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])

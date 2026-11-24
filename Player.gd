@@ -288,7 +288,7 @@ func _physics_process(delta: float) -> void:
 	global_position = global_position.clamp(
 		area.position + Vector2(screen_margin, screen_margin), area.end - Vector2(screen_margin, screen_margin))
 	if _marker:
-		var marker_on := show_hitbox_on_focus and is_focusing and _is_alive
+		var marker_on := _is_alive and _hitbox_shown()
 		_marker.alpha = move_toward(_marker.alpha, 1.0 if marker_on else 0.0, delta * 10.0)
 	_update_lock(delta)
 	_shoot(delta)
@@ -828,6 +828,16 @@ func _add_arrow_keys() -> void:
 			InputMap.action_add_event(action, key)
 
 ## 当たり判定の印を作る。大きさと位置は、Hurtbox の円形シェイプに合わせる
+## 当たり判定を見せるか。オプションの HITBOX(低速移動中だけ / いつも / 出さない)で決まる。
+## FOCUS のときは、show_hitbox_on_focus がオンなら低速移動中に出す
+func _hitbox_shown() -> bool:
+	match GameSettings.hitbox_mode:
+		GameSettings.Hitbox.ALWAYS:
+			return true
+		GameSettings.Hitbox.OFF:
+			return false
+	return show_hitbox_on_focus and is_focusing
+
 func _create_hitbox_marker() -> void:
 	_marker = HitboxMarker.new()
 	_marker.z_index = 10

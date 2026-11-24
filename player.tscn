@@ -152,7 +152,7 @@ script = ExtResource("c_invincible")
 
 [node name="ShotSound" type="AudioStreamPlayer" parent="." unique_id=501000011]
 stream = ExtResource("snd_shot")
-volume_db = -22.0
+volume_db = -19.0
 
 [node name="LockSound" type="AudioStreamPlayer" parent="." unique_id=501000012]
 stream = ExtResource("snd_lock")

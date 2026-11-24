@@ -150,8 +150,11 @@ func _freeze_player(player : Player, frozen : bool) -> void:
 		player.set_physics_process(true)
 		player.start_invincibility(1.0) # 戻った直後に、すぐ当たらないように
 
-## 画面を揺らす(strength px、time 秒かけておさまる)
+## 画面を揺らす(strength px、time 秒かけておさまる)。オプションの揺れの強さ(GameSettings.shake_scale)を掛ける
 func shake(strength : float, time : float) -> void:
+	strength *= GameSettings.shake_scale()
+	if strength <= 0.0:
+		return
 	if _shake_tween and _shake_tween.is_valid():
 		_shake_tween.kill()
 	_shake_tween = create_tween()

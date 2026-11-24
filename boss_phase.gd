@@ -21,6 +21,16 @@ class_name BossPhase
 ## 難易度 ANOTHER のときは、Summons の代わりに、こちらを呼ぶ(空なら Summons のまま)
 @export var another_summons : Array[StageEvent] = []
 
+@export_group("攻撃の合間に呼ぶ")
+## オンなら、Summons を、攻撃のあいだに(重ねずに)1つずつ呼ぶ: 主砲の順番に撃つ弾幕(Sequence)を Attacks Per Summon 回撃ち終えたら、
+## ボスは撃つのをやめ、Summons の次の1つ(並べた順に繰り返す)を呼び、その雑魚がいなくなる(倒すか、画面の外へ出る)まで待ってから、攻撃に戻る。
+## この段階では、HPで呼ぶ(Summon Hp Ratio)ことはしない
+@export var summon_between_attacks : bool = false
+## 雑魚を呼ぶまでに撃つ、主砲の弾幕の数
+@export var attacks_per_summon : int = 2
+## 雑魚がいなくならなくても、この秒数たったら攻撃に戻る
+@export var summon_wait_max : float = 14.0
+
 ## この難易度で呼ぶ援護
 func summons_for_difficulty() -> Array[StageEvent]:
 	return another_summons if HazardRank.active and not another_summons.is_empty() else summons

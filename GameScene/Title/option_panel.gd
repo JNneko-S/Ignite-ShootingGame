@@ -2,8 +2,12 @@ extends TitlePanel
 class_name OptionPanel
 ## タイトル画面の OPTION。値は GameSettings に入れて、すぐに反映する。
 ##   BGM / SE VOL : 左右で音量(0〜10)
-##   GRAPHIC      : 左右でウインドウの大きさ(1080p〜480p)
+##   GRAPHIC      : 左右でウインドウの大きさ(ゲーム画面 336x448 の整数倍。モニタに収まるものだけ)
 ##   MODE         : 左右で WINDOW / FULLSCREEN / BORDERLESS
+##   VSYNC        : 左右で垂直同期のオン・オフ
+##   SHAKE        : 左右で画面の揺れの強さ(0〜100%)
+##   FLASH        : 左右で画面のフラッシュの明るさ(0〜100%)
+##   HITBOX       : 左右で自機の当たり判定の表示(FOCUS / ALWAYS / OFF)
 ##   SLOW MODE    : 左右でオン・オフ(オンだとスコアとリプレイが保存されない)
 ##   KEY CONFIG   : 決定で、キーの割り当ての画面へ
 ##   RESET        : 決定で、全部を初期状態に戻す
@@ -13,13 +17,18 @@ class_name OptionPanel
 ## キーの入力を待つ時間(秒)
 @export var capture_time : float = 5.0
 
-enum Row { BGM, SE, GRAPHIC, MODE, SLOW, KEY_CONFIG, RESET, QUIT }
-const ROW_NAMES : Array[String] = ["BGM", "SE VOL", "GRAPHIC", "MODE", "SLOW MODE", "KEY CONFIG", "RESET", "QUIT"]
+enum Row { BGM, SE, GRAPHIC, MODE, VSYNC, SHAKE, FLASH, HITBOX, SLOW, KEY_CONFIG, RESET, QUIT }
+const ROW_NAMES : Array[String] = ["BGM", "SE VOL", "GRAPHIC", "MODE", "VSYNC", "SHAKE", "FLASH", "HITBOX",
+	"SLOW MODE", "KEY CONFIG", "RESET", "QUIT"]
 const ROW_HELP : Array[String] = [
 	"BGM の音量を調整します。",
 	"効果音の音量を調整します。",
-	"ウインドウの大きさ(画質)を変更します。\nウインドウ表示のときだけ有効です。",
+	"ウインドウの大きさを変更します(ゲーム画面の整数倍)。\nウインドウ表示のときだけ有効です。",
 	"表示モードを切り替えます。\nWINDOW / FULLSCREEN / BORDERLESS",
+	"垂直同期を切り替えます。\n画面のちらつき(ティアリング)を防ぎます。",
+	"爆発などでの、画面の揺れの強さを変更します。\n0% で揺れなくなります。",
+	"画面全体が光る演出の明るさを変更します。\nまぶしいときは下げてください。",
+	"自機の当たり判定の表示を切り替えます。\nFOCUS: 低速移動中 / ALWAYS: 常に / OFF: なし",
 	"敵弾が増えたときに、意図的に処理落ちさせます。\n有効にすると、スコアやリプレイが保存されません。",
 	"ショット・イグナイト・低速移動・ポーズ・\n方向移動の割り当てを変更します。",
 	"すべての設定を初期状態に戻します。",
@@ -28,7 +37,7 @@ const ROW_HELP : Array[String] = [
 const KEY_HELP : String = "決定を押してから、割り当てたいキーか\nボタンを押してください。(%d秒で取り消し)\n同じキーを使っていた操作とは、入れ替わります。"
 
 const ROW_TOP : float = 64.0
-const ROW_STEP : float = 24.0
+const ROW_STEP : float = 20.0
 const NAME_X : float = 34.0
 const VALUE_X : float = 150.0
 const PAD_X : float = 238.0
@@ -57,8 +66,8 @@ func _build() -> void:
 	_bar = _page_bar(_main_page)
 	for i in ROW_NAMES.size():
 		var y := heading_bottom + 8.0 + i * ROW_STEP
-		_names.append(_page_label(_main_page, ROW_NAMES[i], 14, Vector2(NAME_X, y)))
-		_values.append(_page_label(_main_page, "", 14, Vector2(VALUE_X, y), size.x - VALUE_X - 32.0, HORIZONTAL_ALIGNMENT_CENTER))
+		_names.append(_page_label(_main_page, ROW_NAMES[i], 13, Vector2(NAME_X, y)))
+		_values.append(_page_label(_main_page, "", 13, Vector2(VALUE_X, y), size.x - VALUE_X - 32.0, HORIZONTAL_ALIGNMENT_CENTER))
 	_keys_page = _page()
 	_key_bar = _page_bar(_keys_page)
 	_page_label(_keys_page, "KEY", 11, Vector2(VALUE_X, heading_bottom - 4.0), 80.0, HORIZONTAL_ALIGNMENT_CENTER).add_theme_color_override("font_color", dim_color)
@@ -153,12 +162,21 @@ func _change(direction : int) -> void:
 			GameSettings.se_volume = clampi(GameSettings.se_volume + direction, 0, GameSettings.VOLUME_STEPS)
 			GameSettings.apply_audio()
 		Row.GRAPHIC:
-			# 一覧は大きい順なので、右で小さく・左で大きくならないよう、向きを逆にする
-			GameSettings.resolution_index = wrapi(GameSettings.resolution_index - direction, 0, GameSettings.RESOLUTIONS.size())
+			# 右で大きく、左で小さく(1 倍 〜 モニタに収まる倍率)
+			GameSettings.window_scale = wrapi(GameSettings.window_scale + direction, 1, GameSettings.max_window_scale() + 1)
 			GameSettings.apply_video()
 		Row.MODE:
 			GameSettings.mode = wrapi(GameSettings.mode + direction, 0, GameSettings.MODE_NAMES.size())
 			GameSettings.apply_video()
+		Row.VSYNC:
+			GameSettings.vsync = not GameSettings.vsync
+			GameSettings.apply_video()
+		Row.SHAKE:
+			GameSettings.shake_percent = GameSettings.step_effect(GameSettings.shake_percent, direction)
+		Row.FLASH:
+			GameSettings.flash_percent = GameSettings.step_effect(GameSettings.flash_percent, direction)
+		Row.HITBOX:
+			GameSettings.hitbox_mode = wrapi(GameSettings.hitbox_mode + direction, 0, GameSettings.HITBOX_NAMES.size())
 		Row.SLOW:
 			GameSettings.slow_mode = not GameSettings.slow_mode
 		_:
@@ -180,7 +198,7 @@ func _decide() -> void:
 			_help.text = "すべての設定を、初期状態に戻しました。"
 		Row.QUIT:
 			_quit()
-		Row.SLOW:
+		Row.SLOW, Row.VSYNC, Row.HITBOX:
 			_change(1)
 		_:
 			pass
@@ -252,6 +270,10 @@ func _refresh() -> void:
 	_values[Row.SE].text = _volume_text(GameSettings.se_volume)
 	_values[Row.GRAPHIC].text = "<  %s  >" % GameSettings.resolution_name()
 	_values[Row.MODE].text = "<  %s  >" % GameSettings.MODE_NAMES[GameSettings.mode]
+	_values[Row.VSYNC].text = "<  %s  >" % ("ON" if GameSettings.vsync else "OFF")
+	_values[Row.SHAKE].text = "<  %d%%  >" % GameSettings.shake_percent
+	_values[Row.FLASH].text = "<  %d%%  >" % GameSettings.flash_percent
+	_values[Row.HITBOX].text = "<  %s  >" % GameSettings.HITBOX_NAMES[GameSettings.hitbox_mode]
 	_values[Row.SLOW].text = "<  %s  >" % ("ON" if GameSettings.slow_mode else "OFF")
 	for i in _names.size():
 		var selected := i == _row

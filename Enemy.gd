@@ -90,6 +90,15 @@ func _run_pattern() -> void:
 		await _run_step(step)
 		if _is_dead:
 			return
+	# ボスなど: 決めたステップから、倒されるまで繰り返す(消えない)
+	var from := pattern.loop_from_step
+	if from >= 0 and from < pattern.steps.size():
+		while not _is_dead and is_inside_tree():
+			for i in range(from, pattern.steps.size()):
+				await _run_step(pattern.steps[i])
+				if _is_dead or not is_inside_tree():
+					return
+		return
 	# 全ステップが終わったら(画面外に出ている想定)消す
 	queue_free()
 

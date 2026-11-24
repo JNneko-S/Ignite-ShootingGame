@@ -143,6 +143,7 @@ func _retry() -> void:
 
 	# 次のステージは、出撃の演出を飛ばしてすぐ始める。続けて負けたときは、難易度を1つ下げる
 	StageIntro.skip_next = true
+	RunConfig.continues_used += 1 # コンティニューした(二周目には入れなくなる)
 	HazardRank.on_continue() # ANOTHER: ランクは下限まで戻る(下限はそのまま)
 	if _ease_down:
 		RunConfig.has_selection = true

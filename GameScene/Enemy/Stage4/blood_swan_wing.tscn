@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/swan_wing.tscn" id="base"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_wing_winder.tres" id="p_winder"]
+[ext_resource type="Script" path="res://Component/Boss/leader_link.gd" id="leader_link"]
+
+[node name="BloodSwanWing" instance=ExtResource("base")]
+modulate = Color(0.55, 0.5, 0.62, 1)
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 2200
+hp = 2200
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+patterns = Array[ExtResource("shot_script")]([ExtResource("p_winder")])
+
+[node name="LeaderLink" type="Node" parent="."]
+script = ExtResource("leader_link")

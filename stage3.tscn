@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://c3y24ii5htao4" path="res://Resources/StageData/Stage3.tres" id="stage"]
 [ext_resource type="Script" uid="uid://bfilhsngcrmm2" path="res://Component/Camera/stage_camera.gd" id="stage_camera"]
 [ext_resource type="Script" uid="uid://g18nyoka7ga0" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_boss3"]
 
 [node name="Stage3" unique_id=2065326320 instance=ExtResource("base")]
 graze_per_levels = Array[float]([8.0, 10.0, 12.0])
@@ -32,6 +33,9 @@ play_intro = false
 
 [node name="AudioStreamPlayer" parent="." index="11" unique_id=1308156288]
 stage_music = ExtResource("music_stage3")
+boss_music_by_name = Dictionary[String, AudioStream]({
+"ブラックスワン -改-": ExtResource("music_boss3")
+})
 
 [node name="SkyBackground" type="Node2D" parent="." index="14" unique_id=1800000001]
 script = ExtResource("sky_background")
@@ -45,5 +49,7 @@ roll_amount = 2.0
 [node name="StageTransition" type="Node" parent="." index="15" unique_id=1800000002]
 script = ExtResource("stage_transition")
 next_stage = "res://stage4.tscn"
+through_clouds = true
+fog_in_time = 2.6
 
 [editable path="UI/ScoreUI"]

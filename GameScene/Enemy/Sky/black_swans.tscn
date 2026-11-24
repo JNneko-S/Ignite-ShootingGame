@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://dnpu43at3w1sf" path="res://Component/Boss/States/cross_fire_state.gd" id="st_cross"]
 [ext_resource type="Script" uid="uid://hlk5r7h3h1bl" path="res://Component/Boss/States/boss_dive_state.gd" id="st_dive"]
 [ext_resource type="Script" uid="uid://ds7744w0iej0f" path="res://Component/Boss/States/boss_shoot_state.gd" id="st_shoot"]
+[ext_resource type="Script" path="res://Component/Death/crash_fall.gd" id="crash_fall"]
 
 [sub_resource type="RectangleShape2D" id="ram_shape"]
 size = Vector2(110, 78)
@@ -146,3 +147,6 @@ all_sprites = true
 script = ExtResource("st_shoot")
 duration = 1.6
 next_state = "CrossFire"
+
+[node name="CrashFall" type="Node" parent="."]
+script = ExtResource("crash_fall")

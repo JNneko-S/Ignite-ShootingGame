@@ -1,0 +1,161 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e4"]
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 1.6
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 1.6
+change_speed = false
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 21.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 1
+pause = 3.6
+bullet_count = 22
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 22.5
+line_count = 4
+line_speed_ratio = 0.5769
+bullet_speed = 162.5
+motion = Array[ExtResource("e3")]([SubResource("st3"), SubResource("st4"), SubResource("st5")])
+
+[sub_resource type="Resource" id="p6"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+start_delay = 2.3
+shot_count = 3
+interval = 0.4
+pause = 3.0
+bullet_count = 3
+spread_angle = 18.0
+aim_at_player = true
+bullet_speed = 165.0
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("e3")
+duration = 1.6
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st8"]
+script = ExtResource("e3")
+duration = 1.6
+change_speed = false
+
+[sub_resource type="Resource" id="st9"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 17.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 1
+pause = 3.6
+bullet_count = 8
+spread_angle = 360.0
+aim_at_player = false
+line_count = 4
+line_speed_ratio = 0.75
+bullet_speed = 130.0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p2"), SubResource("p6")])
+motion = Array[ExtResource("e3")]([SubResource("st7"), SubResource("st8"), SubResource("st9")])
+
+[sub_resource type="Resource" id="st11"]
+script = ExtResource("e3")
+duration = 1.6
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st12"]
+script = ExtResource("e3")
+duration = 2.0
+change_speed = false
+
+[sub_resource type="Resource" id="st13"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 21.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p10"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 1
+pause = 3.6
+bullet_count = 30
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 16.3636
+line_count = 5
+line_speed_ratio = 0.4615
+bullet_speed = 162.5
+motion = Array[ExtResource("e3")]([SubResource("st11"), SubResource("st12"), SubResource("st13")])
+
+[sub_resource type="Resource" id="p14"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+start_delay = 2.3
+shot_count = 3
+interval = 0.4
+pause = 3.0
+bullet_count = 3
+spread_angle = 18.0
+aim_at_player = true
+bullet_speed = 165.0
+
+[sub_resource type="Resource" id="st15"]
+script = ExtResource("e3")
+duration = 1.6
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st16"]
+script = ExtResource("e3")
+duration = 2.0
+change_speed = false
+
+[sub_resource type="Resource" id="st17"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 17.0
+speed_ease = 0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+normal_version = SubResource("p1")
+start_delay = 0.4
+shot_count = 1
+pause = 3.6
+bullet_count = 11
+spread_angle = 360.0
+aim_at_player = false
+line_count = 6
+line_speed_ratio = 0.5
+bullet_speed = 130.0
+soften_others = 4.0
+with_patterns = Array[ExtResource("e1")]([SubResource("p10"), SubResource("p14")])
+motion = Array[ExtResource("e3")]([SubResource("st15"), SubResource("st16"), SubResource("st17")])

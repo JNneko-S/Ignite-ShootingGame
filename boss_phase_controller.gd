@@ -40,6 +40,11 @@ var _last_lane : int = 2
 var _resummon_index : int = 0
 ## 段階の呼び寄せ(演出つき)をするたびに増える
 var _summon_serial : int = 0
+## 攻撃の合間に雑魚を呼ぶ(Summon Between Attacks): 撃ち終えた主砲の弾幕の数・次に呼ぶ Summons の番号・雑魚を待っているか
+var _attacks_done : int = 0
+var _interlude_index : int = 0
+var _in_interlude : bool = false
+var _main_shooter : EnemyShooter
 
 func _ready() -> void:
 	if _hp == null:
@@ -52,6 +57,7 @@ func _ready() -> void:
 		_resummon_loop.call_deferred()
 	if not Engine.is_editor_hint():
 		_first_summon.call_deferred()
+		_connect_main_shooter.call_deferred()
 
 ## StageRunner が SpawnEvent の Phases から付けるときに使う(ツリーに入る前に呼ぶ)
 func setup(hp : HPComponent, boss_phases : Array[BossPhase]) -> void:
@@ -86,6 +92,11 @@ func _on_hp_changed() -> void:
 
 func _start_phase(index : int) -> void:
 	_index = index
+	_attacks_done = 0
+	_interlude_index = 0
+	if _in_interlude:
+		_in_interlude = false
+		_set_boss_silent(false) # 雑魚を待っているあいだに段階が変わった: 新しい段階の攻撃から始める
 	var phase := phases[index]
 	if phase.clear_bullets:
 		# ボスから近い弾ほど先に、光ってはじけて消える(点にはならない)
@@ -124,6 +135,8 @@ func _check_summon(ratio : float) -> void:
 	if phases.is_empty() or _summoned.has(_index) or _hp.hp <= 0:
 		return
 	var phase := phases[_index]
+	if phase.summon_between_attacks:
+		return # 攻撃の合間に呼ぶ段階は、HPでは呼ばない
 	if phase.summons_for_difficulty().is_empty() or ratio > phase.summon_hp_ratio:
 		return
 	_summoned[_index] = true
@@ -237,6 +250,109 @@ func _summon_with_cut_in(runner : StageRunner, camera : StageCamera, entries : A
 			shown += 0.1
 	_keep_safe(player, 2.0)
 	await camera.end_focus()
+
+# ---------------------------------------------------------------- 攻撃の合間に雑魚を呼ぶ
+
+## 主砲(順番に撃つ弾幕を持つ、いちばん上の砲口)の、弾幕を1つ撃ち終えた合図をつなぐ
+func _connect_main_shooter() -> void:
+	var boss := get_parent()
+	if boss == null:
+		return
+	var named := boss.get_node_or_null("EnemyShooterComponent") as EnemyShooter
+	_main_shooter = named
+	if _main_shooter == null:
+		for shooter in _shooters(boss):
+			_main_shooter = shooter
+			break
+	if _main_shooter:
+		_main_shooter.sequence_step_finished.connect(_on_attack_finished)
+
+func _on_attack_finished(_pattern : ShotPattern) -> void:
+	if phases.is_empty() or _in_interlude or _hp == null or _hp.hp <= 0:
+		return
+	var phase := phases[_index]
+	if not phase.summon_between_attacks or phase.summons_for_difficulty().is_empty():
+		return
+	_attacks_done += 1
+	if _attacks_done >= maxi(phase.attacks_per_summon, 1):
+		_attacks_done = 0
+		_interlude(phase)
+
+## 撃つのをやめて、雑魚を1組呼び、いなくなるまで待ってから、攻撃に戻る
+func _interlude(phase : BossPhase) -> void:
+	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+	var events : Array = phase.summons_for_difficulty().filter(func(e) -> bool: return e != null)
+	if runner == null or events.is_empty():
+		return
+	var index := _index
+	_in_interlude = true
+	_set_boss_silent(true)
+	# 残っている弾が抜けるのを、少しだけ待つ(雑魚と弾幕を重ねない)
+	var waited := 0.0
+	while waited < 2.5 and get_tree().get_nodes_in_group("enemy_bullet").size() > 12:
+		await get_tree().create_timer(0.1, false).timeout
+		waited += 0.1
+		if not _interlude_alive(index):
+			return
+	var event : StageEvent = events[_interlude_index % events.size()]
+	_interlude_index += 1
+	# 呼んだ雑魚を覚える(出てきた Enemy を、ツリーに入った順に拾う)
+	var spawned : Array[Node] = []
+	var on_added := func(node : Node) -> void:
+		if node is Enemy and node != get_parent():
+			spawned.append(node)
+	get_tree().node_added.connect(on_added)
+	var start := event.time
+	var elapsed := 0.0
+	var units := event.unit_count()
+	for i in units:
+		var wait := (event.unit_time(i) - start) - elapsed
+		if wait > 0.0:
+			await get_tree().create_timer(wait, false).timeout
+			elapsed += wait
+		if not _interlude_alive(index):
+			get_tree().node_added.disconnect(on_added)
+			return
+		event.execute(runner, i)
+	await get_tree().process_frame
+	if get_tree().node_added.is_connected(on_added):
+		get_tree().node_added.disconnect(on_added)
+	# 雑魚がいなくなるまで(最大 Summon Wait Max 秒)待つ
+	waited = 0.0
+	while waited < phase.summon_wait_max:
+		await get_tree().create_timer(0.2, false).timeout
+		waited += 0.2
+		if not _interlude_alive(index):
+			return
+		if not spawned.any(func(n) -> bool: return is_instance_valid(n) and not n.is_queued_for_deletion()):
+			break
+	await get_tree().create_timer(0.8, false).timeout
+	if not _interlude_alive(index):
+		return
+	_in_interlude = false
+	_set_boss_silent(false)
+
+## 段階が同じで、ボスが生きていて、まだ雑魚を待っているか
+func _interlude_alive(index : int) -> bool:
+	return is_inside_tree() and _in_interlude and index == _index and _hp and _hp.hp > 0
+
+## ボスの全ての砲口を、黙らせる(true)・今の段階の攻撃を最初から撃ち直させる(false)
+func _set_boss_silent(silent : bool) -> void:
+	for shooter in _shooters(get_parent()):
+		if silent:
+			shooter.suppressed = true
+			shooter.stop()
+		else:
+			shooter.suppressed = false
+			if not switch_shooters:
+				continue
+			if shooter.has_phases():
+				shooter.set_phase(_index, true) # 雑魚の前に撃ち終えた弾幕の、続きから
+			elif not phases.is_empty():
+				shooter.set_patterns(phases[_index].patterns, [], true)
+	for node in get_parent().find_children("*", "", true, false):
+		if node is BeamShooter:
+			(node as BeamShooter).set_silenced(silent)
 
 # ---------------------------------------------------------------- 援護を呼び続ける
 

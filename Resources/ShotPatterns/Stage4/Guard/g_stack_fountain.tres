@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Bermuda.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 0.75
+target_speed = 0.0
+speed_trans = 4
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 1.6
+turn_mode = 3
+target_speed = 165.0
+speed_trans = 4
+speed_ease = 0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 1.2
+shot_count = 4
+interval = 0.16
+pause = 1.8
+bullet_count = 3
+spread_angle = 110.0
+aim_at_player = false
+base_angle = 180.0
+random_angle = 14.0
+random_seed = 21
+bullet_speed = 150.0
+yields = true
+motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2")])

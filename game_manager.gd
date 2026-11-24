@@ -99,6 +99,8 @@ signal score_changed(score : int)
 @export var end_b_use_count_required : int = 30
 ## エンドBの選択条件②: 被弾(当たった回数)がこれ以下
 @export var end_b_max_hits : int = 3
+## エンドBの選択条件③: イグナイトのチャンス(おとりの雑魚)を、イグナイトで返して倒した数がこれ以上(出撃の最初から数える)
+@export var end_b_counter_kills_required : int = 9
 ## エンドBの選択条件のうち、満たす必要がある数
 @export var end_b_optional_required : int = 2
 
@@ -140,6 +142,11 @@ func _enter_tree() -> void:
 	if RunConfig.has_selection:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
 	DifficultyTuning.level = int(difficulty)
+	# 前のステージ(クリアのあと・エンディング)で「全員撃つな」にしたままのことがある: 新しいステージでは必ず解く
+	EnemyShooter.release_fire()
+	DifficultyTuning.chosen_level = int(difficulty) # 限定弾幕は、選んだ難易度で決める
+	DifficultyTuning.hard_plus = false
+	DifficultyTuning.zako_interval_scale = 1.0
 	# ステージによっては、弾幕だけ一段上の難易度として扱う(最終面など。ゲージなどは選んだ難易度のまま)
 	var runner := get_node_or_null("StageRunner")
 	HazardRank.small_bullet_hitbox = false
@@ -147,6 +154,14 @@ func _enter_tree() -> void:
 		# HARD を選んだとき、ステージによっては ANOTHER と同じく敵弾の当たり判定を半分にする
 		HazardRank.small_bullet_hitbox = runner.stage.small_bullet_hitbox_hard and difficulty == Difficulty.HARD
 		DifficultyTuning.level = mini(DifficultyTuning.level + int(runner.stage.difficulty_step), DifficultyTuning.HARD)
+		DifficultyTuning.hard_plus = runner.stage.difficulty_step > 0 and difficulty == Difficulty.HARD
+		DifficultyTuning.zako_interval_scale = runner.stage.zako_fire_interval_scale
+	# 二周目(Another Round): 弾幕を一段上の難易度として撃つ。もう HARD なら、HARD+(撃つ間を詰めて速く)にする
+	if RunConfig.loop >= 2 and not (RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER):
+		if DifficultyTuning.level >= DifficultyTuning.HARD:
+			DifficultyTuning.hard_plus = true
+		else:
+			DifficultyTuning.level += 1
 	# 隠し難易度 ANOTHER: 弾幕は HARD を元に、ハザードランクで強くなる
 	HazardRank.active = RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
 
@@ -194,6 +209,10 @@ func _ready() -> void:
 		score_system = get_tree().get_first_node_in_group("score_system") as ScoreSystem
 	if score_system:
 		score_system.score_changed.connect(_on_score_changed)
+
+	# 二周目の一面など、霧を抜けずに始まるステージでも、前の周の自機と点数を引き継ぐ
+	if StageCarry.pending and not StageCarry.arriving:
+		StageCarry.apply.call_deferred(get_tree())
 
 	ignite.graze_per_level = _by_difficulty(graze_per_levels)
 	ignite.density_bonus = density_bonus
@@ -509,9 +528,11 @@ func ignite_use_count() -> int:
 func is_finisher_state() -> bool:
 	return is_consuming()
 
-## エンドBの選択条件を、いくつ満たしているか(①使用回数 ②被弾数 ③HARD)
+## エンドBの選択条件を、いくつ満たしているか(①使用回数 ②被弾数 ③イグナイトのカウンター撃破 ④HARD)
 func end_b_optional_count() -> int:
 	var count := 0
+	if RunConfig.ignite_counter_kills >= end_b_counter_kills_required:
+		count += 1
 	if ignite_use_count() >= end_b_use_count_required:
 		count += 1
 	if hit_count <= end_b_max_hits:

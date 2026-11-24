@@ -10,7 +10,7 @@ kind = 3
 pickup_sound = NodePath("PickupSound")
 fall_speed = 70.0
 pickup_radius = 24.0
-pop_speed = 80.0
+pop_speed = 140.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1

@@ -67,17 +67,26 @@ static var _hold_fire_count : int = 0
 ## 撃たせない状態を、すぐに全部やめる(エンディングの脱出で、追ってくる敵に撃たせるとき)
 static func release_fire() -> void:
 	_hold_fire_count = 0
+	_hold_epoch += 1 # 解く前に始まった hold_fire のタイマーは、終わっても数を減らさない(新しい hold_fire を早く解かない)
+
+## release_fire のたびに増える
+static var _hold_epoch : int = 0
 
 static func hold_fire(seconds : float) -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null or seconds <= 0.0:
 		return
 	_hold_fire_count += 1
+	var epoch := _hold_epoch
 	await tree.create_timer(seconds, false).timeout
-	_hold_fire_count = maxi(_hold_fire_count - 1, 0)
+	if epoch == _hold_epoch:
+		_hold_fire_count = maxi(_hold_fire_count - 1, 0)
 
 static func is_holding_fire() -> bool:
 	return _hold_fire_count > 0
+
+## 開発用: 設定すると、弾幕を撃ち始めるたびに (砲口, 元の弾幕) で呼ばれる(どの弾幕が実際に使われているかを調べる道具が使う)
+static var debug_pattern_started : Callable
 
 ## 雑魚の砲口か(-1 = まだ調べていない)。EASY で、雑魚の弾をさらに遅くするのに使う
 var _zako : int = -1
@@ -142,10 +151,13 @@ func stop() -> void:
 	_generation += 1
 
 ## 撃っている弾幕を止めて、new_patterns(同時に撃つ)と new_sequence(順番に撃つ)に切り替える(ボスの段階の切り替えなど)
-func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPattern] = []) -> void:
+## keep_position: オンなら、順番に撃つ弾幕(Sequence)を、前に止めたところの続きから撃つ(ボスが雑魚を呼んだあと、攻撃に戻るときなど)
+func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPattern] = [], keep_position : bool = false) -> void:
 	stop()
 	patterns = new_patterns
 	sequence = new_sequence
+	if not keep_position:
+		_sequence_pos = 0
 	if _has_conductor():
 		return
 	for pattern in DifficultyTuning.layers(patterns):
@@ -157,24 +169,29 @@ func has_phases() -> bool:
 	return not phases.is_empty()
 
 ## Phases の index 番目(0 = 第一形態)の弾幕に切り替える。足りなければ最後のもの
-func set_phase(index : int) -> void:
+func set_phase(index : int, keep_position : bool = false) -> void:
 	if phases.is_empty():
 		return
 	var phase := phases[clampi(index, 0, phases.size() - 1)]
 	if phase == null:
 		set_patterns([], [])
 		return
-	set_patterns(phase.patterns_for_difficulty(), phase.sequence_for_difficulty())
+	set_patterns(phase.patterns_for_difficulty(), phase.sequence_for_difficulty(), keep_position)
+
+## 次に撃つ、順番に撃つ弾幕(Sequence)の番号
+var _sequence_pos : int = 0
 
 ## sequence の弾幕を、1つずつ順番に撃つ(最後まで行ったら最初に戻る)
 func _run_sequence() -> void:
 	if sequence.is_empty():
 		return
 	var generation := _generation
-	var index := 0
 	while generation == _generation and not sequence.is_empty():
-		await _run_once(sequence[index % sequence.size()], generation)
-		index += 1
+		var index := _sequence_pos % sequence.size()
+		await _run_once(sequence[index], generation)
+		if generation != _generation:
+			break # 途中で止められた弾幕は、次に戻ったとき、もう一度最初から撃つ
+		_sequence_pos = index + 1
 		if is_inside_tree():
 			await get_tree().process_frame # 時間のかからない弾幕だけでも、止まらないように
 
@@ -184,6 +201,8 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 		if is_inside_tree():
 			await get_tree().process_frame
 		return
+	if debug_pattern_started.is_valid():
+		debug_pattern_started.call(self, pattern)
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
@@ -232,6 +251,8 @@ func fire_scheduled(pattern : ShotPattern, shot_index : int) -> void:
 func _run_pattern(pattern : ShotPattern) -> void:
 	if not DifficultyTuning.allows(pattern):
 		return # この難易度では撃たない弾幕
+	if debug_pattern_started.is_valid():
+		debug_pattern_started.call(self, pattern)
 	var original := pattern
 	pattern = DifficultyTuning.tune(pattern, is_zako()) # この難易度用に、数や速さを変えた写し(HARD ならそのまま)
 	var generation := _generation
@@ -279,8 +300,31 @@ func _can_fire() -> bool:
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
-	spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, _is_mirrored(), deg_to_rad(turn_degrees),
-			0, _motion_heading() if pattern.split_across_motion else NAN)
+	var mirror := _is_mirrored()
+	var heading := _motion_heading() if pattern.split_across_motion else NAN
+	var target := Vector2.INF
+	if pattern.aim_at_point:
+		target = global_position + Vector2(-pattern.aim_point.x if mirror else pattern.aim_point.x, pattern.aim_point.y)
+	if pattern.muzzle_offsets.is_empty() and not pattern.aim_at_point:
+		spawn_bullets(pattern, shot_index, aim_angle, global_position, parent, default_bullet_scene, mirror, deg_to_rad(turn_degrees),
+				0, heading)
+	else:
+		# 合体攻撃: 砲口からずらした位置の全部から撃つ(自機狙いなら、それぞれの位置から。1点へ集めるなら、その点へ向けて)
+		var offsets : Array[Vector2] = [Vector2.ZERO]
+		if not pattern.muzzle_offsets.is_empty():
+			offsets = pattern.muzzle_offsets
+		var player := get_tree().get_first_node_in_group("player") as Node2D
+		var aim_target := global_position + Vector2.from_angle(aim_angle) * 400.0 # バーストで固定した狙いの先
+		for offset in offsets:
+			var origin := global_position + Vector2(-offset.x if mirror else offset.x, offset.y)
+			var angle := aim_angle
+			if pattern.aim_at_point:
+				angle = (target - origin).angle() if target.distance_to(origin) > 0.5 else aim_angle
+			elif pattern.aim_at_player:
+				var at := aim_target if pattern.aim_once_per_burst or player == null else player.global_position
+				angle = (at - origin).angle()
+			spawn_bullets(pattern, shot_index, angle, origin, parent, default_bullet_scene, mirror, deg_to_rad(turn_degrees),
+					0, heading, target)
 	last_fire_swing = pattern.swing_barrel
 	if pattern.swing_barrel:
 		# 弾の向きの平均(砲身を、そちらへ振る)
@@ -320,7 +364,7 @@ var _motion_dir : Vector2 = Vector2.ZERO
 ## split_depth: 何回割れてできた弾か(分裂弾の段階の上限に使う)
 static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : float, origin : Vector2,
 		parent : Node, fallback_scene : PackedScene, mirror : bool = false, turn : float = 0.0, split_depth : int = 0,
-		split_heading : float = NAN) -> void:
+		split_heading : float = NAN, arrive_at : Vector2 = Vector2.INF) -> void:
 	var scene := pattern.bullet_scene if pattern.bullet_scene else fallback_scene
 	if scene == null:
 		push_warning("EnemyShooter: 弾シーンが未設定です")
@@ -350,6 +394,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 		for member_index in cluster.size():
 			var member : Vector2 = cluster[member_index]
 			var bullet : Node2D = scene.instantiate()
+			if pattern.bullet_scale != 1.0 and split_depth == 0:
+				bullet.scale *= pattern.bullet_scale # 巨大弾(当たり判定も一緒に大きくなる)
 			parent.add_child(bullet)
 			bullet.z_index = 5
 			var offset : Vector2 = shot["offset"]
@@ -360,8 +406,14 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 			if not is_nan(top_y):
 				bullet.global_position.y = top_y
 			if bullet.has_method("setup"):
-				bullet.setup(Vector2.from_angle(shot["angle"] + turn), pattern.bullet_speed * shot["speed_scale"] * shot.get("launch_scale", 1.0),
-						pattern.damage, pattern.bullet_accel * shot["speed_scale"])
+				var speed : float = pattern.bullet_speed * shot["speed_scale"] * shot.get("launch_scale", 1.0)
+				var accel : float = pattern.bullet_accel * shot["speed_scale"]
+				if pattern.arrive_time > 0.0 and arrive_at.is_finite():
+					# 1点へ集める弾: arrive_time 秒でちょうど着いて止まる速さと減速にする
+					var d := bullet.global_position.distance_to(arrive_at)
+					speed = 2.0 * d / pattern.arrive_time
+					accel = -speed / pattern.arrive_time
+				bullet.setup(Vector2.from_angle(shot["angle"] + turn), speed, pattern.damage, accel)
 			# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
 			var bullet_mirror : bool = mirror != shot.get("flip", false)
 			if bullet.has_method("set_motion"):
@@ -382,9 +434,14 @@ func _owner_enemy() -> Enemy:
 		node = node.get_parent()
 	return null
 
+## ゆずる・やさしくするを共有する相手(持ち主の敵。敵の中にない砲口なら、親のノード)
+func _soften_owner() -> Node:
+	var enemy := _owner_enemy()
+	return enemy if enemy else get_parent()
+
 ## ほかの砲台をやさしくする倍率を、ボスに覚えさせる(1 で元に戻す)
 func _set_soften(factor : float) -> void:
-	var enemy := _owner_enemy()
+	var enemy := _soften_owner()
 	if enemy == null:
 		return
 	if factor > 1.0:
@@ -394,7 +451,7 @@ func _set_soften(factor : float) -> void:
 
 ## 今、同じボスのほかの砲口が求めている、やさしくする倍率(なければ 1)
 func _soften_factor() -> float:
-	var enemy := _owner_enemy()
+	var enemy := _soften_owner()
 	return float(enemy.get_meta(&"soften_others", 1.0)) if enemy else 1.0
 
 ## 左右反転して出た敵(Enemy の mirror_x)の砲口なら、弾幕も左右反転する

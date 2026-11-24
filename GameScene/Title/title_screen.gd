@@ -1,5 +1,7 @@
 extends Control
 class_name TitleScreen
+## (新しく足したクラスは、エディタがクラス名を覚える前でも動くように、ファイルを直接読み込んで使う)
+const _AnotherRound := preload("res://GameScene/Title/another_round.gd")
 ## タイトル画面(title.tscn)。
 ##
 ## 流れ:
@@ -31,6 +33,12 @@ class_name TitleScreen
 @export var ring_spin_speeds : Array[float] = [6.0, -4.0]
 ## REPLAY を選んだときに出す文字
 @export var replay_message : String = "REPLAY は準備中です"
+
+## ノーコンティニューで最終面をクリアしたあと、EndingSequence が true にする。
+## タイトル画面が出たら、操作を受け付けずに「Another Round」の合図を見せて、二周目の一面へ進む
+static var another_round_pending : bool = false
+## 二周目の最初のステージ
+@export_file("*.tscn") var second_loop_scene : String = "res://stage1.tscn"
 
 enum Phase { PRESS, MENU, PANEL, LEAVING }
 enum Item { START, OPTION, SCORE_BOARD, REPLAY, EXIT }
@@ -65,6 +73,43 @@ func _ready() -> void:
 	_fade.color.a = 1.0
 	create_tween().tween_property(_fade, "color:a", 0.0, 0.6)
 	_start_music()
+	if another_round_pending:
+		another_round_pending = false
+		_another_round()
+
+## 二周目へ: タイトルを少し見せたあと、グリッチが走って「Welcome to Another Round」。終わったら一面へ
+func _another_round() -> void:
+	_state = Phase.LEAVING # 操作は受け付けない
+	_press_label.visible = false
+	# 画面は、黒の上にタイトルロゴだけ(背景の絵・輪・メニューは隠す)
+	for path in ["TextureRect", "Ring", "Ring2", "Menu", "Toast"]:
+		var node := get_node_or_null(path) as CanvasItem
+		if node:
+			node.visible = false
+	var black := ColorRect.new()
+	black.color = Color.BLACK
+	black.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	black.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(black)
+	move_child(black, 0)
+	await get_tree().create_timer(1.4).timeout
+	# 曲が歪んで止まる
+	if music and music.playing:
+		var warp := create_tween().set_parallel(true)
+		warp.tween_property(music, "pitch_scale", 0.45, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		warp.tween_property(music, "volume_db", music.volume_db - 30.0, 0.8)
+		warp.chain().tween_callback(music.stop)
+	var overlay = _AnotherRound.new()
+	add_child(overlay)
+	await overlay.play()
+	# 白く光ったところから、ぱっと暗転する
+	_fade.color = Color(0, 0, 0, 1)
+	_fade.visible = true
+	overlay.queue_free()
+	await get_tree().create_timer(0.6).timeout
+	StageIntro.skip_next = false
+	# 真っ暗なので、写真を貼る切り替え(SceneSwitcher)はいらない。そのまま読み込んで切り替える
+	get_tree().change_scene_to_file(second_loop_scene)
 
 func _start_music() -> void:
 	if music == null or music.stream == null:

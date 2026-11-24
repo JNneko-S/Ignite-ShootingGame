@@ -79,6 +79,15 @@ class_name GroundUnit
 ##   ・止まる時間になっても屋根の下なら、屋根を抜けるまで走り続ける
 @export var keep_off_roof : bool = true
 
+@export_group("壁(コライダー)")
+## 出現位置のまわり、この距離(px)以内に置いた壁(GroundBlocker / GroundBlockArea)があれば、出さない(壁にめり込んで見えないように)
+@export var wall_clearance : float = 20.0
+## オンなら、横へ走る戦車(走る向きが横寄り)は、出る前に、走る道すじ全体を調べ、壁に重なるなら出さない
+## (壁のふちに沿って横切ったり、壁の中を通り抜けたりしないように)。壁は地面と一緒に流れるので、出る瞬間に調べれば足りる
+@export var check_drive_path : bool = true
+## 走る道すじを調べるときの、壁からの距離(px)。車体の大きさより広めにして、壁のふちをかすめて走らないようにする
+@export var path_clearance : float = 40.0
+
 @export_group("重ならない")
 ## 車体の半径(px、画面の上での大きさ)。0 より大きければ、ほかの地上の敵と重ならないようにする:
 ##   ・出現する場所に、ほかの地上の敵がいれば、空いている横の位置へずらす
@@ -157,14 +166,43 @@ func _place_at_spawn() -> void:
 		_enemy.global_position.x = rails.clamp_off_rails(_enemy.global_position.x, 30.0)
 	if avoid_obstacles or keep_off_roof:
 		_enemy.global_position = _nearest_free(_enemy.global_position)
-	# 置いた壁(コライダー)の中に出てきてしまったら、見える前に消す(画面の上の外で出てくるので、見た目には分からない)
-	if GroundObstacles.is_walled(get_tree(), _enemy.global_position):
+	# 置いた壁(コライダー)の中や、すぐそば(Wall Clearance)に出てきてしまったら、見える前に消す
+	# (画面の上の外で出てくるので、見た目には分からない)。横へ走る戦車は、走る道すじに壁があっても出さない
+	if _near_wall(_enemy.global_position) or _drive_path_walled():
 		_enemy.queue_free()
 		return
 	if _ground:
 		_local = _ground.to_local(_enemy.global_position)
 	if body and drive_speed > 0.0:
 		body.global_rotation = _heading.angle() - PI * 0.5 - deg_to_rad(body_forward_deg)
+
+## pos から clearance(省略なら Wall Clearance)以内に、置いた壁があるか(真ん中と、まわりの8点を、近い順に2重に見る)
+func _near_wall(pos : Vector2, clearance : float = -1.0) -> bool:
+	var tree := get_tree()
+	if GroundObstacles.is_walled(tree, pos):
+		return true
+	var r := wall_clearance if clearance < 0.0 else clearance
+	if r <= 0.0:
+		return false
+	for ring in [0.5, 1.0]:
+		for i in 8:
+			if GroundObstacles.is_walled(tree, pos + Vector2.from_angle(TAU * i / 8.0) * r * ring):
+				return true
+	return false
+
+## 横へ走る戦車の、走る道すじに壁があるか。走る時間(Drive Time)ぶん、なければ画面を横切るぶんを、8px ごとに調べる
+func _drive_path_walled() -> bool:
+	if not check_drive_path or drive_speed <= 0.0 or absf(_heading.x) < 0.5:
+		return false
+	var area := CameraView.visible_rect(_enemy)
+	var length := drive_speed * drive_time if drive_time > 0.0 else area.size.x + spawn_margin * 2.0 + 120.0
+	length = minf(length, 1200.0)
+	var d := 8.0
+	while d <= length:
+		if _near_wall(_enemy.global_position + _heading * d, path_clearance):
+			return true
+		d += 8.0
+	return false
 
 ## 置いた壁(コライダー)へ入る一歩か。いま壁の外にいて、次の位置が壁の中なら、その一歩は進まない(壁の手前で止まる)
 func _hits_wall(next : Vector2) -> bool:

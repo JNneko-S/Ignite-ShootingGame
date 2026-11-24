@@ -13,6 +13,9 @@ class_name StageBGM
 @export var stage_runner : StageRunner
 @export var stage_music : AudioStream
 @export var boss_music : AudioStream
+## ボスの名前(SpawnEvent の Boss Name)ごとの曲。ここにある名前のボスが出たら、Boss Music の代わりにこの曲を流す
+## (最終面のラスボスだけ曲を変えるときなど。ANOTHER の曲より優先しない)
+@export var boss_music_by_name : Dictionary[String, AudioStream] = {}
 ## 難易度 ANOTHER のときのボスの曲(どのステージも共通。空なら boss_music のまま)
 ## ANOTHER のボスの曲の音量のずらし(dB)。この曲は小さめに聞こえるので、上げる
 @export var another_boss_volume_db : float = 5.0
@@ -56,10 +59,11 @@ func _on_boss_spawned(_enemy : Enemy, _boss_name : String, _thresholds : Array[f
 	if not _boss_pending:
 		return # 中ボス
 	_boss_pending = false
-	if _is_playing(_boss_music()):
+	var music := _boss_music(_boss_name)
+	if _is_playing(music):
 		return # 同じ曲を、頭から流し直さない
 	_kill_fade()
-	_play_music(_boss_music())
+	_play_music(music)
 	if resume_after_midboss and _enemy.boss_reach_time < 0.0:
 		_enemy.died.connect(_on_midboss_died, CONNECT_ONE_SHOT)
 	if stream == another_boss_music and HazardRank.active:
@@ -73,9 +77,11 @@ func _on_midboss_died(_boss : Enemy) -> void:
 	_fade.tween_callback(func() -> void: _play_music(stage_music))
 
 ## 今の難易度で流すボスの曲
-func _boss_music() -> AudioStream:
+func _boss_music(boss_name : String = "") -> AudioStream:
 	if HazardRank.active and another_boss_music != null:
 		return another_boss_music
+	if boss_name != "" and boss_music_by_name.has(boss_name) and boss_music_by_name[boss_name] != null:
+		return boss_music_by_name[boss_name]
 	return boss_music
 
 func _play_music(music : AudioStream) -> void:

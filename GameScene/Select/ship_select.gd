@@ -431,6 +431,9 @@ func _launch() -> void:
 	SoundManager.play(confirm_sound)
 	RunConfig.has_selection = true
 	RunConfig.consecutive_game_overs = 0
+	RunConfig.loop = 1 # 出撃し直したら、一周目から
+	RunConfig.continues_used = 0
+	RunConfig.ignite_counter_kills = 0
 	_stop_music()
 	RunConfig.difficulty = _difficulty
 	HazardRank.reset_run() # ANOTHER のランクは、出撃するたびに 0 から

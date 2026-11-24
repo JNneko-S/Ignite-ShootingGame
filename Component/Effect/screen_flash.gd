@@ -10,9 +10,10 @@ const DARK := Color(0.05, 0.02, 0.08)
 var _rect : ColorRect
 var _strength : float = 1.0
 
-## 画面をフラッシュさせる。strength: 0〜1(1 でいちばん強い)
+## 画面をフラッシュさせる。strength: 0〜1(1 でいちばん強い)。オプションの明るさ(GameSettings.flash_scale)を掛ける
 static func play(tree : SceneTree, strength : float = 1.0) -> void:
-	if tree == null or tree.current_scene == null:
+	strength *= GameSettings.flash_scale()
+	if tree == null or tree.current_scene == null or strength <= 0.0:
 		return
 	var flash := ScreenFlash.new()
 	flash._strength = clampf(strength, 0.0, 1.0)

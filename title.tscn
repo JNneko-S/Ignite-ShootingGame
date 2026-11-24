@@ -245,15 +245,15 @@ color = Color(0, 0, 0, 1)
 
 [node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=1500000012]
 stream = ExtResource("8_ui_select")
-volume_db = -8.0
+volume_db = -12.0
 
 [node name="ConfirmSound" type="AudioStreamPlayer" parent="." unique_id=1500000013]
 stream = ExtResource("9_ui_decide")
-volume_db = -6.0
+volume_db = -12.0
 
 [node name="BackSound" type="AudioStreamPlayer" parent="." unique_id=1500000014]
 stream = ExtResource("10_beep")
-volume_db = -10.0
+volume_db = -12.0
 pitch_scale = 0.6
 
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1500000015]

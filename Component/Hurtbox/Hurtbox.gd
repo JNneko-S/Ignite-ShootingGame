@@ -1,5 +1,7 @@
 extends Area2D
 class_name Hurtbox
+## (新しく足したクラスは、エディタがクラス名を覚える前でも動くように、ファイルを直接読み込んで使う)
+const _HitSpark := preload("res://GameScene/Effect/hit_spark.gd")
 
 @export var character : CharacterBody2D
 
@@ -12,11 +14,28 @@ var last_hitbox : Hitbox
 
 signal recieved_damage(damage : int)
 
+## 被弾の火花を出す間隔(秒)。連射で同じ敵に当たり続けても、火花が出すぎないように
+const HIT_SPARK_INTERVAL_MSEC : int = 45
+var _last_spark_msec : int = -1000
+
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:
 		last_hitbox = hitbox
 		recieved_damage.emit(_scaled_damage(hitbox))
+		_hit_spark(hitbox)
 		hitbox.damage_dealt.emit(self)
+
+## 自機の弾(反射弾も)が敵に当たったら、当たった所に火花を出す(撃った側へ散る)
+func _hit_spark(hitbox : Hitbox) -> void:
+	if hitbox.damage_source_type != Hitbox.DamageSourceType.Player or not is_inside_tree():
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_spark_msec < HIT_SPARK_INTERVAL_MSEC:
+		return
+	_last_spark_msec = now
+	var away := hitbox.global_position - global_position
+	_HitSpark.spawn(get_tree(), hitbox.global_position, away if away.length_squared() > 1.0 else Vector2.UP,
+			1.4 if hitbox is EnemyBullet else 1.0)
 
 ## 自機のショットは、自機が近くにいるほど強くなる(Player.close_damage_scale_at)。
 ## ダメージは整数なので、端数は確率で切り上げて、平均が倍率どおりになるようにする

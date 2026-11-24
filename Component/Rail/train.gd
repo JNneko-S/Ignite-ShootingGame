@@ -42,6 +42,14 @@ signal finished(train : Train)
 @export var bonus_explosion_interval : float = 0.07
 @export_group("")
 ## 同じ線路の前の列車との、最小の間隔(px)
+@export_group("火花")
+## オンなら、走っているあいだ、画面に見えている車両の車輪から、レールとこすれる火花が飛ぶ
+@export var rail_sparks : bool = true
+## 火花を出す間隔(秒)と、1回に1車両の片側から出す数
+@export var spark_interval : float = 0.08
+@export var sparks_per_side : int = 1
+@export_group("")
+
 @export var min_spacing : float = 60.0
 ## 車両と車両のすき間(px、ワールド)
 @export var gap : float = 4.0
@@ -59,6 +67,7 @@ var _held : bool = true
 ## 急いで去っているときの、速さの倍率
 var _speed_scale : float = 1.0
 var _bonus_done : bool = false
+var _spark_in : float = 0.0
 ## 全車両撃破で落とすパワーアップ(StageRunner が、ステージの Train Clear Power Up から決める。空なら落とさない)
 static var clear_power_up : PackedScene
 ## 全車両撃破でパワーアップを落とせる間隔(秒)と、最後に落とした時刻(ミリ秒)
@@ -162,6 +171,11 @@ func _physics_process(delta : float) -> void:
 		_held = false
 	var net := _net_speed()
 	global_position.y += net * delta
+	if rail_sparks:
+		_spark_in -= delta
+		if _spark_in <= 0.0:
+			_spark_in = spark_interval
+			_emit_sparks()
 	_cars.assign(_cars.filter(func(c) -> bool: return is_instance_valid(c))) # 消えた車両は、型を付けた引数に渡すとエラーになる
 	if _cars.is_empty():
 		_finish()
@@ -177,6 +191,27 @@ func _physics_process(delta : float) -> void:
 	# 縦だけで見る(横の別の画面の線路を走っていても、通り過ぎたら消える)
 	if (net < 0.0 and bottom < view.position.y - exit_margin) or (net > 0.0 and top > view.end.y + exit_margin):
 		_finish()
+
+## 画面に見えている車両の、左右の車輪のあたりから、走る向きの後ろへ火花を飛ばす
+func _emit_sparks() -> void:
+	var view := CameraView.visible_rect(self)
+	var back := 1.0 if speed > 0.0 else -1.0 # 上へ走るなら、火花は下(後ろ)へ
+	var tree := get_tree()
+	for car in _cars:
+		if not is_instance_valid(car) or not view.grow(-4.0).has_point(car.global_position):
+			continue
+		if car is Enemy and (car as Enemy).hp_component and (car as Enemy).hp_component.hp <= 0:
+			continue
+		var half := 14.0
+		var sprite := car.get_node_or_null("Sprite2D") as Sprite2D
+		if sprite and sprite.texture:
+			half = sprite.get_rect().size.x * absf(sprite.scale.x * car.scale.x) * 0.42
+		var length := _car_height(car)
+		for side in [-1.0, 1.0]:
+			if randf() < 0.45:
+				continue # 毎回すべての車輪からは出さない(ちらちら光る)
+			var at := car.global_position + Vector2(side * half, randf_range(-0.4, 0.4) * length)
+			RailSparks.emit(tree, at, Vector2(side * 120.0, back * 300.0), sparks_per_side, 60.0)
 
 ## 壊れていない車両の数
 func alive_cars() -> int:

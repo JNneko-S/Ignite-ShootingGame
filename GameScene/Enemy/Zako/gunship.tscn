@@ -16,6 +16,7 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Enemies/shot_gunship_3way_r.tres" id="pat_r"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Enemies/move_gunship.tres" id="move"]
 [ext_resource type="PackedScene" path="res://GameScene/Item/power_up_option.tscn" id="drop"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_e_zako_ring3d.tres" id="ex_ex_e_zako_ring3d"]
 
 [sub_resource type="SpriteFrames" id="thrust_frames"]
 animations = [{
@@ -103,7 +104,7 @@ one_shot = true
 [node name="EnemyShooterComponent" parent="GunLeft" index="2" unique_id=1925740631 instance=ExtResource("shooter_scene")]
 z_index = 2
 position = Vector2(0, 20)
-patterns = Array[ExtResource("shot_script")]([ExtResource("pat_l")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_l"), ExtResource("ex_ex_e_zako_ring3d")])
 
 [node name="GunRight" type="Node2D" parent="." index="7" unique_id=1407394566]
 position = Vector2(25.5, 22)
@@ -132,7 +133,7 @@ one_shot = true
 [node name="EnemyShooterComponent" parent="GunRight" index="2" unique_id=1361843090 instance=ExtResource("shooter_scene")]
 z_index = 2
 position = Vector2(0, 20)
-patterns = Array[ExtResource("shot_script")]([ExtResource("pat_r")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat_r"), ExtResource("ex_ex_e_zako_ring3d")])
 
 [node name="ItemDrop" parent="." unique_id=301000003]
 item_scene = ExtResource("drop")

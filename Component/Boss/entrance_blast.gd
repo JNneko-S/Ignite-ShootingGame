@@ -88,7 +88,7 @@ func _shake(tree : SceneTree) -> void:
 	var tween := tree.create_tween()
 	tween.tween_method(func(t : float) -> void:
 		if is_instance_valid(camera):
-			var power := shake_strength * (1.0 - t)
+			var power := shake_strength * GameSettings.shake_scale() * (1.0 - t)
 			camera.offset = base + Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * power,
 		0.0, 1.0, shake_time)
 	tween.tween_callback(func() -> void:

@@ -14,14 +14,12 @@
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_small_kai.tscn" id="e_tank"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/turret_ground_kai.tscn" id="e_turret"]
 [ext_resource type="Resource" uid="uid://dvorcwn7qs45n" path="res://Resources/MovePatterns/Stage1/m1_wall_hold.tres" id="m_wall_hold"]
-[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="phase_script"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 [ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
 [ext_resource type="Script" uid="uid://bg0fl5dymji4x" path="res://spawn_event.gd" id="spawn_script"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="stage_script"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_aim_3way_kai.tres" id="s_aim_3way"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_ignite_wall_kai.tres" id="s_ignite_wall"]
-[ext_resource type="Script" uid="uid://bmmsqs21nxnjs" path="res://train_event.gd" id="train_script"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bomber_kai.tscn" id="x4_1"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_lane_right_kai.tscn" id="x4_5"]
@@ -41,8 +39,11 @@
 [ext_resource type="Resource" uid="uid://ujid7vd1nm36" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="z_m_rise"]
 [ext_resource type="Resource" uid="uid://byalnpdisln0b" path="res://Resources/ShotPatterns/Stage3/s3_rise_aim.tres" id="z_p_rise"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/strike_gunship.tscn" id="z_strike"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/black_swans_sairin.tscn" id="z_swans"]
-[ext_resource type="PackedScene" path="res://GameScene/Train/passing_train.tscn" id="z_train"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_kai.tscn" id="e_parked"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_small_kai.tscn" id="e_parked_small"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/blood_swan.tscn" id="z_blood_swan"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/conveyor_wagon.tscn" id="e_wagon"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="a_open_1"]
 script = ExtResource("spawn_script")
@@ -369,6 +370,7 @@ offset_step = Vector2(60, 6)
 emerge = 3
 emerge_time = 0.95
 time = 110.7
+count_below_another = 4
 
 [sub_resource type="Resource" id="Resource_ykof6"]
 script = ExtResource("spawn_script")
@@ -379,6 +381,7 @@ interval = 0.0
 offset = Vector2(-120, 0)
 offset_step = Vector2(120, 0)
 time = 111.8
+count_below_another = 2
 
 [sub_resource type="Resource" id="Resource_6mecu"]
 script = ExtResource("spawn_script")
@@ -399,6 +402,7 @@ offset_step = Vector2(-60, 6)
 emerge = 3
 emerge_time = 0.95
 time = 112.9
+count_below_another = 4
 
 [sub_resource type="Resource" id="Resource_2e3lj"]
 script = ExtResource("spawn_script")
@@ -408,6 +412,7 @@ count = 3
 interval = 0.35
 offset_step = Vector2(0, 75)
 time = 113.8
+count_below_another = 2
 
 [sub_resource type="Resource" id="xb_g1"]
 script = ExtResource("spawn_script")
@@ -430,6 +435,7 @@ interval = 0.0
 offset = Vector2(-150, 0)
 offset_step = Vector2(150, 0)
 time = 115.6
+count_below_another = 2
 
 [sub_resource type="Resource" id="xb_s3"]
 script = ExtResource("spawn_script")
@@ -444,6 +450,7 @@ alternate_mirror = true
 emerge = 3
 emerge_time = 0.85
 time = 116.7
+count_below_another = 5
 
 [sub_resource type="Resource" id="Resource_qytox"]
 script = ExtResource("spawn_script")
@@ -455,6 +462,7 @@ offset = Vector2(0, 40)
 offset_step = Vector2(0, 75)
 mirror_x = true
 time = 117.4
+count_below_another = 2
 
 [sub_resource type="Resource" id="Resource_mmh37"]
 script = ExtResource("spawn_script")
@@ -463,6 +471,7 @@ move_pattern = ExtResource("27_4a3vo")
 count = 3
 interval = 0.4
 time = 118.7
+count_below_another = 2
 
 [sub_resource type="Resource" id="Resource_un0oc"]
 script = ExtResource("spawn_script")
@@ -480,6 +489,7 @@ interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
 time = 120.4
+count_below_another = 3
 
 [sub_resource type="Resource" id="xb_s4"]
 script = ExtResource("spawn_script")
@@ -494,6 +504,7 @@ alternate_mirror = true
 emerge = 3
 emerge_time = 0.8
 time = 121.2
+count_below_another = 6
 
 [sub_resource type="Resource" id="Resource_yo6tb"]
 script = ExtResource("spawn_script")
@@ -503,6 +514,7 @@ count = 3
 interval = 0.4
 mirror_x = true
 time = 122.6
+count_below_another = 2
 
 [sub_resource type="Resource" id="Resource_awcls"]
 script = ExtResource("spawn_script")
@@ -513,6 +525,7 @@ interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
 time = 123.8
+count_below_another = 3
 
 [sub_resource type="Resource" id="Resource_kc4qh"]
 script = ExtResource("spawn_script")
@@ -522,6 +535,7 @@ count = 4
 offset_step = Vector2(0, 70)
 mirror_x = true
 time = 125.2
+count_below_another = 3
 
 [sub_resource type="Resource" id="c_strike_1"]
 script = ExtResource("spawn_script")
@@ -541,6 +555,7 @@ offset_step = Vector2(120, 0)
 emerge = 2
 emerge_time = 1.4
 time = 128.5
+count_below_another = 2
 
 [sub_resource type="Resource" id="c_rise_1"]
 script = ExtResource("spawn_script")
@@ -552,6 +567,7 @@ interval = 0.18
 offset = Vector2(-165, 0)
 offset_step = Vector2(110, 0)
 time = 131.0
+count_below_another = 3
 
 [sub_resource type="Resource" id="c_flak_1"]
 script = ExtResource("spawn_script")
@@ -570,6 +586,7 @@ count = 3
 interval = 0.35
 offset_step = Vector2(0, 75)
 time = 136.0
+count_below_another = 2
 
 [sub_resource type="Resource" id="c_strike_2"]
 script = ExtResource("spawn_script")
@@ -592,6 +609,7 @@ alternate_mirror = true
 emerge = 3
 emerge_time = 0.85
 time = 140.0
+count_below_another = 5
 
 [sub_resource type="Resource" id="c_carrier_1"]
 script = ExtResource("spawn_script")
@@ -608,6 +626,7 @@ interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
 time = 144.0
+count_below_another = 3
 
 [sub_resource type="Resource" id="c_wait"]
 script = ExtResource("wait_script")
@@ -621,14 +640,11 @@ time = 147.0
 
 [sub_resource type="Resource" id="c_swans"]
 script = ExtResource("spawn_script")
-enemy_scene = ExtResource("z_swans")
+enemy_scene = ExtResource("z_blood_swan")
 tag = "midboss2"
 is_boss = true
-boss_name = "ブラックスワンズ -再臨-"
-count = 2
-interval = 0.0
-offset = Vector2(-100, 0)
-offset_step = Vector2(200, 0)
+boss_name = "ブラッドスワン"
+boss_phase_thresholds = Array[float]([0.66, 0.33])
 time = 149.0
 
 [sub_resource type="Resource" id="c_wait_swans"]
@@ -636,24 +652,6 @@ script = ExtResource("wait_script")
 tag = "midboss2"
 timeout = 90.0
 time = 150.0
-
-[sub_resource type="Resource" id="d_train_1"]
-script = ExtResource("train_script")
-rail = -1
-speed = -240.0
-car_count = 4
-interval = 0.0
-lane_x = -140.0
-time = 152.0
-
-[sub_resource type="Resource" id="d_train_2"]
-script = ExtResource("train_script")
-rail = -1
-speed = -240.0
-car_count = 4
-interval = 0.0
-lane_x = 140.0
-time = 154.0
 
 [sub_resource type="Resource" id="d_scramble_1"]
 script = ExtResource("spawn_script")
@@ -668,17 +666,6 @@ emerge = 3
 emerge_time = 0.95
 time = 156.0
 
-[sub_resource type="Resource" id="d_train_3"]
-script = ExtResource("train_script")
-rail = -1
-speed = -260.0
-car_count = 4
-count = 2
-interval = 0.8
-lane_x = -60.0
-lane_step = 120.0
-time = 158.0
-
 [sub_resource type="Resource" id="d_gunship_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
@@ -692,17 +679,6 @@ emerge = 3
 emerge_time = 1.3
 time = 161.0
 
-[sub_resource type="Resource" id="d_train_4"]
-script = ExtResource("train_script")
-rail = -1
-speed = -260.0
-car_count = 4
-count = 3
-interval = 0.6
-lane_x = -180.0
-lane_step = 180.0
-time = 163.5
-
 [sub_resource type="Resource" id="d_side_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("x4_1")
@@ -713,14 +689,6 @@ offset = Vector2(0, 40)
 offset_step = Vector2(0, 75)
 mirror_x = true
 time = 166.0
-
-[sub_resource type="Resource" id="d_train_5"]
-script = ExtResource("train_script")
-rail = -1
-speed = -320.0
-car_count = 6
-interval = 0.0
-time = 168.5
 
 [sub_resource type="Resource" id="d_scramble_2"]
 script = ExtResource("spawn_script")
@@ -759,17 +727,6 @@ offset = Vector2(110, 0)
 emerge = 1
 emerge_time = 1.0
 time = 175.0
-
-[sub_resource type="Resource" id="e_train_1"]
-script = ExtResource("train_script")
-rail = -1
-speed = -280.0
-car_count = 5
-count = 2
-interval = 0.0
-lane_x = -150.0
-lane_step = 300.0
-time = 176.5
 
 [sub_resource type="Resource" id="e_rise_1"]
 script = ExtResource("spawn_script")
@@ -822,17 +779,6 @@ offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
 time = 185.0
 
-[sub_resource type="Resource" id="e_train_2"]
-script = ExtResource("train_script")
-rail = -1
-speed = -300.0
-car_count = 5
-count = 2
-interval = 0.5
-lane_x = -60.0
-lane_step = 120.0
-time = 187.0
-
 [sub_resource type="Resource" id="e_scramble_1"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_formation")
@@ -870,17 +816,6 @@ offset = Vector2(-110, 0)
 emerge = 1
 emerge_time = 1.0
 time = 193.0
-
-[sub_resource type="Resource" id="e_train_3"]
-script = ExtResource("train_script")
-rail = -1
-speed = -320.0
-car_count = 6
-count = 3
-interval = 0.4
-lane_x = -180.0
-lane_step = 180.0
-time = 194.5
 
 [sub_resource type="Resource" id="e_wait"]
 script = ExtResource("wait_script")
@@ -963,10 +898,189 @@ offset_step = Vector2(40, 0)
 alternate_mirror = true
 time = 191.0
 
+[sub_resource type="Resource" id="p_park_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked_small")
+count = 2
+interval = 0.0
+offset = Vector2(-170, 0)
+offset_step = Vector2(340, 0)
+time = 8.0
+
+[sub_resource type="Resource" id="p_park_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+offset = Vector2(-140, 0)
+time = 18.5
+
+[sub_resource type="Resource" id="p_park_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked_small")
+count = 3
+interval = 0.0
+offset = Vector2(-50, -10)
+offset_step = Vector2(50, 10)
+time = 26.0
+
+[sub_resource type="Resource" id="p_park_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+offset = Vector2(150, 0)
+time = 44.0
+
+[sub_resource type="Resource" id="p_park_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked_small")
+count = 2
+interval = 0.0
+offset = Vector2(-160, 0)
+offset_step = Vector2(90, -20)
+time = 58.5
+
+[sub_resource type="Resource" id="p_park_6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+offset = Vector2(-20, 0)
+time = 71.0
+
+[sub_resource type="Resource" id="p_park_7"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked_small")
+count = 3
+interval = 0.0
+offset = Vector2(110, 0)
+offset_step = Vector2(35, -30)
+time = 80.0
+
+[sub_resource type="Resource" id="p_park_8"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+count = 2
+interval = 0.0
+offset = Vector2(-150, 0)
+offset_step = Vector2(300, 0)
+time = 92.0
+
+[sub_resource type="Resource" id="p_park_9"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+offset = Vector2(130, 0)
+time = 176.0
+
+[sub_resource type="Resource" id="p_park_10"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked_small")
+count = 2
+interval = 0.0
+offset = Vector2(-150, 0)
+offset_step = Vector2(300, 0)
+time = 186.0
+
+[sub_resource type="Resource" id="p_park_11"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_parked")
+offset = Vector2(-80, 0)
+time = 192.5
+
+[sub_resource type="Resource" id="d_wagon_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 152.0
+
+[sub_resource type="Resource" id="d_wagon_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 154.0
+
+[sub_resource type="Resource" id="d_wagon_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 156.0
+
+[sub_resource type="Resource" id="d_wagon_4"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 158.0
+
+[sub_resource type="Resource" id="d_wagon_5"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 160.0
+
+[sub_resource type="Resource" id="d_wagon_6"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 162.0
+
+[sub_resource type="Resource" id="d_wagon_7"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 164.0
+
+[sub_resource type="Resource" id="d_wagon_8"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 166.0
+
+[sub_resource type="Resource" id="d_wagon_9"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 168.0
+
+[sub_resource type="Resource" id="d_wagon_10"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 170.0
+
+[sub_resource type="Resource" id="d_wagon_11"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(-141, 0)
+time = 176.5
+
+[sub_resource type="Resource" id="d_wagon_12"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_wagon")
+offset = Vector2(145, 0)
+time = 180.0
+
+[sub_resource type="Resource" id="ignite_chance_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_ignite_bait")
+tag = "ignite_chance"
+count = 3
+interval = 0.35
+offset = Vector2(-120, 0)
+offset_step = Vector2(120, 0)
+time = 160.0
+
+[sub_resource type="Resource" id="ignite_chance_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_ignite_bait")
+tag = "ignite_chance"
+count = 3
+interval = 0.35
+offset = Vector2(-90, 30)
+offset_step = Vector2(90, 0)
+time = 164.0
+
 [resource]
 script = ExtResource("stage_script")
+zako_fire_interval_scale = 1.3
+zako_hp_scale_below_another = 0.9
+boss_hp_scale_below_another = 0.9
 stage_name = "Stage 4 ヌクレオ"
-events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh"), SubResource("c_strike_1"), SubResource("c_bomber_1"), SubResource("c_rise_1"), SubResource("c_flak_1"), SubResource("c_side_1"), SubResource("c_strike_2"), SubResource("c_scramble_1"), SubResource("c_carrier_1"), SubResource("c_down_1"), SubResource("c_wait"), SubResource("c_warning"), SubResource("c_swans"), SubResource("c_wait_swans"), SubResource("d_train_1"), SubResource("d_train_2"), SubResource("d_scramble_1"), SubResource("d_train_3"), SubResource("d_gunship_1"), SubResource("d_train_4"), SubResource("d_side_1"), SubResource("d_train_5"), SubResource("d_scramble_2"), SubResource("e_tank_1"), SubResource("e_lane_l"), SubResource("e_strike_1"), SubResource("e_train_1"), SubResource("e_rise_1"), SubResource("e_heavy_1"), SubResource("e_gunship_1"), SubResource("e_lane_r"), SubResource("e_down_1"), SubResource("e_flak_1"), SubResource("e_train_2"), SubResource("e_scramble_1"), SubResource("e_heavy_2"), SubResource("e_carrier_1"), SubResource("e_strike_2"), SubResource("e_train_3"), SubResource("e_wait"), SubResource("f_warning"), SubResource("f_boss"), SubResource("f_wait"), SubResource("g_warning"), SubResource("g_core"), SubResource("g_wait"), SubResource("e_bee_1"), SubResource("e_queen_1"), SubResource("e_bee_2"), SubResource("e_bee_3")])
+events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh"), SubResource("c_strike_1"), SubResource("c_bomber_1"), SubResource("c_rise_1"), SubResource("c_flak_1"), SubResource("c_side_1"), SubResource("c_strike_2"), SubResource("c_scramble_1"), SubResource("c_carrier_1"), SubResource("c_down_1"), SubResource("c_wait"), SubResource("c_warning"), SubResource("c_swans"), SubResource("c_wait_swans"), SubResource("d_scramble_1"), SubResource("d_gunship_1"), SubResource("d_side_1"), SubResource("d_scramble_2"), SubResource("e_tank_1"), SubResource("e_lane_l"), SubResource("e_strike_1"), SubResource("e_rise_1"), SubResource("e_heavy_1"), SubResource("e_gunship_1"), SubResource("e_lane_r"), SubResource("e_down_1"), SubResource("e_flak_1"), SubResource("e_scramble_1"), SubResource("e_heavy_2"), SubResource("e_carrier_1"), SubResource("e_strike_2"), SubResource("e_wait"), SubResource("f_warning"), SubResource("f_boss"), SubResource("f_wait"), SubResource("g_warning"), SubResource("g_core"), SubResource("g_wait"), SubResource("e_bee_1"), SubResource("e_queen_1"), SubResource("e_bee_2"), SubResource("e_bee_3"), SubResource("p_park_1"), SubResource("p_park_2"), SubResource("p_park_3"), SubResource("p_park_4"), SubResource("p_park_5"), SubResource("p_park_6"), SubResource("p_park_7"), SubResource("p_park_8"), SubResource("p_park_9"), SubResource("p_park_10"), SubResource("p_park_11"), SubResource("d_wagon_1"), SubResource("d_wagon_2"), SubResource("d_wagon_3"), SubResource("d_wagon_4"), SubResource("d_wagon_5"), SubResource("d_wagon_6"), SubResource("d_wagon_7"), SubResource("d_wagon_8"), SubResource("d_wagon_9"), SubResource("d_wagon_10"), SubResource("d_wagon_11"), SubResource("d_wagon_12"), SubResource("ignite_chance_1"), SubResource("ignite_chance_2")])
 difficulty_step = 1
 another_force_black = true
 small_bullet_hitbox_hard = true

@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e4"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 0.75
+target_speed = 0.0
+speed_trans = 4
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 0.45
+change_speed = false
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 1.4
+target_speed = 115.0
+speed_trans = 4
+speed_ease = 0
+angular_velocity = 26.0
+
+[sub_resource type="Resource" id="p3"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+bullet_count = 3
+spread_angle = 56.0
+aim_at_player = false
+cluster_layers = 1
+cluster_spacing = 7.0
+mirror_curve_by_side = true
+bullet_speed = 40.0
+motion = Array[ExtResource("e3")]([SubResource("st4")])
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+start_delay = 0.4
+shot_count = 2
+interval = 0.9
+pause = 1.5
+bullet_count = 5
+spread_angle = 360.0
+aim_at_player = true
+base_angle = 36.0
+rotate_per_shot = 36.0
+bullet_speed = 230.0
+bullet_scale = 1.5
+split_time = 1.2
+motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2")])
+split_pattern = SubResource("p3")

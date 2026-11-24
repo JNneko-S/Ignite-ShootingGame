@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e4"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 0.8
+target_speed = 40.0
+speed_trans = 4
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+bullet_count = 7
+spread_angle = 360.0
+aim_at_player = false
+bullet_speed = 60.0
+bullet_accel = 30.0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 1.4
+shot_count = 2
+interval = 0.45
+pause = 2.2
+bullet_count = 1
+aim_at_player = true
+random_angle = 22.0
+random_seed = 9
+bullet_speed = 190.0
+split_time = 0.85
+split_follow_direction = false
+yields = true
+motion = Array[ExtResource("e3")]([SubResource("st1")])
+split_pattern = SubResource("p2")

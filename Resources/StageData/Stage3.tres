@@ -31,6 +31,7 @@
 [ext_resource type="PackedScene" uid="uid://t26vdwy8qwct" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="swans"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait"]
 [ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="e1"]
 script = ExtResource("scroll")
@@ -978,10 +979,30 @@ script = ExtResource("wait")
 tag = "boss"
 time = 124.0
 
+[sub_resource type="Resource" id="ignite_chance_1"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("e_ignite_bait")
+tag = "ignite_chance"
+count = 3
+interval = 0.35
+offset = Vector2(-120, 0)
+offset_step = Vector2(120, 0)
+time = 72.0
+
+[sub_resource type="Resource" id="ignite_chance_2"]
+script = ExtResource("spawn")
+enemy_scene = ExtResource("e_ignite_bait")
+tag = "ignite_chance"
+count = 3
+interval = 0.35
+offset = Vector2(-90, 30)
+offset_step = Vector2(90, 0)
+time = 75.5
+
 [resource]
 script = ExtResource("data")
 stage_name = "Stage 3"
-events = Array[ExtResource("event")]([SubResource("e1"), SubResource("e2"), SubResource("sky_phase_1"), SubResource("e3"), SubResource("e4"), SubResource("e5"), SubResource("e6"), SubResource("e7"), SubResource("e8"), SubResource("e9"), SubResource("e10"), SubResource("e11"), SubResource("e12"), SubResource("e13"), SubResource("Resource_58da7"), SubResource("Resource_p15fs"), SubResource("Resource_q7f36"), SubResource("Resource_x3gml"), SubResource("Resource_441jl"), SubResource("Resource_o7j5x"), SubResource("Resource_s8xme"), SubResource("e22"), SubResource("e23"), SubResource("e24"), SubResource("e25"), SubResource("e26"), SubResource("e27"), SubResource("e28"), SubResource("sky_phase_2"), SubResource("e29"), SubResource("Resource_y32b2"), SubResource("Resource_2181a"), SubResource("Resource_wq42m"), SubResource("Resource_akd68"), SubResource("Resource_ixama"), SubResource("Resource_fq7rf"), SubResource("Resource_8s5lw"), SubResource("Resource_lpk2e"), SubResource("Resource_kw1ew"), SubResource("Resource_tnjie"), SubResource("Resource_3frt2"), SubResource("Resource_bwvay"), SubResource("Resource_smf0q"), SubResource("Resource_4olo3"), SubResource("Resource_jbwio"), SubResource("Resource_rxxra"), SubResource("Resource_72j23"), SubResource("Resource_mf72h"), SubResource("Resource_0xpx4"), SubResource("Resource_jqv86"), SubResource("Resource_cqs6l"), SubResource("Resource_2ye6s"), SubResource("Resource_5o84p"), SubResource("Resource_yuf8c"), SubResource("e30"), SubResource("e31"), SubResource("e32"), SubResource("e33"), SubResource("e34"), SubResource("e35"), SubResource("e36"), SubResource("e37"), SubResource("e38"), SubResource("e39"), SubResource("Resource_5rnv4"), SubResource("Resource_tf1j2"), SubResource("Resource_do38r"), SubResource("Resource_x6uah"), SubResource("Resource_770st"), SubResource("Resource_ueefj"), SubResource("Resource_wm3d5"), SubResource("Resource_s32yp"), SubResource("e48"), SubResource("e49"), SubResource("e50"), SubResource("e51"), SubResource("e52"), SubResource("e53"), SubResource("e54"), SubResource("sky_phase_3"), SubResource("e55"), SubResource("e56"), SubResource("e57"), SubResource("e58"), SubResource("e59"), SubResource("e60"), SubResource("e61"), SubResource("e62"), SubResource("e63"), SubResource("e64"), SubResource("e65"), SubResource("e66"), SubResource("e67")])
+events = Array[ExtResource("event")]([SubResource("e1"), SubResource("e2"), SubResource("sky_phase_1"), SubResource("e3"), SubResource("e4"), SubResource("e5"), SubResource("e6"), SubResource("e7"), SubResource("e8"), SubResource("e9"), SubResource("e10"), SubResource("e11"), SubResource("e12"), SubResource("e13"), SubResource("Resource_58da7"), SubResource("Resource_p15fs"), SubResource("Resource_q7f36"), SubResource("Resource_x3gml"), SubResource("Resource_441jl"), SubResource("Resource_o7j5x"), SubResource("Resource_s8xme"), SubResource("e22"), SubResource("e23"), SubResource("e24"), SubResource("e25"), SubResource("e26"), SubResource("e27"), SubResource("e28"), SubResource("sky_phase_2"), SubResource("e29"), SubResource("Resource_y32b2"), SubResource("Resource_2181a"), SubResource("Resource_wq42m"), SubResource("Resource_akd68"), SubResource("Resource_ixama"), SubResource("Resource_fq7rf"), SubResource("Resource_8s5lw"), SubResource("Resource_lpk2e"), SubResource("Resource_kw1ew"), SubResource("Resource_tnjie"), SubResource("Resource_3frt2"), SubResource("Resource_bwvay"), SubResource("Resource_smf0q"), SubResource("Resource_4olo3"), SubResource("Resource_jbwio"), SubResource("Resource_rxxra"), SubResource("Resource_72j23"), SubResource("Resource_mf72h"), SubResource("Resource_0xpx4"), SubResource("Resource_jqv86"), SubResource("Resource_cqs6l"), SubResource("Resource_2ye6s"), SubResource("Resource_5o84p"), SubResource("Resource_yuf8c"), SubResource("e30"), SubResource("e31"), SubResource("e32"), SubResource("e33"), SubResource("e34"), SubResource("e35"), SubResource("e36"), SubResource("e37"), SubResource("e38"), SubResource("e39"), SubResource("Resource_5rnv4"), SubResource("Resource_tf1j2"), SubResource("Resource_do38r"), SubResource("Resource_x6uah"), SubResource("Resource_770st"), SubResource("Resource_ueefj"), SubResource("Resource_wm3d5"), SubResource("Resource_s32yp"), SubResource("e48"), SubResource("e49"), SubResource("e50"), SubResource("e51"), SubResource("e52"), SubResource("e53"), SubResource("e54"), SubResource("sky_phase_3"), SubResource("e55"), SubResource("e56"), SubResource("e57"), SubResource("e58"), SubResource("e59"), SubResource("e60"), SubResource("e61"), SubResource("e62"), SubResource("e63"), SubResource("e64"), SubResource("e65"), SubResource("e66"), SubResource("e67"), SubResource("ignite_chance_1"), SubResource("ignite_chance_2")])
 another_zako_rate_ratio = 0.35
 zako_hp_scale_below_another = null
 boss_hp_scale_below_another = null

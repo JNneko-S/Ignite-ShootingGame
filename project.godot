@@ -46,14 +46,14 @@ folder_colors={
 "res://Resources/": "green"
 }
 
-[gui]
-
-theme/custom="res://Resources/UI/ink_theme.tres"
-
 [global_group]
 
 player=""
 enemy=""
+
+[gui]
+
+theme/custom="res://Resources/UI/ink_theme.tres"
 
 [input]
 
@@ -149,6 +149,6 @@ UI_Pause={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)

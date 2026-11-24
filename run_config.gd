@@ -14,5 +14,16 @@ const ANOTHER : int = 3
 static var ship : ShipData = null
 ## 続けてゲームオーバーになった回数(ステージをクリアするか、機体選択から出撃し直すと 0 に戻る)
 static var consecutive_game_overs : int = 0
+## 何周目か(1 = 一周目)。ノーコンティニューで最終面をクリアすると 2 になり、二周目(Another Round)に入る
+static var loop : int = 1
+## この出撃で、コンティニュー(ゲームオーバーからのやり直し)をした回数
+static var continues_used : int = 0
+## この出撃で、イグナイトのチャンス(おとりの雑魚)を、イグナイトで返して倒した数(エンドBの選択条件)
+static var ignite_counter_kills : int = 0
+
+## ノーコンティニューで、まだ一周目なら true(クリアしたら二周目に入れる)
+static func can_enter_second_loop() -> bool:
+	return loop == 1 and continues_used == 0
+
 ## この回数続けてゲームオーバーになったら、やり直しのときに難易度を1つ下げる
 const EASE_AFTER_GAME_OVERS : int = 5

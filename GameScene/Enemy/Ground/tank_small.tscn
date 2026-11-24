@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/tank1_2.png" id="body1"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/Tank1_head.png" id="head"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/tank1_body_rip1.png" id="wreck"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_zako_ketsui.tres" id="ex_ex_h_zako_ketsui"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(24, 28)
@@ -35,7 +36,7 @@ hp = 60
 
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 z_index = 0
-patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("pat0"), ExtResource("ex_ex_h_zako_ketsui")])
 
 [node name="DeathExplosion" parent="." index="6" unique_id=301000002]
 explosion_scale = 1.8

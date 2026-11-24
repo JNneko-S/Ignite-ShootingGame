@@ -233,15 +233,15 @@ horizontal_alignment = 1
 
 [node name="MoveSound" type="AudioStreamPlayer" parent="." unique_id=1837419916]
 stream = ExtResource("18_ui_select")
-volume_db = -8.0
+volume_db = -12.0
 
 [node name="ConfirmSound" type="AudioStreamPlayer" parent="." unique_id=738655468]
 stream = ExtResource("19_ui_decide")
-volume_db = -6.0
+volume_db = -12.0
 
 [node name="BackSound" type="AudioStreamPlayer" parent="." unique_id=485129091]
 stream = ExtResource("10_beep")
-volume_db = -10.0
+volume_db = -12.0
 pitch_scale = 0.6
 
 [node name="SparkSound" type="AudioStreamPlayer" parent="." unique_id=2073730607]

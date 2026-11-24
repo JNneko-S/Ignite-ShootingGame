@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_small_kai.tscn" id="base"]
+
+[node name="TankParkedSmallKai" instance=ExtResource("base")]
+
+[node name="HPComponent" parent="."]
+max_hp = 160
+hp = 160
+
+[node name="GroundUnit" parent="."]
+drive_speed = 0.0

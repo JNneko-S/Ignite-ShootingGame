@@ -19,6 +19,10 @@ class_name StageData
 ## true なら、HARD を選んだときも、ANOTHER と同じく敵弾の当たり判定を半分にする(最終面など、弾がとても多いステージ)
 @export var small_bullet_hitbox_hard : bool = false
 
+## EASY / NORMAL / HARD のとき、雑魚の弾幕の撃つ間(Interval・Pause・最初の待ち)に掛ける倍率。1.3 なら間が3割のびて、弾が減る。
+## 道中の弾が多すぎるステージで上げる(ボス・中ボスには効かない。ANOTHER には効かない)
+@export_range(0.5, 3.0, 0.05) var zako_fire_interval_scale : float = 1.0
+
 @export_group("体力")
 ## EASY / NORMAL / HARD のとき、雑魚(ボス・中ボス以外)の体力に掛ける倍率。1 ならそのまま。ANOTHER には効かない
 @export_range(0.1, 2.0, 0.05) var zako_hp_scale_below_another : float = 1.0
