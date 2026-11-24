@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="bullet"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="split_bullet"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_blizzard_snow_another.tres" id="with0"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+soften_others = 4.0
+with_patterns = Array[ExtResource("shot")]([ExtResource("with0")])
+start_delay = 0.4
+shot_count = 56
+interval = 0.06
+loop = false
+pause = 0.7
+bullet_count = 9
+aim_at_player = false
+parallel_spacing = 38.0
+angle_wave_amplitude = 22.0
+angle_wave_shots = 26
+bullet_speed = 150.0

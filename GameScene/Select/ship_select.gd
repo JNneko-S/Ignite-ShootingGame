@@ -185,7 +185,7 @@ func _to_title() -> void:
 	for alpha in [0.5, 0.1, 0.4, 0.0]:
 		_ui_root.modulate.a = alpha
 		await get_tree().create_timer(0.04).timeout
-	get_tree().change_scene_to_file(title_scene)
+	SceneSwitcher.change(title_scene)
 
 func _pressed(actions : Array) -> bool:
 	for action in actions:

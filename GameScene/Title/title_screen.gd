@@ -174,7 +174,7 @@ func _decide() -> void:
 	match _index:
 		Item.START:
 			SoundManager.play(confirm_sound)
-			_leave(func() -> void: get_tree().change_scene_to_file(ship_select_scene))
+			_leave(func() -> void: SceneSwitcher.change(ship_select_scene))
 		Item.OPTION:
 			_open_panel(_option)
 		Item.SCORE_BOARD:

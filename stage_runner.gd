@@ -184,6 +184,14 @@ func upcoming_spawns(stop_signal : String = "warning") -> Array[Dictionary]:
 				list.append({"event": event, "time": entry["time"]})
 	return list
 
+## これから出てくる、いちばん近いボス(Is Boss の SpawnEvent)の名前。いなければ空(WARNING の表示に使う)
+func upcoming_boss_name() -> String:
+	for i in range(maxi(_next - 1, 0), _entries.size()):
+		var event = _entries[i]["event"]
+		if event is SpawnEvent and event.is_boss and event.boss_name != "":
+			return event.boss_name
+	return ""
+
 ## そのシグナル(StageSignalEvent)を、もう出したか(途中から始めたときも、飛ばした分は出したことにする)
 func signal_passed(signal_name : String) -> bool:
 	for i in mini(_next, _entries.size()):
@@ -369,6 +377,9 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		var death := DeathExplosion.of(enemy)
 		if death:
 			death.big = true # 連鎖爆発 → 大爆発してから消える
+		# 登場の演出(ラスボスは専用の演出があるので付けない)
+		if not enemy.get_children().any(func(n : Node) -> bool: return n is FinalBattleIntro):
+			enemy.add_child(BossEntranceFx.new())
 	if event.boss_time_bonus:
 		enemy.boss_reach_time = stage_time # スタートからボス到達までの時間(待機イベントの時間は含まない)
 		enemy.died.connect(_on_final_boss_died) # ステージの最後のボスを倒したら、ほかの敵が残っていてもクリア

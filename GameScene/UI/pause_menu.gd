@@ -193,4 +193,4 @@ func _leave(path : String, reopen : bool) -> void:
 		shutter.change_scene_and_open(path)
 	else:
 		get_tree().paused = false
-		get_tree().change_scene_to_file(path)
+		SceneSwitcher.change(path)

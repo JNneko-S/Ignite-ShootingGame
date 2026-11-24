@@ -64,6 +64,10 @@ static var _hold_fire_count : int = 0
 
 ## 全ての敵を、seconds 秒のあいだ撃たせない。重なったら、いちばん長いものが終わるまで止まる。
 ## ゲームの時間で数える(ポーズ中は進まず、ヒットストップ中はゆっくり進む)
+## 撃たせない状態を、すぐに全部やめる(エンディングの脱出で、追ってくる敵に撃たせるとき)
+static func release_fire() -> void:
+	_hold_fire_count = 0
+
 static func hold_fire(seconds : float) -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null or seconds <= 0.0:

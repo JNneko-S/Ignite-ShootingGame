@@ -108,7 +108,7 @@ func _on_stage_cleared() -> void:
 	StageCarry.save(get_tree())
 	StageCarry.arriving = true
 	StageCarry.cruise_height = dash_height
-	get_tree().change_scene_to_file(next_stage)
+	SceneSwitcher.change(next_stage) # つなぎ目なく(霧の画面のまま)次のステージへ
 
 # ---------------------------------------------------------------- 入ってくる
 

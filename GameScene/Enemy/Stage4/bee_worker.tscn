@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/charger.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/hy_0.png" id="hy0"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/hy_1.png" id="hy1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Medium tiny enemies Asset pack/hy_2.png" id="hy2"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Bee/bee_sting.tres" id="sting"]
+
+[node name="BeeWorker" instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("hy0")
+
+[node name="TextureCycle" type="Node" parent="Sprite2D"]
+script = ExtResource("cycle")
+textures = Array[Texture2D]([ExtResource("hy0"), ExtResource("hy1"), ExtResource("hy2")])
+fps = 20.0
+ping_pong = true
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 60
+hp = 60
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+patterns = Array[ExtResource("shot")]([ExtResource("sting")])

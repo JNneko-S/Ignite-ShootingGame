@@ -18,6 +18,7 @@ spread_angle = 360.0
 line_count = 3
 random_angle = 2.0
 random_speed_ratio = 0.2
+bullet_speed = 150.0
 metadata/_custom_type_script = "uid://ct8u3n22w477n"
 
 [resource]
@@ -28,8 +29,7 @@ interval = 2.0
 loop = false
 bullet_count = 4
 aim_at_player = false
-bullet_speed = 500.0
-bullet_accel = 30.0
+bullet_speed = 320.0
 motion = Array[ExtResource("2_dcstt")]([SubResource("Resource_6wjy7")])
 split_time = 0.8
 split_pattern = SubResource("Resource_dcstt")

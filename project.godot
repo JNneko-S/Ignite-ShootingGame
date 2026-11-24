@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameSettings="*res://Component/Settings/game_settings.gd"
+SceneSwitcher="*res://Component/Scene/scene_switcher.gd"
 SoundManager="*res://sound_manager.gd"
 
 [display]
@@ -148,5 +149,6 @@ UI_Pause={
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"

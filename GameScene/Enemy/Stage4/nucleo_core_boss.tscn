@@ -48,6 +48,31 @@
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="m_hold"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="m_bomber_down"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="m_bomber_side"]
+[ext_resource type="Script" path="res://Component/Beam/beam_shooter.gd" id="beam"]
+[ext_resource type="Script" path="res://Component/Boss/final_battle_intro.gd" id="intro"]
+[ext_resource type="Script" path="res://Component/Part/phase_break.gd" id="phase_break"]
+[ext_resource type="Script" path="res://Component/Boss/nucleo_finale.gd" id="finale"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_flake.tres" id="n_snow_flake"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_branch.tres" id="n_snow_branch"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_fire_flicker.tres" id="n_fire_flicker"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_fire_wheel.tres" id="n_fire_wheel"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_blizzard_fall.tres" id="n_blizzard_fall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_blizzard_vortex_L.tres" id="n_blizzard_vortex_L"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_blizzard_vortex_R.tres" id="n_blizzard_vortex_R"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_volcano_erupt.tres" id="n_volcano_erupt"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_volcano_bomb.tres" id="n_volcano_bomb"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_storm_rage.tres" id="n_storm_rage"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_storm_tempest.tres" id="n_storm_tempest"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_hell_gate.tres" id="n_hell_gate"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_hell_inferno.tres" id="n_hell_inferno"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_side_snow_L.tres" id="n_side_snow_L"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_side_snow_R.tres" id="n_side_snow_R"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_side_flake_L.tres" id="n_side_flake_L"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_side_flake_R.tres" id="n_side_flake_R"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_finale_ice.tres" id="n_finale_ice"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_finale_fire.tres" id="n_finale_fire"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_finale_pulse.tres" id="n_finale_pulse"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_crystal_mandala.tres" id="n_crystal_mandala"]
 
 [sub_resource type="RectangleShape2D" id="body_shape"]
 size = Vector2(104.0, 260.0)
@@ -66,63 +91,145 @@ size = Vector2(32, 52)
 
 [sub_resource type="Resource" id="main_p1"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("t_spiral"), ExtResource("f_bloom")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("n_snow_flake"), ExtResource("n_fire_flicker"), ExtResource("n_snow_branch"), ExtResource("n_fire_wheel")])
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("t_burst"), ExtResource("f_bloom"), ExtResource("f_lance"), ExtResource("k_washer")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("n_blizzard_fall"), ExtResource("n_volcano_erupt"), ExtResource("n_crystal_mandala"), ExtResource("n_volcano_bomb")])
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("f_storm")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("f_bloom"), ExtResource("t_burst")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("n_storm_rage"), ExtResource("n_hell_gate"), ExtResource("n_storm_tempest"), ExtResource("n_crystal_mandala"), ExtResource("n_hell_inferno")])
 
-[sub_resource type="Resource" id="triple_p1"]
+[sub_resource type="Resource" id="main_p4"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_5way")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_finale_ice"), ExtResource("n_finale_fire"), ExtResource("n_finale_pulse")])
 
-[sub_resource type="Resource" id="triple_p2"]
+[sub_resource type="Resource" id="tripleL_p1"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("r_3way6")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_L")])
 
-[sub_resource type="Resource" id="triple_p3"]
+[sub_resource type="Resource" id="tripleL_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_stream")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_L")])
 
-[sub_resource type="Resource" id="small_p1"]
+[sub_resource type="Resource" id="tripleL_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_tank_aim")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_L")])
 
-[sub_resource type="Resource" id="small_p2"]
+[sub_resource type="Resource" id="tripleL_p4"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_aim_3way")])
 
-[sub_resource type="Resource" id="small_p3"]
+[sub_resource type="Resource" id="tripleR_p1"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_aim_3way")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_R")])
 
-[sub_resource type="Resource" id="wing_p1"]
+[sub_resource type="Resource" id="tripleR_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_R")])
 
-[sub_resource type="Resource" id="wing_p2"]
+[sub_resource type="Resource" id="tripleR_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_R")])
 
-[sub_resource type="Resource" id="wing_p3"]
+[sub_resource type="Resource" id="tripleR_p4"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+
+[sub_resource type="Resource" id="smallL_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_L")])
+
+[sub_resource type="Resource" id="smallL_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_L")])
+
+[sub_resource type="Resource" id="smallL_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="smallL_p4"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="smallR_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_R")])
+
+[sub_resource type="Resource" id="smallR_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_snow_R")])
+
+[sub_resource type="Resource" id="smallR_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="smallR_p4"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="wingL_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_L")])
+
+[sub_resource type="Resource" id="wingL_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_L")])
+
+[sub_resource type="Resource" id="wingL_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_L")])
+
+[sub_resource type="Resource" id="wingL_p4"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="wingR_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_R")])
+
+[sub_resource type="Resource" id="wingR_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_R")])
+
+[sub_resource type="Resource" id="wingR_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_side_flake_R")])
+
+[sub_resource type="Resource" id="wingR_p4"]
+script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="crystal_p1"]
 script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="crystal_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_ring_3way")])
 
 [sub_resource type="Resource" id="crystal_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("w_ring_3way")])
+
+[sub_resource type="Resource" id="crystal_p4"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringL_p1"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringL_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_blizzard_vortex_L")])
+
+[sub_resource type="Resource" id="ringL_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringL_p4"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringR_p1"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringR_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("n_blizzard_vortex_R")])
+
+[sub_resource type="Resource" id="ringR_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="ringR_p4"]
+script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="engine_p1"]
 script = ExtResource("shooter_phase")
@@ -132,19 +239,21 @@ script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="engine_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("f_lance")])
+
+[sub_resource type="Resource" id="engine_p4"]
+script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="cannon_p1"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
 
 [sub_resource type="Resource" id="cannon_p2"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
 
 [sub_resource type="Resource" id="cannon_p3"]
 script = ExtResource("shooter_phase")
-patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
+
+[sub_resource type="Resource" id="cannon_p4"]
+script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="center_p1"]
 script = ExtResource("shooter_phase")
@@ -153,6 +262,9 @@ script = ExtResource("shooter_phase")
 script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="center_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="center_p4"]
 script = ExtResource("shooter_phase")
 
 [sub_resource type="Resource" id="sum1_formation"]
@@ -240,6 +352,11 @@ hp_ratio = 0.33
 boss_modulate = Color(1, 0.6, 0.55, 1)
 summons = Array[ExtResource("event_script")]([SubResource("sum3_formation"), SubResource("sum3_bombers")])
 
+[sub_resource type="Resource" id="boss_phase_4"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.12
+boss_modulate = Color(1, 0.42, 0.38, 1)
+
 [node name="NucleoCore" instance=ExtResource("base")]
 
 [node name="Sprite2D" parent="." index="0"]
@@ -255,7 +372,7 @@ hp = 70000
 
 [node name="EnemyShooterComponent" parent="." index="4"]
 position = Vector2(0.7, 3.9)
-phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3"), SubResource("main_p4")])
 
 [node name="DeathExplosion" parent="." index="6"]
 area = Rect2(-180, -150, 360, 300)
@@ -787,83 +904,83 @@ region_rect = Rect2(37, 31, 15, 23)
 
 [node name="EngineLShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-40.3, -41.6)
-phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3"), SubResource("engine_p4")])
 
 [node name="EngineRShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(39.6, -40.3)
-phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3"), SubResource("engine_p4")])
 
 [node name="CrystalLShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-41.0, 34.5)
-phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3"), SubResource("crystal_p4")])
 
 [node name="CrystalRShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(42.9, 33.1)
-phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3"), SubResource("crystal_p4")])
 
 [node name="CannonLShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-31.9, 12.3)
-phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3"), SubResource("cannon_p4")])
 
 [node name="CannonRShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(31.2, 11.7)
-phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3"), SubResource("cannon_p4")])
 
 [node name="WingCannonLShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-136.5, -7.2)
-phases = Array[ExtResource("shooter_phase")]([SubResource("wing_p1"), SubResource("wing_p2"), SubResource("wing_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("wingL_p1"), SubResource("wingL_p2"), SubResource("wingL_p3"), SubResource("wingL_p4")])
 
 [node name="WingCannonRShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(136.5, -7.2)
-phases = Array[ExtResource("shooter_phase")]([SubResource("wing_p1"), SubResource("wing_p2"), SubResource("wing_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("wingR_p1"), SubResource("wingR_p2"), SubResource("wingR_p3"), SubResource("wingR_p4")])
 
 [node name="TripleLShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-110.5, -18.9)
-phases = Array[ExtResource("shooter_phase")]([SubResource("triple_p1"), SubResource("triple_p2"), SubResource("triple_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("tripleL_p1"), SubResource("tripleL_p2"), SubResource("tripleL_p3"), SubResource("tripleL_p4")])
 
 [node name="TripleRShooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(111.8, -17.6)
-phases = Array[ExtResource("shooter_phase")]([SubResource("triple_p1"), SubResource("triple_p2"), SubResource("triple_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("tripleR_p1"), SubResource("tripleR_p2"), SubResource("tripleR_p3"), SubResource("tripleR_p4")])
 
 [node name="Turret1Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-100.8, -72.8)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallL_p1"), SubResource("smallL_p2"), SubResource("smallL_p3"), SubResource("smallL_p4")])
 
 [node name="Turret2Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-78.7, -67.6)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallL_p1"), SubResource("smallL_p2"), SubResource("smallL_p3"), SubResource("smallL_p4")])
 
 [node name="Turret3Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(-164.5, -23.4)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallL_p1"), SubResource("smallL_p2"), SubResource("smallL_p3"), SubResource("smallL_p4")])
 
 [node name="Turret4Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(80.0, -67.6)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallR_p1"), SubResource("smallR_p2"), SubResource("smallR_p3"), SubResource("smallR_p4")])
 
 [node name="Turret5Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(102.0, -72.8)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallR_p1"), SubResource("smallR_p2"), SubResource("smallR_p3"), SubResource("smallR_p4")])
 
 [node name="Turret6Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(165.8, -23.4)
-phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("smallR_p1"), SubResource("smallR_p2"), SubResource("smallR_p3"), SubResource("smallR_p4")])
 
 [node name="Center1Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(0.7, 14.3)
-phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3"), SubResource("center_p4")])
 
 [node name="Center2Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(0.7, 37.7)
-phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3"), SubResource("center_p4")])
 
 [node name="Center3Shooter" parent="." instance=ExtResource("shooter_scene")]
 position = Vector2(0.7, 61.1)
-phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3"), SubResource("center_p4")])
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("phase_controller")
-phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
+phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3"), SubResource("boss_phase_4")])
 
 [node name="EntranceBlast" type="Node" parent="." node_paths=PackedStringArray("sound")]
 script = ExtResource("entrance_blast")
@@ -872,3 +989,133 @@ sound = NodePath("EntranceSound")
 [node name="EntranceSound" type="AudioStreamPlayer" parent="EntranceBlast"]
 stream = ExtResource("snd_entrance")
 volume_db = -8.0
+[node name="EngineRingL" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-41.0, 34.5)
+phases = Array[ExtResource("shooter_phase")]([SubResource("ringL_p1"), SubResource("ringL_p2"), SubResource("ringL_p3"), SubResource("ringL_p4")])
+
+[node name="BeamL1" type="Node2D" parent="."]
+position = Vector2(-41.0, 34.5)
+script = ExtResource("beam")
+start_angle_deg = 125
+sweep_deg = 6.0
+clockwise = true
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 1.0
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamL2" type="Node2D" parent="."]
+position = Vector2(-41.0, 34.5)
+script = ExtResource("beam")
+start_angle_deg = 140
+sweep_deg = 6.0
+clockwise = true
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 1.0
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamL3" type="Node2D" parent="."]
+position = Vector2(-41.0, 34.5)
+script = ExtResource("beam")
+start_angle_deg = 155
+sweep_deg = 6.0
+clockwise = true
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 1.0
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamL4" type="Node2D" parent="."]
+position = Vector2(-41.0, 34.5)
+script = ExtResource("beam")
+start_angle_deg = 170
+sweep_deg = 6.0
+clockwise = true
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 1.0
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="EngineRingR" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(42.9, 33.1)
+phases = Array[ExtResource("shooter_phase")]([SubResource("ringR_p1"), SubResource("ringR_p2"), SubResource("ringR_p3"), SubResource("ringR_p4")])
+
+[node name="BeamR1" type="Node2D" parent="."]
+position = Vector2(42.9, 33.1)
+script = ExtResource("beam")
+start_angle_deg = 55
+sweep_deg = 6.0
+clockwise = false
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 4.2
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamR2" type="Node2D" parent="."]
+position = Vector2(42.9, 33.1)
+script = ExtResource("beam")
+start_angle_deg = 40
+sweep_deg = 6.0
+clockwise = false
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 4.2
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamR3" type="Node2D" parent="."]
+position = Vector2(42.9, 33.1)
+script = ExtResource("beam")
+start_angle_deg = 25
+sweep_deg = 6.0
+clockwise = false
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 4.2
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="BeamR4" type="Node2D" parent="."]
+position = Vector2(42.9, 33.1)
+script = ExtResource("beam")
+start_angle_deg = 10
+sweep_deg = 6.0
+clockwise = false
+width = 14.0
+warn_time = 0.9
+fire_time = 1.3
+rest_time = 4.2
+start_delay = 4.2
+active_from_phase = 2
+color = Color(1, 0.35, 0.15, 1)
+
+[node name="PhaseBreak" type="Node" parent="." node_paths=PackedStringArray("parts")]
+script = ExtResource("phase_break")
+parts = [NodePath("../VisualRoot/CrystalLPart"), NodePath("../VisualRoot/CrystalRPart")]
+at_phase = 1
+
+[node name="FinalBattleIntro" type="Node" parent="."]
+script = ExtResource("intro")
+
+[node name="NucleoFinale" type="Node" parent="."]
+script = ExtResource("finale")

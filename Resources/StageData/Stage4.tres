@@ -30,12 +30,14 @@
 [ext_resource type="Resource" uid="uid://c370y33jm6o1u" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="xb_m_hold"]
 [ext_resource type="Resource" uid="uid://d2uxhbhb3l4ow" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="xb_m_strike"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/bomber.tscn" id="z_bomber"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/nucleo_core_boss.tscn" id="z_core"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/final_weapon.tscn" id="z_final"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/flak_ship.tscn" id="z_flak"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="z_formation"]
+[ext_resource type="Resource" uid="uid://dx7n767be7h2q" path="res://Resources/MovePatterns/Stage4/m4_core_drift.tres" id="z_m_core"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_worker.tscn" id="z_bee"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_queen.tscn" id="z_queen"]
 [ext_resource type="Resource" uid="uid://sncsc0vfvavc" path="res://Resources/MovePatterns/Stage4/m4_final_drift.tres" id="z_m_final"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/nucleo_core_boss.tscn" id="z_core"]
-[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_core_drift.tres" id="z_m_core"]
 [ext_resource type="Resource" uid="uid://ujid7vd1nm36" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="z_m_rise"]
 [ext_resource type="Resource" uid="uid://byalnpdisln0b" path="res://Resources/ShotPatterns/Stage3/s3_rise_aim.tres" id="z_p_rise"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/strike_gunship.tscn" id="z_strike"]
@@ -908,7 +910,7 @@ time = 203.0
 [sub_resource type="Resource" id="g_warning"]
 script = ExtResource("signal_script")
 signal_name = "warning"
-time = 207.0
+time = 209.5
 
 [sub_resource type="Resource" id="g_core"]
 script = ExtResource("spawn_script")
@@ -917,19 +919,54 @@ move_pattern = ExtResource("z_m_core")
 tag = "final"
 is_boss = true
 boss_name = "最終兵器 ヌクレオ"
-boss_phase_thresholds = Array[float]([0.66, 0.33])
+boss_phase_thresholds = Array[float]([0.66, 0.33, 0.12])
 boss_time_bonus = true
-time = 210.0
+time = 212.5
 
 [sub_resource type="Resource" id="g_wait"]
 script = ExtResource("wait_script")
 tag = "final"
-time = 211.0
+time = 213.5
+
+[sub_resource type="Resource" id="e_bee_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("z_bee")
+count = 8
+interval = 0.12
+offset = Vector2(-160, 0)
+offset_step = Vector2(45, 0)
+time = 174.5
+
+[sub_resource type="Resource" id="e_queen_1"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("z_queen")
+power_drop_chance = 1.0
+offset = Vector2(0, 0)
+time = 180.0
+
+[sub_resource type="Resource" id="e_bee_2"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("z_bee")
+count = 8
+interval = 0.12
+offset = Vector2(160, 0)
+offset_step = Vector2(-45, 0)
+time = 184.5
+
+[sub_resource type="Resource" id="e_bee_3"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("z_bee")
+count = 10
+interval = 0.1
+offset = Vector2(-180, 0)
+offset_step = Vector2(40, 0)
+alternate_mirror = true
+time = 191.0
 
 [resource]
 script = ExtResource("stage_script")
 stage_name = "Stage 4 ヌクレオ"
-events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh"), SubResource("c_strike_1"), SubResource("c_bomber_1"), SubResource("c_rise_1"), SubResource("c_flak_1"), SubResource("c_side_1"), SubResource("c_strike_2"), SubResource("c_scramble_1"), SubResource("c_carrier_1"), SubResource("c_down_1"), SubResource("c_wait"), SubResource("c_warning"), SubResource("c_swans"), SubResource("c_wait_swans"), SubResource("d_train_1"), SubResource("d_train_2"), SubResource("d_scramble_1"), SubResource("d_train_3"), SubResource("d_gunship_1"), SubResource("d_train_4"), SubResource("d_side_1"), SubResource("d_train_5"), SubResource("d_scramble_2"), SubResource("e_tank_1"), SubResource("e_lane_l"), SubResource("e_strike_1"), SubResource("e_train_1"), SubResource("e_rise_1"), SubResource("e_heavy_1"), SubResource("e_gunship_1"), SubResource("e_lane_r"), SubResource("e_down_1"), SubResource("e_flak_1"), SubResource("e_train_2"), SubResource("e_scramble_1"), SubResource("e_heavy_2"), SubResource("e_carrier_1"), SubResource("e_strike_2"), SubResource("e_train_3"), SubResource("e_wait"), SubResource("f_warning"), SubResource("f_boss"), SubResource("f_wait"), SubResource("g_warning"), SubResource("g_core"), SubResource("g_wait")])
+events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh"), SubResource("c_strike_1"), SubResource("c_bomber_1"), SubResource("c_rise_1"), SubResource("c_flak_1"), SubResource("c_side_1"), SubResource("c_strike_2"), SubResource("c_scramble_1"), SubResource("c_carrier_1"), SubResource("c_down_1"), SubResource("c_wait"), SubResource("c_warning"), SubResource("c_swans"), SubResource("c_wait_swans"), SubResource("d_train_1"), SubResource("d_train_2"), SubResource("d_scramble_1"), SubResource("d_train_3"), SubResource("d_gunship_1"), SubResource("d_train_4"), SubResource("d_side_1"), SubResource("d_train_5"), SubResource("d_scramble_2"), SubResource("e_tank_1"), SubResource("e_lane_l"), SubResource("e_strike_1"), SubResource("e_train_1"), SubResource("e_rise_1"), SubResource("e_heavy_1"), SubResource("e_gunship_1"), SubResource("e_lane_r"), SubResource("e_down_1"), SubResource("e_flak_1"), SubResource("e_train_2"), SubResource("e_scramble_1"), SubResource("e_heavy_2"), SubResource("e_carrier_1"), SubResource("e_strike_2"), SubResource("e_train_3"), SubResource("e_wait"), SubResource("f_warning"), SubResource("f_boss"), SubResource("f_wait"), SubResource("g_warning"), SubResource("g_core"), SubResource("g_wait"), SubResource("e_bee_1"), SubResource("e_queen_1"), SubResource("e_bee_2"), SubResource("e_bee_3")])
 difficulty_step = 1
 another_force_black = true
 small_bullet_hitbox_hard = true

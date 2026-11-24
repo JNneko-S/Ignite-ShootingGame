@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="bullet"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="split_bullet"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+soften_others = 4.0
+start_delay = 0.4
+shot_count = 20
+interval = 0.2
+loop = false
+pause = 0.6
+bullet_count = 38
+spread_angle = 170.0
+aim_at_player = false
+gap_size = 5
+gap_wave_amplitude = 0.7
+gap_wave_shots = 9
+line_count = 2
+line_speed_ratio = 0.12
+bullet_speed = 140.0

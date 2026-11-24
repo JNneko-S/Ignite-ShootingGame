@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/New Massive Ship Boss/Boss_Destroyed.png" id="wreck_tex"]
 [ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
 [ext_resource type="Script" path="res://Component/Boss/phase_texture.gd" id="phase_texture"]
+[ext_resource type="Script" path="res://Component/Boss/guard_finale.gd" id="guard_finale"]
 [ext_resource type="Script" path="res://Component/Part/enemy_part.gd" id="part"]
 [ext_resource type="Script" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
 [ext_resource type="PackedScene" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
@@ -222,8 +223,8 @@ position = Vector2(0, -10)
 shape = SubResource("body_shape")
 
 [node name="HPComponent" parent="." index="3"]
-max_hp = 60000
-hp = 60000
+max_hp = 25000
+hp = 25000
 
 [node name="EnemyShooterComponent" parent="." index="4"]
 position = Vector2(0, 104)
@@ -253,7 +254,7 @@ texture = ExtResource("wreck_tex")
 [node name="WingPartL" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
 position = Vector2(-106, 30)
 script = ExtResource("part")
-max_hp = 6000
+max_hp = 2500
 damage_to_body = 0.5
 shooters = [NodePath("../../WingShooterL")]
 break_score = 8000
@@ -274,7 +275,7 @@ one_shot = true
 [node name="WingPartR" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
 position = Vector2(106, 30)
 script = ExtResource("part")
-max_hp = 6000
+max_hp = 2500
 damage_to_body = 0.5
 shooters = [NodePath("../../WingShooterR")]
 break_score = 8000
@@ -295,7 +296,7 @@ one_shot = true
 [node name="StackPartL" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
 position = Vector2(-40, 36)
 script = ExtResource("part")
-max_hp = 5000
+max_hp = 2000
 damage_to_body = 0.5
 shooters = [NodePath("../../StackShooterL")]
 breakable_from_phase = 1
@@ -317,7 +318,7 @@ one_shot = true
 [node name="StackPartR" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
 position = Vector2(40, 36)
 script = ExtResource("part")
-max_hp = 5000
+max_hp = 2000
 damage_to_body = 0.5
 shooters = [NodePath("../../StackShooterR")]
 breakable_from_phase = 1
@@ -363,3 +364,6 @@ sound = NodePath("EntranceSound")
 [node name="EntranceSound" type="AudioStreamPlayer" parent="EntranceBlast"]
 stream = ExtResource("snd_entrance")
 volume_db = -8.0
+
+[node name="GuardFinale" type="Node" parent="."]
+script = ExtResource("guard_finale")

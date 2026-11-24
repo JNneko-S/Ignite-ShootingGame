@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Yellow1.png" id="y1"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Yellow2.png" id="y2"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Yellow3.png" id="y3"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Yellow4.png" id="y4"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Enm_Model1/Yellow5.png" id="y5"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Bee/bee_honeycomb.tres" id="honeycomb"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Bee/bee_sting.tres" id="sting"]
+
+[node name="BeeQueen" instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." index="0"]
+scale = Vector2(1.6, 1.6)
+texture = ExtResource("y1")
+
+[node name="TextureCycle" type="Node" parent="Sprite2D"]
+script = ExtResource("cycle")
+textures = Array[Texture2D]([ExtResource("y1"), ExtResource("y2"), ExtResource("y3"), ExtResource("y4"), ExtResource("y5")])
+fps = 12.0
+ping_pong = true
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+patterns = Array[ExtResource("shot")]([ExtResource("honeycomb")])
+
+[node name="Thruster" parent="." index="5"]
+visible = false
+
+[node name="Sprite2D" parent="GunLeft" index="0"]
+visible = false
+
+[node name="EnemyShooterComponent" parent="GunLeft" index="2"]
+patterns = Array[ExtResource("shot")]([ExtResource("sting")])
+
+[node name="Sprite2D" parent="GunRight" index="0"]
+visible = false
+
+[node name="EnemyShooterComponent" parent="GunRight" index="2"]
+patterns = Array[ExtResource("shot")]([ExtResource("sting")])

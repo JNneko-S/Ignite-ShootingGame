@@ -10,12 +10,14 @@
 [ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
 [ext_resource type="Script" path="res://Component/Stage/breach_sequence.gd" id="breach"]
 [ext_resource type="Script" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
+[ext_resource type="Script" path="res://Component/Stage/ending_sequence.gd" id="ending"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss4"]
 
 [node name="Stage4" instance=ExtResource("base")]
 
 [node name="StageRunner" parent="."]
+final_boss_clear_delay = 9999.0
 stage = ExtResource("stage")
 
 [node name="Scroller" parent="."]
@@ -86,6 +88,9 @@ script = ExtResource("stage_transition")
 [node name="BreachSequence" type="Node" parent="." node_paths=PackedStringArray("scroller")]
 script = ExtResource("breach")
 scroller = NodePath("../Scroller")
-next_arrive_time = 210.0
+next_arrive_time = 212.5
+
+[node name="EndingSequence" type="Node" parent="."]
+script = ExtResource("ending")
 
 [editable path="UI/ScoreUI"]

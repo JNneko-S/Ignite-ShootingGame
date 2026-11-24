@@ -69,6 +69,10 @@ var _flood_layer : Control
 var _echoes : Array[Label] = []
 var _time : float = 0.0
 var _serial : int = 0
+## WARNING のあとに出てくるボスの名前(帯の下に出す)
+var _boss_label : Label
+var _boss_line : ColorRect
+var _runner : StageRunner
 
 func _ready() -> void:
 	_root.visible = false
@@ -82,10 +86,12 @@ func _ready() -> void:
 
 func _connect_runner() -> void:
 	if stage_runner:
+		_runner = stage_runner
 		stage_runner.stage_signal.connect(_on_stage_signal)
 		return
 	for node in get_tree().get_nodes_in_group("stage_runner"):
 		(node as StageRunner).stage_signal.connect(_on_stage_signal)
+		_runner = node as StageRunner
 
 func _on_stage_signal(signal_name : String, text : String) -> void:
 	if signal_name == SIGNAL_NAME:
@@ -136,6 +142,19 @@ func _build() -> void:
 	for stripe in _stripes:
 		stripe.add_theme_color_override("font_color", accent_color)
 		stripe.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0))
+	# ボスの名前(帯の下に、朱の細い線と一緒に出す)
+	_boss_line = ColorRect.new()
+	_boss_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_boss_line.color = accent_color
+	_root.add_child(_boss_line)
+	_boss_label = Label.new()
+	_boss_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_boss_label.add_theme_font_size_override("font_size", 22)
+	_boss_label.add_theme_color_override("font_color", paper_color)
+	_boss_label.add_theme_color_override("font_outline_color", ink_color)
+	_boss_label.add_theme_constant_override("outline_size", 6)
+	_root.add_child(_boss_label)
 	# 文字の残像(右へ尾を引く。後ろほど薄く、赤紫に)
 	for i in 5:
 		var echo := _title.duplicate() as Label
@@ -172,6 +191,7 @@ func show_warning(text : String = "") -> void:
 	_band.pivot_offset = _band.size / 2.0
 	_rings.modulate.a = 0.0
 	_scan.modulate.a = 0.0
+	_show_boss_name(serial)
 	for child in _flood_layer.get_children():
 		child.queue_free()
 
@@ -203,6 +223,29 @@ func show_warning(text : String = "") -> void:
 	for at in flood_times:
 		get_tree().create_timer(at, false).timeout.connect(_flood.bind(word, serial))
 	_play_alarm()
+
+## 帯が開いたあと、帯の下にボスの名前を出す(左から朱の線が伸びて、名前が浮かび上がる)
+func _show_boss_name(serial : int) -> void:
+	var boss_name := _runner.upcoming_boss_name() if is_instance_valid(_runner) else ""
+	_boss_label.text = boss_name
+	_boss_label.visible = boss_name != ""
+	_boss_line.visible = boss_name != ""
+	_boss_label.modulate.a = 0.0
+	if boss_name == "":
+		return
+	var width := _root.size.x
+	var top := _band.position.y + _band.size.y + 10.0
+	_boss_label.position = Vector2(0.0, top + 4.0)
+	_boss_label.size = Vector2(width, 30.0)
+	_boss_line.position = Vector2(width * 0.2, top)
+	_boss_line.size = Vector2(0.0, 1.0)
+	await get_tree().create_timer(0.55, false).timeout
+	if serial != _serial:
+		return
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(_boss_line, "size:x", width * 0.6, 0.35).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_boss_label, "modulate:a", 1.0, 0.3).set_delay(0.15)
+	tween.tween_property(_boss_label, "position:y", top + 4.0, 0.3).from(top + 14.0).set_delay(0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 ## WARNING の文字を、画面じゅうに何枚も重ねて出す。少しずつずれながら消えていく
 func _flood(word : String, serial : int) -> void:

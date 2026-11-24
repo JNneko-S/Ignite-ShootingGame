@@ -157,10 +157,19 @@ func _place_at_spawn() -> void:
 		_enemy.global_position.x = rails.clamp_off_rails(_enemy.global_position.x, 30.0)
 	if avoid_obstacles or keep_off_roof:
 		_enemy.global_position = _nearest_free(_enemy.global_position)
+	# 置いた壁(コライダー)の中に出てきてしまったら、見える前に消す(画面の上の外で出てくるので、見た目には分からない)
+	if GroundObstacles.is_walled(get_tree(), _enemy.global_position):
+		_enemy.queue_free()
+		return
 	if _ground:
 		_local = _ground.to_local(_enemy.global_position)
 	if body and drive_speed > 0.0:
 		body.global_rotation = _heading.angle() - PI * 0.5 - deg_to_rad(body_forward_deg)
+
+## 置いた壁(コライダー)へ入る一歩か。いま壁の外にいて、次の位置が壁の中なら、その一歩は進まない(壁の手前で止まる)
+func _hits_wall(next : Vector2) -> bool:
+	var tree := get_tree()
+	return GroundObstacles.is_walled(tree, next) and not GroundObstacles.is_walled(tree, _enemy.global_position)
 
 ## 出現位置が建物の上なら、左右の近い空いている所へずらす(見つからなければそのまま)
 func _nearest_free(pos : Vector2) -> Vector2:
@@ -202,10 +211,14 @@ func _process(delta : float) -> void:
 		if speed > 0.0:
 			# 画面の上での速さを、地面のノードの中の長さに直して足す
 			var step := _heading * speed * delta
-			_local += _ground.global_transform.affine_inverse().basis_xform(step)
+			var next_local := _local + _ground.global_transform.affine_inverse().basis_xform(step)
+			if not _hits_wall(_ground.to_global(next_local)):
+				_local = next_local
 		_enemy.global_position = _ground.to_global(_local)
 	elif speed > 0.0:
-		_enemy.global_position += _heading * speed * delta
+		var next := _enemy.global_position + _heading * speed * delta
+		if not _hits_wall(next):
+			_enemy.global_position = next
 	if body_radius > 0.0 and yield_to_others and not _dead:
 		_separate(delta)
 	if speed > 0.0:

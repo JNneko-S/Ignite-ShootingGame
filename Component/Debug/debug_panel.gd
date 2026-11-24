@@ -185,7 +185,7 @@ func _next_stage() -> void:
 	StageCarry.save(get_tree())
 	StageCarry.arriving = true
 	StageCarry.cruise_height = 0.6
-	get_tree().change_scene_to_file(next)
+	SceneSwitcher.change(next)
 
 func _next_boss_phase() -> void:
 	var boss := _boss()

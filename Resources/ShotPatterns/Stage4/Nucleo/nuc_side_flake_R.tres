@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="bullet"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="split_bullet"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_side_flake_R_another.tres" id="another"]
+
+[sub_resource type="Resource" id="m0"]
+script = ExtResource("step")
+duration = 1.6
+turn_mode = 3
+turn_angle = 60.0
+target_speed = 45.0
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+another_version = ExtResource("another")
+black_version = ExtResource("another")
+start_delay = 2.0
+shot_count = 1
+pause = 3.0
+bullet_count = 6
+spread_angle = 360.0
+aim_at_player = false
+yields = true
+bullet_speed = 30.0
+motion = Array[ExtResource("step")]([SubResource("m0")])

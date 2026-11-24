@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="bullet"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="split_bullet"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_storm_tempest_another.tres" id="another"]
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+soften_others = 4.0
+another_version = ExtResource("another")
+black_version = ExtResource("another")
+start_delay = 0.3
+shot_count = 3
+interval = 0.55
+loop = false
+pause = 1.0
+bullet_count = 5
+spread_angle = 90.0
+ring3d_count = 10
+ring3d_radius = 8.0
+ring3d_grow = 45.0
+ring3d_max_radius = 40.0
+ring3d_spin = 220.0
+ring3d_tilt = 60.0
+ring3d_tumble = 200.0
+bullet_speed = 95.0

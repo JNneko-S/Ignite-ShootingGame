@@ -96,8 +96,8 @@ func _make_ticks() -> void:
 		tick.queue_free()
 	_ticks.clear()
 	for t in _thresholds:
-		_ticks.append(_rect(Color(1.0, 1.0, 1.0, 0.95),
-			Vector2(_bar_width * t - 1.0, -3.0), Vector2(2.0, _bar_height + 6.0)))
+		_ticks.append(_rect(Color(1.0, 0.97, 0.92, 0.95),
+			Vector2(_bar_width * t - 0.5, -3.0), Vector2(1.0, _bar_height + 6.0)))
 		_root.move_child(_name_label, -1)
 
 # ---------------------------------------------------------------- 接続

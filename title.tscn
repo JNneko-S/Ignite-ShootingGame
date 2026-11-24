@@ -1,21 +1,22 @@
 [gd_scene format=3 uid="uid://bwyu1auys3uxw"]
 
-[ext_resource type="Script" path="res://GameScene/Title/title_screen.gd" id="0_title"]
+[ext_resource type="Script" uid="uid://j4ghp5wpg8qh" path="res://GameScene/Title/title_screen.gd" id="0_title"]
 [ext_resource type="Texture2D" uid="uid://d00nq6kgqrfh0" path="res://Assets/1106_20261120122130.png" id="1_mom7w"]
 [ext_resource type="Texture2D" uid="uid://e2fl1ogwe50x" path="res://Assets/1106_20261120122154.png" id="2_7lgly"]
 [ext_resource type="Texture2D" uid="uid://3q23ry7o3wbp" path="res://Assets/1106_20261120122200.png" id="3_0824t"]
 [ext_resource type="Texture2D" uid="uid://b7ucwdnclxd3t" path="res://Assets/1106_20261120122203.png" id="4_nuqgq"]
 [ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="5_mom7w"]
-[ext_resource type="Script" path="res://GameScene/Title/option_panel.gd" id="6_option"]
-[ext_resource type="Script" path="res://GameScene/Title/score_board_panel.gd" id="7_score"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="8_ui_select"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="9_ui_decide"]
+[ext_resource type="Script" uid="uid://b4sle2t8etstr" path="res://GameScene/Title/option_panel.gd" id="6_option"]
+[ext_resource type="Script" uid="uid://bdm0yap07eb3n" path="res://GameScene/Title/score_board_panel.gd" id="7_score"]
+[ext_resource type="AudioStream" uid="uid://bogedhf8wfhaw" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="8_ui_select"]
+[ext_resource type="AudioStream" uid="uid://dit7bq3jw5b3m" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="9_ui_decide"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
-[ext_resource type="AudioStream" uid="uid://bhh1h78p6hl0b" path="res://Assets/Sounds/Music/AS_1026032_SF系、メニュー画面向けエレクトロニカ.mp3" id="11_music"]
+[ext_resource type="AudioStream" uid="uid://cqqubfb3jkxj" path="res://Assets/Sounds/Music/AS_1161150_戦闘準備・近未来・エレクトロ・ポップ.mp3" id="12_upcoo"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_06r0y"]
 font = ExtResource("5_mom7w")
 font_size = 20
+font_color = Color(1, 0.55605084, 0.49481243, 1)
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
 shadow_color = Color(0, 0, 0, 1)
@@ -256,5 +257,5 @@ volume_db = -10.0
 pitch_scale = 0.6
 
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1500000015]
-stream = ExtResource("11_music")
+stream = ExtResource("12_upcoo")
 volume_db = -19.0

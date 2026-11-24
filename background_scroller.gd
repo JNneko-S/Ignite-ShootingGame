@@ -58,6 +58,8 @@ var external_control : bool = false
 var _segment_start_time : float = 0.0
 ## ステージが始まる前に流した距離
 var _preroll_offset : float = 0.0
+## いちばん最初(ステージの始まり)の位置。巻き戻し(run_back)で戻る先
+var _origin_y : float = 0.0
 
 func _ready() -> void:
 	add_to_group("background_scroller")
@@ -142,6 +144,7 @@ func _initialize() -> void:
 	# position.y を変えると、背景の端のワールド座標は (parent_y + position.y + 端 * scale_y) になる
 	if align_bottom_on_start:
 		position.y = view.end.y - parent_y - bounds.y * scale_y
+	_origin_y = position.y
 	_start_y = position.y
 	_end_y = maxf(view.position.y - parent_y - bounds.x * scale_y, _start_y)
 	if _end_y - _start_y < 1.0:
@@ -157,6 +160,17 @@ func _initialize() -> void:
 
 ## 上の端に着いたあと(または external_control で動かしたあと)、今の位置から、さらに上の new_top まで流す。
 ## ステージ時刻 arrive_time に着く(0 以下なら scroll_speed で進む)。new_top はこのノードから見た y
+## ステージの始まりの位置まで、time 秒かけて巻き戻す(エンディングで、来た道を逆に脱出する)
+func run_back(time : float) -> Tween:
+	if not _initialized:
+		_initialize()
+	external_control = true
+	_looping = false
+	is_at_top = false
+	var tween := create_tween()
+	tween.tween_property(self, "position:y", _origin_y, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	return tween
+
 func continue_to(new_top : float, arrive_time : float) -> void:
 	if not _initialized:
 		_initialize()

@@ -14,6 +14,16 @@ const GROUP : StringName = &"ground_obstacle"
 ## Texture → Image(ピクセルを読むため)。同じ絵は1回だけ読み込む
 static var _images : Dictionary = {}
 
+## world_point が、置いた壁(GroundBlocker / GroundBlockArea)の中か。屋根の絵などは見ない。
+## 地上の敵は、よける設定に関係なく、ここへは進めない(壁として扱う)
+static func is_walled(tree : SceneTree, world_point : Vector2) -> bool:
+	for node in tree.get_nodes_in_group(GROUP):
+		if node is GroundBlocker and (node as GroundBlocker).blocks(world_point):
+			return true
+		if node is GroundBlockArea and (node as GroundBlockArea).blocks(world_point):
+			return true
+	return false
+
 ## world_point(画面の座標)が通れない場所か
 static func is_blocked(tree : SceneTree, world_point : Vector2, alpha_threshold : float = 0.6) -> bool:
 	for node in tree.get_nodes_in_group(GROUP):
