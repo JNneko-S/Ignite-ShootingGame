@@ -1,11 +1,10 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cx4qd7di33paj"]
 
+[ext_resource type="Resource" uid="uid://6kgl1n5urur8" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_branch_another.tres" id="another"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="split_bullet"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_branch_mirror.tres" id="with0"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_branch_another.tres" id="another"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+[ext_resource type="Resource" uid="uid://dhjhxdd4yqsa2" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_snow_branch_mirror.tres" id="with0"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
@@ -15,16 +14,16 @@ angular_velocity = 38.0
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
-soften_others = 4.0
-with_patterns = Array[ExtResource("shot")]([ExtResource("with0")])
+bullet_scene = ExtResource("split_bullet")
 another_version = ExtResource("another")
 black_version = ExtResource("another")
+with_patterns = Array[ExtResource("shot")]([ExtResource("with0")])
 start_delay = 0.4
 shot_count = 34
 interval = 0.06
 loop = false
 pause = 1.0
+soften_others = 4.0
 bullet_count = 6
 spread_angle = 360.0
 aim_at_player = false

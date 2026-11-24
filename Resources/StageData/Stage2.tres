@@ -30,9 +30,9 @@
 [ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="e25"]
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_limited.tscn" id="e26"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="e27"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 [ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
 [ext_resource type="Resource" uid="uid://bsnvi5b3qu5ki" path="res://Resources/ShotPatterns/Stage2/s2_z_tank.tres" id="z_tank"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="ax1"]
 script = ExtResource("e2")

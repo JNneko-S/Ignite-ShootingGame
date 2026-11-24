@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dprjpmtn8rtf6"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e2"]
@@ -17,10 +17,9 @@ start_delay = 1.2
 shot_count = 3
 interval = 0.22
 pause = 1.9
+yields = true
 bullet_count = 6
 spread_angle = 76.0
-aim_at_player = true
 mirror_curve_by_side = true
 bullet_speed = 135.0
-yields = true
 motion = Array[ExtResource("e3")]([SubResource("st1")])

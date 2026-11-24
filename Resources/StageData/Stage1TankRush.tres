@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="e_formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/gunship.tscn" id="e_gunship"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_heavy.tscn" id="e_heavy"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 [ext_resource type="PackedScene" uid="uid://dcaufucsn0tn5" path="res://GameScene/Enemy/Zako/midboss_split.tscn" id="e_midboss_split"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_squad.tscn" id="e_squad"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Ground/tank_small.tscn" id="e_tank"]
@@ -26,7 +27,6 @@
 [ext_resource type="Resource" uid="uid://ciqnnmxorfut8" path="res://Resources/ShotPatterns/Stage1/s1_ignite_wall.tres" id="s_ignite_wall"]
 [ext_resource type="Resource" uid="uid://dinoq0tgh1iam" path="res://Resources/ShotPatterns/Stage1/s1_mb_spiral.tres" id="s_mb_spiral"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait_script"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="scroll_start"]
 script = ExtResource("scroll_script")

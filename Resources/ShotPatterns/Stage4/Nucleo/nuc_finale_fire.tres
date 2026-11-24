@@ -1,10 +1,9 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c75fmncq47ajs"]
 
+[ext_resource type="Resource" uid="uid://dwdakc8oc3doq" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_finale_fire_another.tres" id="another"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="split_bullet"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Nucleo/nuc_finale_fire_another.tres" id="another"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
@@ -14,7 +13,7 @@ angular_velocity = -40.0
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
+bullet_scene = ExtResource("split_bullet")
 another_version = ExtResource("another")
 black_version = ExtResource("another")
 start_delay = 0.9

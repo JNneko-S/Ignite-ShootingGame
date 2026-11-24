@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://0h17ubxb5byg"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="e2"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Bermuda.tscn" id="e4"]
+[ext_resource type="PackedScene" uid="uid://c7s461oab2s80" path="res://GameScene/Bullet/E_Bermuda.tscn" id="e4"]
 
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("e3")
@@ -29,9 +29,8 @@ interval = 0.3
 pause = 1.3
 bullet_count = 2
 spread_angle = 120.0
-aim_at_player = true
 bullet_speed = 150.0
-split_time = 0.95
-split_follow_direction = false
 motion = Array[ExtResource("e3")]([SubResource("st1")])
+split_time = 0.95
 split_pattern = SubResource("p2")
+split_follow_direction = false

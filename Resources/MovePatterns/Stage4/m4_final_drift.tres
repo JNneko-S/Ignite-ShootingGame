@@ -333,6 +333,6 @@ y_trans = 1
 
 [resource]
 script = ExtResource("1")
-loop_from_step = 1
 start_position = Vector2(240, -220)
 steps = Array[ExtResource("2")]([SubResource("enter"), SubResource("drift_1"), SubResource("drift_2"), SubResource("drift_3"), SubResource("drift_4"), SubResource("drift_5"), SubResource("drift_6"), SubResource("drift_7"), SubResource("drift_8"), SubResource("drift_9"), SubResource("drift_10"), SubResource("drift_11"), SubResource("drift_12"), SubResource("drift_13"), SubResource("drift_14"), SubResource("drift_15"), SubResource("drift_16"), SubResource("drift_17"), SubResource("drift_18"), SubResource("drift_19"), SubResource("drift_20"), SubResource("drift_21"), SubResource("drift_22"), SubResource("drift_23"), SubResource("drift_24"), SubResource("drift_25"), SubResource("drift_26"), SubResource("drift_27"), SubResource("drift_28"), SubResource("drift_29"), SubResource("drift_30"), SubResource("drift_31"), SubResource("drift_32"), SubResource("drift_33"), SubResource("drift_34"), SubResource("drift_35"), SubResource("drift_36"), SubResource("drift_37"), SubResource("drift_38"), SubResource("drift_39"), SubResource("drift_40")])
+loop_from_step = 1

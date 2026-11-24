@@ -1,9 +1,45 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://djxj05x5ivukr"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e2"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e3"]
+[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
+
+[sub_resource type="Resource" id="st8"]
+script = ExtResource("e4")
+duration = 0.35
+change_speed = false
+angular_velocity = 90.0
+
+[sub_resource type="Resource" id="st9"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -90.0
+
+[sub_resource type="Resource" id="st10"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 90.0
+
+[sub_resource type="Resource" id="st11"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -90.0
+
+[sub_resource type="Resource" id="st12"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 90.0
+
+[sub_resource type="Resource" id="st13"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -90.0
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
@@ -48,69 +84,30 @@ min_difficulty = 1
 max_difficulty = 1
 skip_auto_tuning = true
 start_delay = 0.75
-shot_count = 1
 interval = 0.9
 pause = 2.0
 bullet_count = 2
 spread_angle = 60.0
-aim_at_player = true
 aim_once_per_burst = true
 mirror_curve_by_side = true
 bullet_speed = 118.0
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5"), SubResource("st6"), SubResource("st7")])
-
-[sub_resource type="Resource" id="st8"]
-script = ExtResource("e4")
-duration = 0.35
-change_speed = false
-angular_velocity = 90.0
-
-[sub_resource type="Resource" id="st9"]
-script = ExtResource("e4")
-duration = 0.7
-change_speed = false
-angular_velocity = -90.0
-
-[sub_resource type="Resource" id="st10"]
-script = ExtResource("e4")
-duration = 0.7
-change_speed = false
-angular_velocity = 90.0
-
-[sub_resource type="Resource" id="st11"]
-script = ExtResource("e4")
-duration = 0.7
-change_speed = false
-angular_velocity = -90.0
-
-[sub_resource type="Resource" id="st12"]
-script = ExtResource("e4")
-duration = 0.7
-change_speed = false
-angular_velocity = 90.0
-
-[sub_resource type="Resource" id="st13"]
-script = ExtResource("e4")
-duration = 0.7
-change_speed = false
-angular_velocity = -90.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 1
 max_difficulty = 1
-skip_auto_tuning = true
 replaces_others = true
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.8
 shot_count = 18
 interval = 0.05
 pause = 2.0
 bullet_count = 2
 spread_angle = 60.0
-aim_at_player = true
 aim_once_per_burst = true
 mirror_curve_by_side = true
 bullet_speed = 118.0
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 motion = Array[ExtResource("e4")]([SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12"), SubResource("st13")])

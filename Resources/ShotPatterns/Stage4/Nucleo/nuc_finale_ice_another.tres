@@ -1,9 +1,8 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cdqol20u3kqkb"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="split_bullet"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
@@ -13,7 +12,7 @@ angular_velocity = 40.0
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
+bullet_scene = ExtResource("split_bullet")
 start_delay = 0.6
 interval = 0.05
 pause = 0.0

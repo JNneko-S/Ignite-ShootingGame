@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="StageData" format=3 uid="uid://blkm2cc1bvajc"]
 
+[ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="3_sy4tp"]
 [ext_resource type="Resource" uid="uid://dmfinvkyfy5yb" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="22_awoan"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/carrier_kai.tscn" id="23_b06xr"]
 [ext_resource type="Resource" uid="uid://bilndlbhn0r38" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="24_p56hy"]
@@ -10,9 +11,13 @@
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/formation_kai.tscn" id="e_formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/gunship_kai.tscn" id="e_gunship"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_heavy_kai.tscn" id="e_heavy"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_kai.tscn" id="e_parked"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_small_kai.tscn" id="e_parked_small"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_squad_kai.tscn" id="e_squad"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_small_kai.tscn" id="e_tank"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/turret_ground_kai.tscn" id="e_turret"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/conveyor_wagon.tscn" id="e_wagon"]
 [ext_resource type="Resource" uid="uid://dvorcwn7qs45n" path="res://Resources/MovePatterns/Stage1/m1_wall_hold.tres" id="m_wall_hold"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
 [ext_resource type="Script" uid="uid://cebo166p6gckc" path="res://stage_signal_event.gd" id="signal_script"]
@@ -27,23 +32,19 @@
 [ext_resource type="Resource" uid="uid://lwtgu4mfgcax" path="res://Resources/MovePatterns/Stage4/m4_boss_enter.tres" id="x4_9"]
 [ext_resource type="Resource" uid="uid://c370y33jm6o1u" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="xb_m_hold"]
 [ext_resource type="Resource" uid="uid://d2uxhbhb3l4ow" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="xb_m_strike"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_worker.tscn" id="z_bee"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/blood_swan.tscn" id="z_blood_swan"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/bomber.tscn" id="z_bomber"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/nucleo_core_boss.tscn" id="z_core"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/final_weapon.tscn" id="z_final"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/flak_ship.tscn" id="z_flak"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="z_formation"]
 [ext_resource type="Resource" uid="uid://dx7n767be7h2q" path="res://Resources/MovePatterns/Stage4/m4_core_drift.tres" id="z_m_core"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_worker.tscn" id="z_bee"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_queen.tscn" id="z_queen"]
 [ext_resource type="Resource" uid="uid://sncsc0vfvavc" path="res://Resources/MovePatterns/Stage4/m4_final_drift.tres" id="z_m_final"]
 [ext_resource type="Resource" uid="uid://ujid7vd1nm36" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="z_m_rise"]
 [ext_resource type="Resource" uid="uid://byalnpdisln0b" path="res://Resources/ShotPatterns/Stage3/s3_rise_aim.tres" id="z_p_rise"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bee_queen.tscn" id="z_queen"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/strike_gunship.tscn" id="z_strike"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_kai.tscn" id="e_parked"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/tank_parked_small_kai.tscn" id="e_parked_small"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/blood_swan.tscn" id="z_blood_swan"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/conveyor_wagon.tscn" id="e_wagon"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="a_open_1"]
 script = ExtResource("spawn_script")
@@ -367,10 +368,10 @@ count = 6
 interval = 0.22
 offset = Vector2(-150, 0)
 offset_step = Vector2(60, 6)
+count_below_another = 4
 emerge = 3
 emerge_time = 0.95
 time = 110.7
-count_below_another = 4
 
 [sub_resource type="Resource" id="Resource_ykof6"]
 script = ExtResource("spawn_script")
@@ -380,8 +381,8 @@ count = 3
 interval = 0.0
 offset = Vector2(-120, 0)
 offset_step = Vector2(120, 0)
-time = 111.8
 count_below_another = 2
+time = 111.8
 
 [sub_resource type="Resource" id="Resource_6mecu"]
 script = ExtResource("spawn_script")
@@ -399,10 +400,10 @@ count = 6
 interval = 0.22
 offset = Vector2(150, 20)
 offset_step = Vector2(-60, 6)
+count_below_another = 4
 emerge = 3
 emerge_time = 0.95
 time = 112.9
-count_below_another = 4
 
 [sub_resource type="Resource" id="Resource_2e3lj"]
 script = ExtResource("spawn_script")
@@ -411,8 +412,8 @@ move_pattern = ExtResource("24_p56hy")
 count = 3
 interval = 0.35
 offset_step = Vector2(0, 75)
-time = 113.8
 count_below_another = 2
+time = 113.8
 
 [sub_resource type="Resource" id="xb_g1"]
 script = ExtResource("spawn_script")
@@ -434,8 +435,8 @@ count = 3
 interval = 0.0
 offset = Vector2(-150, 0)
 offset_step = Vector2(150, 0)
-time = 115.6
 count_below_another = 2
+time = 115.6
 
 [sub_resource type="Resource" id="xb_s3"]
 script = ExtResource("spawn_script")
@@ -447,10 +448,10 @@ interval = 0.16
 offset = Vector2(-30, 0)
 offset_step = Vector2(20, 4)
 alternate_mirror = true
+count_below_another = 5
 emerge = 3
 emerge_time = 0.85
 time = 116.7
-count_below_another = 5
 
 [sub_resource type="Resource" id="Resource_qytox"]
 script = ExtResource("spawn_script")
@@ -461,8 +462,8 @@ interval = 0.35
 offset = Vector2(0, 40)
 offset_step = Vector2(0, 75)
 mirror_x = true
-time = 117.4
 count_below_another = 2
+time = 117.4
 
 [sub_resource type="Resource" id="Resource_mmh37"]
 script = ExtResource("spawn_script")
@@ -470,8 +471,8 @@ enemy_scene = ExtResource("x4_1")
 move_pattern = ExtResource("27_4a3vo")
 count = 3
 interval = 0.4
-time = 118.7
 count_below_another = 2
+time = 118.7
 
 [sub_resource type="Resource" id="Resource_un0oc"]
 script = ExtResource("spawn_script")
@@ -488,8 +489,8 @@ count = 4
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-time = 120.4
 count_below_another = 3
+time = 120.4
 
 [sub_resource type="Resource" id="xb_s4"]
 script = ExtResource("spawn_script")
@@ -501,10 +502,10 @@ interval = 0.13
 offset = Vector2(-160, 0)
 offset_step = Vector2(35, 3)
 alternate_mirror = true
+count_below_another = 6
 emerge = 3
 emerge_time = 0.8
 time = 121.2
-count_below_another = 6
 
 [sub_resource type="Resource" id="Resource_yo6tb"]
 script = ExtResource("spawn_script")
@@ -513,8 +514,8 @@ move_pattern = ExtResource("27_4a3vo")
 count = 3
 interval = 0.4
 mirror_x = true
-time = 122.6
 count_below_another = 2
+time = 122.6
 
 [sub_resource type="Resource" id="Resource_awcls"]
 script = ExtResource("spawn_script")
@@ -524,8 +525,8 @@ count = 4
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-time = 123.8
 count_below_another = 3
+time = 123.8
 
 [sub_resource type="Resource" id="Resource_kc4qh"]
 script = ExtResource("spawn_script")
@@ -534,8 +535,8 @@ move_pattern = ExtResource("24_p56hy")
 count = 4
 offset_step = Vector2(0, 70)
 mirror_x = true
-time = 125.2
 count_below_another = 3
+time = 125.2
 
 [sub_resource type="Resource" id="c_strike_1"]
 script = ExtResource("spawn_script")
@@ -552,10 +553,10 @@ count = 3
 interval = 0.15
 offset = Vector2(-120, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 2
 emerge = 2
 emerge_time = 1.4
 time = 128.5
-count_below_another = 2
 
 [sub_resource type="Resource" id="c_rise_1"]
 script = ExtResource("spawn_script")
@@ -566,8 +567,8 @@ count = 4
 interval = 0.18
 offset = Vector2(-165, 0)
 offset_step = Vector2(110, 0)
-time = 131.0
 count_below_another = 3
+time = 131.0
 
 [sub_resource type="Resource" id="c_flak_1"]
 script = ExtResource("spawn_script")
@@ -585,8 +586,8 @@ move_pattern = ExtResource("24_p56hy")
 count = 3
 interval = 0.35
 offset_step = Vector2(0, 75)
-time = 136.0
 count_below_another = 2
+time = 136.0
 
 [sub_resource type="Resource" id="c_strike_2"]
 script = ExtResource("spawn_script")
@@ -606,10 +607,10 @@ interval = 0.16
 offset = Vector2(-30, 0)
 offset_step = Vector2(20, 4)
 alternate_mirror = true
+count_below_another = 5
 emerge = 3
 emerge_time = 0.85
 time = 140.0
-count_below_another = 5
 
 [sub_resource type="Resource" id="c_carrier_1"]
 script = ExtResource("spawn_script")
@@ -625,8 +626,8 @@ count = 4
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-time = 144.0
 count_below_another = 3
+time = 144.0
 
 [sub_resource type="Resource" id="c_wait"]
 script = ExtResource("wait_script")
@@ -876,7 +877,6 @@ time = 174.5
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("z_queen")
 power_drop_chance = 1.0
-offset = Vector2(0, 0)
 time = 180.0
 
 [sub_resource type="Resource" id="e_bee_2"]
@@ -1076,11 +1076,11 @@ time = 164.0
 
 [resource]
 script = ExtResource("stage_script")
-zako_fire_interval_scale = 1.3
-zako_hp_scale_below_another = 0.9
-boss_hp_scale_below_another = 0.9
 stage_name = "Stage 4 ヌクレオ"
 events = Array[ExtResource("event_script")]([SubResource("a_open_1"), SubResource("g_down_1"), SubResource("g_down_2"), SubResource("a_open_2"), SubResource("g_down_3"), SubResource("gunship_1_r"), SubResource("g_down_4"), SubResource("a_a_1"), SubResource("g_down_5"), SubResource("g_down_6"), SubResource("a_a_2"), SubResource("g_down_7"), SubResource("gunship_2_c"), SubResource("a_a_3"), SubResource("g_lane_0"), SubResource("g_lane_1"), SubResource("gunship_3_l"), SubResource("a_a_4"), SubResource("g_lane_2"), SubResource("g_lane_3"), SubResource("a_b_1"), SubResource("g_lane_4"), SubResource("g_lane_5"), SubResource("g_turret_l"), SubResource("g_turret_r"), SubResource("gunship_4_c"), SubResource("a_b_2"), SubResource("a_bomber_2"), SubResource("a_b_3"), SubResource("gunship_5_r"), SubResource("a_bomber_3"), SubResource("a_b_4"), SubResource("a_r_1"), SubResource("s4_warning"), SubResource("s4_boss"), SubResource("s4_wait_boss"), SubResource("xb_breach"), SubResource("xb_s1"), SubResource("Resource_ykof6"), SubResource("Resource_6mecu"), SubResource("xb_s2"), SubResource("Resource_2e3lj"), SubResource("xb_g1"), SubResource("Resource_gr15q"), SubResource("xb_s3"), SubResource("Resource_qytox"), SubResource("Resource_mmh37"), SubResource("Resource_un0oc"), SubResource("Resource_hxx2c"), SubResource("xb_s4"), SubResource("Resource_yo6tb"), SubResource("Resource_awcls"), SubResource("Resource_kc4qh"), SubResource("c_strike_1"), SubResource("c_bomber_1"), SubResource("c_rise_1"), SubResource("c_flak_1"), SubResource("c_side_1"), SubResource("c_strike_2"), SubResource("c_scramble_1"), SubResource("c_carrier_1"), SubResource("c_down_1"), SubResource("c_wait"), SubResource("c_warning"), SubResource("c_swans"), SubResource("c_wait_swans"), SubResource("d_scramble_1"), SubResource("d_gunship_1"), SubResource("d_side_1"), SubResource("d_scramble_2"), SubResource("e_tank_1"), SubResource("e_lane_l"), SubResource("e_strike_1"), SubResource("e_rise_1"), SubResource("e_heavy_1"), SubResource("e_gunship_1"), SubResource("e_lane_r"), SubResource("e_down_1"), SubResource("e_flak_1"), SubResource("e_scramble_1"), SubResource("e_heavy_2"), SubResource("e_carrier_1"), SubResource("e_strike_2"), SubResource("e_wait"), SubResource("f_warning"), SubResource("f_boss"), SubResource("f_wait"), SubResource("g_warning"), SubResource("g_core"), SubResource("g_wait"), SubResource("e_bee_1"), SubResource("e_queen_1"), SubResource("e_bee_2"), SubResource("e_bee_3"), SubResource("p_park_1"), SubResource("p_park_2"), SubResource("p_park_3"), SubResource("p_park_4"), SubResource("p_park_5"), SubResource("p_park_6"), SubResource("p_park_7"), SubResource("p_park_8"), SubResource("p_park_9"), SubResource("p_park_10"), SubResource("p_park_11"), SubResource("d_wagon_1"), SubResource("d_wagon_2"), SubResource("d_wagon_3"), SubResource("d_wagon_4"), SubResource("d_wagon_5"), SubResource("d_wagon_6"), SubResource("d_wagon_7"), SubResource("d_wagon_8"), SubResource("d_wagon_9"), SubResource("d_wagon_10"), SubResource("d_wagon_11"), SubResource("d_wagon_12"), SubResource("ignite_chance_1"), SubResource("ignite_chance_2")])
 difficulty_step = 1
 another_force_black = true
 small_bullet_hitbox_hard = true
+zako_fire_interval_scale = 1.3
+zako_hp_scale_below_another = 0.9
+boss_hp_scale_below_another = 0.9

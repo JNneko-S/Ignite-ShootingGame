@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dox7w3n2t184r"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
@@ -7,7 +7,6 @@
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("e3")
 duration = 0.7
-target_speed = 0.0
 speed_trans = 7
 
 [sub_resource type="Resource" id="st2"]

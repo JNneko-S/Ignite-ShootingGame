@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://le5auiev1q8a"]
 
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_48s6r"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
@@ -8,16 +9,15 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-start_delay = 0.5
 shot_count = 5
 interval = 0.32
 pause = 1.3
 bullet_count = 21
 spread_angle = 360.0
 aim_at_player = false
+rotate_per_shot = -10.0
 polygon_sides = 3
 polygon_phase = 60.0
-rotate_per_shot = -10.0
 bullet_speed = 100.0
 
 [sub_resource type="Resource" id="p2"]
@@ -30,24 +30,22 @@ pause = 1.3
 bullet_count = 21
 spread_angle = 360.0
 aim_at_player = false
+rotate_per_shot = 15.0
 polygon_sides = 4
 polygon_phase = 45.0
-rotate_per_shot = 15.0
 bullet_speed = 62.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-start_delay = 0.5
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])
 shot_count = 5
 interval = 0.32
 pause = 1.3
+soften_others = 2.5
 bullet_count = 21
 spread_angle = 360.0
 aim_at_player = false
-polygon_sides = 3
-polygon_phase = 0.0
 rotate_per_shot = 10.0
+polygon_sides = 3
 bullet_speed = 100.0
-soften_others = 2.5
-with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])

@@ -1,9 +1,8 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://4ysmvouusv8r"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="split_bullet"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
@@ -13,14 +12,13 @@ angular_velocity = -28.0
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
-start_delay = 0.5
+bullet_scene = ExtResource("split_bullet")
 shot_count = 10
 interval = 0.09
 loop = false
 bullet_count = 16
 spread_angle = 150.0
-mirror_curve_by_side = true
 aim_once_per_burst = true
+mirror_curve_by_side = true
 bullet_speed = 130.0
 motion = Array[ExtResource("step")]([SubResource("m0")])

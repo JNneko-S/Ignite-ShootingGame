@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c4jbotku8jxf"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
@@ -7,7 +7,6 @@
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("e3")
 duration = 0.6
-target_speed = 0.0
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e3")
@@ -16,7 +15,6 @@ change_speed = false
 
 [sub_resource type="Resource" id="st3"]
 script = ExtResource("e3")
-duration = 1.0
 turn_mode = 4
 target_speed = 105.0
 speed_ease = 2
@@ -26,12 +24,10 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 1
 max_difficulty = 1
-skip_auto_tuning = true
 replaces_others = true
+skip_auto_tuning = true
 start_delay = 1.0
-shot_count = 1
 pause = 2.6
-aim_at_player = true
 cluster_layers = 2
 cluster_spacing = 10.0
 bullet_speed = 120.0

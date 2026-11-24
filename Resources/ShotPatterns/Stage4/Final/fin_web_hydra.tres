@@ -1,14 +1,45 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bcn2f5l12810m"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e4"]
 
+[sub_resource type="Resource" id="st27"]
+script = ExtResource("e3")
+duration = 1.6
+speed_trans = 0
+
+[sub_resource type="Resource" id="st28"]
+script = ExtResource("e3")
+duration = 2.0
+change_speed = false
+
+[sub_resource type="Resource" id="st29"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 17.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="st13"]
+script = ExtResource("e3")
+duration = 1.6
+speed_trans = 0
+
+[sub_resource type="Resource" id="st14"]
+script = ExtResource("e3")
+duration = 1.6
+change_speed = false
+
+[sub_resource type="Resource" id="st15"]
+script = ExtResource("e3")
+duration = 2.4
+target_speed = 17.0
+speed_ease = 0
+
 [sub_resource type="Resource" id="st3"]
 script = ExtResource("e3")
 duration = 1.6
-target_speed = 0.0
 speed_trans = 0
 
 [sub_resource type="Resource" id="st4"]
@@ -26,7 +57,6 @@ speed_ease = 0
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 start_delay = 0.4
-shot_count = 1
 pause = 3.6
 bullet_count = 20
 spread_angle = 360.0
@@ -80,38 +110,21 @@ start_delay = 2.4
 shot_count = 12
 interval = 0.08
 pause = 3.0
-aim_at_player = true
 aim_once_per_burst = true
+muzzle_offsets = Array[Vector2]([Vector2(-157.78, -12.765), Vector2(156.17, -12.765)])
 ring3d_count = 3
 ring3d_radius = 9.0
 ring3d_spin = 300.0
 ring3d_tilt = 76.0
 bullet_speed = 120.0
-muzzle_offsets = Array[Vector2]([Vector2(-157.78, -12.765), Vector2(156.17, -12.765)])
 motion = Array[ExtResource("e3")]([SubResource("st7"), SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12")])
-
-[sub_resource type="Resource" id="st13"]
-script = ExtResource("e3")
-duration = 1.6
-target_speed = 0.0
-speed_trans = 0
-
-[sub_resource type="Resource" id="st14"]
-script = ExtResource("e3")
-duration = 1.6
-change_speed = false
-
-[sub_resource type="Resource" id="st15"]
-script = ExtResource("e3")
-duration = 2.4
-target_speed = 17.0
-speed_ease = 0
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p2"), SubResource("p6")])
 start_delay = 0.4
-shot_count = 1
 pause = 3.6
 bullet_count = 7
 spread_angle = 360.0
@@ -119,14 +132,11 @@ aim_at_player = false
 line_count = 4
 line_speed_ratio = 0.75
 bullet_speed = 130.0
-skip_auto_tuning = true
-with_patterns = Array[ExtResource("e1")]([SubResource("p2"), SubResource("p6")])
 motion = Array[ExtResource("e3")]([SubResource("st13"), SubResource("st14"), SubResource("st15")])
 
 [sub_resource type="Resource" id="st17"]
 script = ExtResource("e3")
 duration = 1.6
-target_speed = 0.0
 speed_trans = 0
 
 [sub_resource type="Resource" id="st18"]
@@ -144,7 +154,6 @@ speed_ease = 0
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 start_delay = 0.4
-shot_count = 1
 pause = 3.6
 bullet_count = 26
 spread_angle = 360.0
@@ -198,46 +207,27 @@ start_delay = 2.4
 shot_count = 12
 interval = 0.08
 pause = 3.0
-aim_at_player = true
 aim_once_per_burst = true
+muzzle_offsets = Array[Vector2]([Vector2(-157.78, -12.765), Vector2(156.17, -12.765), Vector2(0, 0)])
 ring3d_count = 3
 ring3d_radius = 9.0
 ring3d_spin = 300.0
 ring3d_tilt = 76.0
 bullet_speed = 120.0
-muzzle_offsets = Array[Vector2]([Vector2(-157.78, -12.765), Vector2(156.17, -12.765), Vector2(0.0, 0.0)])
 motion = Array[ExtResource("e3")]([SubResource("st21"), SubResource("st22"), SubResource("st23"), SubResource("st24"), SubResource("st25"), SubResource("st26")])
-
-[sub_resource type="Resource" id="st27"]
-script = ExtResource("e3")
-duration = 1.6
-target_speed = 0.0
-speed_trans = 0
-
-[sub_resource type="Resource" id="st28"]
-script = ExtResource("e3")
-duration = 2.0
-change_speed = false
-
-[sub_resource type="Resource" id="st29"]
-script = ExtResource("e3")
-duration = 2.4
-target_speed = 17.0
-speed_ease = 0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 normal_version = SubResource("p1")
+with_patterns = Array[ExtResource("e1")]([SubResource("p16"), SubResource("p20")])
 start_delay = 0.4
-shot_count = 1
 pause = 3.6
+soften_others = 4.0
 bullet_count = 9
 spread_angle = 360.0
 aim_at_player = false
 line_count = 6
 line_speed_ratio = 0.5
 bullet_speed = 130.0
-soften_others = 4.0
-with_patterns = Array[ExtResource("e1")]([SubResource("p16"), SubResource("p20")])
 motion = Array[ExtResource("e3")]([SubResource("st27"), SubResource("st28"), SubResource("st29")])

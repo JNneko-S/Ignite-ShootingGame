@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://crc1qrjwhm4au" path="res://Resources/MovePatterns/flight_curve.gd" id="curve"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="data"]
 [ext_resource type="Script" uid="uid://lju0o41fm8lj" path="res://stage_event.gd" id="event"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="kai"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai_intro.tscn" id="kai_intro"]
@@ -31,7 +32,6 @@
 [ext_resource type="PackedScene" uid="uid://t26vdwy8qwct" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="swans"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait"]
 [ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
-[ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
 
 [sub_resource type="Resource" id="e1"]
 script = ExtResource("scroll")
@@ -43,7 +43,6 @@ time = 0.5
 script = ExtResource("spawn")
 enemy_scene = ExtResource("kai_intro")
 tag = "kai_intro"
-count_below_another = null
 time = 2.0
 
 [sub_resource type="Resource" id="sky_phase_1"]
@@ -64,7 +63,6 @@ count = 2
 interval = 0.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(120, 0)
-count_below_another = null
 time = 14.0
 
 [sub_resource type="Resource" id="e5"]
@@ -75,7 +73,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("p_side")])
 count = 4
 interval = 0.22
 offset_step = Vector2(44, 30)
-count_below_another = null
 time = 15.5
 
 [sub_resource type="Resource" id="e6"]
@@ -87,7 +84,6 @@ count = 3
 interval = 0.18
 offset = Vector2(-110, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 17.0
 
 [sub_resource type="Resource" id="c1"]
@@ -102,7 +98,6 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
 count = 6
 interval = 0.0
-count_below_another = null
 flight_curve = SubResource("c1")
 time = 18.5
 
@@ -111,7 +106,6 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("z_fighter")])
 count = 8
-count_below_another = null
 emerge = 1
 time = 20.0
 
@@ -124,7 +118,6 @@ count = 4
 interval = 0.22
 offset_step = Vector2(44, 30)
 mirror_x = true
-count_below_another = null
 time = 22.0
 
 [sub_resource type="Resource" id="e10"]
@@ -134,7 +127,6 @@ count = 3
 interval = 0.15
 offset = Vector2(-120, 0)
 offset_step = Vector2(120, 0)
-count_below_another = null
 emerge = 2
 emerge_time = 1.4
 time = 23.5
@@ -148,13 +140,11 @@ count = 4
 interval = 0.18
 offset = Vector2(-165, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 25.0
 
 [sub_resource type="Resource" id="e12"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
-count_below_another = null
 emerge = 1
 emerge_time = 1.0
 time = 26.5
@@ -163,7 +153,6 @@ time = 26.5
 script = ExtResource("spawn")
 enemy_scene = ExtResource("carrier")
 offset = Vector2(-70, 0)
-count_below_another = null
 time = 29.0
 
 [sub_resource type="Resource" id="Resource_58da7"]
@@ -174,7 +163,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 31.0
 
 [sub_resource type="Resource" id="Resource_p15fs"]
@@ -186,7 +174,6 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 33.2
 
 [sub_resource type="Resource" id="Resource_q7f36"]
@@ -197,7 +184,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 35.4
 
 [sub_resource type="Resource" id="Resource_x3gml"]
@@ -207,7 +193,6 @@ count = 6
 interval = 0.25
 offset = Vector2(-25, 0)
 offset_step = Vector2(60, 0)
-count_below_another = null
 time = 37.0
 
 [sub_resource type="Resource" id="Resource_441jl"]
@@ -219,7 +204,6 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 37.6
 
 [sub_resource type="Resource" id="Resource_o7j5x"]
@@ -230,7 +214,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 39.8
 
 [sub_resource type="Resource" id="Resource_s8xme"]
@@ -242,13 +225,11 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 42.0
 
 [sub_resource type="Resource" id="e22"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
-count_below_another = null
 emerge = 1
 emerge_time = 1.0
 time = 44.0
@@ -267,7 +248,6 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
 count = 3
 interval = 0.0
-count_below_another = null
 flight_curve = SubResource("c4")
 time = 44.5
 
@@ -280,7 +260,6 @@ count = 4
 interval = 0.18
 offset = Vector2(-165, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 46.0
 
 [sub_resource type="Resource" id="e25"]
@@ -303,7 +282,6 @@ count = 2
 interval = 0.0
 offset = Vector2(-100, 0)
 offset_step = Vector2(200, 0)
-count_below_another = null
 time = 51.0
 
 [sub_resource type="Resource" id="e28"]
@@ -332,7 +310,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-180, 0)
-count_below_another = null
 time = 54.5
 
 [sub_resource type="Resource" id="Resource_2181a"]
@@ -343,7 +320,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-60, 0)
-count_below_another = null
 time = 54.5
 
 [sub_resource type="Resource" id="Resource_wq42m"]
@@ -354,7 +330,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(60, 0)
-count_below_another = null
 time = 54.5
 
 [sub_resource type="Resource" id="Resource_akd68"]
@@ -365,7 +340,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(180, 0)
-count_below_another = null
 time = 54.5
 
 [sub_resource type="Resource" id="Resource_ixama"]
@@ -375,7 +349,6 @@ move_pattern = ExtResource("25_tf1j2")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
-count_below_another = null
 time = 57.7
 
 [sub_resource type="Resource" id="Resource_fq7rf"]
@@ -386,7 +359,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 90)
-count_below_another = null
 time = 57.7
 
 [sub_resource type="Resource" id="Resource_8s5lw"]
@@ -397,7 +369,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 180)
-count_below_another = null
 time = 57.7
 
 [sub_resource type="Resource" id="Resource_lpk2e"]
@@ -408,7 +379,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 270)
-count_below_another = null
 time = 57.7
 
 [sub_resource type="Resource" id="Resource_kw1ew"]
@@ -419,7 +389,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(180, 0)
-count_below_another = null
 time = 60.9
 
 [sub_resource type="Resource" id="Resource_tnjie"]
@@ -430,7 +399,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(60, 0)
-count_below_another = null
 time = 60.9
 
 [sub_resource type="Resource" id="Resource_3frt2"]
@@ -441,7 +409,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-60, 0)
-count_below_another = null
 time = 60.9
 
 [sub_resource type="Resource" id="Resource_bwvay"]
@@ -452,7 +419,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-180, 0)
-count_below_another = null
 time = 60.9
 
 [sub_resource type="Resource" id="Resource_smf0q"]
@@ -464,7 +430,6 @@ count = 10
 interval = 0.12
 offset = Vector2(0, 270)
 mirror_x = true
-count_below_another = null
 time = 61.3
 
 [sub_resource type="Resource" id="Resource_4olo3"]
@@ -476,7 +441,6 @@ count = 10
 interval = 0.12
 offset = Vector2(0, 180)
 mirror_x = true
-count_below_another = null
 time = 61.3
 
 [sub_resource type="Resource" id="Resource_jbwio"]
@@ -488,7 +452,6 @@ count = 10
 interval = 0.12
 offset = Vector2(0, 90)
 mirror_x = true
-count_below_another = null
 time = 61.3
 
 [sub_resource type="Resource" id="Resource_rxxra"]
@@ -499,7 +462,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 mirror_x = true
-count_below_another = null
 time = 61.3
 
 [sub_resource type="Resource" id="Resource_72j23"]
@@ -510,7 +472,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-180, 0)
-count_below_another = null
 time = 64.3
 
 [sub_resource type="Resource" id="Resource_mf72h"]
@@ -521,7 +482,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(-60, 0)
-count_below_another = null
 time = 64.3
 
 [sub_resource type="Resource" id="Resource_0xpx4"]
@@ -532,7 +492,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(60, 0)
-count_below_another = null
 time = 64.3
 
 [sub_resource type="Resource" id="Resource_jqv86"]
@@ -543,7 +502,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("24_5rnv4")])
 count = 10
 interval = 0.16
 offset = Vector2(180, 0)
-count_below_another = null
 time = 64.3
 
 [sub_resource type="Resource" id="Resource_cqs6l"]
@@ -553,7 +511,6 @@ move_pattern = ExtResource("25_tf1j2")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
-count_below_another = null
 time = 64.7
 
 [sub_resource type="Resource" id="Resource_2ye6s"]
@@ -564,7 +521,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 90)
-count_below_another = null
 time = 64.7
 
 [sub_resource type="Resource" id="Resource_5o84p"]
@@ -575,7 +531,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 180)
-count_below_another = null
 time = 64.7
 
 [sub_resource type="Resource" id="Resource_yuf8c"]
@@ -586,7 +541,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("26_x3gml")])
 count = 10
 interval = 0.12
 offset = Vector2(0, 270)
-count_below_another = null
 time = 64.7
 
 [sub_resource type="Resource" id="e30"]
@@ -596,7 +550,6 @@ count = 4
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-count_below_another = null
 time = 68.0
 
 [sub_resource type="Resource" id="e31"]
@@ -607,7 +560,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("p_side")])
 count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
-count_below_another = null
 time = 69.0
 
 [sub_resource type="Resource" id="e32"]
@@ -619,7 +571,6 @@ count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
 mirror_x = true
-count_below_another = null
 time = 69.3
 
 [sub_resource type="Resource" id="e33"]
@@ -631,7 +582,6 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 70.5
 
 [sub_resource type="Resource" id="e34"]
@@ -641,7 +591,6 @@ count = 2
 interval = 0.0
 offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
-count_below_another = null
 time = 72.0
 
 [sub_resource type="Resource" id="c5"]
@@ -659,7 +608,6 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
 count = 5
 interval = 0.0
-count_below_another = null
 flight_curve = SubResource("c5")
 time = 73.0
 
@@ -669,7 +617,6 @@ enemy_scene = ExtResource("formation")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("z_fighter")])
 count = 22
 interval = 0.16
-count_below_another = null
 emerge = 1
 time = 75.0
 
@@ -682,13 +629,11 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 76.5
 
 [sub_resource type="Resource" id="e38"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
-count_below_another = null
 emerge = 1
 emerge_time = 1.0
 time = 78.0
@@ -697,7 +642,6 @@ time = 78.0
 script = ExtResource("spawn")
 enemy_scene = ExtResource("carrier")
 offset = Vector2(80, 0)
-count_below_another = null
 time = 80.5
 
 [sub_resource type="Resource" id="Resource_5rnv4"]
@@ -708,7 +652,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 82.5
 
 [sub_resource type="Resource" id="Resource_tf1j2"]
@@ -720,7 +663,6 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 84.7
 
 [sub_resource type="Resource" id="Resource_do38r"]
@@ -731,7 +673,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 86.9
 
 [sub_resource type="Resource" id="Resource_x6uah"]
@@ -743,7 +684,6 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 89.10000000000001
 
 [sub_resource type="Resource" id="Resource_770st"]
@@ -753,7 +693,6 @@ count = 6
 interval = 0.25
 offset = Vector2(-25, 0)
 offset_step = Vector2(60, 0)
-count_below_another = null
 time = 89.5
 
 [sub_resource type="Resource" id="Resource_ueefj"]
@@ -764,7 +703,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 91.3
 
 [sub_resource type="Resource" id="Resource_wm3d5"]
@@ -776,7 +714,6 @@ count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
 mirror_x = true
-count_below_another = null
 time = 93.5
 
 [sub_resource type="Resource" id="Resource_s32yp"]
@@ -787,7 +724,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("19_p15fs")])
 count = 3
 interval = 0.45
 offset_step = Vector2(0, 80)
-count_below_another = null
 time = 95.7
 
 [sub_resource type="Resource" id="e48"]
@@ -797,7 +733,6 @@ count = 2
 interval = 0.0
 offset = Vector2(-110, 0)
 offset_step = Vector2(220, 0)
-count_below_another = null
 emerge = 1
 emerge_time = 1.0
 time = 96.5
@@ -807,7 +742,6 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("charger")
 count = 5
 interval = 0.35
-count_below_another = null
 time = 97.0
 
 [sub_resource type="Resource" id="e50"]
@@ -819,7 +753,6 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 98.5
 
 [sub_resource type="Resource" id="e51"]
@@ -842,7 +775,6 @@ count = 3
 interval = 0.0
 offset = Vector2(-130, 0)
 offset_step = Vector2(130, 0)
-count_below_another = null
 time = 103.0
 
 [sub_resource type="Resource" id="e54"]
@@ -870,7 +802,6 @@ count = 4
 interval = 0.15
 offset = Vector2(-180, 0)
 offset_step = Vector2(120, 0)
-count_below_another = null
 emerge = 2
 emerge_time = 1.4
 time = 107.0
@@ -883,7 +814,6 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("p_side")])
 count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
-count_below_another = null
 time = 108.0
 
 [sub_resource type="Resource" id="e58"]
@@ -895,7 +825,6 @@ count = 5
 interval = 0.22
 offset_step = Vector2(44, 30)
 mirror_x = true
-count_below_another = null
 time = 108.3
 
 [sub_resource type="Resource" id="e59"]
@@ -907,7 +836,6 @@ count = 6
 interval = 0.18
 offset = Vector2(-275, 0)
 offset_step = Vector2(110, 0)
-count_below_another = null
 time = 109.5
 
 [sub_resource type="Resource" id="c7"]
@@ -925,14 +853,12 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
 count = 8
 interval = 0.0
-count_below_another = null
 flight_curve = SubResource("c7")
 time = 110.5
 
 [sub_resource type="Resource" id="e61"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("strike")
-count_below_another = null
 emerge = 1
 emerge_time = 1.0
 time = 112.5
@@ -940,7 +866,6 @@ time = 112.5
 [sub_resource type="Resource" id="e62"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("carrier")
-count_below_another = null
 time = 114.0
 
 [sub_resource type="Resource" id="e63"]
@@ -950,7 +875,6 @@ count = 2
 interval = 0.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(120, 0)
-count_below_another = null
 time = 117.0
 
 [sub_resource type="Resource" id="e64"]
@@ -971,7 +895,6 @@ is_boss = true
 boss_name = "ブラックスワン -改-"
 boss_phase_thresholds = Array[float]([0.66, 0.33])
 boss_time_bonus = true
-count_below_another = null
 time = 123.0
 
 [sub_resource type="Resource" id="e67"]
@@ -1004,5 +927,3 @@ script = ExtResource("data")
 stage_name = "Stage 3"
 events = Array[ExtResource("event")]([SubResource("e1"), SubResource("e2"), SubResource("sky_phase_1"), SubResource("e3"), SubResource("e4"), SubResource("e5"), SubResource("e6"), SubResource("e7"), SubResource("e8"), SubResource("e9"), SubResource("e10"), SubResource("e11"), SubResource("e12"), SubResource("e13"), SubResource("Resource_58da7"), SubResource("Resource_p15fs"), SubResource("Resource_q7f36"), SubResource("Resource_x3gml"), SubResource("Resource_441jl"), SubResource("Resource_o7j5x"), SubResource("Resource_s8xme"), SubResource("e22"), SubResource("e23"), SubResource("e24"), SubResource("e25"), SubResource("e26"), SubResource("e27"), SubResource("e28"), SubResource("sky_phase_2"), SubResource("e29"), SubResource("Resource_y32b2"), SubResource("Resource_2181a"), SubResource("Resource_wq42m"), SubResource("Resource_akd68"), SubResource("Resource_ixama"), SubResource("Resource_fq7rf"), SubResource("Resource_8s5lw"), SubResource("Resource_lpk2e"), SubResource("Resource_kw1ew"), SubResource("Resource_tnjie"), SubResource("Resource_3frt2"), SubResource("Resource_bwvay"), SubResource("Resource_smf0q"), SubResource("Resource_4olo3"), SubResource("Resource_jbwio"), SubResource("Resource_rxxra"), SubResource("Resource_72j23"), SubResource("Resource_mf72h"), SubResource("Resource_0xpx4"), SubResource("Resource_jqv86"), SubResource("Resource_cqs6l"), SubResource("Resource_2ye6s"), SubResource("Resource_5o84p"), SubResource("Resource_yuf8c"), SubResource("e30"), SubResource("e31"), SubResource("e32"), SubResource("e33"), SubResource("e34"), SubResource("e35"), SubResource("e36"), SubResource("e37"), SubResource("e38"), SubResource("e39"), SubResource("Resource_5rnv4"), SubResource("Resource_tf1j2"), SubResource("Resource_do38r"), SubResource("Resource_x6uah"), SubResource("Resource_770st"), SubResource("Resource_ueefj"), SubResource("Resource_wm3d5"), SubResource("Resource_s32yp"), SubResource("e48"), SubResource("e49"), SubResource("e50"), SubResource("e51"), SubResource("e52"), SubResource("e53"), SubResource("e54"), SubResource("sky_phase_3"), SubResource("e55"), SubResource("e56"), SubResource("e57"), SubResource("e58"), SubResource("e59"), SubResource("e60"), SubResource("e61"), SubResource("e62"), SubResource("e63"), SubResource("e64"), SubResource("e65"), SubResource("e66"), SubResource("e67"), SubResource("ignite_chance_1"), SubResource("ignite_chance_2")])
 another_zako_rate_ratio = 0.35
-zako_hp_scale_below_another = null
-boss_hp_scale_below_another = null

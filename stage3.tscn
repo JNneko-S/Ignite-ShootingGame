@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://k0t63g5fjkmx"]
 
 [ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
+[ext_resource type="AudioStream" uid="uid://u2j1svbuhh8e" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_boss3"]
 [ext_resource type="AudioStream" uid="uid://dk506wt1c7udi" path="res://Assets/Sounds/Music/AS_114335_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="music_stage3"]
 [ext_resource type="Texture2D" uid="uid://cph1ljbpdgefn" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Sea Ice Stage/BG/Stage_Base_strip3.png" id="sea_tex"]
 [ext_resource type="Script" uid="uid://cepvjotc1qur4" path="res://Component/Stage/sky_background.gd" id="sky_background"]
 [ext_resource type="Resource" uid="uid://c3y24ii5htao4" path="res://Resources/StageData/Stage3.tres" id="stage"]
 [ext_resource type="Script" uid="uid://bfilhsngcrmm2" path="res://Component/Camera/stage_camera.gd" id="stage_camera"]
 [ext_resource type="Script" uid="uid://g18nyoka7ga0" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_boss3"]
 
 [node name="Stage3" unique_id=2065326320 instance=ExtResource("base")]
 graze_per_levels = Array[float]([8.0, 10.0, 12.0])

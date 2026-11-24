@@ -1,26 +1,9 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bh26vofh8oyxk"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
-
-[sub_resource type="Resource" id="p1"]
-script = ExtResource("e1")
-bullet_scene = ExtResource("e3")
-min_difficulty = 2
-max_difficulty = 2
-skip_auto_tuning = true
-start_delay = 1.95
-shot_count = 2
-interval = 0.32
-pause = 4.0
-bullet_count = 5
-spread_angle = 26.0
-line_count = 3
-line_speed_ratio = 0.14
-aim_at_player = true
-bullet_speed = 200.0
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
@@ -30,7 +13,6 @@ change_speed = false
 [sub_resource type="Resource" id="st3"]
 script = ExtResource("e4")
 duration = 0.12
-target_speed = 0.0
 speed_trans = 0
 
 [sub_resource type="Resource" id="st4"]
@@ -46,16 +28,32 @@ target_speed = 72.0
 speed_trans = 4
 speed_ease = 0
 
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+start_delay = 1.95
+shot_count = 2
+interval = 0.32
+pause = 4.0
+bullet_count = 5
+spread_angle = 26.0
+line_count = 3
+line_speed_ratio = 0.14
+bullet_speed = 200.0
+
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 2
 max_difficulty = 2
 skip_auto_tuning = true
-start_delay = 0.5
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 shot_count = 5
-interval = 0.1
 pause = 2.2
+soften_others = 3.0
 bullet_count = 22
 spread_angle = 360.0
 aim_at_player = false
@@ -63,6 +61,4 @@ random_angle = 180.0
 random_speed_ratio = 0.55
 random_seed = 5
 bullet_speed = 150.0
-soften_others = 3.0
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5")])

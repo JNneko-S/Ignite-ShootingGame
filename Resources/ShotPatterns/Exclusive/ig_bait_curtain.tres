@@ -1,63 +1,54 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://dfksdykmtvrdk"]
 
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_sdmky"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e3"]
+[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e3"]
 
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
 start_delay = 1.6
-shot_count = 1
-interval = 0.1
 pause = 2.3
-bullet_count = 1
-aim_at_player = true
 bullet_speed = 55.0
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 another_made = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p2")])
 start_delay = 1.0
 shot_count = 4
 interval = 0.35
 pause = 0.9
 bullet_count = 13
 spread_angle = 100.0
-aim_at_player = true
 aim_once_per_burst = true
 gap_size = 2
 gap_random = true
 random_seed = 41
 bullet_speed = 62.0
-with_patterns = Array[ExtResource("e1")]([SubResource("p2")])
 
 [sub_resource type="Resource" id="p3"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
 start_delay = 1.8
-shot_count = 1
-interval = 0.1
 pause = 3.3
-bullet_count = 1
-aim_at_player = true
 bullet_speed = 50.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 another_version = SubResource("p1")
+with_patterns = Array[ExtResource("e1")]([SubResource("p3")])
 start_delay = 1.2
 shot_count = 2
 interval = 0.5
 pause = 2.4
 bullet_count = 7
 spread_angle = 76.0
-aim_at_player = true
 aim_once_per_burst = true
 gap_size = 2
 gap_random = true
 random_seed = 41
 bullet_speed = 56.0
-with_patterns = Array[ExtResource("e1")]([SubResource("p3")])
