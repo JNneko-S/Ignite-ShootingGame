@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer2_strip6.png" id="nucleo2"]
 [ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
 [ext_resource type="Script" path="res://Component/Stage/breach_sequence.gd" id="breach"]
+[ext_resource type="Script" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss4"]
 
@@ -18,6 +19,7 @@
 stage = ExtResource("stage")
 
 [node name="Scroller" parent="."]
+preroll = true
 loop_sprite = null
 arrive_at_time = 106.0
 auto_detect_bounds = false
@@ -35,6 +37,16 @@ texture = ExtResource("industy")
 
 [node name="Sprite2D" parent="Scroller/Sprite2D3"]
 texture = null
+
+[node name="WallBlockLowerLeft" type="Polygon2D" parent="Scroller/Sprite2D3"]
+color = Color(1, 0.15, 0.15, 0.45)
+polygon = PackedVector2Array(-120, -123.5, -84, -123.5, 40, -0.5, 40, 37.5, 30, 44.5, -120, 44.5)
+script = ExtResource("block_area")
+
+[node name="WallBlockUpperRight" type="Polygon2D" parent="Scroller/Sprite2D3"]
+color = Color(1, 0.15, 0.15, 0.45)
+polygon = PackedVector2Array(-56, -142.5, 120, -142.5, 120, -75.5, 85, -34.5, 58, -34.5)
+script = ExtResource("block_area")
 
 [node name="Sprite2D2" parent="Scroller"]
 visible = false
@@ -74,5 +86,6 @@ script = ExtResource("stage_transition")
 [node name="BreachSequence" type="Node" parent="." node_paths=PackedStringArray("scroller")]
 script = ExtResource("breach")
 scroller = NodePath("../Scroller")
+next_arrive_time = 210.0
 
 [editable path="UI/ScoreUI"]

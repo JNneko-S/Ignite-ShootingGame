@@ -12,13 +12,14 @@ config_version=5
 
 config/name="Ignite"
 config/version="0.0.0alpha"
-run/main_scene="uid://cdpyuc213bh0u"
+run/main_scene="uid://bwyu1auys3uxw"
 config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=144
 config/icon="res://icon.svg"
 
 [autoload]
 
+GameSettings="*res://Component/Settings/game_settings.gd"
 SoundManager="*res://sound_manager.gd"
 
 [display]
@@ -43,6 +44,10 @@ folder_colors={
 "res://GameScene/Common/": "yellow",
 "res://Resources/": "green"
 }
+
+[gui]
+
+theme/custom="res://Resources/UI/ink_theme.tres"
 
 [global_group]
 

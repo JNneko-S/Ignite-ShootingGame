@@ -20,6 +20,9 @@ static func is_blocked(tree : SceneTree, world_point : Vector2, alpha_threshold 
 		if node is GroundBlocker:
 			if (node as GroundBlocker).blocks(world_point):
 				return true
+		elif node is GroundBlockArea:
+			if (node as GroundBlockArea).blocks(world_point):
+				return true
 		elif node is Sprite2D:
 			if _sprite_blocks(node, world_point, alpha_threshold):
 				return true

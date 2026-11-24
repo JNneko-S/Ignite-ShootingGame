@@ -14,10 +14,10 @@ class_name ScoreUI
 @export var roll_speed : float = 12.0
 @export var digits : int = 9
 
-const COLOR_TEXT := Color(1.0, 1.0, 1.0)
-const COLOR_HI := Color(1.0, 0.85, 0.45)
-const COLOR_MULT := Color(0.55, 0.95, 1.0)
-const COLOR_IGNITE := Color(1.0, 0.55, 0.2)
+const COLOR_TEXT := Color(1.0, 0.98, 0.94)
+const COLOR_HI := Color(1.0, 0.82, 0.6)
+const COLOR_MULT := Color(1.0, 0.62, 0.48)
+const COLOR_IGNITE := Color(1.0, 0.35, 0.15)
 
 @onready var _root : Control = $Root
 @onready var _hi_label : Label = $Root/HiLabel
@@ -84,7 +84,7 @@ func _label(font_size : int, color : Color, align : HorizontalAlignment, parent 
 	label.horizontal_alignment = align
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_color_override("font_outline_color", Color(0.08, 0.05, 0.05))
 	label.add_theme_constant_override("outline_size", 4)
 	(parent if parent else _root).add_child(label)
 	return label

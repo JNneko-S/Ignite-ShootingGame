@@ -19,6 +19,12 @@ class_name StageData
 ## true なら、HARD を選んだときも、ANOTHER と同じく敵弾の当たり判定を半分にする(最終面など、弾がとても多いステージ)
 @export var small_bullet_hitbox_hard : bool = false
 
+@export_group("体力")
+## EASY / NORMAL / HARD のとき、雑魚(ボス・中ボス以外)の体力に掛ける倍率。1 ならそのまま。ANOTHER には効かない
+@export_range(0.1, 2.0, 0.05) var zako_hp_scale_below_another : float = 1.0
+## EASY / NORMAL / HARD のとき、中ボス・ボスの体力に掛ける倍率(部位にも掛かる)。1 ならそのまま。ANOTHER には効かない
+@export_range(0.1, 2.0, 0.05) var boss_hp_scale_below_another : float = 1.0
+
 @export_group("パワーアップ")
 ## オフなら、雑魚(ItemDrop を持つ敵)はパワーアップを落とさない(列車の全車両撃破で落とすステージなど)
 @export var zako_power_drops : bool = true

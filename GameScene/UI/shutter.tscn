@@ -9,21 +9,21 @@
 shader = ExtResource("2_shader")
 shader_parameter/rect_size = Vector2(336, 224)
 shader_parameter/edge_at_bottom = true
-shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/metal_color = Color(0.86, 0.84, 0.8, 1)
 shader_parameter/slat_height = 14.0
 shader_parameter/edge_height = 16.0
-shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
-shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+shader_parameter/stripe_color = Color(0.8, 0.14, 0.06, 1)
+shader_parameter/stripe_dark = Color(0.1, 0.07, 0.07, 1)
 
 [sub_resource type="ShaderMaterial" id="mat_bottom"]
 shader = ExtResource("2_shader")
 shader_parameter/rect_size = Vector2(336, 224)
 shader_parameter/edge_at_bottom = false
-shader_parameter/metal_color = Color(0.32, 0.34, 0.38, 1)
+shader_parameter/metal_color = Color(0.86, 0.84, 0.8, 1)
 shader_parameter/slat_height = 14.0
 shader_parameter/edge_height = 16.0
-shader_parameter/stripe_color = Color(0.95, 0.72, 0.1, 1)
-shader_parameter/stripe_dark = Color(0.08, 0.08, 0.09, 1)
+shader_parameter/stripe_color = Color(0.8, 0.14, 0.06, 1)
+shader_parameter/stripe_dark = Color(0.1, 0.07, 0.07, 1)
 
 [sub_resource type="ShaderMaterial" id="mat_fx"]
 shader = ExtResource("3_fx")

@@ -430,7 +430,7 @@ func _on_enemy_incoming(event : SpawnEvent, seconds : float) -> void:
 			break
 	var points : Array[Vector2] = []
 	for i in event.unit_count():
-		var world := base + event.offset + event.offset_step * i
+		var world := base + event.unit_offset(i)
 		points.append(screen_to_local((world - _view.get_center()) / _view.size))
 	_swarm.foreshadow(info["texture"], points, seconds, info["scale"])
 

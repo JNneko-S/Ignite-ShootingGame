@@ -178,6 +178,7 @@ count = 3
 interval = 0.5
 offset = Vector2(-150, 0)
 offset_step = Vector2(150, 0)
+count_below_another = 2
 time = 6.0
 
 [sub_resource type="Resource" id="a_open_2"]
@@ -198,6 +199,7 @@ count = 3
 interval = 0.5
 offset = Vector2(150, 0)
 offset_step = Vector2(-150, 0)
+count_below_another = 2
 time = 10.5
 
 [sub_resource type="Resource" id="t_a_0"]
@@ -207,6 +209,7 @@ count = 2
 interval = 0.5
 offset = Vector2(-130, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 2
 time = 14.0
 
 [sub_resource type="Resource" id="t_a_1"]
@@ -216,6 +219,7 @@ count = 3
 interval = 0.45
 offset = Vector2(170, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 16.6
 
 [sub_resource type="Resource" id="t_a_3"]
@@ -225,6 +229,7 @@ count = 3
 interval = 0.45
 offset = Vector2(-170, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 0
 time = 23.0
 
 [sub_resource type="Resource" id="t_a_4"]
@@ -234,6 +239,7 @@ count = 2
 interval = 0.5
 offset = Vector2(-130, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 2
 time = 25.6
 
 [sub_resource type="Resource" id="t_a_5"]
@@ -243,6 +249,7 @@ count = 3
 interval = 0.45
 offset = Vector2(170, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 28.2
 
 [sub_resource type="Resource" id="t_a_6"]
@@ -252,6 +259,7 @@ count = 2
 interval = 0.5
 offset = Vector2(40, 0)
 offset_step = Vector2(-170, 0)
+count_below_another = 2
 time = 30.8
 
 [sub_resource type="Resource" id="t_a_7"]
@@ -261,6 +269,7 @@ count = 3
 interval = 0.45
 offset = Vector2(-170, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 0
 time = 33.4
 
 [sub_resource type="Resource" id="t_a_8"]
@@ -270,6 +279,7 @@ count = 2
 interval = 0.5
 offset = Vector2(-130, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 2
 time = 38.5
 
 [sub_resource type="Resource" id="t_a_9"]
@@ -279,6 +289,7 @@ count = 3
 interval = 0.45
 offset = Vector2(170, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 41.0
 
 [sub_resource type="Resource" id="t_a_10"]
@@ -288,6 +299,7 @@ count = 2
 interval = 0.5
 offset = Vector2(40, 0)
 offset_step = Vector2(-170, 0)
+count_below_another = 2
 time = 43.6
 
 [sub_resource type="Resource" id="t_a_11"]
@@ -297,6 +309,7 @@ count = 3
 interval = 0.45
 offset = Vector2(-170, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 0
 time = 46.2
 
 [sub_resource type="Resource" id="t_a_12"]
@@ -306,6 +319,7 @@ count = 2
 interval = 0.5
 offset = Vector2(-130, 0)
 offset_step = Vector2(120, 0)
+count_below_another = 2
 time = 48.8
 
 [sub_resource type="Resource" id="t_a_13"]
@@ -315,6 +329,7 @@ count = 3
 interval = 0.45
 offset = Vector2(170, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 51.0
 
 [sub_resource type="Resource" id="q_a_1"]
@@ -324,6 +339,7 @@ count = 4
 interval = 0.0
 offset = Vector2(-150, 0)
 offset_step = Vector2(85, -60)
+count_below_another = 3
 time = 20.5
 
 [sub_resource type="Resource" id="q_a_2"]
@@ -333,6 +349,7 @@ count = 4
 interval = 0.0
 offset = Vector2(150, 0)
 offset_step = Vector2(-85, -60)
+count_below_another = 3
 time = 36.0
 
 [sub_resource type="Resource" id="r_a_2"]
@@ -367,6 +384,7 @@ count = 5
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 3
 time = 24.5
 
 [sub_resource type="Resource" id="a_a_3"]
@@ -378,6 +396,7 @@ count = 5
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 3
 time = 33.0
 
 [sub_resource type="Resource" id="a_a_4"]
@@ -389,6 +408,7 @@ count = 5
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 3
 time = 45.0
 
 [sub_resource type="Resource" id="t_b_0"]
@@ -398,6 +418,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 2
 time = 59.0
 
 [sub_resource type="Resource" id="t_b_1"]
@@ -407,6 +428,7 @@ count = 2
 interval = 0.4
 offset = Vector2(150, 0)
 offset_step = Vector2(-130, 0)
+count_below_another = 0
 time = 60.7
 
 [sub_resource type="Resource" id="t_b_2"]
@@ -416,6 +438,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 2
 time = 63.5
 
 [sub_resource type="Resource" id="t_b_3"]
@@ -425,6 +448,7 @@ count = 2
 interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(200, 0)
+count_below_another = 0
 time = 65.2
 
 [sub_resource type="Resource" id="t_b_4"]
@@ -434,6 +458,7 @@ count = 3
 interval = 0.4
 offset = Vector2(180, 0)
 offset_step = Vector2(-120, 0)
+count_below_another = 2
 time = 66.9
 
 [sub_resource type="Resource" id="t_b_5"]
@@ -443,6 +468,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 0
 time = 69.5
 
 [sub_resource type="Resource" id="t_b_6"]
@@ -452,6 +478,7 @@ count = 2
 interval = 0.4
 offset = Vector2(150, 0)
 offset_step = Vector2(-130, 0)
+count_below_another = 2
 time = 71.2
 
 [sub_resource type="Resource" id="t_b_7"]
@@ -461,6 +488,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 72.9
 
 [sub_resource type="Resource" id="t_b_8"]
@@ -470,6 +498,7 @@ count = 2
 interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(200, 0)
+count_below_another = 2
 time = 74.6
 
 [sub_resource type="Resource" id="t_b_9"]
@@ -479,6 +508,7 @@ count = 3
 interval = 0.4
 offset = Vector2(180, 0)
 offset_step = Vector2(-120, 0)
+count_below_another = 0
 time = 77.5
 
 [sub_resource type="Resource" id="t_b_10"]
@@ -488,6 +518,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 2
 time = 79.2
 
 [sub_resource type="Resource" id="t_b_11"]
@@ -497,6 +528,7 @@ count = 2
 interval = 0.4
 offset = Vector2(150, 0)
 offset_step = Vector2(-130, 0)
+count_below_another = 0
 time = 81.5
 
 [sub_resource type="Resource" id="t_b_12"]
@@ -506,6 +538,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 2
 time = 83.2
 
 [sub_resource type="Resource" id="t_b_13"]
@@ -515,6 +548,7 @@ count = 2
 interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(200, 0)
+count_below_another = 0
 time = 84.9
 
 [sub_resource type="Resource" id="t_b_14"]
@@ -524,6 +558,7 @@ count = 3
 interval = 0.4
 offset = Vector2(180, 0)
 offset_step = Vector2(-120, 0)
+count_below_another = 2
 time = 86.6
 
 [sub_resource type="Resource" id="t_b_15"]
@@ -533,6 +568,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 0
 time = 88.3
 
 [sub_resource type="Resource" id="t_b_16"]
@@ -542,6 +578,7 @@ count = 2
 interval = 0.4
 offset = Vector2(150, 0)
 offset_step = Vector2(-130, 0)
+count_below_another = 2
 time = 91.5
 
 [sub_resource type="Resource" id="t_b_17"]
@@ -551,6 +588,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 0
 time = 93.2
 
 [sub_resource type="Resource" id="t_b_18"]
@@ -560,6 +598,7 @@ count = 2
 interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(200, 0)
+count_below_another = 2
 time = 94.9
 
 [sub_resource type="Resource" id="t_b_19"]
@@ -569,6 +608,7 @@ count = 3
 interval = 0.4
 offset = Vector2(180, 0)
 offset_step = Vector2(-120, 0)
+count_below_another = 0
 time = 96.6
 
 [sub_resource type="Resource" id="t_b_20"]
@@ -578,6 +618,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 2
 time = 98.3
 
 [sub_resource type="Resource" id="t_b_21"]
@@ -587,6 +628,7 @@ count = 2
 interval = 0.4
 offset = Vector2(150, 0)
 offset_step = Vector2(-130, 0)
+count_below_another = 0
 time = 101.5
 
 [sub_resource type="Resource" id="t_b_22"]
@@ -596,6 +638,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-110, 0)
+count_below_another = 2
 time = 103.2
 
 [sub_resource type="Resource" id="t_b_23"]
@@ -605,6 +648,7 @@ count = 2
 interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(200, 0)
+count_below_another = 0
 time = 104.9
 
 [sub_resource type="Resource" id="t_b_24"]
@@ -614,6 +658,7 @@ count = 3
 interval = 0.4
 offset = Vector2(180, 0)
 offset_step = Vector2(-120, 0)
+count_below_another = 2
 time = 106.6
 
 [sub_resource type="Resource" id="t_b_25"]
@@ -623,6 +668,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-170, 0)
 offset_step = Vector2(110, 0)
+count_below_another = 0
 time = 108.3
 
 [sub_resource type="Resource" id="q_b_1"]
@@ -632,6 +678,7 @@ count = 5
 interval = 0.0
 offset = Vector2(-170, 0)
 offset_step = Vector2(85, -60)
+count_below_another = 3
 time = 62.0
 
 [sub_resource type="Resource" id="q_b_2"]
@@ -641,6 +688,7 @@ count = 5
 interval = 0.0
 offset = Vector2(170, 0)
 offset_step = Vector2(-85, -60)
+count_below_another = 3
 time = 70.0
 
 [sub_resource type="Resource" id="q_b_3"]
@@ -650,6 +698,7 @@ count = 5
 interval = 0.0
 offset = Vector2(-170, 0)
 offset_step = Vector2(85, -60)
+count_below_another = 3
 time = 80.5
 
 [sub_resource type="Resource" id="q_b_4"]
@@ -659,6 +708,7 @@ count = 5
 interval = 0.0
 offset = Vector2(170, 0)
 offset_step = Vector2(-85, -60)
+count_below_another = 3
 time = 90.0
 
 [sub_resource type="Resource" id="q_b_5"]
@@ -668,6 +718,7 @@ count = 5
 interval = 0.0
 offset = Vector2(-170, 0)
 offset_step = Vector2(85, -60)
+count_below_another = 3
 time = 100.0
 
 [sub_resource type="Resource" id="h_b_1"]
@@ -714,6 +765,7 @@ count = 6
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 4
 time = 60.0
 
 [sub_resource type="Resource" id="a_b_2"]
@@ -725,6 +777,7 @@ count = 6
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 4
 time = 76.0
 
 [sub_resource type="Resource" id="a_b_3"]
@@ -736,6 +789,7 @@ count = 6
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 4
 time = 88.0
 
 [sub_resource type="Resource" id="a_b_4"]
@@ -747,6 +801,7 @@ count = 6
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 4
 time = 104.0
 
 [sub_resource type="Resource" id="q_r_1"]
@@ -756,6 +811,7 @@ count = 5
 interval = 0.0
 offset = Vector2(-170, 0)
 offset_step = Vector2(85, -60)
+count_below_another = 3
 time = 111.0
 
 [sub_resource type="Resource" id="q_r_2"]
@@ -765,6 +821,7 @@ count = 5
 interval = 0.0
 offset = Vector2(170, 0)
 offset_step = Vector2(-85, -60)
+count_below_another = 3
 time = 113.5
 
 [sub_resource type="Resource" id="q_r_3"]
@@ -774,6 +831,7 @@ count = 5
 interval = 0.0
 offset = Vector2(-175, 0)
 offset_step = Vector2(80, 0)
+count_below_another = 3
 time = 116.0
 
 [sub_resource type="Resource" id="t_r_1"]
@@ -783,6 +841,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
+count_below_another = 2
 time = 112.2
 
 [sub_resource type="Resource" id="t_r_2"]
@@ -792,6 +851,7 @@ count = 3
 interval = 0.4
 offset = Vector2(60, 0)
 offset_step = Vector2(-60, 0)
+count_below_another = 2
 time = 114.8
 
 [sub_resource type="Resource" id="t_r_3"]
@@ -801,6 +861,7 @@ count = 3
 interval = 0.4
 offset = Vector2(-150, 0)
 offset_step = Vector2(150, 0)
+count_below_another = 2
 time = 117.5
 
 [sub_resource type="Resource" id="a_r_1"]
@@ -812,9 +873,12 @@ count = 8
 interval = 0.4
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = 5
 time = 115.0
 
 [resource]
 script = ExtResource("stage_script")
 stage_name = "Stage 1 タンクラッシュ"
 events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("rest_1_slow"), SubResource("rest_1_resume"), SubResource("rest_2_slow"), SubResource("rest_2_resume"), SubResource("prop_train_1"), SubResource("prop_train_2"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss"), SubResource("a_open_1"), SubResource("t_open_1"), SubResource("t_open_2"), SubResource("a_open_2"), SubResource("t_open_3"), SubResource("t_a_0"), SubResource("t_a_1"), SubResource("t_a_3"), SubResource("t_a_4"), SubResource("t_a_5"), SubResource("t_a_6"), SubResource("t_a_7"), SubResource("t_a_8"), SubResource("t_a_9"), SubResource("t_a_10"), SubResource("t_a_11"), SubResource("t_a_12"), SubResource("t_a_13"), SubResource("q_a_1"), SubResource("q_a_2"), SubResource("r_a_2"), SubResource("r_a_3"), SubResource("a_a_1"), SubResource("a_a_2"), SubResource("a_a_3"), SubResource("a_a_4"), SubResource("t_b_0"), SubResource("t_b_1"), SubResource("t_b_2"), SubResource("t_b_3"), SubResource("t_b_4"), SubResource("t_b_5"), SubResource("t_b_6"), SubResource("t_b_7"), SubResource("t_b_8"), SubResource("t_b_9"), SubResource("t_b_10"), SubResource("t_b_11"), SubResource("t_b_12"), SubResource("t_b_13"), SubResource("t_b_14"), SubResource("t_b_15"), SubResource("t_b_16"), SubResource("t_b_17"), SubResource("t_b_18"), SubResource("t_b_19"), SubResource("t_b_20"), SubResource("t_b_21"), SubResource("t_b_22"), SubResource("t_b_23"), SubResource("t_b_24"), SubResource("t_b_25"), SubResource("q_b_1"), SubResource("q_b_2"), SubResource("q_b_3"), SubResource("q_b_4"), SubResource("q_b_5"), SubResource("h_b_1"), SubResource("h_b_2"), SubResource("r_b_1"), SubResource("r_b_2"), SubResource("r_b_3"), SubResource("a_b_1"), SubResource("a_b_2"), SubResource("a_b_3"), SubResource("a_b_4"), SubResource("q_r_1"), SubResource("q_r_2"), SubResource("q_r_3"), SubResource("t_r_1"), SubResource("t_r_2"), SubResource("t_r_3"), SubResource("a_r_1")])
+zako_hp_scale_below_another = 0.8
+boss_hp_scale_below_another = 0.8

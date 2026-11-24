@@ -353,6 +353,7 @@ func _scatter_items(level_before : int, progress_before : float) -> void:
 
 ## 残機が尽きた: ゲームオーバーの画面を出す
 func _on_game_over() -> void:
+	ScoreBoard.finish_run(get_tree(), false) # スコアボードに記録する(Slow Mode で遊んだときは記録しない)
 	if game_over_scene == null:
 		return
 	var screen := game_over_scene.instantiate() as GameOverScreen

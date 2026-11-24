@@ -382,7 +382,7 @@ func _fire_parallel(look : int, total : int) -> void:
 		var each : int = total / offsets.size() + (1 if i < total % offsets.size() else 0)
 		bullet.setup(Vector2.UP, speed, each, 0)
 		if beam:
-			bullet.visible = false # 当たり判定だけ(見た目はビーム)
+			bullet.get_node("Sprite2D").visible = false # 当たり判定だけ(見た目はビーム)
 	if beam and _beam:
 		_beam.fire(look >= 5, absf(float(offsets[0])) * width_scale)
 

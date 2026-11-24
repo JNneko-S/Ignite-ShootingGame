@@ -45,6 +45,16 @@ var _split_depth : int = 0
 var split_heading : float = NAN
 ## 集合弾(ShotPattern の Cluster Layers)の、群れの真ん中からのずれ。群れで向きを変える(AIM_GROUP)ときに使う
 var group_offset : Vector2 = Vector2.ZERO
+## 立体弾幕(ShotPattern の Ring3d): 回る輪の中の位置。弾はふつうに飛びながら、輪の中の位置のずれを足す
+var _ring_pattern : ShotPattern
+var _ring_index : int = 0
+var _ring_heading : float = 0.0
+var _ring_spin_sign : float = 1.0
+var _ring_offset : Vector2 = Vector2.ZERO
+var _ring_time : float = 0.0
+var _ring_base_scale : Vector2 = Vector2.ONE
+var _ring_sprite : CanvasItem
+var _ring_sprite_color : Color = Color.WHITE
 
 ## 画面からこれより遠くへ行った弾は消す(px)
 const FAR_AWAY_DISTANCE : float = 700.0
@@ -52,6 +62,8 @@ const FAR_AWAY_DISTANCE : float = 700.0
 ## 生まれた時刻と、はじめて画面に入った時刻(ミリ秒)
 var _born_msec : int = 0
 var _revealed_msec : int = 0
+
+var lifetime_check : float = randf() * 0.5
 
 ## 画面の外で生まれて、ついさっき(within_msec 以内に)画面に入ってきた弾か
 func just_revealed_from_offscreen(within_msec : int) -> bool:
@@ -80,11 +92,6 @@ func _ready() -> void:
 		if _revealed_msec == 0:
 			_revealed_msec = Time.get_ticks_msec())
 	# 画面の外で撃たれた弾(画面外から撃ってくるボス)は、画面に入らないまま遠くへ行ったら消す
-	var lifetime_check := Timer.new()
-	lifetime_check.wait_time = 0.5
-	lifetime_check.autostart = true
-	lifetime_check.timeout.connect(_check_far_away)
-	add_child(lifetime_check)
 
 func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	direction = dir.normalized()
@@ -92,6 +99,40 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	damage = dmg
 	accel = acc
 	rotation = direction.angle() + PI / 2.0
+
+## 立体弾幕の輪に並べる。index は輪の中の何番目か、heading は輪が飛ぶ向き(ラジアン)。setup のあとに呼ぶ
+func set_ring3d(pattern : ShotPattern, index : int, heading : float, mirror : bool = false) -> void:
+	_ring_pattern = pattern
+	_ring_index = index
+	_ring_heading = heading
+	_ring_spin_sign = -1.0 if mirror else 1.0
+	_ring_base_scale = scale
+	for child in get_children():
+		if child is Sprite2D or child is AnimatedSprite2D:
+			_ring_sprite = child
+			_ring_sprite_color = child.self_modulate
+			break
+	_apply_ring(0.0)
+
+## 輪の中の位置を進める: 輪の面を傾けて、手前の弾は大きく明るく、奥の弾は小さく暗くする
+func _apply_ring(delta : float) -> void:
+	var p := _ring_pattern
+	_ring_time += delta
+	var r := minf(p.ring3d_radius + p.ring3d_grow * _ring_time, maxf(p.ring3d_max_radius, p.ring3d_radius))
+	var a := TAU * float(_ring_index) / float(maxi(p.ring3d_count, 1)) + deg_to_rad(p.ring3d_spin) * _ring_time * _ring_spin_sign
+	var tilt := deg_to_rad(p.ring3d_tilt + p.ring3d_tumble * _ring_time)
+	# 輪の面: 横 = 飛ぶ向きに直角、縦 = 飛ぶ向き。傾けるほど縦がつぶれて、奥行きになる
+	var side := cos(a) * r
+	var forward := sin(a) * r * cos(tilt)
+	var depth := sin(a) * sin(tilt) # プラスが手前(-1〜1)
+	var heading := direction.normalized() if direction != Vector2.ZERO else Vector2.from_angle(_ring_heading) # 曲がる弾でも、輪は飛ぶ向きを向く
+	var offset := heading * forward + heading.orthogonal() * side
+	global_position += offset - _ring_offset
+	_ring_offset = offset
+	scale = _ring_base_scale * (1.0 + p.ring3d_depth_scale * depth)
+	z_index = 6 if depth >= 0.0 else 4
+	if _ring_sprite:
+		_ring_sprite.self_modulate = _ring_sprite_color.darkened(clampf(-depth, 0.0, 1.0) * 0.5)
 
 ## 撃ったあとの動きを設定する。setup のあとに呼ぶ。
 ## speed_scale: 列弾・ばらつきによる速さの倍率(Motion の速度にもかかる)
@@ -261,6 +302,7 @@ func ignite(params : IgniteParams, chain_until_msec : int, is_chain : bool = fal
 	remove_from_group("enemy_bullet")
 	set_deferred("collision_layer", params.ignited_collision_layer)
 	set_deferred("collision_mask", params.ignited_collision_mask)
+	set_deferred("monitoring", true)
 
 func _on_area_entered(area : Area2D) -> void:
 	match _state:
@@ -274,6 +316,10 @@ func _on_area_entered(area : Area2D) -> void:
 				area.ignite(_params, _chain_until_msec, true)
 
 func _physics_process(delta : float) -> void:
+	lifetime_check -= delta
+	if lifetime_check <= 0.0:
+		lifetime_check = 0.5
+		_check_far_away()
 	match _state:
 		BulletState.NORMAL:
 			if _split_in >= 0.0:
@@ -286,6 +332,8 @@ func _physics_process(delta : float) -> void:
 				global_position += direction * speed * delta
 			else:
 				_update_motion(delta)
+			if _ring_pattern:
+				_apply_ring(delta)
 		BulletState.IGNITED:
 			_move_ignited(delta)
 

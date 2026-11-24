@@ -336,8 +336,15 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 			for j in range(-layers, layers + 1):
 				if absi(i) + absi(j) <= layers:
 					cluster.append(Vector2(i, j) * pattern.cluster_spacing)
+	# 立体弾幕(Ring3d Count): 1発の代わりに、回る輪に並んだ弾を出す(輪の中の位置は、弾が自分で動かす)
+	var ring := maxi(pattern.ring3d_count, 0)
+	if ring > 0:
+		cluster.clear()
+		for k in ring:
+			cluster.append(Vector2.ZERO)
 	for shot in ShotMath.bullets(pattern, shot_index, aim_angle, mirror):
-		for member in cluster:
+		for member_index in cluster.size():
+			var member : Vector2 = cluster[member_index]
 			var bullet : Node2D = scene.instantiate()
 			parent.add_child(bullet)
 			bullet.z_index = 5
@@ -359,6 +366,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 				bullet.set_split(pattern, bullet_mirror, split_depth)
 				if not is_nan(split_heading) and "split_heading" in bullet:
 					bullet.split_heading = split_heading
+			if ring > 0 and bullet.has_method("set_ring3d"):
+				bullet.set_ring3d(pattern, member_index, shot["angle"] + turn, bullet_mirror)
 
 ## この砲口のボス(Enemy)。いなければ null
 func _owner_enemy() -> Enemy:

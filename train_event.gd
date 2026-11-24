@@ -20,6 +20,11 @@ class_name TrainEvent
 @export var count : int = 1
 @export var interval : float = 2.0
 @export var rail_step : int = 0
+## 線路のないステージ(Rail が -1)で走らせるときの、画面の真ん中からの横の位置(px)。
+## 向きは Speed の符号で決まる(プラスで上へ、マイナスで下へ。下へ走らせると、画面の上から突っ込んでくる)
+@export var lane_x : float = 0.0
+## 同じ列車を何本も出すとき、1本ごとに Lane X をずらす量(px)
+@export var lane_step : float = 0.0
 
 func unit_count() -> int:
 	return maxi(count, 1)
@@ -34,7 +39,12 @@ func execute(runner : StageRunner, unit_index : int) -> void:
 	if train == null:
 		push_error("TrainEvent: train_scene のルートが Train ではありません")
 		return
-	train.rail = rail + rail_step * unit_index
+	train.rail = rail + rail_step * unit_index if rail >= 0 else -1
+	if rail < 0:
+		# 線路がない: 画面の真ん中から Lane X の位置を走る
+		train.direction_by_rail = false
+		var view := CameraView.visible_rect(runner.get_tree().current_scene as CanvasItem)
+		train.position.x = view.get_center().x + lane_x + lane_step * unit_index
 	if speed != 0.0:
 		train.speed = speed
 	if car_count > 0:

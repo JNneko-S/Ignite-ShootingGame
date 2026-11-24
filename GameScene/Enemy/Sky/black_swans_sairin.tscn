@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="base"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_swans_ring_3way.tres" id="ring_3way"]
+
+[node name="BlackSwansSairin" instance=ExtResource("base")]
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+patterns = Array[ExtResource("shot_script")]([ExtResource("ring_3way")])

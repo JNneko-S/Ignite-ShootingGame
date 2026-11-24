@@ -80,7 +80,7 @@ func _set_shown(value : float, pop : bool) -> void:
 	if lv != _shown_level:
 		var first := _shown_level < 0
 		_shown_level = lv
-		label.text = "Ignite %d" % lv
+		label.text = "IGNITE %d" % lv
 		if pop and not first:
 			_pop_label(1.4)
 

@@ -154,6 +154,22 @@ enum TimingUnit {
 ## ばらつきの種。プレビューとゲームで、同じばらつき方になる
 @export var random_seed : int = 0
 
+@export_group("立体弾幕(回転する輪)")
+## 1 以上なら、1発の代わりに、この数の弾を輪に並べて撃つ。輪は飛びながら回って、立体的に見える(奥の弾は小さく暗い)
+@export var ring3d_count : int = 0
+## 輪の半径(px)と、1秒に広がる量(px)・広がる上限(px)
+@export var ring3d_radius : float = 22.0
+@export var ring3d_grow : float = 0.0
+@export var ring3d_max_radius : float = 60.0
+## 輪が回る速さ(度/秒)
+@export var ring3d_spin : float = 240.0
+## 輪の傾き(度)。0 なら画面に平たい円、90 なら真横から見た線。60〜75 くらいで立体に見える
+@export var ring3d_tilt : float = 65.0
+## 傾きが変わっていく速さ(度/秒)。0 なら変わらない。入れると、輪がでんぐり返るように見える
+@export var ring3d_tumble : float = 0.0
+## 奥と手前の大きさの差(0 なら同じ大きさ)
+@export_range(0.0, 0.8, 0.05) var ring3d_depth_scale : float = 0.35
+
 @export_group("弾の性質")
 ## 撃った瞬間の速さ(px/秒)
 @export var bullet_speed : float = 250.0

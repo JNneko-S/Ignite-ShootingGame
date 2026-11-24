@@ -22,6 +22,7 @@ static var power_boost : int = 0
 
 ## 今のステージの状態を覚える
 static func save(tree : SceneTree) -> void:
+	ScoreBoard.carry_stage(tree) # 被弾数・ボム・撃破数を、次のステージへ持ち越す
 	var score_system := tree.get_first_node_in_group("score_system") as ScoreSystem
 	var player := find_player(tree)
 	var game_manager := _game_manager(tree)

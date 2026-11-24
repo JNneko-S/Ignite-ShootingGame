@@ -52,6 +52,11 @@ class_name SpawnEvent
 ## 1体でも画面の外へ逃げたら出ない(Count が 2 以上のときだけ)
 @export var formation_bonus : int = 0
 
+@export_group("難易度")
+## EASY / NORMAL / HARD のときに出す数。-1 なら Count のまま。0 ならこの敵は出ない。
+## ANOTHER のときは、いつも Count の数が出る(道中の雑魚を、HARD 以下だけ減らすのに使う)
+@export var count_below_another : int = -1
+
 @export_group("背景から出てくる")
 ## 0: ふつうに出る / 1: 背景から近づいてくる(小さく暗い姿から大きく濃くなって前に出る) /
 ## 2: 背景の下から上へ飛び去ってから、上から入り直す /
@@ -66,7 +71,19 @@ class_name SpawnEvent
 @export var flight_curve : FlightCurve
 
 func unit_count() -> int:
+	if count_below_another >= 0 and not HazardRank.active:
+		return mini(count_below_another, maxi(count, 1)) # 0 なら、この敵は出ない
 	return maxi(count, 1)
+
+## unit_index 体目の位置のずれ。HARD 以下で数を減らしたときは、元の列の両端に合わせて、間を広げて並べる
+func unit_offset(unit_index : int) -> Vector2:
+	var full := maxi(count, 1)
+	var now := unit_count()
+	if now >= full or now <= 0:
+		return offset + offset_step * unit_index
+	if now == 1:
+		return offset + offset_step * (full - 1) * 0.5 # 1体だけなら、列の真ん中
+	return offset + offset_step * (float(unit_index) * (full - 1) / (now - 1))
 
 func unit_time(unit_index : int) -> float:
 	return time + interval * unit_index

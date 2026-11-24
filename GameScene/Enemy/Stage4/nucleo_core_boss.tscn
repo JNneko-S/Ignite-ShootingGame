@@ -1,0 +1,874 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Body.png" id="t_body"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Thruster_strip4.png" id="t_thruster"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Turrets.png" id="t_turrets"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Cannon_L.png" id="t_cannon_l"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Cannon_R.png" id="t_cannon_r"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Crystal_L.png" id="t_crystal_l"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Crystal_R.png" id="t_crystal_r"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Engine_L.png" id="t_engine_l"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/Engine_R.png" id="t_engine_r"]
+[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Multiple Parts Enm Ship/WingCannonL&R.png" id="t_wing_cannon"]
+[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" path="res://Component/Part/enemy_part.gd" id="part"]
+[ext_resource type="Script" path="res://Component/Hurtbox/Hurtbox.gd" id="hurtbox_script"]
+[ext_resource type="PackedScene" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
+[ext_resource type="Script" path="res://shooter_phase.gd" id="shooter_phase"]
+[ext_resource type="Script" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Script" path="res://boss_phase.gd" id="boss_phase"]
+[ext_resource type="Script" path="res://boss_phase_controller.gd" id="phase_controller"]
+[ext_resource type="Script" path="res://Component/Boss/entrance_blast.gd" id="entrance_blast"]
+[ext_resource type="AudioStream" path="res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3" id="snd_entrance"]
+[ext_resource type="Script" path="res://stage_event.gd" id="event_script"]
+[ext_resource type="Script" path="res://spawn_event.gd" id="spawn_script"]
+[ext_resource type="Script" path="res://train_event.gd" id="train_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_lance.tres" id="f_lance"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_bloom.tres" id="f_bloom"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_final_storm.tres" id="f_storm"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/FireWork_kai.tres" id="k_firework"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/WashingMachine_kai.tres" id="k_washer"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/g_tank_aim_kai.tres" id="k_tank_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s1_aim_3way_kai.tres" id="k_aim_3way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/g_turret_burst_kai.tres" id="k_turret_burst"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_vulcan.tres" id="r_vulcan"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_rear_p1_3way6.tres" id="r_3way6"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_scatter_ring.tres" id="t_scatter_ring"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_swans_ring_3way.tres" id="w_ring_3way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_center_spiral.tres" id="t_spiral"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage2/s2_boss_burst.tres" id="t_burst"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_swans_5way.tres" id="w_5way"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage3/s3_front_stream.tres" id="w_stream"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/formation_kai.tscn" id="e_formation"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/bomber_kai.tscn" id="e_bomber"]
+[ext_resource type="PackedScene" path="res://GameScene/Enemy/Stage4/gunship_kai.tscn" id="e_gunship"]
+[ext_resource type="PackedScene" path="res://GameScene/Train/passing_train.tscn" id="e_train"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres" id="m_strike"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres" id="m_hold"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="m_bomber_down"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="m_bomber_side"]
+
+[sub_resource type="RectangleShape2D" id="body_shape"]
+size = Vector2(104.0, 260.0)
+
+[sub_resource type="CircleShape2D" id="small_shape"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="mid_shape"]
+radius = 12.0
+
+[sub_resource type="RectangleShape2D" id="crystal_shape"]
+size = Vector2(38, 26)
+
+[sub_resource type="RectangleShape2D" id="engine_shape"]
+size = Vector2(32, 52)
+
+[sub_resource type="Resource" id="main_p1"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("t_spiral"), ExtResource("f_bloom")])
+
+[sub_resource type="Resource" id="main_p2"]
+script = ExtResource("shooter_phase")
+sequence = Array[ExtResource("shot_script")]([ExtResource("t_burst"), ExtResource("f_bloom"), ExtResource("f_lance"), ExtResource("k_washer")])
+
+[sub_resource type="Resource" id="main_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("f_storm")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("f_lance"), ExtResource("f_bloom"), ExtResource("t_burst")])
+
+[sub_resource type="Resource" id="triple_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("w_5way")])
+
+[sub_resource type="Resource" id="triple_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_3way6")])
+
+[sub_resource type="Resource" id="triple_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("w_stream")])
+
+[sub_resource type="Resource" id="small_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_tank_aim")])
+
+[sub_resource type="Resource" id="small_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_aim_3way")])
+
+[sub_resource type="Resource" id="small_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_aim_3way")])
+
+[sub_resource type="Resource" id="wing_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+
+[sub_resource type="Resource" id="wing_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+
+[sub_resource type="Resource" id="wing_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("r_vulcan")])
+
+[sub_resource type="Resource" id="crystal_p1"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="crystal_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("w_ring_3way")])
+
+[sub_resource type="Resource" id="crystal_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("w_ring_3way")])
+
+[sub_resource type="Resource" id="engine_p1"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="engine_p2"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="engine_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("f_lance")])
+
+[sub_resource type="Resource" id="cannon_p1"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
+
+[sub_resource type="Resource" id="cannon_p2"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
+
+[sub_resource type="Resource" id="cannon_p3"]
+script = ExtResource("shooter_phase")
+patterns = Array[ExtResource("shot_script")]([ExtResource("k_turret_burst")])
+
+[sub_resource type="Resource" id="center_p1"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="center_p2"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="center_p3"]
+script = ExtResource("shooter_phase")
+
+[sub_resource type="Resource" id="sum1_formation"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_strike")
+hp_override = 80
+count = 6
+interval = 0.2
+offset = Vector2(-150, 0)
+offset_step = Vector2(60, 6)
+emerge = 3
+emerge_time = 0.9
+time = 6.0
+
+[sub_resource type="Resource" id="sum1_bombers"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_bomber")
+move_pattern = ExtResource("m_bomber_down")
+count = 2
+interval = 0.0
+offset = Vector2(-160, 0)
+offset_step = Vector2(320, 0)
+time = 18.0
+
+[sub_resource type="Resource" id="sum2_trains"]
+script = ExtResource("train_script")
+train_scene = ExtResource("e_train")
+rail = -1
+speed = -280.0
+car_count = 4
+count = 2
+interval = 0.0
+lane_x = -170.0
+lane_step = 340.0
+time = 2.0
+
+[sub_resource type="Resource" id="sum2_gunships"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_gunship")
+move_pattern = ExtResource("m_hold")
+count = 2
+interval = 0.4
+offset = Vector2(-150, 0)
+offset_step = Vector2(300, 0)
+emerge = 3
+emerge_time = 1.2
+time = 12.0
+
+[sub_resource type="Resource" id="sum3_formation"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_formation")
+move_pattern = ExtResource("m_strike")
+hp_override = 80
+count = 8
+interval = 0.15
+offset = Vector2(-30, 0)
+offset_step = Vector2(20, 4)
+alternate_mirror = true
+emerge = 3
+emerge_time = 0.85
+time = 4.0
+
+[sub_resource type="Resource" id="sum3_bombers"]
+script = ExtResource("spawn_script")
+enemy_scene = ExtResource("e_bomber")
+move_pattern = ExtResource("m_bomber_side")
+count = 3
+interval = 0.35
+offset_step = Vector2(0, 75)
+time = 14.0
+
+[sub_resource type="Resource" id="boss_phase_1"]
+script = ExtResource("boss_phase")
+summons = Array[ExtResource("event_script")]([SubResource("sum1_formation"), SubResource("sum1_bombers")])
+
+[sub_resource type="Resource" id="boss_phase_2"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.66
+summons = Array[ExtResource("event_script")]([SubResource("sum2_trains"), SubResource("sum2_gunships")])
+
+[sub_resource type="Resource" id="boss_phase_3"]
+script = ExtResource("boss_phase")
+hp_ratio = 0.33
+boss_modulate = Color(1, 0.6, 0.55, 1)
+summons = Array[ExtResource("event_script")]([SubResource("sum3_formation"), SubResource("sum3_bombers")])
+
+[node name="NucleoCore" instance=ExtResource("base")]
+
+[node name="Sprite2D" parent="." index="0"]
+visible = false
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(0, 22)
+shape = SubResource("body_shape")
+
+[node name="HPComponent" parent="." index="3"]
+max_hp = 70000
+hp = 70000
+
+[node name="EnemyShooterComponent" parent="." index="4"]
+position = Vector2(0.7, 3.9)
+phases = Array[ExtResource("shooter_phase")]([SubResource("main_p1"), SubResource("main_p2"), SubResource("main_p3")])
+
+[node name="DeathExplosion" parent="." index="6"]
+area = Rect2(-180, -150, 360, 300)
+
+[node name="VisualRoot" type="Node2D" parent="."]
+z_index = 1
+scale = Vector2(1.3, 1.3)
+
+[node name="Thruster" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+texture = ExtResource("t_thruster")
+hframes = 4
+
+[node name="TextureCycle" type="Node" parent="VisualRoot/Thruster"]
+script = ExtResource("cycle")
+fps = 14.0
+
+[node name="Body" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+texture = ExtResource("t_body")
+
+[node name="EngineLPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-31.0, -32.0)
+script = ExtResource("part")
+max_hp = 6000
+damage_to_body = 0.4
+shooters = [NodePath("../../EngineLShooter")]
+breakable_from_phase = 2
+break_score = 15000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/EngineLPart"]
+texture_filter = 1
+texture = ExtResource("t_engine_l")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/EngineLPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/EngineLPart/Hurtbox"]
+shape = SubResource("engine_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/EngineLPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="EngineRPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(30.5, -31.0)
+script = ExtResource("part")
+max_hp = 6000
+damage_to_body = 0.4
+shooters = [NodePath("../../EngineRShooter")]
+breakable_from_phase = 2
+break_score = 15000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/EngineRPart"]
+texture_filter = 1
+texture = ExtResource("t_engine_r")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/EngineRPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/EngineRPart/Hurtbox"]
+shape = SubResource("engine_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/EngineRPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="CrystalLPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-31.5, 26.5)
+script = ExtResource("part")
+max_hp = 5000
+damage_to_body = 0.4
+shooters = [NodePath("../../CrystalLShooter")]
+breakable_from_phase = 1
+break_score = 12000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/CrystalLPart"]
+texture_filter = 1
+texture = ExtResource("t_crystal_l")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/CrystalLPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/CrystalLPart/Hurtbox"]
+shape = SubResource("crystal_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/CrystalLPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="CrystalRPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(33.0, 25.5)
+script = ExtResource("part")
+max_hp = 5000
+damage_to_body = 0.4
+shooters = [NodePath("../../CrystalRShooter")]
+breakable_from_phase = 1
+break_score = 12000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/CrystalRPart"]
+texture_filter = 1
+texture = ExtResource("t_crystal_r")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/CrystalRPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/CrystalRPart/Hurtbox"]
+shape = SubResource("crystal_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/CrystalRPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="CannonLPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-24.5, 9.5)
+script = ExtResource("part")
+max_hp = 2000
+damage_to_body = 0.4
+shooters = [NodePath("../../CannonLShooter")]
+break_score = 4000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/CannonLPart"]
+texture_filter = 1
+texture = ExtResource("t_cannon_l")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/CannonLPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/CannonLPart/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/CannonLPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="CannonRPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(24.0, 9.0)
+script = ExtResource("part")
+max_hp = 2000
+damage_to_body = 0.4
+shooters = [NodePath("../../CannonRShooter")]
+break_score = 4000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/CannonRPart"]
+texture_filter = 1
+texture = ExtResource("t_cannon_r")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/CannonRPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/CannonRPart/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/CannonRPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="WingCannonLPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-105.0, -5.5)
+script = ExtResource("part")
+max_hp = 800
+damage_to_body = 0.4
+shooters = [NodePath("../../WingCannonLShooter")]
+break_score = 2000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/WingCannonLPart"]
+texture_filter = 1
+texture = ExtResource("t_wing_cannon")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/WingCannonLPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/WingCannonLPart/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/WingCannonLPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="WingCannonRPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(105.0, -5.5)
+script = ExtResource("part")
+max_hp = 800
+damage_to_body = 0.4
+shooters = [NodePath("../../WingCannonRShooter")]
+break_score = 2000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/WingCannonRPart"]
+texture_filter = 1
+texture = ExtResource("t_wing_cannon")
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/WingCannonRPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/WingCannonRPart/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/WingCannonRPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="TripleLPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-85.0, -14.5)
+script = ExtResource("part")
+max_hp = 3000
+damage_to_body = 0.4
+shooters = [NodePath("../../TripleLShooter")]
+break_score = 6000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/TripleLPart"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(33, 3, 20, 19)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/TripleLPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/TripleLPart/Hurtbox"]
+shape = SubResource("mid_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/TripleLPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="TripleRPart" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(86.0, -13.5)
+script = ExtResource("part")
+max_hp = 3000
+damage_to_body = 0.4
+shooters = [NodePath("../../TripleRShooter")]
+break_score = 6000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/TripleRPart"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(33, 3, 20, 19)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/TripleRPart"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/TripleRPart/Hurtbox"]
+shape = SubResource("mid_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/TripleRPart/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret1Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-77.5, -56.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret1Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret1Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret1Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret1Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret1Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret2Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-60.5, -52.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret2Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret2Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret2Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret2Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret2Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret3Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(-126.5, -18.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret3Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret3Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret3Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret3Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret3Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret4Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(61.5, -52.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret4Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret4Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret4Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret4Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret4Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret5Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(78.5, -56.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret5Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret5Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret5Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret5Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret5Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Turret6Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(127.5, -18.0)
+script = ExtResource("part")
+max_hp = 1200
+damage_to_body = 0.4
+shooters = [NodePath("../../Turret6Shooter")]
+break_score = 2500
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Turret6Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 5, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Turret6Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Turret6Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Turret6Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Center1Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(0.5, 11.0)
+script = ExtResource("part")
+max_hp = 1500
+damage_to_body = 0.4
+shooters = [NodePath("../../Center1Shooter")]
+break_score = 3000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Center1Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 31, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Center1Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Center1Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Center1Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Center2Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(0.5, 29.0)
+script = ExtResource("part")
+max_hp = 1500
+damage_to_body = 0.4
+shooters = [NodePath("../../Center2Shooter")]
+break_score = 3000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Center2Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 31, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Center2Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Center2Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Center2Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Center3Part" type="Node2D" parent="VisualRoot" node_paths=PackedStringArray("shooters")]
+position = Vector2(0.5, 47.0)
+script = ExtResource("part")
+max_hp = 1500
+damage_to_body = 0.4
+shooters = [NodePath("../../Center3Shooter")]
+break_score = 3000
+break_items = 8
+
+[node name="Sprite" type="Sprite2D" parent="VisualRoot/Center3Part"]
+texture_filter = 1
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(11, 31, 13, 14)
+
+[node name="Hurtbox" type="Area2D" parent="VisualRoot/Center3Part"]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("hurtbox_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisualRoot/Center3Part/Hurtbox"]
+shape = SubResource("small_shape")
+
+[node name="Timer" type="Timer" parent="VisualRoot/Center3Part/Hurtbox"]
+wait_time = 0.2
+one_shot = true
+
+[node name="MainTurret" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+position = Vector2(0.5, -8.5)
+texture = ExtResource("t_turrets")
+region_enabled = true
+region_rect = Rect2(37, 31, 15, 23)
+
+[node name="EngineLShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-40.3, -41.6)
+phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3")])
+
+[node name="EngineRShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(39.6, -40.3)
+phases = Array[ExtResource("shooter_phase")]([SubResource("engine_p1"), SubResource("engine_p2"), SubResource("engine_p3")])
+
+[node name="CrystalLShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-41.0, 34.5)
+phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3")])
+
+[node name="CrystalRShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(42.9, 33.1)
+phases = Array[ExtResource("shooter_phase")]([SubResource("crystal_p1"), SubResource("crystal_p2"), SubResource("crystal_p3")])
+
+[node name="CannonLShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-31.9, 12.3)
+phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3")])
+
+[node name="CannonRShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(31.2, 11.7)
+phases = Array[ExtResource("shooter_phase")]([SubResource("cannon_p1"), SubResource("cannon_p2"), SubResource("cannon_p3")])
+
+[node name="WingCannonLShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-136.5, -7.2)
+phases = Array[ExtResource("shooter_phase")]([SubResource("wing_p1"), SubResource("wing_p2"), SubResource("wing_p3")])
+
+[node name="WingCannonRShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(136.5, -7.2)
+phases = Array[ExtResource("shooter_phase")]([SubResource("wing_p1"), SubResource("wing_p2"), SubResource("wing_p3")])
+
+[node name="TripleLShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-110.5, -18.9)
+phases = Array[ExtResource("shooter_phase")]([SubResource("triple_p1"), SubResource("triple_p2"), SubResource("triple_p3")])
+
+[node name="TripleRShooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(111.8, -17.6)
+phases = Array[ExtResource("shooter_phase")]([SubResource("triple_p1"), SubResource("triple_p2"), SubResource("triple_p3")])
+
+[node name="Turret1Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-100.8, -72.8)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Turret2Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-78.7, -67.6)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Turret3Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(-164.5, -23.4)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Turret4Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(80.0, -67.6)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Turret5Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(102.0, -72.8)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Turret6Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(165.8, -23.4)
+phases = Array[ExtResource("shooter_phase")]([SubResource("small_p1"), SubResource("small_p2"), SubResource("small_p3")])
+
+[node name="Center1Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(0.7, 14.3)
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+
+[node name="Center2Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(0.7, 37.7)
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+
+[node name="Center3Shooter" parent="." instance=ExtResource("shooter_scene")]
+position = Vector2(0.7, 61.1)
+phases = Array[ExtResource("shooter_phase")]([SubResource("center_p1"), SubResource("center_p2"), SubResource("center_p3")])
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase_controller")
+phases = Array[ExtResource("boss_phase")]([SubResource("boss_phase_1"), SubResource("boss_phase_2"), SubResource("boss_phase_3")])
+
+[node name="EntranceBlast" type="Node" parent="." node_paths=PackedStringArray("sound")]
+script = ExtResource("entrance_blast")
+sound = NodePath("EntranceSound")
+
+[node name="EntranceSound" type="AudioStreamPlayer" parent="EntranceBlast"]
+stream = ExtResource("snd_entrance")
+volume_db = -8.0

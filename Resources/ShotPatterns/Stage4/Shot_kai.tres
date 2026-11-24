@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://b7je62el8pto2"]
 
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="1_q13d3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_mmgs0"]

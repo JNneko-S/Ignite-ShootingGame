@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://GameScene/UI/led_board.gd" id="2_board"]
 [ext_resource type="Script" path="res://GameScene/Select/tech_panel.gd" id="3_panel"]
 [ext_resource type="Shader" path="res://GameScene/UI/game_over_screen_fx.gdshader" id="4_fx"]
-[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="5_font"]
+[ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="5_font"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="6_beep"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="8_ui_select"]
 [ext_resource type="AudioStream" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="9_ui_decide"]
@@ -21,16 +21,15 @@ shader_parameter/vignette = 0.7
 
 [sub_resource type="LabelSettings" id="ls_item"]
 font = ExtResource("5_font")
-font_size = 14
-outline_size = 4
-outline_color = Color(0, 0, 0, 1)
+font_size = 16
+outline_size = 0
 
 [sub_resource type="LabelSettings" id="ls_hint"]
 font = ExtResource("5_font")
-font_size = 8
-font_color = Color(0.45, 0.8, 1, 1)
-outline_size = 3
-outline_color = Color(0, 0, 0, 1)
+font_size = 10
+font_color = Color(1, 0.97, 0.92, 1)
+outline_size = 4
+outline_color = Color(0.08, 0.05, 0.05, 1)
 
 [node name="PauseMenu" type="CanvasLayer" node_paths=PackedStringArray("move_sound", "confirm_sound", "open_sound")]
 process_mode = 3
@@ -40,6 +39,8 @@ script = ExtResource("1_pause")
 move_sound = NodePath("MoveSound")
 confirm_sound = NodePath("ConfirmSound")
 open_sound = NodePath("OpenSound")
+selected_color = Color(1, 1, 1, 1)
+normal_color = Color(0.12, 0.09, 0.09, 1)
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -58,7 +59,7 @@ layout_mode = 0
 offset_right = 336.0
 offset_bottom = 448.0
 mouse_filter = 2
-color = Color(0, 0.02, 0.05, 0.35)
+color = Color(0.08, 0.02, 0.01, 0.4)
 
 [node name="Board" type="Control" parent="Root"]
 layout_mode = 0
@@ -69,8 +70,10 @@ offset_bottom = 158.0
 mouse_filter = 2
 script = ExtResource("2_board")
 text = "PAUSE"
-lit_color = Color(0.35, 0.85, 1, 1)
-dim_color = Color(0.03, 0.1, 0.14, 1)
+lit_color = Color(1, 0.3, 0.14, 1)
+dim_color = Color(0.2, 0.05, 0.04, 1)
+housing_color = Color(0.09, 0.07, 0.07, 1)
+frame_color = Color(0.8, 0.14, 0.06, 1)
 fixed_pitch = 4.0
 
 [node name="Panel" type="Control" parent="Root"]
@@ -82,6 +85,9 @@ offset_bottom = 300.0
 pivot_offset = Vector2(110, 61)
 mouse_filter = 2
 script = ExtResource("3_panel")
+fill_color = Color(1, 0.99, 0.97, 0.95)
+line_color = Color(0.8, 0.14, 0.06, 1)
+line_width = 1.5
 
 [node name="Cursor" type="ColorRect" parent="Root/Panel"]
 layout_mode = 0
@@ -90,7 +96,7 @@ offset_top = 20.0
 offset_right = 202.0
 offset_bottom = 42.0
 mouse_filter = 2
-color = Color(0.35, 0.85, 1, 0.22)
+color = Color(0.8, 0.14, 0.06, 1)
 
 [node name="Resume" type="Label" parent="Root/Panel"]
 layout_mode = 0

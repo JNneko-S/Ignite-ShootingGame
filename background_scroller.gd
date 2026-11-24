@@ -26,6 +26,10 @@ signal reached_top
 ## 設定すると、上の端に着いても止まらず、この絵(子の Sprite2D。背景の上の端に置いておく)を上へ繰り返し並べて、
 ## スクロールを続ける(ボス戦で、地面が流れ続けるように)。絵のテクスチャは縦につながる絵にする
 @export var loop_sprite : Sprite2D
+## オンなら、ステージが始まる前(出撃の演出・前のステージから霧を抜けてくるあいだ)も、背景を流しておく。
+## 先に進んだ分は、始まってから Preroll Blend Time 秒かけて少しずつ戻すので、Arrive At Time に着く時刻は変わらない
+@export var preroll : bool = false
+@export var preroll_blend_time : float = 20.0
 
 @export_group("背景の範囲")
 ## true なら、子の Sprite2D / TileMapLayer から背景の上下の端を求める
@@ -52,6 +56,8 @@ var _loop_tile : Vector2 = Vector2.ONE
 var external_control : bool = false
 ## arrive_at_time で動かすときの、区間のはじまりのステージ時刻(continue_to で次の区間へ進めたとき)
 var _segment_start_time : float = 0.0
+## ステージが始まる前に流した距離
+var _preroll_offset : float = 0.0
 
 func _ready() -> void:
 	add_to_group("background_scroller")
@@ -68,10 +74,20 @@ func _process(delta : float) -> void:
 	if is_at_top or external_control:
 		return
 
+	# ステージが始まる前: ふつうの速さで流しておく
+	if preroll and _runner and not _runner.get("_running") and _runner.stage_time <= 0.0:
+		var pre_speed := (_end_y - _start_y) / arrive_at_time if arrive_at_time > 0.0 else scroll_speed
+		_preroll_offset = minf(_preroll_offset + pre_speed * delta, (_end_y - _start_y) * 0.25)
+		position.y = _start_y + _preroll_offset
+		return
 	if arrive_at_time > 0.0:
 		var time := _runner.stage_time if _runner else 0.0
 		var span := maxf(arrive_at_time - _segment_start_time, 0.001)
 		_set_progress(clampf((time - _segment_start_time) / span, 0.0, 1.0))
+		if _preroll_offset > 0.0 and _segment_start_time <= 0.0:
+			# 始まる前に先に進んだ分を、少しずつ戻していく(戻す速さは、ふつうに流れる速さより遅いので、背景は止まらない)
+			var blend := clampf(1.0 - time / maxf(preroll_blend_time, 0.001), 0.0, 1.0)
+			position.y = minf(position.y + _preroll_offset * blend, _end_y)
 	else:
 		var multiplier := _runner.scroll_multiplier if _runner else 1.0
 		var remaining := _end_y - position.y

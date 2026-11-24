@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://h73058bquboe"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="bullet"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("step")
+duration = 0.75
+speed_trans = 7
+
+[sub_resource type="Resource" id="ring_to_player"]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+ring3d_count = 4
+ring3d_radius = 2.0
+ring3d_grow = 45.0
+ring3d_max_radius = 22.0
+ring3d_spin = 300.0
+ring3d_tumble = 80.0
+bullet_speed = 30.0
+bullet_accel = 180.0
+
+[resource]
+script = ExtResource("shot")
+bullet_scene = ExtResource("bullet")
+start_delay = 0.4
+shot_count = 2
+interval = 0.45
+pause = 1.6
+bullet_count = 12
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 15.0
+random_angle = 6.0
+random_speed_ratio = 0.45
+random_seed = 17
+bullet_speed = 520.0
+motion = Array[ExtResource("step")]([SubResource("st1")])
+split_time = 1.0
+split_pattern = SubResource("ring_to_player")

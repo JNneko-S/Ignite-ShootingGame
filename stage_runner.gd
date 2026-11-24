@@ -296,7 +296,7 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 	if event.move_pattern:
 		enemy.pattern = event.move_pattern
 	enemy.mirror_x = event.mirror_x != (event.alternate_mirror and unit_index % 2 == 1)
-	enemy.path_offset = event.offset + event.offset_step * unit_index
+	enemy.path_offset = event.unit_offset(unit_index)
 	enemy.unit_index = unit_index
 	# カメラが横に動くステージ(StageCamera)では、座標は「今の画面」の座標として扱う
 	var view_offset := StageCamera.view_offset(self)
@@ -316,6 +316,23 @@ func spawn(event : SpawnEvent, unit_index : int) -> void:
 		if hp:
 			hp.max_hp = event.hp_override
 			hp.hp = event.hp_override
+	var soft_scale : float = 1.0
+	if not HazardRank.active and stage:
+		soft_scale = stage.boss_hp_scale_below_another if event.is_boss else stage.zako_hp_scale_below_another
+	if not is_equal_approx(soft_scale, 1.0):
+		# EASY / NORMAL / HARD: ステージの設定で、雑魚・中ボス・ボスを柔らかくする
+		var soft_hp := enemy.get_node_or_null("HPComponent")
+		if soft_hp:
+			var softened := maxi(roundi(soft_hp.max_hp * soft_scale), 1)
+			soft_hp.max_hp = softened
+			soft_hp.hp = softened
+		enemy.set_meta(&"hazard_hp_scale", soft_scale) # 部位で HP が決まる敵(列車など)は、PartsDefeat が部位にも掛ける
+		# 部位が本体と別に HP を持つ敵(PartsDefeat を使わないボスの砲台など)は、ここで部位にも掛ける
+		var nodes := enemy.find_children("*", "", true, false)
+		if not nodes.any(func(n : Node) -> bool: return n is PartsDefeat):
+			for node in nodes:
+				if node is EnemyPart:
+					node.max_hp = maxi(roundi(node.max_hp * soft_scale), 1)
 	if HazardRank.active:
 		# ANOTHER: 出てきた瞬間のランクで、硬さが決まる
 		var hp_node := enemy.get_node_or_null("HPComponent")

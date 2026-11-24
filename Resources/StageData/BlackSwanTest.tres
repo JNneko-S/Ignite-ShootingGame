@@ -30,6 +30,7 @@ is_boss = true
 boss_name = "ブラックスワン"
 boss_phase_thresholds = Array[float]([0.66, 0.33])
 boss_time_bonus = true
+count_below_another = null
 time = 5.0
 
 [sub_resource type="Resource" id="wait_boss"]
@@ -41,3 +42,5 @@ time = 6.0
 script = ExtResource("stage_script")
 stage_name = "BlackSwan テスト"
 events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss")])
+zako_hp_scale_below_another = null
+boss_hp_scale_below_another = null

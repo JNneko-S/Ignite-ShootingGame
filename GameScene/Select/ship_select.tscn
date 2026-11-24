@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://Resources/Ships/phoenix.tres" id="8_phoenix"]
 [ext_resource type="Resource" uid="uid://bec6dx0n5uyvi" path="res://Resources/Ships/vespa.tres" id="8_vespa"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="9_font"]
+[ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="21_mincho"]
+[ext_resource type="Texture2D" uid="uid://d00nq6kgqrfh0" path="res://Assets/1106_20261120122130.png" id="22_paper"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/shutter.tscn" id="13_shutter_scene"]
 [ext_resource type="AudioStream" uid="uid://drqvi48px8sp1" path="res://Assets/Sounds/Explosive/AS_1474525_爆発01-1（短）.mp3" id="14_spark"]
@@ -20,34 +22,34 @@
 [ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="20_an_music"]
 
 [sub_resource type="LabelSettings" id="ls_name"]
-font = ExtResource("9_font")
-font_size = 12
-font_color = Color(0.85, 0.95, 1, 1)
+font = ExtResource("21_mincho")
+font_size = 15
+font_color = Color(0.12, 0.09, 0.09, 1)
 outline_size = 4
-outline_color = Color(0, 0, 0, 1)
+outline_color = Color(1, 1, 1, 0.9)
 
 [sub_resource type="LabelSettings" id="ls_small"]
-font = ExtResource("9_font")
-font_size = 8
-font_color = Color(0.45, 0.8, 1, 1)
+font = ExtResource("21_mincho")
+font_size = 9
+font_color = Color(0.55, 0.45, 0.43, 1)
 outline_size = 3
-outline_color = Color(0, 0, 0, 1)
+outline_color = Color(1, 1, 1, 0.9)
 
 [sub_resource type="LabelSettings" id="ls_desc_title"]
-font = ExtResource("9_font")
-font_size = 12
-font_color = Color(1, 0.75, 0.3, 1)
-outline_size = 4
-outline_color = Color(0, 0, 0, 1)
+font = ExtResource("21_mincho")
+font_size = 15
+font_color = Color(0.8, 0.14, 0.06, 1)
 
 [sub_resource type="LabelSettings" id="ls_desc_sub"]
-font_size = 9
-font_color = Color(0.45, 0.85, 1, 1)
+font = ExtResource("21_mincho")
+font_size = 10
+font_color = Color(0.45, 0.38, 0.36, 1)
 
 [sub_resource type="LabelSettings" id="ls_desc_text"]
 line_spacing = 1.0
-font_size = 9
-font_color = Color(0.9, 0.93, 0.97, 1)
+font = ExtResource("21_mincho")
+font_size = 10
+font_color = Color(0.12, 0.09, 0.09, 1)
 
 [node name="ShipSelect" type="Node" unique_id=792165094 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music", "spark_sound", "another_alarm_sound")]
 script = ExtResource("1_select")
@@ -70,6 +72,19 @@ layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
 
+[node name="Paper" type="TextureRect" parent="UI/Root" unique_id=1730200001]
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+texture = ExtResource("22_paper")
+expand_mode = 1
+
+[node name="Wash" type="ColorRect" parent="UI/Root" unique_id=1730200002]
+offset_right = 336.0
+offset_bottom = 448.0
+mouse_filter = 2
+color = Color(1, 0.99, 0.97, 0.6)
+
 [node name="TitleBoard" type="Control" parent="UI/Root" unique_id=1648837275]
 anchors_preset = 0
 offset_left = 12.0
@@ -79,8 +94,10 @@ offset_bottom = 60.0
 mouse_filter = 2
 script = ExtResource("5_board")
 text = "SELECT YOUR FIGHTER"
-lit_color = Color(0.35, 0.85, 1, 1)
-dim_color = Color(0.03, 0.1, 0.14, 1)
+lit_color = Color(1, 0.3, 0.14, 1)
+dim_color = Color(0.2, 0.05, 0.04, 1)
+housing_color = Color(0.09, 0.07, 0.07, 1)
+frame_color = Color(0.8, 0.14, 0.06, 1)
 fixed_pitch = 4.0
 
 [node name="PreviewFrame" type="Control" parent="UI/Root" unique_id=1600188410]
@@ -91,6 +108,9 @@ offset_bottom = 300.0
 mouse_filter = 2
 script = ExtResource("6_panel")
 shape = 1
+fill_color = Color(1, 0.99, 0.97, 0.92)
+line_color = Color(0.8, 0.14, 0.06, 1)
+line_width = 1.5
 
 [node name="PreviewPanel" type="Control" parent="UI/Root/PreviewFrame" unique_id=236038725]
 anchors_preset = 0
@@ -100,7 +120,9 @@ offset_right = 134.0
 offset_bottom = 202.0
 mouse_filter = 2
 script = ExtResource("6_panel")
-fill_color = Color(0.02, 0.05, 0.08, 0.95)
+fill_color = Color(0.1, 0.08, 0.08, 0.96)
+line_color = Color(0.8, 0.14, 0.06, 1)
+line_width = 1.5
 show_grid = true
 
 [node name="FireClip" type="Control" parent="UI/Root/PreviewFrame/PreviewPanel" unique_id=1730100002]
@@ -133,6 +155,10 @@ offset_bottom = 246.0
 mouse_filter = 2
 script = ExtResource("7_ring")
 radius = 40.0
+ring_color = Color(0.8, 0.14, 0.06, 1)
+fill_color = Color(1, 0.99, 0.97, 0.92)
+arrow_color = Color(0.12, 0.09, 0.09, 1)
+locked_color = Color(0.95, 0.4, 0.1, 1)
 
 [node name="Icon" type="Sprite2D" parent="UI/Root/Selector" unique_id=2131544178]
 position = Vector2(68, 50)
@@ -166,6 +192,9 @@ mouse_filter = 2
 script = ExtResource("6_panel")
 shape = 2
 cut = 30.0
+fill_color = Color(1, 0.99, 0.97, 0.94)
+line_color = Color(0.8, 0.14, 0.06, 1)
+line_width = 1.5
 
 [node name="DescTitle" type="Label" parent="UI/Root/DescPanel" unique_id=573636955]
 layout_mode = 0

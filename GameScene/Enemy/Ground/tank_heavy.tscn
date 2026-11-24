@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://Component/Ground/track_marks.gd" id="track_marks"]
+
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
 [ext_resource type="Script" path="res://Component/Ground/ground_unit.gd" id="ground"]
 [ext_resource type="Script" path="res://Component/Ground/turret_aim.gd" id="aim"]
@@ -69,3 +71,8 @@ muzzle = NodePath("../EnemyShooterComponent")
 art_angle_deg = 90.0
 turn_speed = 45.0
 barrel_length = 30.0
+
+[node name="TrackMarks" type="Node" parent="."]
+script = ExtResource("track_marks")
+tread_offsets = PackedFloat32Array(-16, 16)
+tread_width = 9.0

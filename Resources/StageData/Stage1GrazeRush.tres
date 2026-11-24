@@ -52,6 +52,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 2.0
 
 [sub_resource type="Resource" id="pop_01_rain"]
@@ -64,6 +65,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 3.2
 
 [sub_resource type="Resource" id="pop_02_snake"]
@@ -74,6 +76,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 6.2
 
 [sub_resource type="Resource" id="pop_03_snake"]
@@ -85,6 +88,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 8.0
 
 [sub_resource type="Resource" id="pop_04_dip"]
@@ -96,6 +100,7 @@ hp_override = 30
 count = 7
 interval = 0.05
 offset_step = Vector2(54, 0)
+count_below_another = null
 time = 11.5
 
 [sub_resource type="Resource" id="pop_05_cross"]
@@ -107,6 +112,7 @@ hp_override = 30
 count = 16
 interval = 0.22
 alternate_mirror = true
+count_below_another = null
 time = 16.0
 
 [sub_resource type="Resource" id="pop_06_rain"]
@@ -118,6 +124,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 18.5
 
 [sub_resource type="Resource" id="pop_07_rain"]
@@ -130,6 +137,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 19.5
 
 [sub_resource type="Resource" id="pop_08_rain"]
@@ -141,6 +149,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 20.5
 
 [sub_resource type="Resource" id="pop_09_snake"]
@@ -151,6 +160,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 26.0
 
 [sub_resource type="Resource" id="pop_10_snake"]
@@ -162,6 +172,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 26.6
 
 [sub_resource type="Resource" id="pop_11_dip"]
@@ -173,6 +184,7 @@ hp_override = 30
 count = 7
 interval = 0.05
 offset_step = Vector2(54, 0)
+count_below_another = null
 time = 31.0
 
 [sub_resource type="Resource" id="pop_12_cross"]
@@ -184,6 +196,7 @@ hp_override = 30
 count = 16
 interval = 0.22
 alternate_mirror = true
+count_below_another = null
 time = 38.5
 
 [sub_resource type="Resource" id="pop_13_rain"]
@@ -195,6 +208,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 40.0
 
 [sub_resource type="Resource" id="pop_14_rain"]
@@ -207,6 +221,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 41.0
 
 [sub_resource type="Resource" id="pop_15_rain"]
@@ -218,6 +233,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 42.0
 
 [sub_resource type="Resource" id="pop_16_snake"]
@@ -228,6 +244,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 46.0
 
 [sub_resource type="Resource" id="pop_17_snake"]
@@ -239,6 +256,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 46.5
 
 [sub_resource type="Resource" id="pop_18_dip"]
@@ -250,6 +268,7 @@ hp_override = 30
 count = 7
 interval = 0.05
 offset_step = Vector2(54, 0)
+count_below_another = null
 time = 51.0
 
 [sub_resource type="Resource" id="pop_19_rain"]
@@ -261,6 +280,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 60.0
 
 [sub_resource type="Resource" id="pop_20_rain"]
@@ -273,6 +293,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 61.0
 
 [sub_resource type="Resource" id="pop_21_cross"]
@@ -284,6 +305,7 @@ hp_override = 30
 count = 16
 interval = 0.22
 alternate_mirror = true
+count_below_another = null
 time = 65.0
 
 [sub_resource type="Resource" id="pop_22_snake"]
@@ -294,6 +316,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_3way")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 68.5
 
 [sub_resource type="Resource" id="pop_23_snake"]
@@ -305,6 +328,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 69.0
 
 [sub_resource type="Resource" id="pop_24_dip"]
@@ -316,6 +340,7 @@ hp_override = 30
 count = 7
 interval = 0.05
 offset_step = Vector2(54, 0)
+count_below_another = null
 time = 72.5
 
 [sub_resource type="Resource" id="pop_25_rain"]
@@ -327,6 +352,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 79.0
 
 [sub_resource type="Resource" id="pop_26_rain"]
@@ -339,6 +365,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 80.0
 
 [sub_resource type="Resource" id="pop_27_snake"]
@@ -349,6 +376,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 89.0
 
 [sub_resource type="Resource" id="pop_28_snake"]
@@ -360,6 +388,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 89.5
 
 [sub_resource type="Resource" id="pop_29_cross"]
@@ -371,6 +400,7 @@ hp_override = 30
 count = 16
 interval = 0.22
 alternate_mirror = true
+count_below_another = null
 time = 92.0
 
 [sub_resource type="Resource" id="pop_30_rain"]
@@ -382,6 +412,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 100.0
 
 [sub_resource type="Resource" id="pop_31_rain"]
@@ -394,6 +425,7 @@ count = 7
 interval = 0.0
 offset = Vector2(26, 0)
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 101.0
 
 [sub_resource type="Resource" id="pop_32_rain"]
@@ -405,6 +437,7 @@ hp_override = 30
 count = 8
 interval = 0.0
 offset_step = Vector2(52, 0)
+count_below_another = null
 time = 102.0
 
 [sub_resource type="Resource" id="pop_33_dip"]
@@ -416,6 +449,7 @@ hp_override = 30
 count = 7
 interval = 0.05
 offset_step = Vector2(54, 0)
+count_below_another = null
 time = 104.5
 
 [sub_resource type="Resource" id="pop_34_snake"]
@@ -426,6 +460,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_pop_aim")])
 hp_override = 30
 count = 14
 interval = 0.16
+count_below_another = null
 time = 106.0
 
 [sub_resource type="Resource" id="pop_35_snake"]
@@ -437,6 +472,7 @@ hp_override = 30
 count = 14
 interval = 0.16
 mirror_x = true
+count_below_another = null
 time = 106.5
 
 [sub_resource type="Resource" id="s1_open_1"]
@@ -446,6 +482,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_single")])
 hp_override = 80
 count = 6
 interval = 0.4
+count_below_another = null
 time = 1.0
 
 [sub_resource type="Resource" id="s1_pass_1"]
@@ -457,6 +494,7 @@ hp_override = 80
 count = 5
 interval = 0.4
 offset = Vector2(0, -40)
+count_below_another = null
 time = 3.0
 
 [sub_resource type="Resource" id="s1_open_2"]
@@ -467,6 +505,7 @@ hp_override = 80
 count = 6
 interval = 0.4
 mirror_x = true
+count_below_another = null
 time = 5.0
 
 [sub_resource type="Resource" id="s1_burst_1"]
@@ -478,6 +517,7 @@ count = 2
 interval = 0.0
 offset = Vector2(-40, 0)
 offset_step = Vector2(160, 0)
+count_below_another = null
 time = 7.0
 
 [sub_resource type="Resource" id="s1_pass_2"]
@@ -490,6 +530,7 @@ count = 5
 interval = 0.4
 offset = Vector2(0, -40)
 mirror_x = true
+count_below_another = null
 time = 9.0
 
 [sub_resource type="Resource" id="s1_open_3"]
@@ -500,6 +541,7 @@ hp_override = 80
 count = 8
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = null
 time = 10.0
 
 [sub_resource type="Resource" id="s2_comb"]
@@ -512,6 +554,7 @@ count = 10
 interval = 0.0
 offset = Vector2(-162, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 14.0
 
 [sub_resource type="Resource" id="s2_swarm"]
@@ -521,6 +564,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_aim_single")])
 hp_override = 80
 count = 8
 alternate_mirror = true
+count_below_another = null
 time = 21.5
 
 [sub_resource type="Resource" id="s2_bloom"]
@@ -531,6 +575,7 @@ hp_override = 300
 count = 2
 offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
+count_below_another = null
 time = 24.0
 
 [sub_resource type="Resource" id="s2_burst"]
@@ -543,6 +588,7 @@ interval = 0.0
 offset = Vector2(-40, 0)
 offset_step = Vector2(160, 0)
 mirror_x = true
+count_below_another = null
 time = 25.0
 
 [sub_resource type="Resource" id="s3_stream_1"]
@@ -554,6 +600,7 @@ count = 2
 interval = 0.8
 offset = Vector2(-80, 0)
 offset_step = Vector2(60, 0)
+count_below_another = null
 time = 28.0
 
 [sub_resource type="Resource" id="s3_pass"]
@@ -565,6 +612,7 @@ hp_override = 80
 count = 5
 interval = 0.4
 offset = Vector2(0, -40)
+count_below_another = null
 time = 30.0
 
 [sub_resource type="Resource" id="s3_stream_2"]
@@ -577,6 +625,7 @@ interval = 0.8
 offset = Vector2(-80, 0)
 offset_step = Vector2(60, 0)
 mirror_x = true
+count_below_another = null
 time = 32.0
 
 [sub_resource type="Resource" id="s3_swarm"]
@@ -587,6 +636,7 @@ hp_override = 80
 count = 10
 interval = 0.25
 alternate_mirror = true
+count_below_another = null
 time = 34.0
 
 [sub_resource type="Resource" id="s3_edge_l"]
@@ -599,6 +649,7 @@ count = 2
 interval = 0.0
 offset = Vector2(-206, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 36.0
 
 [sub_resource type="Resource" id="s3_edge_r"]
@@ -611,6 +662,7 @@ count = 2
 interval = 0.0
 offset = Vector2(170, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 36.0
 
 [sub_resource type="Resource" id="s3_stream_3"]
@@ -621,6 +673,7 @@ hp_override = 140
 count = 2
 interval = 1.5
 alternate_mirror = true
+count_below_another = null
 time = 37.0
 
 [sub_resource type="Resource" id="s4_swarm"]
@@ -631,6 +684,7 @@ hp_override = 80
 count = 8
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = null
 time = 48.0
 
 [sub_resource type="Resource" id="s4_bloom"]
@@ -641,6 +695,7 @@ hp_override = 300
 count = 3
 offset = Vector2(-140, 0)
 offset_step = Vector2(140, 0)
+count_below_another = null
 time = 50.0
 
 [sub_resource type="Resource" id="scroll_midboss"]
@@ -657,6 +712,7 @@ tag = "midboss"
 is_boss = true
 boss_name = "分離砲台"
 boss_phase_thresholds = Array[float]([0.5])
+count_below_another = null
 time = 55.0
 
 [sub_resource type="Resource" id="wait_midboss"]
@@ -678,6 +734,7 @@ hp_override = 80
 count = 10
 interval = 0.25
 alternate_mirror = true
+count_below_another = null
 time = 58.5
 
 [sub_resource type="Resource" id="s5_pass_1"]
@@ -689,6 +746,7 @@ hp_override = 80
 count = 6
 interval = 0.35
 offset = Vector2(0, -40)
+count_below_another = null
 time = 59.0
 
 [sub_resource type="Resource" id="s5_sway"]
@@ -701,6 +759,7 @@ count = 8
 interval = 0.0
 offset = Vector2(-126, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 62.0
 
 [sub_resource type="Resource" id="s5_swarm_2"]
@@ -712,6 +771,7 @@ count = 10
 interval = 0.25
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = null
 time = 78.0
 
 [sub_resource type="Resource" id="s5_burst"]
@@ -724,6 +784,7 @@ interval = 0.4
 offset = Vector2(-90, 0)
 offset_step = Vector2(30, 0)
 alternate_mirror = true
+count_below_another = null
 time = 80.0
 
 [sub_resource type="Resource" id="s5_bloom"]
@@ -734,6 +795,7 @@ hp_override = 300
 count = 2
 offset = Vector2(-120, 0)
 offset_step = Vector2(240, 0)
+count_below_another = null
 time = 82.0
 
 [sub_resource type="Resource" id="s5_pass_2"]
@@ -746,6 +808,7 @@ count = 6
 interval = 0.35
 offset = Vector2(0, -40)
 mirror_x = true
+count_below_another = null
 time = 83.0
 
 [sub_resource type="Resource" id="s5_turret_l"]
@@ -754,6 +817,7 @@ enemy_scene = ExtResource("e_curve_turret")
 shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_turret_curve")])
 hp_override = 300
 interval = 0.0
+count_below_another = null
 time = 86.0
 
 [sub_resource type="Resource" id="s5_turret_r"]
@@ -763,6 +827,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_turret_curve")
 hp_override = 300
 interval = 0.0
 mirror_x = true
+count_below_another = null
 time = 86.0
 
 [sub_resource type="Resource" id="s5_swarm_3"]
@@ -773,6 +838,7 @@ hp_override = 80
 count = 10
 interval = 0.25
 alternate_mirror = true
+count_below_another = null
 time = 86.5
 
 [sub_resource type="Resource" id="s6_edge_l"]
@@ -785,6 +851,7 @@ count = 2
 interval = 0.0
 offset = Vector2(-206, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 96.0
 
 [sub_resource type="Resource" id="s6_edge_r"]
@@ -797,6 +864,7 @@ count = 2
 interval = 0.0
 offset = Vector2(170, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 96.0
 
 [sub_resource type="Resource" id="s6_sway"]
@@ -809,6 +877,7 @@ count = 6
 interval = 0.0
 offset = Vector2(-90, 0)
 offset_step = Vector2(36, 0)
+count_below_another = null
 time = 97.0
 
 [sub_resource type="Resource" id="s7_swarm_1"]
@@ -819,6 +888,7 @@ hp_override = 80
 count = 16
 interval = 0.15
 alternate_mirror = true
+count_below_another = null
 time = 111.0
 
 [sub_resource type="Resource" id="s7_burst"]
@@ -830,6 +900,7 @@ count = 6
 offset = Vector2(-90, 0)
 offset_step = Vector2(30, 0)
 alternate_mirror = true
+count_below_another = null
 time = 112.0
 
 [sub_resource type="Resource" id="s7_swarm_2"]
@@ -841,6 +912,7 @@ count = 16
 interval = 0.15
 offset = Vector2(0, 40)
 alternate_mirror = true
+count_below_another = null
 time = 114.0
 
 [sub_resource type="Resource" id="s7_pass"]
@@ -851,6 +923,7 @@ shot_patterns = Array[ExtResource("shot_script")]([ExtResource("s_drop")])
 hp_override = 80
 count = 8
 offset = Vector2(0, -40)
+count_below_another = null
 time = 116.6
 
 [sub_resource type="Resource" id="s7_swarm_3"]
@@ -862,6 +935,7 @@ count = 20
 interval = 0.12
 offset = Vector2(0, -20)
 alternate_mirror = true
+count_below_another = null
 time = 117.0
 
 [sub_resource type="Resource" id="scroll_boss"]
@@ -883,6 +957,7 @@ is_boss = true
 boss_name = "ボス"
 boss_phase_thresholds = Array[float]([0.7, 0.4])
 boss_time_bonus = true
+count_below_another = null
 time = 125.0
 
 [sub_resource type="Resource" id="wait_boss"]
@@ -894,28 +969,33 @@ time = 126.0
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
 offset = Vector2(130, 0)
+count_below_another = null
 time = 13.0
 
 [sub_resource type="Resource" id="gunship_2_c"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
+count_below_another = null
 time = 29.0
 
 [sub_resource type="Resource" id="gunship_3_l"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
 offset = Vector2(-130, 0)
+count_below_another = null
 time = 43.0
 
 [sub_resource type="Resource" id="gunship_4_c"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
+count_below_another = null
 time = 74.0
 
 [sub_resource type="Resource" id="gunship_5_r"]
 script = ExtResource("spawn_script")
 enemy_scene = ExtResource("e_gunship")
 offset = Vector2(130, 0)
+count_below_another = null
 time = 93.0
 
 [sub_resource type="Resource" id="rest_1_slow"]
@@ -956,3 +1036,5 @@ time = 66.0
 script = ExtResource("stage_script")
 stage_name = "Stage 1 グレイズラッシュ"
 events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("pop_00_rain"), SubResource("pop_01_rain"), SubResource("pop_02_snake"), SubResource("pop_03_snake"), SubResource("pop_04_dip"), SubResource("pop_05_cross"), SubResource("pop_06_rain"), SubResource("pop_07_rain"), SubResource("pop_08_rain"), SubResource("pop_09_snake"), SubResource("pop_10_snake"), SubResource("pop_11_dip"), SubResource("pop_12_cross"), SubResource("pop_13_rain"), SubResource("pop_14_rain"), SubResource("pop_15_rain"), SubResource("pop_16_snake"), SubResource("pop_17_snake"), SubResource("pop_18_dip"), SubResource("pop_19_rain"), SubResource("pop_20_rain"), SubResource("pop_21_cross"), SubResource("pop_22_snake"), SubResource("pop_23_snake"), SubResource("pop_24_dip"), SubResource("pop_25_rain"), SubResource("pop_26_rain"), SubResource("pop_27_snake"), SubResource("pop_28_snake"), SubResource("pop_29_cross"), SubResource("pop_30_rain"), SubResource("pop_31_rain"), SubResource("pop_32_rain"), SubResource("pop_33_dip"), SubResource("pop_34_snake"), SubResource("pop_35_snake"), SubResource("s1_open_1"), SubResource("s1_pass_1"), SubResource("s1_open_2"), SubResource("s1_burst_1"), SubResource("s1_pass_2"), SubResource("s1_open_3"), SubResource("s2_comb"), SubResource("s2_swarm"), SubResource("s2_bloom"), SubResource("s2_burst"), SubResource("s3_stream_1"), SubResource("s3_pass"), SubResource("s3_stream_2"), SubResource("s3_swarm"), SubResource("s3_edge_l"), SubResource("s3_edge_r"), SubResource("s3_stream_3"), SubResource("s4_swarm"), SubResource("s4_bloom"), SubResource("scroll_midboss"), SubResource("midboss"), SubResource("wait_midboss"), SubResource("scroll_late"), SubResource("s5_swarm_1"), SubResource("s5_pass_1"), SubResource("s5_sway"), SubResource("s5_swarm_2"), SubResource("s5_burst"), SubResource("s5_bloom"), SubResource("s5_pass_2"), SubResource("s5_turret_l"), SubResource("s5_turret_r"), SubResource("s5_swarm_3"), SubResource("s6_edge_l"), SubResource("s6_edge_r"), SubResource("s6_sway"), SubResource("s7_swarm_1"), SubResource("s7_burst"), SubResource("s7_swarm_2"), SubResource("s7_pass"), SubResource("s7_swarm_3"), SubResource("scroll_boss"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss"), SubResource("gunship_1_r"), SubResource("gunship_2_c"), SubResource("gunship_3_l"), SubResource("gunship_4_c"), SubResource("gunship_5_r"), SubResource("rest_1_slow"), SubResource("rest_1_resume"), SubResource("rest_2_slow"), SubResource("rest_2_resume"), SubResource("prop_train_1"), SubResource("prop_train_2")])
+zako_hp_scale_below_another = null
+boss_hp_scale_below_another = null

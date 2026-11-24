@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bpmwsg86hpo15" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Stage_Top_Layer.png" id="7_nxg43"]
 [ext_resource type="Texture2D" uid="uid://cx4gd465fu883" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Train Stage/Loop this at the end.png" id="7_sf26y"]
 [ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="11_32fuh"]
+[ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="30_mincho"]
 [ext_resource type="PackedScene" path="res://GameScene/UI/boss_gauge.tscn" id="14_0u1li"]
 [ext_resource type="AudioStream" uid="uid://ce7p8gonc583" path="res://Assets/Sounds/Music/AS_1240332_勇壮なプログレッシブブレイクス.mp3" id="19_sf26y"]
 [ext_resource type="AudioStream" uid="uid://dhj4htoqrenf0" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="20_32fuh"]
@@ -25,24 +26,24 @@
 [ext_resource type="PackedScene" path="res://GameScene/UI/warning_display.tscn" id="warning_display"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jhy2k"]
-bg_color = Color(0.45882353, 0, 0, 0.6627451)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_size = 2
+bg_color = Color(0.08, 0.05, 0.05, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.14, 0.06, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5hoxb"]
-bg_color = Color(0.97105914, 0.3139395, 0, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+bg_color = Color(0.85, 0.2, 0.08, 1)
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.35, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ri2fp"]
-font = ExtResource("11_32fuh")
-font_color = Color(0.96385103, 0.4562564, 5.7756904e-07, 1)
-outline_size = 3
+font = ExtResource("30_mincho")
+font_size = 14
+font_color = Color(1, 0.4, 0.22, 1)
+outline_size = 4
+outline_color = Color(0.08, 0.05, 0.05, 1)
 
 [node name="ScrollTest" type="Node2D" unique_id=1257581970 node_paths=PackedStringArray("player", "ui", "lives_label")]
 script = ExtResource("1_7uoxh")
@@ -113,7 +114,11 @@ offset_left = 5.0
 offset_top = 24.0
 offset_right = 93.0
 offset_bottom = 51.0
-theme_override_fonts/font = ExtResource("11_32fuh")
+theme_override_colors/font_color = Color(1, 0.97, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.05, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("30_mincho")
+theme_override_font_sizes/font_size = 12
 theme_override_styles/background = SubResource("StyleBoxFlat_jhy2k")
 theme_override_styles/fill = SubResource("StyleBoxFlat_5hoxb")
 value = 25.36
@@ -123,7 +128,7 @@ offset_left = 5.0
 offset_top = 6.0
 offset_right = 62.0
 offset_bottom = 24.0
-text = "Ignite"
+text = "IGNITE"
 label_settings = SubResource("LabelSettings_ri2fp")
 
 [node name="Label2" type="Control" parent="UI/CanvasLayer" unique_id=237769609]
@@ -135,6 +140,8 @@ offset_right = 126.0
 offset_bottom = 72.0
 mouse_filter = 2
 script = ExtResource("3_n7bgm")
+font = ExtResource("30_mincho")
+font_size = 14
 
 [node name="WarningDisplay" parent="UI" unique_id=1400875786 instance=ExtResource("warning_display")]
 

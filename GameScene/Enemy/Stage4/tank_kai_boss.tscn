@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://Component/Ground/track_marks.gd" id="track_marks"]
+
 [ext_resource type="PackedScene" uid="uid://cr31p6griofpq" path="res://GameScene/Enemy/Enemy.tscn" id="base"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body1.png" id="body1"]
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Mid Boss/Tank_Body2.png" id="body2"]
@@ -42,6 +44,7 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a1_shell_bloom.tres" id="a_bloom"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_diamond.tres" id="t_diamond"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_scatter.tres" id="t_scatter"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/s4_turncoat_scatter_ring.tres" id="t_scatter_ring"]
 
 [ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Lil_Cannon_L&R.png" id="lil_cannon"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
@@ -63,7 +66,7 @@ another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_firework"),
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("k_circle"), ExtResource("t_scatter"), ExtResource("k_shot"), ExtResource("k_firework"), ExtResource("t_scatter"), ExtResource("k_washer")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("k_circle"), ExtResource("t_scatter_ring"), ExtResource("k_shot"), ExtResource("k_firework"), ExtResource("t_scatter_ring"), ExtResource("k_washer")])
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_corridor"), ExtResource("a_push"), ExtResource("t_scatter"), ExtResource("a_lattice"), ExtResource("a_storm"), ExtResource("t_scatter")])
@@ -212,3 +215,11 @@ volume_db = -8.0
 script = ExtResource("tank_mover")
 forward_distance = 25.0
 side_distance = 90.0
+
+[node name="TrackMarks" type="Node" parent="."]
+script = ExtResource("track_marks")
+tread_offsets = PackedFloat32Array(-62, 62)
+tread_width = 44.0
+spacing = 10.0
+max_marks = 240
+color = Color(0.1, 0.08, 0.05, 0.5)

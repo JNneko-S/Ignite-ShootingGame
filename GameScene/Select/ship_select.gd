@@ -11,11 +11,14 @@ class_name ShipSelect
 ## 選んだ内容は RunConfig に入り、ステージの GameManager が読む。
 ##
 ## 操作: 左右 = UI_Left / UI_Right(と矢印キー) / 決める = UI_Shoot(と Enter) / 戻る = UI_Ignite(と Esc)
+## 機体を選んでいるときに戻ると、タイトル画面(Title Scene)へ戻る
 
 ## 選べる機体(並べた順に出る)
 @export var ships : Array[ShipData] = []
 ## 出撃するステージのシーン
 @export_file("*.tscn") var stage_scene : String = "res://stage1.tscn"
+## 機体を選んでいるときに戻るボタンで戻る、タイトル画面のシーン(空なら戻れない)
+@export_file("*.tscn") var title_scene : String = "res://title.tscn"
 
 @export_group("掲示板の文字")
 @export var title_text : String = "SELECT YOUR FIGHTER"
@@ -162,6 +165,8 @@ func _process(delta : float) -> void:
 				_change_ship(1)
 			elif _pressed(["UI_Shoot", "ui_accept"]):
 				_to_difficulty()
+			elif _pressed(["UI_Ignite", "ui_cancel"]) and title_scene != "":
+				_to_title()
 		Step.DIFFICULTY:
 			if _pressed(["UI_Left", "UI_StickLeft", "ui_left"]):
 				_change_difficulty(-1)
@@ -171,6 +176,16 @@ func _process(delta : float) -> void:
 				_launch()
 			elif _pressed(["UI_Ignite", "ui_cancel"]):
 				_to_ship()
+
+## タイトル画面へ戻る: 画面がちらついて消えてから切り替える
+func _to_title() -> void:
+	_step = Step.LAUNCH
+	SoundManager.play(back_sound)
+	_stop_music()
+	for alpha in [0.5, 0.1, 0.4, 0.0]:
+		_ui_root.modulate.a = alpha
+		await get_tree().create_timer(0.04).timeout
+	get_tree().change_scene_to_file(title_scene)
 
 func _pressed(actions : Array) -> bool:
 	for action in actions:
@@ -339,8 +354,15 @@ func _set_red_theme(on : bool) -> void:
 	_selector.fill_color = RED_FILL if on else _theme_saved[_selector]["fill"]
 	_board.lit_color = RED_LINE if on else _board_color
 	_board.dim_color = Color(0.16, 0.02, 0.02) if on else _theme_saved[_board]["dim"]
-	for label in [_ship_name, _ship_index, _desc_title, _desc_sub, _hint]:
-		label.modulate = Color(1.0, 0.45, 0.42) if on else Color.WHITE
+	# 紙の画風: 文字は墨色なので、黒い板の上では明るい赤に描き直す。背景の紙も暗くする
+	for label in [_ship_name, _ship_index, _desc_title, _desc_sub, _desc_text, _hint]:
+		label.label_settings = _red_label_settings(label) if on else _theme_saved[label]["settings"]
+	var paper := get_node_or_null("UI/Root/Paper") as CanvasItem
+	var wash := get_node_or_null("UI/Root/Wash") as ColorRect
+	if paper:
+		paper.modulate = Color(0.3, 0.06, 0.05) if on else Color.WHITE
+	if wash:
+		wash.color = Color(0.05, 0.0, 0.0, 0.7) if on else _theme_saved[wash]["color"]
 	for shutter in [$Shutter/ShutterTop, $Shutter/ShutterBottom]:
 		var material := shutter.material as ShaderMaterial
 		material.set_shader_parameter("metal_color", Color(0.16, 0.12, 0.12) if on else _theme_saved[shutter]["metal"])
@@ -352,10 +374,25 @@ func _save_theme() -> void:
 	_theme_saved[_selector] = {"ring": _selector.ring_color, "arrow": _selector.arrow_color,
 		"locked": _selector.locked_color, "fill": _selector.fill_color}
 	_theme_saved[_board] = {"dim": _board.dim_color}
+	for label in [_ship_name, _ship_index, _desc_title, _desc_sub, _desc_text, _hint]:
+		_theme_saved[label] = {"settings": label.label_settings}
+	var wash := get_node_or_null("UI/Root/Wash") as ColorRect
+	if wash:
+		_theme_saved[wash] = {"color": wash.color}
 	for shutter in [$Shutter/ShutterTop, $Shutter/ShutterBottom]:
 		var material := shutter.material as ShaderMaterial
 		_theme_saved[shutter] = {"metal": material.get_shader_parameter("metal_color"),
 			"stripe": material.get_shader_parameter("stripe_color")}
+
+## ANOTHER のときの文字の設定(元の設定を写して、色だけ明るい赤にする)
+func _red_label_settings(label : Label) -> LabelSettings:
+	var original : LabelSettings = _theme_saved[label]["settings"]
+	if original == null:
+		return null
+	var settings := original.duplicate() as LabelSettings
+	settings.font_color = Color(1.0, 0.82, 0.78) if label == _desc_text else Color(1.0, 0.38, 0.3)
+	settings.outline_color = Color(0.0, 0.0, 0.0, 0.9)
+	return settings
 
 ## 映像が一瞬大きく乱れる
 func _glitch() -> void:
@@ -397,6 +434,7 @@ func _launch() -> void:
 	_stop_music()
 	RunConfig.difficulty = _difficulty
 	HazardRank.reset_run() # ANOTHER のランクは、出撃するたびに 0 から
+	ScoreBoard.begin_run() # スコアボードの記録(被弾数など)も 0 から
 	RunConfig.ship = ships[_ship_index_value] if not ships.is_empty() else null
 	await _board.set_text(launch_text, false)
 	await _board.blink(3, 0.1, 0.16)

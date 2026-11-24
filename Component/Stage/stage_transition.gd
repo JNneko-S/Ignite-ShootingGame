@@ -56,6 +56,10 @@ func _ready() -> void:
 
 func _connect() -> void:
 	if next_stage == "":
+		# 最後のステージ: クリアしたら、全クリアとしてスコアボードに記録する
+		var last_runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
+		if last_runner:
+			last_runner.stage_cleared.connect(func() -> void: ScoreBoard.finish_run(get_tree(), true), CONNECT_ONE_SHOT)
 		return
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	if runner:

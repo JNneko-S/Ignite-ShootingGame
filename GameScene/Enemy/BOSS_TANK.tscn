@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://dro6tqpru25cy"]
 
+[ext_resource type="Script" path="res://Component/Ground/track_marks.gd" id="track_marks"]
+
 [ext_resource type="Script" path="res://Component/Boss/boss_scroll_boost.gd" id="scroll_boost"]
 [ext_resource type="Texture2D" uid="uid://b02kojahk51jq" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Wheels_strip4.png" id="1_xstfq"]
 [ext_resource type="Texture2D" uid="uid://5d3cvuu4pylh" path="res://Assets/Full Shmup Asset Pack/Tank Boss/Body_strip4.png" id="2_7ermy"]
@@ -637,3 +639,11 @@ script = ExtResource("scroll_boost")
 
 [node name="TankTrainRaid" type="Node" parent="." unique_id=1900000001]
 script = ExtResource("tank_train_raid")
+
+[node name="TrackMarks" type="Node" parent="."]
+script = ExtResource("track_marks")
+tread_offsets = PackedFloat32Array(-100, -43, 43, 100)
+tread_width = 30.0
+spacing = 10.0
+max_marks = 320
+color = Color(0.1, 0.08, 0.05, 0.5)

@@ -320,7 +320,7 @@ func _build_path(event : SpawnEvent, unit : int, screen : Rect2) -> Dictionary:
 	if pattern == null:
 		return {}
 	var mirror := event.mirror_x != (event.alternate_mirror and unit % 2 == 1)
-	var offset := event.offset + event.offset_step * unit
+	var offset := event.unit_offset(unit)
 
 	var cursor := offset
 	if pattern.override_start_position:
