@@ -58,6 +58,38 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_gyroscope.tres" id="ex_ex_n_gyroscope"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_prism_break.tres" id="ex_ex_h_prism_break"]
 [ext_resource type="Script" path="res://Component/Death/boss_wreck.gd" id="boss_wreck"]
+[ext_resource type="Script" path="res://Component/Boss/counter_spell.gd" id="counter_spell"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_pattern_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp1_freeze_scatter.tres" id="spell_sp1_freeze_scatter"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp1_light_aim.tres" id="spell_sp1_light_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp1_frozen_giant.tres" id="spell_sp1_frozen_giant"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_needle_e.tres" id="l2_t1_needle_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_needle_n.tres" id="l2_t1_needle_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_needle_h.tres" id="l2_t1_needle_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_flower_e.tres" id="l2_t1_flower_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_flower_n.tres" id="l2_t1_flower_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_flower_h.tres" id="l2_t1_flower_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_q_tapstream_e.tres" id="l2_t1_q_tapstream_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_q_tapstream_n.tres" id="l2_t1_q_tapstream_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t1_q_tapstream_h.tres" id="l2_t1_q_tapstream_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_rows_e.tres" id="l2_t2_rows_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_rows_n.tres" id="l2_t2_rows_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_rows_h.tres" id="l2_t2_rows_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_spiral_e.tres" id="l2_t2_spiral_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_spiral_n.tres" id="l2_t2_spiral_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_spiral_h.tres" id="l2_t2_spiral_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_q_pendulum_e.tres" id="l2_t2_q_pendulum_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_q_pendulum_n.tres" id="l2_t2_q_pendulum_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t2_q_pendulum_h.tres" id="l2_t2_q_pendulum_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_burst_e.tres" id="l2_t3_burst_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_burst_n.tres" id="l2_t3_burst_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_burst_h.tres" id="l2_t3_burst_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_lace_e.tres" id="l2_t3_lace_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_lace_n.tres" id="l2_t3_lace_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_lace_h.tres" id="l2_t3_lace_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_e.tres" id="l2_t3_q_turncoat_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_n.tres" id="l2_t3_q_turncoat_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_h.tres" id="l2_t3_q_turncoat_h"]
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(65, 80)
 
@@ -71,6 +103,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("t_shot"), ExtResource
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_freeze_aim")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_t1_needle_e"), ExtResource("l2_t1_needle_n"), ExtResource("l2_t1_needle_h"), ExtResource("l2_t1_flower_e"), ExtResource("l2_t1_flower_n"), ExtResource("l2_t1_flower_h"), ExtResource("l2_t1_q_tapstream_e"), ExtResource("l2_t1_q_tapstream_n"), ExtResource("l2_t1_q_tapstream_h")])
+
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
@@ -79,6 +115,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("ex_ex_e_meteor_shower
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_firework"), ExtResource("an_a1_corridor"), ExtResource("an_a1_corridor_push"), ExtResource("an_a1_ignite_crush"), ExtResource("an_a1_cage_net"), ExtResource("an_a1_key_core"), ExtResource("an_a1_gate_wall"), ExtResource("an_a1_lattice"), ExtResource("an_a1_combo_spiral_aim"), ExtResource("an_a1_yfork_sweep")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_t2_rows_e"), ExtResource("l2_t2_rows_n"), ExtResource("l2_t2_rows_h"), ExtResource("l2_t2_spiral_e"), ExtResource("l2_t2_spiral_n"), ExtResource("l2_t2_spiral_h"), ExtResource("l2_t2_q_pendulum_e"), ExtResource("l2_t2_q_pendulum_n"), ExtResource("l2_t2_q_pendulum_h")])
+
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
@@ -87,6 +127,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("t_firework"), ExtReso
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("an_a1_rampage"), ExtResource("an_a1_combo_rain_cross"), ExtResource("an_a1_spiral_storm"), ExtResource("an_a1_shell_bloom"), ExtResource("an_a1_ignite_crush"), ExtResource("an_a1_yfork_sweep"), ExtResource("an_a1_lattice")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_t3_burst_e"), ExtResource("l2_t3_burst_n"), ExtResource("l2_t3_burst_h"), ExtResource("l2_t3_lace_e"), ExtResource("l2_t3_lace_n"), ExtResource("l2_t3_lace_h"), ExtResource("l2_t3_q_turncoat_e"), ExtResource("l2_t3_q_turncoat_n"), ExtResource("l2_t3_q_turncoat_h")])
+
 
 [sub_resource type="RectangleShape2D" id="top_body_shape"]
 size = Vector2(25.428572, 40)
@@ -654,3 +698,10 @@ color = Color(0.1, 0.08, 0.05, 0.5)
 
 [node name="BossWreck" type="Node" parent="."]
 script = ExtResource("boss_wreck")
+
+[node name="CounterSpell" type="Node" parent="."]
+script = ExtResource("counter_spell")
+spell_name = "凍結 -フローズン・カウンター-"
+trigger_hp_ratio = 0.5
+duration = 14.0
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp1_freeze_scatter"), ExtResource("spell_sp1_light_aim"), ExtResource("spell_sp1_frozen_giant")])

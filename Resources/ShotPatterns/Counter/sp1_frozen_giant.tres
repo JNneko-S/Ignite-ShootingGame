@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://ci8g1sk7eqe2g"]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 1.2
+change_speed = false
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 0.3
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 0.9
+change_speed = false
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 2
+target_speed = 75.0
+speed_ease = 0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+also_another = null
+start_delay = 2.0
+pause = 2.6
+warning_time = 0.8
+bullet_speed = 70.0
+counter_hp_ratio = 0.06
+bullet_scale = 2.4
+motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2"), SubResource("st3"), SubResource("st4")])

@@ -1,9 +1,8 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://58n4euoic5fa"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="split_bullet"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
@@ -14,9 +13,8 @@ change_speed = false
 script = ExtResource("step")
 duration = 0.7
 target_speed = 25.0
-fade_to = 0.08
 speed_trans = 4
-speed_ease = 1
+fade_to = 0.08
 
 [sub_resource type="Resource" id="m2"]
 script = ExtResource("step")
@@ -34,13 +32,13 @@ speed_ease = 0
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
-soften_others = 6.0
+bullet_scene = ExtResource("split_bullet")
 start_delay = 0.4
 shot_count = 14
 interval = 0.16
 loop = false
 pause = 1.2
+soften_others = 6.0
 bullet_count = 5
 spread_angle = 50.0
 random_angle = 6.0

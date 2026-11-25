@@ -6,6 +6,9 @@ class_name StageData
 @export var stage_name : String = "Stage 1"
 ## イベントの並び。順番は自由(time の小さい順に実行される)
 @export var events : Array[StageEvent] = []
+## 二周目(Another Round。ANOTHER 以外)で、このステージの代わりに使うタイムライン(雑魚の数・並び・弾を作り直したもの)。
+## 空なら、二周目もこのタイムラインのまま
+@export var second_loop : StageData
 ## 難易度 ANOTHER のときだけ、events に足して実行するイベント(敵の追加など)
 @export var another_events : Array[StageEvent] = []
 ## ANOTHER で、ランクによって雑魚の撃つ頻度が上がる量の割合(1 でそのまま、0.5 なら半分だけ上がる)。
@@ -22,6 +25,14 @@ class_name StageData
 ## EASY / NORMAL / HARD のとき、雑魚の弾幕の撃つ間(Interval・Pause・最初の待ち)に掛ける倍率。1.3 なら間が3割のびて、弾が減る。
 ## 道中の弾が多すぎるステージで上げる(ボス・中ボスには効かない。ANOTHER には効かない)
 @export_range(0.5, 3.0, 0.05) var zako_fire_interval_scale : float = 1.0
+
+@export_group("コンティニュー")
+## 空でなければ、この Tag の待機(Wait Clear。中ボスなど)を越えたあとにゲームオーバーになってコンティニューすると、
+## ステージの最初ではなく、待機を越えたところから始める(長いステージの救済。ステージをクリアすると、記録は消える)
+@export var continue_checkpoint_tag : String = ""
+## 記録したところから始め直したとき、選んだ難易度がこれ以下なら、子機(オプション)をこの数まで付ける(0 = EASY, 1 = NORMAL)
+@export_range(-1, 3) var checkpoint_options_max_difficulty : int = 1
+@export var checkpoint_options : int = 4
 
 @export_group("体力")
 ## EASY / NORMAL / HARD のとき、雑魚(ボス・中ボス以外)の体力に掛ける倍率。1 ならそのまま。ANOTHER には効かない

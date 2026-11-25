@@ -1,5 +1,7 @@
 extends Node
 class_name ShipSelect
+## 共有の状態をまとめて戻す場所(エディタがクラス名を覚える前でも動くように、ファイルを直接読み込む)
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## 出撃機体の選択画面。シーン(GameScene/Select/ship_select.tscn)で使う。
 ## 閉まったシャッターの上に、電光掲示板・機体のプレビュー・選択の輪・説明の欄が並ぶ。
 ##
@@ -430,6 +432,7 @@ func _launch() -> void:
 	_step = Step.LAUNCH
 	SoundManager.play(confirm_sound)
 	RunConfig.has_selection = true
+	_RunState.begin_run() # 一回のプレイの状態(周回・コンティニュー・ランク・引き継ぎ・クリアタイムなど)を、まっさらにする
 	RunConfig.consecutive_game_overs = 0
 	RunConfig.loop = 1 # 出撃し直したら、一周目から
 	RunConfig.hidden_boss_defeated = false

@@ -21,6 +21,12 @@ class_name GuardFinale
 @export var fall_blast_interval : float = 0.045
 ## レーザーの色(外側)
 @export var laser_color : Color = Color(1.0, 0.32, 0.12)
+## 倒されたときに支給するアイテム(ラスボスの前の補給。全ての難易度)。
+## 回復(イグナイトのレベルが 3 より低ければ 3 まで戻す)と、子機2つ。どちらも自機へ吸い寄せられる
+@export var supply_items : Array[PackedScene] = [
+	preload("res://GameScene/Item/power_up_heal.tscn"),
+	preload("res://GameScene/Item/power_up_option_pair.tscn"),
+]
 
 var _enemy : Enemy
 var _visual : Node2D
@@ -65,6 +71,7 @@ func _on_died(_e : Enemy) -> void:
 	await tree.create_timer(laser_rise_time * 0.6, false).timeout
 	ScreenFlash.play(tree, 1.0)
 	HitStop.apply(tree, 0.12)
+	_supply()
 	if camera:
 		camera.shake(12.0, 0.8)
 	for i in 6:
@@ -146,3 +153,18 @@ class CoreLaser extends Node2D:
 		# 根元(コア)の光の玉
 		draw_circle(Vector2.ZERO, w * 0.9, Color(color, 0.5))
 		draw_circle(Vector2.ZERO, w * 0.5, Color(1.0, 0.95, 0.85, 0.95))
+
+## ラスボスの前の補給: 機体のそばに、回復と子機2つのアイテムを出す(画面の中に寄せる)
+func _supply() -> void:
+	var view := CameraView.visible_rect(_enemy)
+	var at := _enemy.global_position
+	at = Vector2(clampf(at.x, view.position.x + 80.0, view.end.x - 80.0),
+		clampf(at.y, view.position.y + 100.0, view.position.y + view.size.y * 0.45))
+	var i := 0
+	for scene in supply_items:
+		if scene == null:
+			continue
+		var item := scene.instantiate() as Node2D
+		get_tree().current_scene.add_child.call_deferred(item)
+		item.set_deferred(&"global_position", at + Vector2((i - (supply_items.size() - 1) * 0.5) * 48.0, 0.0))
+		i += 1

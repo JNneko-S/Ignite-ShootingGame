@@ -24,6 +24,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("2_o0fgd")
 bullet_scene = ExtResource("1_o0fgd")
+also_another = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 shot_count = 36

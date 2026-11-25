@@ -56,6 +56,24 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_counter_wall.tres" id="ex_ex_n_counter_wall"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_double_helix.tres" id="ex_ex_h_double_helix"]
 [ext_resource type="Script" path="res://Component/Death/boss_wreck.gd" id="boss_wreck"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_ring_e.tres" id="l2_tk1_ring_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_ring_n.tres" id="l2_tk1_ring_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_ring_h.tres" id="l2_tk1_ring_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_q_diamond_e.tres" id="l2_tk1_q_diamond_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_q_diamond_n.tres" id="l2_tk1_q_diamond_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk1_q_diamond_h.tres" id="l2_tk1_q_diamond_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_lines_e.tres" id="l2_tk2_lines_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_lines_n.tres" id="l2_tk2_lines_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_lines_h.tres" id="l2_tk2_lines_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_q_moire_e.tres" id="l2_tk2_q_moire_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_q_moire_n.tres" id="l2_tk2_q_moire_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk2_q_moire_h.tres" id="l2_tk2_q_moire_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_burst_e.tres" id="l2_tk3_burst_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_burst_n.tres" id="l2_tk3_burst_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_burst_h.tres" id="l2_tk3_burst_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_q_scissor_e.tres" id="l2_tk3_q_scissor_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_q_scissor_n.tres" id="l2_tk3_q_scissor_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tk3_q_scissor_h.tres" id="l2_tk3_q_scissor_h"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(200, 230)
@@ -66,6 +84,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("k_firework"), ExtReso
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_firework"), ExtResource("a_gate"), ExtResource("a_cage"), ExtResource("a_key"), ExtResource("a_yfork")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_tk1_ring_e"), ExtResource("l2_tk1_ring_n"), ExtResource("l2_tk1_ring_h"), ExtResource("l2_tk1_q_diamond_e"), ExtResource("l2_tk1_q_diamond_n"), ExtResource("l2_tk1_q_diamond_h")])
+
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
@@ -73,6 +95,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("k_circle"), ExtResour
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_corridor"), ExtResource("a_push"), ExtResource("t_scatter"), ExtResource("a_lattice"), ExtResource("a_storm"), ExtResource("t_scatter")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_tk2_lines_e"), ExtResource("l2_tk2_lines_n"), ExtResource("l2_tk2_lines_h"), ExtResource("l2_tk2_q_moire_e"), ExtResource("l2_tk2_q_moire_n"), ExtResource("l2_tk2_q_moire_h")])
+
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
@@ -81,6 +107,10 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("k_firework"), ExtReso
 another_replace = true
 another_patterns = Array[ExtResource("shot_script")]([])
 another_sequence = Array[ExtResource("shot_script")]([ExtResource("a_rampage"), ExtResource("t_diamond"), ExtResource("a_bloom"), ExtResource("t_diamond"), ExtResource("a_storm"), ExtResource("a_yfork"), ExtResource("t_scatter")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_tk3_burst_e"), ExtResource("l2_tk3_burst_n"), ExtResource("l2_tk3_burst_h"), ExtResource("l2_tk3_q_scissor_e"), ExtResource("l2_tk3_q_scissor_n"), ExtResource("l2_tk3_q_scissor_h")])
+
 
 [sub_resource type="Resource" id="rear_p1"]
 script = ExtResource("shooter_phase")

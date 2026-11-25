@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="Resource_v4nm1"]
 script = ExtResource("3_03ps3")
 bullet_scene = ExtResource("4_47om5")
+also_another = null
 bullet_count = 14
 spread_angle = 360.0
 aim_at_player = false
@@ -18,6 +19,7 @@ bullet_speed = 85.0
 [resource]
 script = ExtResource("3_03ps3")
 bullet_scene = ExtResource("1_uqog4")
+also_another = null
 another_made = true
 start_delay = 0.0
 loop = false

@@ -26,6 +26,7 @@ angular_velocity = 26.0
 [sub_resource type="Resource" id="p3"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
+also_another = null
 bullet_count = 3
 spread_angle = 56.0
 aim_at_player = false
@@ -40,6 +41,7 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 2
 max_difficulty = 2
+also_another = null
 skip_auto_tuning = true
 start_delay = 0.4
 shot_count = 2

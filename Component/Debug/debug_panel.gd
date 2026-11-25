@@ -74,6 +74,11 @@ func _input(event : InputEvent) -> void:
 		KEY_P: _next_stage()
 		KEY_L: _to_final_boss(false)
 		KEY_E: _to_final_boss(true)
+		KEY_U:
+			# 裏ボス Union 戦へ: Bエンドの条件を満たしたことにして、ラスボスをすぐ倒し、脱出を飛ばして Union の登場から
+			DebugTools.force_b_end = true
+			DebugTools.union_direct = true
+			_to_final_boss(true)
 		_: handled = false
 	if handled and viewport:
 		viewport.set_input_as_handled()
@@ -100,7 +105,7 @@ func _build_text() -> String:
 	lines.append("9 当たり判定: %s" % ("ON" if get_tree().debug_collisions_hint else "OFF"))
 	lines.append("0 弾消し  - 雑魚を倒す")
 	lines.append("P 次のステージへ")
-	lines.append("L ラスボス戦へ  E エンディングへ")
+	lines.append("L ラスボス戦へ  E エンディングへ  U 裏ボス(Union)戦へ")
 	lines.append("")
 	lines.append("FPS %d  弾 %d  敵 %d" % [Engine.get_frames_per_second(),
 		get_tree().get_nodes_in_group("enemy_bullet").size(), get_tree().get_nodes_in_group("enemy").size()])

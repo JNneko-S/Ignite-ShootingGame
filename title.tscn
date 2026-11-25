@@ -125,6 +125,15 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 
+[node name="Label" type="Label" parent="Menu" unique_id=643233873]
+layout_mode = 0
+offset_left = 144.0
+offset_top = -288.0
+offset_right = 238.0
+offset_bottom = -270.0
+text = "v0.91 beta"
+label_settings = SubResource("LabelSettings_jhy2k")
+
 [node name="Bar" type="ColorRect" parent="Menu" unique_id=1500000002]
 layout_mode = 0
 offset_top = 2.0
@@ -296,12 +305,3 @@ pitch_scale = 0.6
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1500000015]
 stream = ExtResource("12_upcoo")
 volume_db = -19.0
-
-[node name="Label" type="Label" parent="." unique_id=643233873]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 2.0
-offset_right = 86.0
-offset_bottom = 20.0
-text = "v0.9beta"
-label_settings = SubResource("LabelSettings_jhy2k")

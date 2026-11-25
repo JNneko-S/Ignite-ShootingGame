@@ -21,6 +21,7 @@ target_speed = 250.0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_a1agy")
+also_another = null
 another_made = true
 start_delay = 3.0
 shot_count = 2

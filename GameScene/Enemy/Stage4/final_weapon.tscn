@@ -39,6 +39,24 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_flak.tres" id="g_stack_flak"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_fountain.tres" id="g_stack_fountain"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Guard/g_stack_mine.tres" id="g_stack_mine"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_spread_e.tres" id="l2_g1_spread_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_spread_n.tres" id="l2_g1_spread_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_spread_h.tres" id="l2_g1_spread_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_q_lattice_e.tres" id="l2_g1_q_lattice_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_q_lattice_n.tres" id="l2_g1_q_lattice_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g1_q_lattice_h.tres" id="l2_g1_q_lattice_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_aim_e.tres" id="l2_g2_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_aim_n.tres" id="l2_g2_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_aim_h.tres" id="l2_g2_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_q_fireworks_e.tres" id="l2_g2_q_fireworks_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_q_fireworks_n.tres" id="l2_g2_q_fireworks_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g2_q_fireworks_h.tres" id="l2_g2_q_fireworks_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_ring_e.tres" id="l2_g3_ring_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_ring_n.tres" id="l2_g3_ring_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_ring_h.tres" id="l2_g3_ring_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_q_arch_e.tres" id="l2_g3_q_arch_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_q_arch_n.tres" id="l2_g3_q_arch_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/g3_q_arch_h.tres" id="l2_g3_q_arch_h"]
 
 [sub_resource type="RectangleShape2D" id="body_shape"]
 size = Vector2(250, 120)
@@ -52,15 +70,27 @@ size = Vector2(30, 48)
 [sub_resource type="Resource" id="main_p1"]
 script = ExtResource("shooter_phase")
 sequence = Array[ExtResource("shot_script")]([ExtResource("g_cross_spiral"), ExtResource("f_lance"), ExtResource("g_gatling_sweep"), ExtResource("f_bloom"), ExtResource("f_lance")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_g1_spread_e"), ExtResource("l2_g1_spread_n"), ExtResource("l2_g1_spread_h"), ExtResource("l2_g1_q_lattice_e"), ExtResource("l2_g1_q_lattice_n"), ExtResource("l2_g1_q_lattice_h")])
+
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
 sequence = Array[ExtResource("shot_script")]([ExtResource("g_scissor"), ExtResource("g_shell_burst"), ExtResource("f_bloom"), ExtResource("g_star_burst"), ExtResource("f_lance")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_g2_aim_e"), ExtResource("l2_g2_aim_n"), ExtResource("l2_g2_aim_h"), ExtResource("l2_g2_q_fireworks_e"), ExtResource("l2_g2_q_fireworks_n"), ExtResource("l2_g2_q_fireworks_h")])
+
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("f_storm")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("g_star_burst"), ExtResource("f_lance"), ExtResource("g_shell_burst"), ExtResource("f_bloom"), ExtResource("f_lance")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_g3_ring_e"), ExtResource("l2_g3_ring_n"), ExtResource("l2_g3_ring_h"), ExtResource("l2_g3_q_arch_e"), ExtResource("l2_g3_q_arch_n"), ExtResource("l2_g3_q_arch_h")])
+
 
 [sub_resource type="Resource" id="wing_p1"]
 script = ExtResource("shooter_phase")

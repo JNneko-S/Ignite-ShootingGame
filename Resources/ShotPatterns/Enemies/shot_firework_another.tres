@@ -14,6 +14,7 @@ angular_velocity = 70.0
 [sub_resource type="Resource" id="Resource_qmdka"]
 script = ExtResource("1")
 bullet_scene = ExtResource("4_mveue")
+also_another = null
 bullet_count = 16
 spread_angle = 360.0
 aim_at_player = false
@@ -24,6 +25,7 @@ motion = Array[ExtResource("2")]([SubResource("Resource_khl7a")])
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_2r8jl")
+also_another = null
 another_made = true
 start_delay = 1.6
 loop = false

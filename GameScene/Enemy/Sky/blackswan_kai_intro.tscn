@@ -2,9 +2,30 @@
 
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="base"]
 [ext_resource type="Script" path="res://Component/Boss/fly_away.gd" id="fly_away"]
+[ext_resource type="Script" uid="uid://5e6refxj3qvq" path="res://shooter_phase.gd" id="intro_shooter_phase"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="intro_shot_script"]
+[ext_resource type="Resource" uid="uid://dtpjbusws2fnp" path="res://Resources/ShotPatterns/Boss/BlackSwan/5wayShot.tres" id="intro_5way"]
+[ext_resource type="Resource" uid="uid://cnbgaw5th4h1l" path="res://Resources/ShotPatterns/Boss/BlackSwan/AimedShotgunReverse.tres" id="intro_shotgun"]
+
+
+[sub_resource type="Resource" id="intro_p1"]
+script = ExtResource("intro_shooter_phase")
+sequence = Array[ExtResource("intro_shot_script")]([ExtResource("intro_5way")])
+
+[sub_resource type="Resource" id="intro_p2"]
+script = ExtResource("intro_shooter_phase")
+sequence = Array[ExtResource("intro_shot_script")]([ExtResource("intro_shotgun"), ExtResource("intro_5way")])
+
+[sub_resource type="Resource" id="intro_p3"]
+script = ExtResource("intro_shooter_phase")
+patterns = Array[ExtResource("intro_shot_script")]([ExtResource("intro_shotgun")])
+sequence = Array[ExtResource("intro_shot_script")]([ExtResource("intro_5way")])
 
 [node name="BlackSwanKaiIntro" unique_id=724143726 instance=ExtResource("base")]
 
 [node name="FlyAway" type="Node" parent="." unique_id=1830000001]
 script = ExtResource("fly_away")
 stay_time = 10.0
+
+[node name="EnemyShooterComponent" parent="." unique_id=140393654]
+phases = Array[ExtResource("intro_shooter_phase")]([SubResource("intro_p1"), SubResource("intro_p2"), SubResource("intro_p3")])

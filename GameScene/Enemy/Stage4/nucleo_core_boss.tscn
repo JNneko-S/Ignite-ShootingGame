@@ -84,6 +84,36 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_residue_net.tres" id="ex_n_residue_net"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_footprint.tres" id="ex_h_footprint"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_residue_turncoat.tres" id="ex_h_residue_turncoat"]
+[ext_resource type="Script" path="res://Component/Boss/counter_spell.gd" id="counter_spell"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_pattern_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Final/fin_giga_core.tres" id="spell_fin_giga_core"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Final/fin_residue_spiral.tres" id="spell_fin_residue_spiral"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp1_light_aim.tres" id="spell_sp1_light_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp4_hydra_heads.tres" id="spell_sp4_hydra_heads"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_aim_e.tres" id="l2_n1_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_aim_n.tres" id="l2_n1_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_aim_h.tres" id="l2_n1_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_q_star_e.tres" id="l2_n1_q_star_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_q_star_n.tres" id="l2_n1_q_star_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n1_q_star_h.tres" id="l2_n1_q_star_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_rows_e.tres" id="l2_n2_rows_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_rows_n.tres" id="l2_n2_rows_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_rows_h.tres" id="l2_n2_rows_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_q_freezering_e.tres" id="l2_n2_q_freezering_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_q_freezering_n.tres" id="l2_n2_q_freezering_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n2_q_freezering_h.tres" id="l2_n2_q_freezering_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_web_e.tres" id="l2_n3_web_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_web_n.tres" id="l2_n3_web_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_web_h.tres" id="l2_n3_web_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_q_galaxy_e.tres" id="l2_n3_q_galaxy_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_q_galaxy_n.tres" id="l2_n3_q_galaxy_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n3_q_galaxy_h.tres" id="l2_n3_q_galaxy_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_aim_e.tres" id="l2_n4_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_aim_n.tres" id="l2_n4_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_aim_h.tres" id="l2_n4_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_q_curtain_e.tres" id="l2_n4_q_curtain_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_q_curtain_n.tres" id="l2_n4_q_curtain_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/n4_q_curtain_h.tres" id="l2_n4_q_curtain_h"]
 
 [sub_resource type="RectangleShape2D" id="body_shape"]
 size = Vector2(104.0, 260.0)
@@ -103,22 +133,34 @@ size = Vector2(32, 52)
 [sub_resource type="Resource" id="main_p1"]
 script = ExtResource("shooter_phase")
 sequence = Array[ExtResource("shot_script")]([ExtResource("fin_hexagram"), ExtResource("fin_aim_lace"), ExtResource("fin_washer_easy"), ExtResource("fin_residue_terraces"), ExtResource("ex_n_residue_net"), ExtResource("ex_h_footprint"), ExtResource("fin_hydra"), ExtResource("fin_aim_lace"), ExtResource("fin_residue_spiral"), ExtResource("fin_washer_easy"), ExtResource("n_snow_flake")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_n1_aim_e"), ExtResource("l2_n1_aim_n"), ExtResource("l2_n1_aim_h"), ExtResource("l2_n1_q_star_e"), ExtResource("l2_n1_q_star_n"), ExtResource("l2_n1_q_star_h")])
+
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
 loop2_replace = true
-loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("fin_spider_web"), ExtResource("l2_lunatic_gun"), ExtResource("l2r_spiral"), ExtResource("l2r_net"), ExtResource("l2_staff_1"), ExtResource("l2r_turncoat"), ExtResource("fin_giga_core"), ExtResource("l2_backdraft"), ExtResource("l2r_terraces"), ExtResource("l2_carpet")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("fin_spider_web"), ExtResource("fin_aim_lace"), ExtResource("fin_washer_easy"), ExtResource("fin_residue_spiral"), ExtResource("ex_n_residue_net"), ExtResource("ex_h_residue_turncoat"), ExtResource("fin_giga_core"), ExtResource("ex_frozen"), ExtResource("fin_residue_terraces"), ExtResource("fin_aim_lace"), ExtResource("n_blizzard_fall")])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_n2_rows_e"), ExtResource("l2_n2_rows_n"), ExtResource("l2_n2_rows_h"), ExtResource("l2_n2_q_freezering_e"), ExtResource("l2_n2_q_freezering_n"), ExtResource("l2_n2_q_freezering_h")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("fin_spider_web"), ExtResource("fin_aim_lace"), ExtResource("fin_washer_easy"), ExtResource("fin_residue_spiral"), ExtResource("ex_n_residue_net"), ExtResource("ex_h_residue_turncoat"), ExtResource("ex_frozen"), ExtResource("fin_residue_terraces"), ExtResource("fin_aim_lace"), ExtResource("n_blizzard_fall")])
+loop2_patterns = Array[ExtResource("shot_script")]([])
+
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
 loop2_replace = true
-loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("fin_web_hydra"), ExtResource("l2r_spiral"), ExtResource("l2_cage_wall"), ExtResource("l2r_terraces"), ExtResource("l2_spark_stars"), ExtResource("l2r_net"), ExtResource("l2_backdraft"), ExtResource("l2r_turncoat"), ExtResource("l2_cage_wall"), ExtResource("fin_hexagram_rage")])
-sequence = Array[ExtResource("shot_script")]([ExtResource("fin_web_hydra"), ExtResource("fin_washer_hard"), ExtResource("fin_residue_terraces"), ExtResource("ex_h_footprint"), ExtResource("ex_n_residue_net"), ExtResource("fin_aim_lace"), ExtResource("fin_giga_core"), ExtResource("fin_residue_spiral"), ExtResource("ex_h_residue_turncoat"), ExtResource("fin_washer_hard"), ExtResource("fin_hexagram_rage"), ExtResource("n_hell_gate")])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_n3_web_e"), ExtResource("l2_n3_web_n"), ExtResource("l2_n3_web_h"), ExtResource("l2_n3_q_galaxy_e"), ExtResource("l2_n3_q_galaxy_n"), ExtResource("l2_n3_q_galaxy_h")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("fin_web_hydra"), ExtResource("fin_washer_hard"), ExtResource("fin_residue_terraces"), ExtResource("ex_h_footprint"), ExtResource("ex_n_residue_net"), ExtResource("fin_aim_lace"), ExtResource("fin_residue_spiral"), ExtResource("ex_h_residue_turncoat"), ExtResource("fin_washer_hard"), ExtResource("fin_hexagram_rage"), ExtResource("n_hell_gate")])
+loop2_patterns = Array[ExtResource("shot_script")]([])
+
 
 [sub_resource type="Resource" id="main_p4"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("n_finale_ice"), ExtResource("n_finale_fire"), ExtResource("n_finale_pulse")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_n4_aim_e"), ExtResource("l2_n4_aim_n"), ExtResource("l2_n4_aim_h"), ExtResource("l2_n4_q_curtain_e"), ExtResource("l2_n4_q_curtain_n"), ExtResource("l2_n4_q_curtain_h")])
+
 
 [sub_resource type="Resource" id="tripleL_p1"]
 script = ExtResource("shooter_phase")
@@ -1292,3 +1334,17 @@ color = Color(1, 0.45, 0.7, 1)
 loop2_only = true
 active_until_phase = 2
 sync_pattern = "l2r_residue_spiral"
+
+[node name="GigaSpell" type="Node" parent="."]
+script = ExtResource("counter_spell")
+spell_name = "超巨大弾 -ギガ・コア-"
+trigger_hp_ratio = 0.5
+duration = 15.0
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_fin_giga_core"), ExtResource("spell_fin_residue_spiral"), ExtResource("spell_sp1_light_aim")])
+
+[node name="HydraSpell" type="Node" parent="."]
+script = ExtResource("counter_spell")
+spell_name = "九頭竜 -ヒュドラ-"
+lethal = true
+duration = 16.0
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp4_hydra_heads"), ExtResource("spell_fin_residue_spiral")])

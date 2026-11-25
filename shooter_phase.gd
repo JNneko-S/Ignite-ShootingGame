@@ -15,7 +15,8 @@ class_name ShooterPhase
 @export var another_patterns : Array[ShotPattern] = []
 @export var another_sequence : Array[ShotPattern] = []
 @export_group("二周目")
-## オンなら、二周目(RunConfig.loop が 2 以上)のときは、Patterns / Sequence の代わりに、下の2つを撃つ(難易度の差し替えより先)
+## オンなら、二周目(RunConfig.second_round())のときは、Patterns / Sequence の代わりに、下の2つを撃つ(難易度の差し替えより先)。
+## 二周目の弾幕は、難易度ごとの限定弾幕(Max Difficulty)で作り分け、同時に撃つ数を難易度で絞らない
 @export var loop2_replace : bool = false
 @export var loop2_patterns : Array[ShotPattern] = []
 @export var loop2_sequence : Array[ShotPattern] = []
@@ -27,7 +28,7 @@ class_name ShooterPhase
 
 ## この難易度で撃つ、同時に撃つ弾幕
 func patterns_for_difficulty() -> Array[ShotPattern]:
-	if loop2_replace and RunConfig.loop >= 2:
+	if is_loop2():
 		return loop2_patterns
 	if another_replace and HazardRank.active:
 		return another_patterns
@@ -35,8 +36,12 @@ func patterns_for_difficulty() -> Array[ShotPattern]:
 
 ## この難易度で撃つ、順番に撃つ弾幕
 func sequence_for_difficulty() -> Array[ShotPattern]:
-	if loop2_replace and RunConfig.loop >= 2:
+	if is_loop2():
 		return loop2_sequence
 	if another_replace and HazardRank.active:
 		return another_sequence
 	return easy_sequence if DifficultyTuning.is_easy() and not easy_sequence.is_empty() else sequence
+
+## 二周目の弾幕を撃つか
+func is_loop2() -> bool:
+	return loop2_replace and RunConfig.second_round()

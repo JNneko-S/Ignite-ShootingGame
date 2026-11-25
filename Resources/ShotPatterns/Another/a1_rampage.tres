@@ -15,6 +15,7 @@ speed_ease = 2
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_aim")
+also_another = null
 black_version = ExtResource("black_ver")
 another_made = true
 start_delay = 0.6

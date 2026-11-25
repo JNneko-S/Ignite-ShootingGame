@@ -12,18 +12,64 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_crimson_fan.tres" id="bs_fan"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_blood_turncoat.tres" id="bs_turncoat"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/bs_blood_rain.tres" id="bs_rain"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_fan_e.tres" id="l2_bs2_fan_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_fan_n.tres" id="l2_bs2_fan_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_fan_h.tres" id="l2_bs2_fan_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_aim_e.tres" id="l2_bs2_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_aim_n.tres" id="l2_bs2_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_aim_h.tres" id="l2_bs2_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_spiral_e.tres" id="l2_bs2_spiral_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_spiral_n.tres" id="l2_bs2_spiral_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/bs2_spiral_h.tres" id="l2_bs2_spiral_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_e.tres" id="l2_bsx_veins_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_n.tres" id="l2_bsx_veins_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_h.tres" id="l2_bsx_veins_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_e.tres" id="l2_bsx_thorns_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_n.tres" id="l2_bsx_thorns_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_h.tres" id="l2_bsx_thorns_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_l2_e.tres" id="l2_bsx_veins_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_l2_n.tres" id="l2_bsx_veins_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_l2_h.tres" id="l2_bsx_veins_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_l2_e.tres" id="l2_bsx_thorns_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_l2_n.tres" id="l2_bsx_thorns_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_l2_h.tres" id="l2_bsx_thorns_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_e.tres" id="l2_bsx_bloodlet_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_n.tres" id="l2_bsx_bloodlet_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_h.tres" id="l2_bsx_bloodlet_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_l2_e.tres" id="l2_bsx_bloodlet_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_l2_n.tres" id="l2_bsx_bloodlet_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_l2_h.tres" id="l2_bsx_bloodlet_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_e.tres" id="l2_bsx_rampage_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_n.tres" id="l2_bsx_rampage_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_h.tres" id="l2_bsx_rampage_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_l2_e.tres" id="l2_bsx_rampage_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_l2_n.tres" id="l2_bsx_rampage_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_l2_h.tres" id="l2_bsx_rampage_l2_h"]
+[ext_resource type="Script" path="res://Component/Boss/boss_rampage.gd" id="boss_rampage"]
 
 [sub_resource type="Resource" id="bs_main_p1"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("bs_lance"), ExtResource("bs_fan")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+
 
 [sub_resource type="Resource" id="bs_main_p2"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("bs_turncoat"), ExtResource("bs_lance"), ExtResource("bs_fan")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+
 
 [sub_resource type="Resource" id="bs_main_p3"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("bs_rain"), ExtResource("bs_turncoat"), ExtResource("bs_lance")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_e"), ExtResource("l2_bsx_rampage_n"), ExtResource("l2_bsx_rampage_h"), ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_l2_e"), ExtResource("l2_bsx_rampage_l2_n"), ExtResource("l2_bsx_rampage_l2_h"), ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+
 
 [sub_resource type="Resource" id="bs_wings"]
 script = ExtResource("spawn_script")
@@ -95,3 +141,10 @@ bottom_patterns = Array[ExtResource("shot_script")]([])
 
 [node name="SwanUsurper" parent="."]
 trigger_phase = 99
+
+[node name="CounterSpell" parent="."]
+trigger_hp_ratio = -1.0
+
+[node name="BossRampage" type="Node" parent="."]
+script = ExtResource("boss_rampage")
+subtitle = "暴走 -鮮血の暴走-"

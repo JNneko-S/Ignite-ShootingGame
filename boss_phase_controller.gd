@@ -81,6 +81,8 @@ func current_phase() -> int:
 func _on_hp_changed() -> void:
 	if _hp.max_hp <= 0:
 		return
+	if counter_spell_active():
+		return # カウンター大技のあいだは、次の形態へ移らない(終わったら CounterSpell が確かめ直す)
 	var ratio := float(_hp.hp) / _hp.max_hp
 	# HPが一気に減ったときは、飛ばした段階も含めて、当てはまる最後の段階まで進める
 	var next := _index
@@ -268,7 +270,7 @@ func _connect_main_shooter() -> void:
 		_main_shooter.sequence_step_finished.connect(_on_attack_finished)
 
 func _on_attack_finished(_pattern : ShotPattern) -> void:
-	if phases.is_empty() or _in_interlude or _hp == null or _hp.hp <= 0:
+	if phases.is_empty() or _in_interlude or _hp == null or _hp.hp <= 0 or counter_spell_active():
 		return
 	var phase := phases[_index]
 	if not phase.summon_between_attacks or phase.summons_for_difficulty().is_empty():
@@ -334,7 +336,22 @@ func _interlude(phase : BossPhase) -> void:
 
 ## 段階が同じで、ボスが生きていて、まだ雑魚を待っているか
 func _interlude_alive(index : int) -> bool:
+	if counter_spell_active():
+		_in_interlude = false # カウンター大技が始まった: 雑魚の待ちはやめる(大技が終わったら、攻撃に戻す)
+		return false
 	return is_inside_tree() and _in_interlude and index == _index and _hp and _hp.hp > 0
+
+## ボスがカウンター大技(CounterSpell)のあいだか
+func counter_spell_active() -> bool:
+	var boss := get_parent()
+	return boss != null and boss.get_meta(&"counter_spell", false)
+
+## カウンター大技が終わったとき(CounterSpell が呼ぶ): 今のHPに合う形態にして、攻撃に戻す
+func resume_after_counter_spell() -> void:
+	_in_interlude = false
+	_set_boss_silent(false)
+	if _hp and _hp.max_hp > 0:
+		_on_hp_changed()
 
 ## ボスの全ての砲口を、黙らせる(true)・今の段階の攻撃を最初から撃ち直させる(false)
 func _set_boss_silent(silent : bool) -> void:

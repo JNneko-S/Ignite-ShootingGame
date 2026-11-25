@@ -1,15 +1,13 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cfswyb7s7ob1x"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="bullet"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="split_bullet"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="step"]
 
 [sub_resource type="Resource" id="m0"]
 script = ExtResource("step")
 duration = 2.2
 target_speed = 22.0
-speed_trans = 1
 
 [sub_resource type="Resource" id="m1"]
 script = ExtResource("step")
@@ -18,7 +16,7 @@ change_speed = false
 
 [resource]
 script = ExtResource("shot")
-bullet_scene = ExtResource("bullet")
+bullet_scene = ExtResource("split_bullet")
 start_delay = 0.55
 shot_count = 22
 interval = 0.5
@@ -26,9 +24,9 @@ loop = false
 bullet_count = 12
 aim_at_player = false
 base_angle = -12.0
-from_screen_top = true
-parallel_spacing = 30.0
 angle_wave_amplitude = -22.0
 angle_wave_shots = 9
+from_screen_top = true
+parallel_spacing = 30.0
 bullet_speed = 48.0
 motion = Array[ExtResource("step")]([SubResource("m0"), SubResource("m1")])

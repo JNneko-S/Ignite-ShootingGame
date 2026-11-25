@@ -20,13 +20,14 @@ func setup(params : IgniteParams, mask : int, radius : float, life : float, chai
 func _ready() -> void:
 	collision_layer = 0
 	collision_mask = _mask
-	monitorable = false
+	# イグナイトの発動は、当たり判定の処理の途中(弾に触れた合図など)から始まることがあるので、判定の設定は遅らせて行う
+	set_deferred(&"monitorable", false)
 
 	var shape_node := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
 	circle.radius = _radius
 	shape_node.shape = circle
-	add_child(shape_node)
+	add_child.call_deferred(shape_node)
 	area_entered.connect(_on_area_entered)
 
 	# 縮みながら薄くなって消える(判定も一緒に縮む)

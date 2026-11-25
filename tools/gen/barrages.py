@@ -182,10 +182,21 @@ def giga(path, bursts=2, ring=30):
     burst = P(bullet="E_Blue_Cian", bullet_count=ring, spread_angle=360.0, aim_at_player=False,
               shot_count=bursts, interval=0.14, rotate_per_shot=360.0 / ring / 2.0,
               bullet_speed=36.0, bullet_accel=48.0)
+    # 色々な弾で組み立てた超巨大弾: 燃える芯(カウンター弾)のまわりを、平らに回る輪が何重にも囲む。
+    # どれも同じ速さで、同じ瞬間に自機を狙って撃つので、1つの巨大な弾として迫ってくる(外の輪は、近づくほど少しふくらむ)
+    def layer(bullet, count, radius, spin, grow=0.0):
+        return P(bullet=bullet, muzzle_offsets=[CORE_POINT], start_delay=2.15, shot_count=1, pause=4.0,
+                 bullet_count=1, aim_at_player=True, bullet_speed=46.0, bullet_accel=12.0,
+                 ring3d_count=count, ring3d_radius=radius, ring3d_grow=grow, ring3d_max_radius=radius * 1.2,
+                 ring3d_spin=spin, ring3d_tilt=0.0, ring3d_depth_scale=0.0)
+    rings = [layer("E_Red_Normal", 30, 58.0, 28.0, 4.0),         # 外縁: 赤
+             layer("E_Blue_Cian", 20, 42.0, -55.0, 3.0),         # 青
+             layer("E_medium_flamy", 12, 27.0, 120.0),           # オレンジ
+             layer("E_Green_Curve", 6, 14.0, -200.0)]            # 黄色(曲がる弾の見た目は黄〜水色の玉)
     return reg(path, P(
-        bullet="E_Massive_Light_Green", muzzle_offsets=[CORE_POINT], start_delay=2.15, shot_count=1, pause=1.6,
-        bullet_count=1, aim_at_player=True, bullet_speed=52.0, bullet_accel=14.0, bullet_scale=4.5,
-        split_time=2.1, split_follow_direction=False, split=burst, with_=[gather]))
+        bullet="E_Giga", muzzle_offsets=[CORE_POINT], start_delay=2.15, shot_count=1, pause=4.0,
+        bullet_count=1, aim_at_player=True, bullet_speed=46.0, bullet_accel=12.0, bullet_scale=3.0,
+        split_time=2.6, split_follow_direction=False, split=burst, with_=[gather] + rings))
 
 
 giga(FIN + "fin_giga_core.tres")
@@ -375,6 +386,85 @@ reg(EX + "ig_bait_curtain.tres", P(
     with_=[P(bullet="E_Massive_Light_Green", start_delay=1.8, shot_count=1, interval=0.1, pause=3.3,
              bullet_count=1, aim_at_player=True, bullet_speed=50.0)]))
 
+# =============================================================== カウンター大技(各ステージのボス)
+# 残留弾の輪が広がって止まり、ゆっくり降りてくる(グレイズでゲージをためる材料)。予告線のあと、巨大なカウンター弾が撃ち出される。
+# 返して当てれば、ボスの最大HPを大きく削れる。返さなければ、しばらくして弾ける(弾の輪になる)
+COUNTER = "res://Resources/ShotPatterns/Counter/"
+
+
+def counter_attack(path, giants=3, spread=48.0, scale=2.6, speed=58.0, ratio=0.06, ring=26, rings=2):
+    residue = P(bullet="E_Pink_Medium", start_delay=0.2, shot_count=rings, interval=0.3, pause=6.0,
+                bullet_count=ring, spread_angle=360.0, aim_at_player=False, launch_speed_step=0.55, bullet_speed=120.0,
+                motion=[S(1.3, 0.0, trans="linear"), S(1.6, None), S(2.6, 46.0, turn="abs", trans="sine", ease="in")])
+    burst = P(bullet="E_Blue_Cian", bullet_count=20, spread_angle=360.0, aim_at_player=False,
+              shot_count=2, interval=0.16, rotate_per_shot=9.0, bullet_speed=40.0, bullet_accel=45.0)
+    return reg(path, P(
+        bullet="E_Massive_Light_Green", start_delay=2.2, warning_time=1.0, shot_count=giants, interval=0.45, pause=1.6,
+        soften_others=3.0, bullet_count=1, aim_at_player=True, random_shot_angle=spread * 0.5, random_seed=53,
+        bullet_scale=scale, counter_hp_ratio=ratio, bullet_speed=speed,
+        split_time=4.2, split_follow_direction=False, split=burst, with_=[residue]))
+
+
+# (カウンター大技は、下の「大技」= CounterSpell で撃つ。ボスの特別な状態として、決まったきっかけで始まる)
+
+# ---- 1面: 凍結(パーフェクトフリーズのアレンジ)
+reg(COUNTER + "sp1_freeze_scatter.tres", P(   # ばらまいた弾が一斉に凍って残り(グレイズの材料)、しばらくしてばらばらに動き出す
+    bullet="E_Pink_Medium", start_delay=0.2, shot_count=4, interval=0.12, pause=3.6,
+    bullet_count=16, spread_angle=360.0, aim_at_player=False, random_angle=180.0, random_speed_ratio=0.5, random_seed=61,
+    bullet_speed=135.0, motion=[S(1.0, None), S(0.15, 0.0, trans="linear"), S(3.2, None), S(1.4, 55.0, turn="random", trans="quad", ease="in")]))
+reg(COUNTER + "sp1_light_aim.tres", P(        # 軽い攻撃: 遅い自機狙いの3way
+    bullet="E_Magenta_Aim", start_delay=1.0, shot_count=1, pause=1.5,
+    bullet_count=3, spread_angle=24.0, aim_at_player=True, bullet_speed=115.0))
+reg(COUNTER + "sp1_frozen_giant.tres", P(     # カウンター弾: 凍った巨大弾。途中で止まってから、また迫ってくる
+    bullet="E_Massive_Light_Green", start_delay=2.0, warning_time=0.8, shot_count=1, pause=2.6,
+    aim_at_player=True, bullet_scale=2.4, counter_hp_ratio=0.06, bullet_speed=70.0,
+    motion=[S(1.2, None), S(0.3, 0.0), S(0.9, None), S(2.0, 75.0, turn="aim", trans="sine", ease="in")]))
+
+# ---- 2面(第三形態だけ): アリジゴク
+reg(COUNTER + "sp2_sand_slide.tres", P(       # 止まった砂の粒が、ゆっくり自機(すり鉢の底)へ滑り落ちてくる
+    bullet="E_Pink_Medium", start_delay=0.2, shot_count=2, interval=0.25, pause=2.4,
+    bullet_count=26, spread_angle=360.0, aim_at_player=False, launch_speed_step=0.4, random_angle=4.0, random_seed=67,
+    bullet_speed=135.0, motion=[S(1.2, 0.0, trans="linear"), S(1.0, None), S(4.5, 24.0, turn="aim", trans="sine", ease="in")]))
+reg(COUNTER + "sp2_light_line.tres", P(       # 軽い攻撃: 細い狙い線
+    bullet="E_Magenta_Aim", start_delay=1.2, shot_count=3, interval=0.12, pause=1.9,
+    bullet_count=1, aim_at_player=True, bullet_speed=150.0))
+reg(COUNTER + "sp2_jaw.tres", P(              # カウンター弾: 大顎。近くまで来て止まり、待ち構えてから食らいつく
+    bullet="E_Massive_Light_Green", start_delay=2.4, warning_time=0.8, shot_count=1, pause=3.0,
+    aim_at_player=True, bullet_scale=2.8, counter_hp_ratio=0.06, bullet_speed=95.0,
+    motion=[S(2.0, 0.0, trans="sine"), S(1.0, None), S(0.9, 170.0, turn="aim", trans="quad", ease="in")]))
+
+# ---- 3面: 大砂嵐(立体弾幕)
+for side, off, ang in (("L", (-210.0, 30.0), -62.0), ("R", (210.0, 90.0), 62.0)):
+    reg(COUNTER + "sp3_sand_wind_%s.tres" % side, P(   # 砂の竜巻: 立てて回る輪を重ねた柱。流れてきて止まり、回り続けてから、また流れる(ふちでグレイズ)
+        bullet="E_Pink_Medium", muzzle_offsets=[off], start_delay=0.3, shot_count=4, interval=0.24, pause=2.6,
+        aim_at_player=False, base_angle=ang, random_shot_angle=8.0, random_seed=71,
+        ring3d_count=7, ring3d_radius=12.0, ring3d_grow=7.0, ring3d_max_radius=26.0, ring3d_spin=330.0,
+        ring3d_tilt=80.0, ring3d_depth_scale=0.45, bullet_speed=70.0,
+        motion=[S(1.4, 0.0, trans="sine"), S(1.8, None), S(2.4, 75.0, trans="sine", ease="in")]))
+reg(COUNTER + "sp3_sand_swirl.tres", P(          # 舞い上がる砂: でんぐり返りながら回る砂の輪を、ボスから放つ
+    bullet="E_Bermuda", start_delay=0.8, shot_count=1, pause=2.8,
+    bullet_count=2, spread_angle=70.0, aim_at_player=True,
+    ring3d_count=8, ring3d_radius=10.0, ring3d_grow=12.0, ring3d_max_radius=34.0, ring3d_spin=200.0,
+    ring3d_tilt=55.0, ring3d_tumble=110.0, bullet_speed=62.0))
+reg(COUNTER + "sp3_light_fan.tres", P(        # 軽い攻撃: 遅い5way
+    bullet="E_Red_Normal", start_delay=1.0, shot_count=1, pause=2.0,
+    bullet_count=5, spread_angle=56.0, aim_at_player=True, bullet_speed=95.0))
+reg(COUNTER + "sp3_storm_giant.tres", P(      # カウンター弾: 風に乗って曲がりながら横切る巨大弾
+    bullet="E_Massive_Light_Green", muzzle_offsets=[(-200.0, 60.0), (200.0, 100.0)], start_delay=2.2, warning_time=0.6,
+    shot_count=1, pause=3.2, aim_at_player=True, mirror_curve_by_side=True, bullet_scale=2.3, counter_hp_ratio=0.05,
+    bullet_speed=60.0, motion=[S(3.0, None, av=18.0)]))
+
+# ---- 4面: 超巨大弾の大技(第二形態の半分)・ヒュドラの大技(倒れる直前)
+reg(COUNTER + "sp4_hydra_heads.tres", P(      # ヒュドラの首(ゆっくり)。頭はカウンター弾
+    bullet="E_Green_Curve", muzzle_offsets=[(0.0, 0.0), (-37.5, 9.7), (35.1, 9.0), (-157.8, -12.8), (156.2, -12.8)],
+    start_delay=0.6, shot_count=12, interval=0.08, pause=2.2, aim_at_player=True, aim_once_per_burst=True,
+    ring3d_count=3, ring3d_radius=10.0, ring3d_spin=300.0, ring3d_tilt=76.0, bullet_speed=110.0,
+    motion=[S(0.35, None, av=60.0)] + [S(0.7, None, av=(-60.0 if i % 2 == 0 else 60.0)) for i in range(5)],
+    with_=[P(bullet="E_Massive_Light_Green", muzzle_offsets=[(0.0, 0.0), (-37.5, 9.7), (35.1, 9.0), (-157.8, -12.8), (156.2, -12.8)],
+             start_delay=0.55, shot_count=1, interval=0.96, pause=2.2, aim_at_player=True, aim_once_per_burst=True,
+             bullet_scale=1.8, counter_hp_ratio=0.02, bullet_speed=110.0,
+             motion=[S(0.35, None, av=60.0)] + [S(0.7, None, av=(-60.0 if i % 2 == 0 else 60.0)) for i in range(5)])]))
+
 # =============================================================== 中枢防衛艦(全難易度)
 
 reg(GD + "g_cross_spiral.tres", P(
@@ -489,6 +579,10 @@ for _f in ["g_cross_spiral", "g_star_burst", "g_scissor", "g_gatling_sweep"]:
 for _f in ["g_wing_needle", "g_wing_arc", "g_wing_rain", "g_stack_flak", "g_stack_fountain", "g_stack_mine"]:
     ALL[GD + _f + ".tres"]["yields"] = True
 ALL[BS + "bs_wing_winder.tres"]["interval"] = 0.07
+
+
+# ---- ラスボスの超巨大弾も、カウンター弾にする
+ALL[FIN + "fin_giga_core.tres"]["counter_hp_ratio"] = 0.08
 
 
 if __name__ == "__main__":

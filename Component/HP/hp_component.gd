@@ -9,6 +9,14 @@ signal is_dead #自身が死んだ時に呼び出される
 
 var _dead : bool = false #死亡済みか(is_dead を二重に出さないためのフラグ)
 
+## カウンター大技のあいだ true: ふつうのダメージは 1 に固定する(Counter Pass のときだけ、そのまま入る)
+var damage_lock : bool = false
+## 次の1回だけ、Damage Lock を素通りする(カウンター弾を返して当てたとき)
+var counter_pass : bool = false
+## 0 より大きければ、HPはこれより下がらない(倒れる直前で止める)。下がろうとしたら floor_reached を出す
+var hp_floor : int = 0
+signal floor_reached
+
 func _set_hp(new_hp : int) -> void:
 	if _dead:
 		return
@@ -23,4 +31,11 @@ func restore_hp() -> void:
 	hp = max_hp #初期化用の関数
 
 func apply_damage(amount : int) -> void:
+	if damage_lock and not counter_pass:
+		amount = mini(amount, 1)
+	counter_pass = false
+	if hp_floor > 0 and hp - amount < hp_floor:
+		hp = hp_floor
+		floor_reached.emit()
+		return
 	hp -= amount

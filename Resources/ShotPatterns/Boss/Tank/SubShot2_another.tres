@@ -12,6 +12,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_uhcpt")
 bullet_scene = ExtResource("1_48ea2")
+also_another = null
 shot_count = 24
 bullet_count = 5
 spread_angle = 100.0

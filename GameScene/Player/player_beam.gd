@@ -62,7 +62,12 @@ func fire(helix : bool, half_width : float) -> void:
 	_helix = helix
 	_half_width = maxf(half_width, 4.0)
 
+## 自機が回っていても(エンディングの脱出で下を向くなど)、ビームはいつも上へ伸ばす(自機のショットはいつも上へ飛ぶので、それに合わせる)
+func _process(_delta : float) -> void:
+	global_rotation = 0.0
+
 func _physics_process(delta : float) -> void:
+	global_rotation = 0.0
 	_time += delta
 	_since_fire += delta
 	var target := 1.0 if _since_fire < HOLD_TIME else 0.0

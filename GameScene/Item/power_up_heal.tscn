@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://power_up_item.gd" id="1_item"]
+
+[node name="PowerUp_HEAL" type="Node2D"]
+script = ExtResource("1_item")
+kind = 4
+magnet_radius = 2000.0
+max_lifetime = 0.0

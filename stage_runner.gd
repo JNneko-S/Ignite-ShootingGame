@@ -1,5 +1,6 @@
 extends Node
 class_name StageRunner
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## ステージのタイムラインを実行する。ステージのシーンに子ノードとして置く。
 ##
 ## 使い方:
@@ -93,6 +94,10 @@ func _ready() -> void:
 	if DebugTools.pending_start_time > 0.0:
 		debug_start_time = DebugTools.pending_start_time
 		DebugTools.pending_start_time = 0.0
+	if _RunState.checkpoint_restart:
+		_RunState.checkpoint_restart = false
+		if stage:
+			_checkpoint_restarted.call_deferred()
 	if autostart:
 		start()
 
@@ -225,6 +230,7 @@ func _physics_process(delta : float) -> void:
 		_finished = true
 		if debug_log:
 			print("[Stage] クリア t=%.1f" % stage_time)
+		_RunState.clear_checkpoint()
 		stage_cleared.emit()
 
 ## ステージの最後のボス(Boss Time Bonus の敵)を倒した: 残っている敵は去らせて、ボスの爆発が終わったらクリアにする
@@ -271,6 +277,7 @@ func _on_final_boss_died(_boss : Enemy) -> void:
 	await get_tree().create_timer(final_boss_clear_delay, false).timeout
 	if debug_log:
 		print("[Stage] クリア(最後のボスを撃破) t=%.1f" % stage_time)
+	_RunState.clear_checkpoint()
 	stage_cleared.emit()
 
 func _enemies_alive() -> int:
@@ -522,6 +529,33 @@ func kills_of(tag : String) -> int:
 
 # ---------------------------------------------------------------- 待機(中ボス・ボス)
 
+## 今の待機(begin_wait)の Tag
+var _wait_tag : String = ""
+
+## コンティニューの救済: 決まった待機(中ボスなど)を越えたら、ここから始め直せるように覚える
+func _record_checkpoint() -> void:
+	if stage == null or stage.continue_checkpoint_tag == "" or _wait_tag != stage.continue_checkpoint_tag:
+		return
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	_RunState.checkpoint_scene = scene.scene_file_path
+	_RunState.checkpoint_time = stage_time + 0.1 # 越えた待機のイベントより、少しだけ後
+	if debug_log:
+		print("[Stage] 再開の場所を記録 t=%.1f" % _RunState.checkpoint_time)
+
+## コンティニューで、記録したところから始め直した: 難易度によって子機を付けて、知らせる
+func _checkpoint_restarted() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var player := get_tree().get_first_node_in_group("player") as Player
+	if player == null:
+		return
+	if DifficultyTuning.chosen() <= stage.checkpoint_options_max_difficulty:
+		while player.options.size() < stage.checkpoint_options and player.add_option():
+			pass
+	FloatingText.spawn(get_tree(), player.global_position + Vector2(0, -60), "RESTART", Color(1.0, 0.85, 0.5), 16)
+
 func begin_wait(tag : String, timeout : float, include_trains : bool = false) -> void:
 	_wait_group = _tag_group(tag) if tag != "" else "enemy"
 	_wait_trains = include_trains
@@ -533,6 +567,7 @@ func begin_wait(tag : String, timeout : float, include_trains : bool = false) ->
 	_wait_timeout = timeout
 	_wait_elapsed = 0.0
 	_waiting = true
+	_wait_tag = tag
 	if debug_log:
 		print("[Stage] 待機 group=%s timeout=%.1f" % [_wait_group, timeout])
 
@@ -597,6 +632,7 @@ func _update_wait(delta : float) -> void:
 		_waiting = false
 		if debug_log:
 			print("[Stage] 待機終了 (%s)" % ("全滅" if cleared else "タイムアウト"))
+		_record_checkpoint()
 
 # ---------------------------------------------------------------- スクロール・演出
 

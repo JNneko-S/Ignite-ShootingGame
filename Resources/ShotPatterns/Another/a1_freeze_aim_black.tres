@@ -24,6 +24,7 @@ speed_ease = 0
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_stop")
+also_another = null
 another_made = true
 start_delay = 0.4
 shot_count = 5

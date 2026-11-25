@@ -13,6 +13,7 @@ target_speed = 25.0
 [sub_resource type="Resource" id="Resource_jpycg"]
 script = ExtResource("3_igk1s")
 bullet_scene = ExtResource("4_fj081")
+also_another = null
 bullet_count = 12
 spread_angle = 360.0
 aim_at_player = false
@@ -22,6 +23,7 @@ bullet_accel = 40.0
 [resource]
 script = ExtResource("3_igk1s")
 bullet_scene = ExtResource("1_03wkm")
+also_another = null
 another_made = true
 start_delay = 1.0
 pause = 2.6

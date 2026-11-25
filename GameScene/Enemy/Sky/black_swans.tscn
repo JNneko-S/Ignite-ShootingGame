@@ -17,6 +17,12 @@
 [ext_resource type="Script" uid="uid://hlk5r7h3h1bl" path="res://Component/Boss/States/boss_dive_state.gd" id="st_dive"]
 [ext_resource type="Script" uid="uid://ds7744w0iej0f" path="res://Component/Boss/States/boss_shoot_state.gd" id="st_shoot"]
 [ext_resource type="Script" path="res://Component/Death/crash_fall.gd" id="crash_fall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_wave_e.tres" id="l2_sw_wave_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_wave_n.tres" id="l2_sw_wave_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_wave_h.tres" id="l2_sw_wave_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_ring_e.tres" id="l2_sw_ring_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_ring_n.tres" id="l2_sw_ring_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/sw_ring_h.tres" id="l2_sw_ring_h"]
 
 [sub_resource type="RectangleShape2D" id="ram_shape"]
 size = Vector2(110, 78)
@@ -66,6 +72,10 @@ hp = 5000
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("p_5way")])
 autostart = false
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_sw_wave_e"), ExtResource("l2_sw_wave_n"), ExtResource("l2_sw_wave_h"), ExtResource("l2_sw_ring_e"), ExtResource("l2_sw_ring_n"), ExtResource("l2_sw_ring_h")])
+
 
 [node name="CannonL" parent="." index="9" unique_id=1820000007 instance=ExtResource("shooter_scene")]
 position = Vector2(-22, 26)

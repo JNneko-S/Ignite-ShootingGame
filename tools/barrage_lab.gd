@@ -1,6 +1,7 @@
 extends Node
 ## 開発用: 弾幕を頭なし(--headless)で撃たせて、弾の数・隙間・よけやすさを測る。
 ##   godot --headless --path . --fixed-fps 60 res://tools/barrage_lab.tscn -- <設定の .json>
+## "loop": 2 で、二周目の弾幕を撃たせる。"only_shooters": ["名前", …] で、ボスのシーン(boss_scene)の砲口を絞る
 ## 設定(JSON): {"tests": [{"name": "…", "patterns": ["res://…tres"], "sequence": [], "difficulty": 2,
 ##   "chosen": 2, "duration": 30, "origin": [240, 110], "zako": false, "moving": 0}]}
 ##   difficulty … 弾幕の調整に使う難易度(DifficultyTuning.level)。chosen … 選んだ難易度(限定弾幕の判定)
@@ -69,6 +70,8 @@ func _next_test() -> void:
 	DifficultyTuning.level = int(_test.get("difficulty", 2))
 	DifficultyTuning.chosen_level = int(_test.get("chosen", _test.get("difficulty", 2)))
 	HazardRank.active = false
+	RunConfig.has_selection = false
+	RunConfig.loop = int(_test.get("loop", 1)) # 2 なら二周目の弾幕(ShooterPhase / EnemyShooter の二周目の設定)
 	DifficultyTuning.hard_plus = bool(_test.get("hard_plus", false))
 	DifficultyTuning._cache.clear()
 	_root = Node2D.new()
@@ -105,6 +108,8 @@ func _next_test() -> void:
 			if not node is EnemyShooter:
 				continue
 			var src := node as EnemyShooter
+			if _test.has("only_shooters") and not String(src.name) in _test["only_shooters"]:
+				continue
 			var copy : EnemyShooter = shooter_scene.instantiate()
 			copy.autostart = false
 			copy.only_when_on_screen = false
@@ -115,6 +120,8 @@ func _next_test() -> void:
 			_root.add_child(copy)
 			if copy.has_phases():
 				copy.set_phase(phase_index)
+			elif src.loop2_replace and RunConfig.second_round():
+				copy.set_patterns(src.loop2_patterns, src.loop2_sequence, false, true)
 			elif phase_index == 0 or _test.get("static_all_phases", true):
 				copy.set_patterns(src.patterns, src.sequence)
 		proto.free()
@@ -145,7 +152,7 @@ func _next_test() -> void:
 	var sequence : Array[ShotPattern] = []
 	for path in _test.get("sequence", []):
 		sequence.append(load(path))
-	_shooter.set_patterns(patterns, sequence)
+	_shooter.set_patterns(patterns, sequence, false, bool(_test.get("all_layers", false)))
 
 ## node の、root から見た位置(ツリーの外にあるシーンの中で、親をたどって足す)
 func _local_pos(node : Node, root_node : Node) -> Vector2:

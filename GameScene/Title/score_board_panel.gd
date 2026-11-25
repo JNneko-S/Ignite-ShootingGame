@@ -131,6 +131,8 @@ func _show_detail(entry : Dictionary) -> void:
 		format_score(int(entry.get("score", 0)))]
 	set_color(_detail[1], _result_color(entry))
 	_detail[2].text = "被弾 %d    ボム %d    撃破 %d" % [int(entry.get("hits", 0)), int(entry.get("bombs", 0)), int(entry.get("kills", 0))]
+	if entry.has("play_time"):
+		_detail[2].text += "    TIME %s" % _format_time(float(entry["play_time"]))
 	_detail[3].text = "RATE  %.1f   ( %s )" % [ScoreBoard.rate_value(entry), ScoreBoard.grade(entry)]
 	set_color(_detail[3], accent_color)
 
@@ -155,3 +157,8 @@ static func format_score(value : int) -> String:
 		result = "," + digits.right(3) + result
 		digits = digits.left(digits.length() - 3)
 	return ("-" if value < 0 else "") + digits + result
+
+## 秒を「分:秒.百分の一」の文字にする(クリアタイム)
+func _format_time(seconds : float) -> String:
+	var total := maxf(seconds, 0.0)
+	return "%d:%05.2f" % [int(total / 60.0), fmod(total, 60.0)]

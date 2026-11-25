@@ -24,6 +24,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [sub_resource type="Resource" id="Resource_gyea8"]
 script = ExtResource("2_85xu1")
 bullet_scene = ExtResource("b_stop")
+also_another = null
 loop = false
 pause = 3.0
 bullet_count = 5
@@ -37,6 +38,7 @@ metadata/_custom_type_script = "uid://ct8u3n22w477n"
 [resource]
 script = ExtResource("2_85xu1")
 bullet_scene = ExtResource("b_split")
+also_another = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 bullet_count = 2

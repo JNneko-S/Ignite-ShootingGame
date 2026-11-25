@@ -1,5 +1,6 @@
 extends Node
 class_name ScoreSystem
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## スコアの計算。ステージのシーンに置く("score_system" グループに入る)。
 ##
 ## 点数:
@@ -248,6 +249,9 @@ func current_ignite_multiplier() -> float:
 # ---------------------------------------------------------------- 撃破
 
 ## Enemy._die から呼ばれる
+## 二周目(ANOTHER 以外)で、倒した敵が一周目より多く落とすスコアアイテムの数(最小, 最大)
+const LOOP2_EXTRA_ITEMS := Vector2i(2, 5)
+
 func on_enemy_killed(enemy : Enemy) -> void:
 	kill_count += 1
 	if enemy.boss_reach_time < 0.0 and not enemy.is_midboss:
@@ -275,7 +279,10 @@ func on_enemy_killed(enemy : Enemy) -> void:
 		points *= reflect_kill_multiplier
 	# 点はその場で入らず、アイテムになって落ちる(種類は敵による。大きい敵ほど数が多い)
 	var kind := _kill_item_kind(enemy, reward)
-	spawn_items(enemy.global_position, roundi(points), _kill_item_count(kind, reward), 1.0, kind)
+	var item_count := _kill_item_count(kind, reward)
+	if RunConfig.second_round():
+		item_count += randi_range(LOOP2_EXTRA_ITEMS.x, LOOP2_EXTRA_ITEMS.y) # 二周目は、アイテムが多く出る(点の合計は同じ)
+	spawn_items(enemy.global_position, roundi(points), item_count, 1.0, kind)
 	# イグナイトの発動中に倒すと、さらにボーナスのアイテムが出る敵がいる
 	if reward.ignite_kill_bonus > 0 and ignite_multiplier > 1.0:
 		spawn_items(enemy.global_position, roundi(reward.ignite_kill_bonus * ignite_multiplier),
@@ -330,8 +337,11 @@ func _drop_boss_items(at : Vector2, bonus : int) -> void:
 	var ignite_uses := game_manager.ignite_activation_count if game_manager else 0
 	if ignite_uses > 0:
 		items.append_array(spawn_items(at, boss_large_item_value * ignite_uses, ignite_uses, 1.8, ScoreItem.Kind.LARGE))
-	if boss_small_items > 0:
-		items.append_array(spawn_items(at, boss_small_item_value * boss_small_items, boss_small_items, 2.4))
+	var small_items := boss_small_items
+	if RunConfig.second_round():
+		small_items += randi_range(LOOP2_EXTRA_ITEMS.x, LOOP2_EXTRA_ITEMS.y)
+	if small_items > 0:
+		items.append_array(spawn_items(at, boss_small_item_value * small_items, small_items, 2.4))
 	await get_tree().create_timer(boss_drop_collect_delay).timeout
 	if not is_inside_tree():
 		return
@@ -560,7 +570,11 @@ func _on_stage_cleared() -> void:
 		lines.append(["IGNITE x%d" % uses, uses * ignite_use_bonus_each])
 	var total := 0
 	for line in lines:
-		total += int(line[1])
+		if line[1] is int:
+			total += int(line[1])
+	# クリアタイム(このステージと、出撃してからの合計。点にはならない)
+	lines.append(["TIME", _RunState.format_time(_RunState.stage_clock)])
+	lines.append(["TOTAL TIME", _RunState.format_time(_RunState.run_clock)])
 	add_points(total)
 	stage_bonus.emit(lines, total)
 	save_hi_score()

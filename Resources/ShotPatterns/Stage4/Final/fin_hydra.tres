@@ -80,6 +80,7 @@ angular_velocity = -72.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
+also_another = null
 start_delay = 0.35
 interval = 1.05
 aim_once_per_burst = true
@@ -91,6 +92,7 @@ motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubRe
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 15

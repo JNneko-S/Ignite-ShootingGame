@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cdvvc86bg801e"]
 
 [ext_resource type="AudioStream" uid="uid://db16gftfe8xra" path="res://Assets/Sounds/Music/AS_1609786_ゲーム／ループ・疾走感あるバトルBGM.mp3" id="10_32ul0"]
+[ext_resource type="AudioStream" uid="uid://b7nyt2vw5sw71" path="res://Assets/Sounds/Music/AS_1059216_◣WARNING！攻撃的で激しいロック◥.mp3" id="10_x3par"]
 [ext_resource type="Script" uid="uid://cyfaycsma447k" path="res://Component/Stage/nucleo_ambience.gd" id="ambience"]
 [ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
 [ext_resource type="Script" uid="uid://b0dwis407fneo" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
@@ -82,7 +83,7 @@ depth_scales = Array[float]([0.7, 1.0, 0.7, 0.7, 0.7, 0.7])
 
 [node name="AudioStreamPlayer" parent="." index="11" unique_id=1308156288]
 stage_music = ExtResource("music_stage4")
-boss_music = ExtResource("10_32ul0")
+boss_music = ExtResource("10_x3par")
 boss_music_by_name = Dictionary[String, AudioStream]({
 "最終兵器 ヌクレオ": ExtResource("music_final")
 })

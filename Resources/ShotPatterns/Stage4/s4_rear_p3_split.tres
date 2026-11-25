@@ -18,6 +18,7 @@ speed_trans = 4
 [sub_resource type="Resource" id="red_column"]
 script = ExtResource("3_qqho1")
 bullet_scene = ExtResource("4_v2f4o")
+also_another = null
 shot_count = 5
 interval = 0.16
 loop = false
@@ -32,6 +33,7 @@ bullet_accel = 260.0
 [sub_resource type="Resource" id="yellow_side"]
 script = ExtResource("3_qqho1")
 bullet_scene = ExtResource("1_g105a")
+also_another = null
 bullet_count = 2
 spread_angle = 180.0
 aim_at_player = false
@@ -46,6 +48,7 @@ split_follow_direction = false
 [resource]
 script = ExtResource("3_qqho1")
 bullet_scene = ExtResource("1_g105a")
+also_another = null
 start_delay = 0.4
 pause = 2.6
 aim_at_player = false

@@ -1,5 +1,6 @@
 extends RefCounted
 class_name ScoreBoard
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## スコアボード(過去 MAX_ENTRIES 回のプレイの記録)。user://scores.cfg に保存する。シーンを切り替えても残る(static)。
 ##
 ## 記録するとき:
@@ -76,6 +77,7 @@ static func finish_run(tree : SceneTree, result : String) -> bool:
 			"cleared": result != FAILED,
 			"result": result,
 			"loop": RunConfig.loop,
+			"play_time": _RunState.run_clock, # クリアタイム(出撃してからの、プレイしている時間の合計。秒)
 		}
 		record(entry)
 		Achievements.on_run_recorded(entry) # RATE A の回数と、ANOTHER の解禁

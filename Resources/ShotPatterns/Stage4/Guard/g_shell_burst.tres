@@ -13,6 +13,7 @@ speed_trans = 4
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
+also_another = null
 bullet_count = 12
 spread_angle = 360.0
 aim_at_player = false
@@ -22,6 +23,7 @@ bullet_accel = 40.0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 start_delay = 0.4
 shot_count = 2
 interval = 0.6

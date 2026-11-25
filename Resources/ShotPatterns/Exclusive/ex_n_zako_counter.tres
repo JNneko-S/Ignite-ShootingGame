@@ -24,6 +24,7 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 1
 max_difficulty = 1
+also_another = null
 replaces_others = true
 skip_auto_tuning = true
 start_delay = 1.0

@@ -21,6 +21,14 @@ const BOMBER := preload("res://GameScene/Enemy/Stage4/bomber_kai.tscn")
 const M_STRIKE := preload("res://Resources/MovePatterns/Stage4/m4_scramble_strike.tres")
 const M_HOLD := preload("res://Resources/MovePatterns/Stage4/m4_scramble_hold.tres")
 const M_BOMBER := preload("res://Resources/MovePatterns/Stage4/m4_bomber_down.tres")
+## 裏ボス Union(Bエンド)。重い(3D のモデル)ので、Bエンドのときだけ、ラスボスを倒したところで読み込む
+const UNION_SCENE := "res://GameScene/Enemy/SECRET/union_boss.tscn"
+const WARNING_SCENE := preload("res://GameScene/UI/warning_display.tscn")
+const _BlackWave := preload("res://GameScene/Effect/black_wave.gd")
+const ROAR_SOUNDS : Array[AudioStream] = [
+	preload("res://Assets/Sounds/Explosive/AS_833264_フィルターが掛かったような爆破音.mp3"),
+	preload("res://Assets/Sounds/Explosive/AS_1373492_爆発／攻撃／破壊／爆破／ドカーン.mp3"),
+]
 
 ## 脱出(ステージの最初まで戻る)にかける時間(秒)
 @export var escape_time : float = 40.0
@@ -30,6 +38,8 @@ const M_BOMBER := preload("res://Resources/MovePatterns/Stage4/m4_bomber_down.tr
 @export var quake_interval : float = 0.18
 ## タイトル画面(ゲームクリアのあと)
 @export_file("*.tscn") var title_scene : String = "res://title.tscn"
+## 裏ボス Union 戦の曲
+@export var union_music : AudioStream = preload("res://Assets/Sounds/Music/AS_1259553_テンポ速めのメタルドラムンベース.mp3")
 
 var _runner : StageRunner
 var _player : Player
@@ -45,6 +55,10 @@ var _cloud_speed : float = 0.0
 var _cables : Array[Line2D] = []
 var _anchors : Array[Node2D] = []
 var _cable_reach : float = 0.0
+var _union_scene : PackedScene
+## 裏ボス戦が終わった(勝ったら true。負けたら false で、A エンドで終える)
+signal union_battle_over(won : bool)
+var _union_over : bool = false
 
 func _ready() -> void:
 	_connect.call_deferred()
@@ -67,13 +81,31 @@ func _process(delta : float) -> void:
 
 func _on_final_boss_defeated() -> void:
 	var gm := get_tree().current_scene as GameManager
-	_b_end = gm != null and gm.end_b_conditions_met()
+	# Bエンド(裏ボス Union)は、HARD と ANOTHER だけ。EASY・NORMAL は、条件を満たしても A エンド
+	_b_end = (gm != null and gm.end_b_conditions_met() and DifficultyTuning.chosen() >= 2) or DebugTools.force_b_end
+	DebugTools.force_b_end = false
 	_player = get_tree().get_first_node_in_group("player") as Player
+	if DebugTools.union_direct:
+		# デバッグ: 裏ボス Union 戦へすぐ(ラスボスの最期・緊急事態・脱出を飛ばす)
+		DebugTools.union_direct = false
+		_b_end = true
+		_union_scene = load(UNION_SCENE) as PackedScene
+		_quiet_alarm()
+		if gm and gm.ignite:
+			gm.ignite.value = gm.ignite.max_value() # 脱出のあとと同じく、ゲージは最大
+			gm.ignite._update(true)
+		if is_instance_valid(_player):
+			_player.rotation_degrees = 180.0 # 脱出のあとと同じ向き(回収の場面で、上を向き直す)
+		await get_tree().create_timer(1.5, false).timeout
+		await _pickup()
+		return
 	# 1. ラスボスの最期を待つ
 	var finale : NucleoFinale = null
 	for node in get_tree().current_scene.find_children("*", "", true, false):
 		if node is NucleoFinale:
 			finale = node
+	if _b_end:
+		_union_scene = load(UNION_SCENE) as PackedScene # 裏ボスを先に読み込んでおく(画面が揺れている今のうちに)
 	if finale:
 		await finale.finished
 	else:
@@ -83,6 +115,20 @@ func _on_final_boss_defeated() -> void:
 	await _pickup()
 
 # ---------------------------------------------------------------- 2. 緊急事態
+
+## 警報の画面と音を、鳴らさずに用意する(緊急事態を飛ばしたとき。回収の場面が、これを静める)
+func _quiet_alarm() -> void:
+	_alarm_layer = CanvasLayer.new()
+	_alarm_layer.layer = 9
+	add_child(_alarm_layer)
+	_alarm_rect = ColorRect.new()
+	_alarm_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_alarm_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_alarm_rect.color = Color(0.9, 0.05, 0.02, 0.0)
+	_alarm_layer.add_child(_alarm_rect)
+	_siren = AudioStreamPlayer.new()
+	_siren.volume_db = -60.0
+	add_child(_siren)
 
 func _emergency() -> void:
 	var tree := get_tree()
@@ -256,31 +302,257 @@ func _pickup() -> void:
 	await fade_white.finished
 	await tree.create_timer(1.0, false).timeout
 	_set_banner()
-	# ノーコンティニューの一周目なら、二周目(Another Round)へ: 自機と点数を覚えて、タイトルで合図を見せてから一面へ
+	_enter_second_loop_if_allowed()
+	_to_staff_roll()
+
+## ノーコンティニューの一周目なら、二周目(Another Round)へ: 自機と点数を覚えて、タイトルで合図を見せてから一面へ(A エンド)
+func _enter_second_loop_if_allowed() -> void:
 	if RunConfig.can_enter_second_loop():
-		StageCarry.save(tree)
+		StageCarry.save(get_tree())
 		RunConfig.loop = 2
 		if HazardRank.active:
 			HazardRank.start_black_loop() # ANOTHER の二周目は BLACK ANOTHER
 		TitleScreen.another_round_pending = true
-	_to_staff_roll()
 
-## Bエンド: 回収されようとした瞬間に、変化が起きる。
-## (中身はこれから決める。今は、母艦が赤く明滅して、アームがちぎれ、画面が暗転して止まる)
+## Bエンド: 回収されようとした瞬間、画面の横から裏ボス Union が母艦を貫いて壊す。
+## Union は弧を描いて戻り、画面の上の真ん中で止まる → 黒い WARNING → 口を開いて叫ぶ(画面が揺れ、黒い波動) → 裏ボス戦。
+## 倒すと、クリア(ボーナスの集計 → スタッフロール)
 func _b_end_event(mothership : Node2D) -> void:
-	Achievements.unlock("b_end")
 	var tree := get_tree()
-	var flicker := create_tween().set_loops(8)
+	var view := CameraView.visible_rect(get_tree().current_scene as CanvasItem)
+	var union := _spawn_union()
+	if union == null:
+		push_warning("EndingSequence: Union を出せませんでした")
+		await _plain_b_end()
+		return
+	Achievements.on_hidden_boss_appeared()
+	var ub := union.get_node_or_null("UnionBoss")
+	var uview := union.get_node_or_null("UnionView")
+	var height := mothership.global_position.y + 10.0
+	union.global_position = Vector2(view.position.x - 240.0, height)
+	# 一瞬の静けさ: 母艦が赤く明滅する
+	var flicker := create_tween().set_loops(4)
 	flicker.tween_property(mothership, "modulate", Color(2.0, 0.3, 0.3), 0.06)
 	flicker.tween_property(mothership, "modulate", Color.WHITE, 0.06)
+	await tree.create_timer(0.6, false).timeout
+	# 1. 横から突っ込んで、母艦を貫く
+	var dash := create_tween()
+	dash.tween_property(union, "global_position:x", view.end.x + 260.0, 0.6).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN_OUT)
+	await tree.create_timer(0.3, false).timeout
+	_destroy_mothership(mothership)
+	await dash.finished
+	await tree.create_timer(0.5, false).timeout
+	# 2. 弧を描いて戻ってきて、画面の上の真ん中で止まる
+	var home := Vector2(view.get_center().x, view.position.y + view.size.y * 0.24)
+	var from := Vector2(view.end.x + 200.0, view.position.y + view.size.y * 0.55)
+	var bend := Vector2(view.end.x - view.size.x * 0.05, view.position.y - view.size.y * 0.15)
+	union.global_position = from
+	if uview:
+		uview.play(&"Awake", 0.1)
+	var arc := create_tween()
+	arc.tween_method(func(t : float) -> void:
+		if is_instance_valid(union):
+			union.global_position = from.lerp(bend, t).lerp(bend.lerp(home, t), t), 0.0, 1.0, 1.8)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await arc.finished
+	# 3. 黒い WARNING
+	await _black_warning()
+	# 4. 口を開いて、叫ぶ
+	await _roar(union, uview)
+	# 5. 裏ボス戦。負けたら(残機が尽きたら)、ゲームオーバーにせず A エンドで終える
+	var gm := get_tree().current_scene as GameManager
+	if gm:
+		gm.game_over_handler = _on_union_lost.bind(union)
+	union.died.connect(func(_e : Enemy) -> void:
+		if not _union_over:
+			_union_over = true
+			union_battle_over.emit(true), CONNECT_ONE_SHOT)
+	_start_union_fight(union, ub, home)
+	var won : bool = await union_battle_over
+	if gm:
+		gm.game_over_handler = Callable()
+	if won:
+		Achievements.unlock("b_end")
+		Achievements.on_hidden_boss_defeated()
+		await tree.create_timer(5.0, false).timeout
+	else:
+		await tree.create_timer(2.5, false).timeout
+	if _runner:
+		_runner.stage_cleared.emit()
+	await tree.create_timer(4.0, false).timeout
+	var white := ColorRect.new()
+	white.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	white.set_anchors_preset(Control.PRESET_FULL_RECT)
+	white.color = Color(1.0, 1.0, 1.0, 0.0)
+	_alarm_layer.layer = 90
+	_alarm_layer.add_child(white)
+	var fade_white := create_tween()
+	fade_white.tween_property(white, "color:a", 1.0, 2.0)
+	await fade_white.finished
 	await tree.create_timer(1.0, false).timeout
+	_set_banner()
+	if not won:
+		_enter_second_loop_if_allowed() # 負けたら A エンドと同じ
+	_to_staff_roll()
+
+## 裏ボス戦で負けた(残機が尽きた): Union は去り、ゲームオーバーにはせず、A エンドとしてクリアにする
+func _on_union_lost(union : Enemy) -> void:
+	if _union_over:
+		return
+	_union_over = true
+	var tree := get_tree()
+	EnemyShooter.hold_fire(60.0)
+	tree.call_group("enemy_bullet", "vanish", 0.2)
+	if is_instance_valid(union) and not union._is_dead:
+		var hp := union.get_node_or_null("HPComponent") as HPComponent
+		if hp:
+			hp.damage_lock = true
+		for node in union.find_children("*", "", true, false):
+			if node is EnemyShooter:
+				(node as EnemyShooter).suppressed = true
+				(node as EnemyShooter).stop()
+		var ub := union.get_node_or_null("UnionBoss")
+		if ub:
+			ub.set_physics_process(false)
+		var leave := union.create_tween().set_parallel(true)
+		leave.tween_property(union, "global_position:y", union.global_position.y - 520.0, 2.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		leave.tween_property(union, "modulate:a", 0.0, 2.2)
+		leave.chain().tween_callback(union.queue_free)
+	union_battle_over.emit(false)
+
+## Union を出す(StageRunner から、ボスとして出す。HP のゲージが出る)
+func _spawn_union() -> Enemy:
+	if _union_scene == null:
+		_union_scene = load(UNION_SCENE) as PackedScene
+	if _union_scene == null or _runner == null:
+		return null
+	var event := SpawnEvent.new()
+	event.enemy_scene = _union_scene
+	event.is_boss = true
+	event.boss_name = "UNION"
+	event.boss_phase_thresholds = [0.66, 0.33]
+	event.tag = "union"
+	var spawned : Array[Enemy] = []
+	var grab := func(enemy : Enemy, _boss_name : String, _t : Array[float]) -> void: spawned.append(enemy)
+	_runner.boss_spawned.connect(grab)
+	_runner.spawn(event, 0)
+	_runner.boss_spawned.disconnect(grab)
+	if spawned.is_empty():
+		for node in get_tree().get_nodes_in_group("enemy"):
+			if node is Enemy and node.scene_file_path == UNION_SCENE:
+				spawned.append(node)
+	if spawned.is_empty():
+		return null
+	var union := spawned[0]
+	# ボスの登場の演出(ふつうのボス用)は使わない
+	for child in union.get_children():
+		if child is BossEntranceFx:
+			child.queue_free()
+	return union
+
+## 母艦が貫かれて、爆発しながら墜ちていく。アームはちぎれる
+func _destroy_mothership(mothership : Node2D) -> void:
+	var tree := get_tree()
 	for cable in _cables:
 		cable.visible = false
 	_cables.clear()
-	ScreenFlash.play(tree, 0.8)
+	ScreenFlash.play(tree, 1.0)
+	HitStop.apply(tree, 0.15)
 	var camera := StageCamera.of(get_tree().current_scene)
 	if camera:
-		camera.shake(10.0, 0.8)
+		camera.shake(14.0, 1.2)
+	var at := mothership.global_position
+	Explosion.spawn(tree, Explosion.WAVE, at, 2.6)
+	for i in 6:
+		Explosion.spawn(tree, Explosion.EXPLOSIVE, at + Vector2(randf_range(-90.0, 90.0), randf_range(-30.0, 30.0)), randf_range(1.2, 2.0))
+	var fall := create_tween().set_parallel(true)
+	fall.tween_property(mothership, "global_position", at + Vector2(-40.0, 520.0), 2.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.tween_property(mothership, "rotation_degrees", -28.0, 2.6)
+	fall.tween_property(mothership, "modulate", Color(0.35, 0.2, 0.2, 0.0), 2.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.chain().tween_callback(mothership.hide)
+	_mothership_blasts(mothership)
+
+func _mothership_blasts(mothership : Node2D) -> void:
+	var tree := get_tree()
+	for i in 14:
+		if not is_instance_valid(mothership) or not mothership.visible:
+			return
+		var at := mothership.global_position + Vector2(randf_range(-110.0, 110.0), randf_range(-40.0, 40.0))
+		Explosion.spawn(tree, Explosion.EXPLOSIVE if randf() < 0.6 else Explosion.ZAKO, at, randf_range(0.9, 1.6))
+		await tree.create_timer(0.16, false).timeout
+
+## 黒い WARNING(いつもの WARNING を、黒と深紅の色にして出す)
+func _black_warning() -> void:
+	var warning := WARNING_SCENE.instantiate() as WarningDisplay
+	warning.paper_color = Color(0.03, 0.0, 0.04)
+	warning.ink_color = Color(0.0, 0.0, 0.0)
+	warning.accent_color = Color(0.78, 0.0, 0.12)
+	warning.flood_colors = [Color(0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0), Color(0.6, 0.0, 0.1), Color(0.3, 0.0, 0.3)]
+	warning.clear_bullets = false
+	warning.duration = 4.0
+	get_tree().current_scene.add_child(warning)
+	warning.show_warning("WARNING")
+	await warning.finished
+	warning.queue_free()
+
+## 口を開いて叫ぶ: 画面が揺れ、黒い波動が何度も広がる
+func _roar(union : Enemy, uview : Node) -> void:
+	var tree := get_tree()
+	if uview:
+		uview.play(&"Open", 0.05)
+	await tree.create_timer(0.35, false).timeout
+	var pitches := [0.42, 0.55]
+	for i in ROAR_SOUNDS.size():
+		var roar := AudioStreamPlayer.new()
+		roar.stream = ROAR_SOUNDS[i]
+		roar.pitch_scale = pitches[i]
+		roar.volume_db = 2.0
+		roar.bus = &"SFX"
+		add_child(roar)
+		roar.play()
+		roar.finished.connect(roar.queue_free)
+	var camera := StageCamera.of(get_tree().current_scene)
+	if camera:
+		camera.shake(16.0, 2.4)
+	var dark := ColorRect.new()
+	dark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dark.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dark.color = Color(0.0, 0.0, 0.0, 0.0)
+	_alarm_layer.add_child(dark)
+	var pulse := create_tween().set_loops(3)
+	pulse.tween_property(dark, "color:a", 0.45, 0.2)
+	pulse.tween_property(dark, "color:a", 0.1, 0.4)
+	for i in 6:
+		if is_instance_valid(union):
+			_BlackWave.spawn(tree, union.global_position, 360.0 + 60.0 * i, 1.1, 40.0 + 6.0 * i)
+		await tree.create_timer(0.38, false).timeout
+	pulse.kill()
+	var clear := create_tween()
+	clear.tween_property(dark, "color:a", 0.0, 0.5)
+	clear.tween_callback(dark.queue_free)
+	await tree.create_timer(0.4, false).timeout
+
+## 裏ボス戦を始める: 自機を動かせるようにして、イグナイトを使えるようにし、Union が撃ち始める
+func _start_union_fight(union : Enemy, ub : Node, home : Vector2) -> void:
+	if is_instance_valid(_player):
+		_player.set_physics_process(true)
+		_player.ignite_locked = false
+		_player.start_invincibility(2.0)
+	EnemyShooter.release_fire()
+	_cloud_speed = 1.4
+	for node in get_tree().current_scene.find_children("*", "StageBGM", true, false):
+		var bgm := node as StageBGM
+		bgm._kill_fade()
+		bgm._play_music(union_music)
+	if ub:
+		ub.begin_fight(home)
+
+## Union を出せなかったとき(読み込めないなど): 前の B エンド(暗転して終わる)
+func _plain_b_end() -> void:
+	var tree := get_tree()
+	for cable in _cables:
+		cable.visible = false
+	_cables.clear()
 	var black := ColorRect.new()
 	black.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	black.set_anchors_preset(Control.PRESET_FULL_RECT)

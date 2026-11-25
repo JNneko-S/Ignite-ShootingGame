@@ -22,6 +22,8 @@ var speed : float = 250.0
 var accel : float = 0.0
 
 var _state : BulletState = BulletState.NORMAL
+## カウンター弾(ShotPattern の Counter Hp Ratio)。返して敵に当てると、その敵の最大HPのこの割合を削る
+var counter_hp_ratio : float = 0.0
 var _params : IgniteParams
 var _chain_until_msec : int = 0
 var _age : float = 0.0

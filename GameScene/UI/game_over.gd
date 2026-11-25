@@ -1,5 +1,6 @@
 extends CanvasLayer
 class_name GameOverScreen
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## ゲームオーバーの画面。シーン(GameScene/UI/game_over.tscn)を GameManager が出す(Game Over Scene)。
 ##
 ## 流れ:
@@ -143,6 +144,11 @@ func _retry() -> void:
 
 	# 次のステージは、出撃の演出を飛ばしてすぐ始める。続けて負けたときは、難易度を1つ下げる
 	StageIntro.skip_next = true
+	# 長いステージの救済: 中ボスなどを越えていたら、そこから始め直す(StageData の Continue Checkpoint Tag)
+	var scene := get_tree().current_scene
+	if _RunState.checkpoint_scene != "" and scene and scene.scene_file_path == _RunState.checkpoint_scene:
+		DebugTools.pending_start_time = _RunState.checkpoint_time
+		_RunState.checkpoint_restart = true
 	RunConfig.continues_used += 1 # コンティニューした(二周目には入れなくなる)
 	HazardRank.on_continue() # ANOTHER: ランクは下限まで戻る(下限はそのまま)
 	if _ease_down:

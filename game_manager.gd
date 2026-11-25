@@ -1,5 +1,7 @@
 extends Node2D
 class_name GameManager
+## 共有の状態をまとめて戻す場所(エディタがクラス名を覚える前でも動くように、ファイルを直接読み込む)
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## ScrollTest(ステージのルート)にアタッチする配線役。
 ## ゲージ(体力)・難易度・イグナイトの発動・スコアをまとめて管理する。
 ##
@@ -141,15 +143,18 @@ func _enter_tree() -> void:
 	# 敵の砲口(子)の _ready より先に、弾幕の難易度を決めておく
 	if RunConfig.has_selection:
 		difficulty = clampi(RunConfig.difficulty, 0, 2) as Difficulty
+	# 前のステージから残ると困る共有の状態(「全員撃つな」・ヒットストップ・弾幕の調整の記憶など)を、まとめて戻す
+	_RunState.begin_stage()
 	DifficultyTuning.level = int(difficulty)
-	# 前のステージ(クリアのあと・エンディング)で「全員撃つな」にしたままのことがある: 新しいステージでは必ず解く
-	EnemyShooter.release_fire()
 	DifficultyTuning.chosen_level = int(difficulty) # 限定弾幕は、選んだ難易度で決める
 	DifficultyTuning.hard_plus = false
 	DifficultyTuning.zako_interval_scale = 1.0
 	# ステージによっては、弾幕だけ一段上の難易度として扱う(最終面など。ゲージなどは選んだ難易度のまま)
 	var runner := get_node_or_null("StageRunner")
 	HazardRank.small_bullet_hitbox = false
+	# 二周目(ANOTHER 以外): 作り直した二周目用のタイムラインに差し替える(雑魚の数・並び・弾)
+	if runner and runner.get("stage") and RunConfig.second_round() and runner.stage.second_loop:
+		runner.stage = runner.stage.second_loop
 	if runner and runner.get("stage"):
 		# HARD を選んだとき、ステージによっては ANOTHER と同じく敵弾の当たり判定を半分にする
 		HazardRank.small_bullet_hitbox = runner.stage.small_bullet_hitbox_hard and difficulty == Difficulty.HARD
@@ -210,6 +215,7 @@ func _ready() -> void:
 	if score_system:
 		score_system.score_changed.connect(_on_score_changed)
 
+	_show_loop_mark()
 	# 二周目の一面など、霧を抜けずに始まるステージでも、前の周の自機と点数を引き継ぐ
 	if StageCarry.pending and not StageCarry.arriving:
 		StageCarry.apply.call_deferred(get_tree())
@@ -291,6 +297,7 @@ func _at_level(values : Array, index : int):
 	return values[clampi(index, 0, values.size() - 1)]
 
 func _physics_process(delta : float) -> void:
+	_RunState.tick(delta) # クリアタイム(ポーズ中は進まない)
 	if player == null:
 		return
 	# 発動の効果時間を数える。終わったら効果を止める
@@ -371,8 +378,16 @@ func _scatter_items(level_before : int, progress_before : float) -> void:
 		get_tree().current_scene.add_child(item)
 		item.global_position = player.global_position
 
+## 空でなければ、残機が尽きたときに、ゲームオーバーの画面の代わりに、これを呼ぶ(裏ボス戦で負けたら A エンドで終えるなど)
+var game_over_handler : Callable
+
 ## 残機が尽きた: ゲームオーバーの画面を出す
 func _on_game_over() -> void:
+	if game_over_handler.is_valid():
+		var handler := game_over_handler
+		game_over_handler = Callable()
+		handler.call()
+		return
 	# スコアボードに記録する(コンティニューしたあとのゲームオーバーは記録しない。Slow Mode で遊んだときも記録しない)
 	if RunConfig.continues_used == 0:
 		ScoreBoard.finish_run(get_tree(), ScoreBoard.FAILED)
@@ -390,6 +405,15 @@ func _on_player_respawned() -> void:
 	# 復活の瞬間に残っている敵弾を消して、しばらく撃たせない
 	get_tree().call_group("enemy_bullet", "queue_free")
 	EnemyShooter.hold_fire(respawn_ceasefire_time)
+
+## イグナイトのレベル(体力)が to_level より低ければ、to_level まで戻す(回復アイテム)。戻したら true
+func refill_ignite(to_level : int) -> bool:
+	to_level = clampi(to_level, IgniteGauge.MIN_LEVEL, IgniteGauge.MAX_LEVEL)
+	if ignite.level >= to_level:
+		return false
+	ignite.value = ignite.threshold(to_level)
+	ignite._update()
+	return true
 
 func _on_level_changed(level : int) -> void:
 	_apply_level_stats()
@@ -547,3 +571,29 @@ func end_b_optional_count() -> int:
 ## 最終兵器を倒した瞬間に呼ぶ。エンドBの条件(とどめ+選択条件)を満たすか
 func end_b_conditions_met() -> bool:
 	return is_finisher_state() and end_b_optional_count() >= end_b_optional_required
+
+## 二周目の目印: 画面の左上(残機の下)に「2nd:難易度」と出す
+func _show_loop_mark() -> void:
+	if RunConfig.loop < 2:
+		return
+	var names := ["EASY", "NORMAL", "HARD", "ANOTHER"]
+	var chosen := RunConfig.difficulty if RunConfig.has_selection else int(difficulty)
+	var layer := CanvasLayer.new()
+	layer.layer = 10
+	var label := Label.new()
+	label.text = "%s:%s" % [_ordinal(RunConfig.loop), names[clampi(chosen, 0, names.size() - 1)]]
+	label.position = Vector2(6.0, 74.0)
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", Color(1.0, 0.32, 0.22))
+	label.add_theme_color_override("font_outline_color", Color(0.1, 0.0, 0.0))
+	label.add_theme_constant_override("outline_size", 4)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(label)
+	add_child(layer)
+
+func _ordinal(n : int) -> String:
+	match n:
+		1: return "1st"
+		2: return "2nd"
+		3: return "3rd"
+	return "%dth" % n

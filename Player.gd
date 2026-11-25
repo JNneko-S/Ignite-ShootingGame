@@ -493,6 +493,20 @@ func apply_power_up(kind : PowerUpItem.Kind) -> bool:
 			return true
 		PowerUpItem.Kind.LOCK_SPEED:
 			return upgrade_lock_speed()
+		PowerUpItem.Kind.OPTION_PAIR:
+			var added := add_option()
+			added = add_option() or added
+			if added:
+				FloatingText.spawn(get_tree(), global_position + Vector2(0, -36), "Option x2!", Color(0.45, 1.0, 0.6))
+			return added
+		PowerUpItem.Kind.HEAL:
+			var to_level := int(get_meta(&"heal_level", 3))
+			var gm := ScoreBoard._game_manager(get_tree())
+			if gm and gm.refill_ignite(to_level):
+				FloatingText.spawn(get_tree(), global_position + Vector2(0, -36), "Recover! IGNITE Lv%d" % to_level, Color(1.0, 0.55, 0.6))
+				return true
+			FloatingText.spawn(get_tree(), global_position + Vector2(0, -36), "IGNITE OK", Color(1.0, 0.8, 0.8), 12)
+			return false
 	return false
 
 ## 子機を1つ増やす(最大 max_options)

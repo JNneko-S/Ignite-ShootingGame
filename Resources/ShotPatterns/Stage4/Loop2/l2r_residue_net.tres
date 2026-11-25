@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://yacfnt5tay1"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
@@ -67,29 +67,29 @@ aim_at_player = false
 base_angle = -28.0
 parallel_spacing = 50.0
 launch_speed_step = 0.32
+window_width_deg = 55.0
+window_speed_deg = -100.0
+window_big_scale = 2.3
 bullet_speed = 150.0
 motion = Array[ExtResource("e3")]([SubResource("st5"), SubResource("st6"), SubResource("st7")])
-window_width_deg = 55
-window_speed_deg = -100
-window_big_scale = 2.3
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-soften_others = 6.0
 skip_auto_tuning = true
 with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("rose_red_twin")])
 start_delay = 0.4
 shot_count = 5
 interval = 0.14
-pause = 5
+pause = 5.0
+soften_others = 6.0
 bullet_count = 12
 aim_at_player = false
 base_angle = 28.0
 parallel_spacing = 50.0
 launch_speed_step = 0.32
+window_width_deg = 55.0
+window_speed_deg = 100.0
+window_big_scale = 2.3
 bullet_speed = 150.0
 motion = Array[ExtResource("e3")]([SubResource("st5"), SubResource("st6"), SubResource("st7")])
-window_width_deg = 55
-window_speed_deg = 100
-window_big_scale = 2.3

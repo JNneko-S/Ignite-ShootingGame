@@ -1,5 +1,7 @@
 extends Control
 class_name TitleScreen
+## 共有の状態をまとめて戻す場所(エディタがクラス名を覚える前でも動くように、ファイルを直接読み込む)
+const _RunState := preload("res://Component/Settings/run_state.gd")
 ## (新しく足したクラスは、エディタがクラス名を覚える前でも動くように、ファイルを直接読み込んで使う)
 const _AnotherRound := preload("res://GameScene/Title/another_round.gd")
 ## タイトル画面(title.tscn)。
@@ -75,6 +77,7 @@ func _ready() -> void:
 	_fade.color.a = 1.0
 	create_tween().tween_property(_fade, "color:a", 0.0, 0.6)
 	_start_music()
+	_RunState.to_title() # 前のプレイの引き継ぎなどを捨てる(二周目へ入る途中なら、そのまま)
 	if another_round_pending:
 		another_round_pending = false
 		_another_round()

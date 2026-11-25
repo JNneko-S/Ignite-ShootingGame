@@ -56,6 +56,9 @@ class_name SpawnEvent
 ## EASY / NORMAL / HARD のときに出す数。-1 なら Count のまま。0 ならこの敵は出ない。
 ## ANOTHER のときは、いつも Count の数が出る(道中の雑魚を、HARD 以下だけ減らすのに使う)
 @export var count_below_another : int = -1
+## 空でなければ、EASY / NORMAL / HARD のときに出す数(選んだ難易度の順に3つ)。Count Below Another より先。
+## ANOTHER のときは Count のまま。二周目のタイムラインで、難易度ごとに隊列の数を決めるのに使う
+@export var count_by_difficulty : Array[int] = []
 ## オンなら、選んだ難易度が HARD か ANOTHER のときだけ出す(隠しボスなど)。EASY / NORMAL では、この敵は出ない
 @export var hard_and_above_only : bool = false
 
@@ -75,6 +78,8 @@ class_name SpawnEvent
 func unit_count() -> int:
 	if hard_and_above_only and DifficultyTuning.chosen() < 2:
 		return 0
+	if not count_by_difficulty.is_empty() and not HazardRank.active:
+		return clampi(count_by_difficulty[clampi(DifficultyTuning.chosen(), 0, count_by_difficulty.size() - 1)], 0, maxi(count, 1))
 	if count_below_another >= 0 and not HazardRank.active:
 		return mini(count_below_another, maxi(count, 1)) # 0 なら、この敵は出ない
 	return maxi(count, 1)

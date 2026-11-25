@@ -20,14 +20,16 @@ func change(path : String, fade_time : float = FADE_TIME) -> void:
 	var tree := get_tree()
 	# 1. 今の画面を写真にして、いちばん手前に貼る
 	var cover := _make_cover()
-	# 2. 次のシーンを裏で読み込む(読み込みのあいだも、写真が見えている)
-	var packed : PackedScene = null
-	if ResourceLoader.load_threaded_request(path) == OK:
-		while ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-			await tree.process_frame
-		packed = ResourceLoader.load_threaded_get(path) as PackedScene
+	# 2. 次のシーンを読み込む(読み込みのあいだも、写真が見えている)。
+	# 別のスレッドでは読み込まない: 今のステージが動いている(弾や弾幕のリソースを使っている)あいだに、
+	# 同じリソースを別のスレッドで読み込むと、壊れたリソースが次のステージに残って、あとで落ちることがある
+	# (3面から4面へ移ったあとだけ落ちる事例)。止まって見えるのは、写真に隠れる一瞬だけ
+	await tree.process_frame # 写真が貼られてから読み込む
+	var packed := load(path) as PackedScene
 	if packed == null:
-		packed = load(path) as PackedScene
+		push_error("SceneSwitcher: シーンを読み込めません: " + path)
+		_busy = false
+		return
 	# 3. 切り替えて、描かれ始めるのを待ってから、写真を消す
 	tree.change_scene_to_packed(packed)
 	await tree.process_frame

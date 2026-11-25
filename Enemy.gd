@@ -1,5 +1,6 @@
 extends CharacterBody2D
 class_name Enemy
+const _FireFx := preload("res://GameScene/Effect/fire_fx.gd")
 ## MovePattern に沿って動く敵。HPComponent と Hurtbox で被ダメージ・死亡を処理する。
 ##
 ## 必要な子ノード: HPComponent / Hurtbox (Hurtbox直下に CollisionShape2D と CoolDown という名前のTimer)
@@ -206,8 +207,16 @@ func _die() -> void:
 	ItemDrop.drop_all(self, global_position)
 	var death := DeathExplosion.of(self)
 	var stay := wreck_texture != null or keep_after_death
+	var burning := ignite_kill or killed_by_reflect # イグナイトで倒された: 炎上しながら爆発する
 	if stay:
 		_become_wreck() # 爆発の前に当たり判定を消す(爆発のあいだも撃たれ続けないように)
+	if burning and not stay:
+		_become_wreck() # 燃えているあいだは、当たらず撃たない
+		await _FireFx.burn_body(self, 0.4, _FireFx.body_radius(self))
+		if not is_inside_tree():
+			return
+	elif burning:
+		_FireFx.burn_body(self, 2.0, _FireFx.body_radius(self)) # ボスなど: 大爆発のあいだ、全身から炎を噴く
 	if death:
 		await death.play()
 	if stay:

@@ -37,6 +37,12 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_shotgun_accel.tres" id="an_a2_shotgun_accel"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_snake.tres" id="an_a2_snake"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a2_split_aim.tres" id="an_a2_split_aim"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_fan_e.tres" id="l2_tm_fan_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_fan_n.tres" id="l2_tm_fan_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_fan_h.tres" id="l2_tm_fan_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_aim_e.tres" id="l2_tm_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_aim_n.tres" id="l2_tm_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tm_aim_h.tres" id="l2_tm_aim_h"]
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
 
@@ -331,6 +337,10 @@ patterns = Array[ExtResource("x7")]([ExtResource("x14"), ExtResource("x20")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_ignite_wall"), ExtResource("an_a2_ignite_core")])
 another_sequence = Array[ExtResource("x7")]([ExtResource("an_a2_gate_wall"), ExtResource("an_a2_converge_dash"), ExtResource("an_a2_split_aim"), ExtResource("an_a2_shotgun_accel")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tm_fan_e"), ExtResource("l2_tm_fan_n"), ExtResource("l2_tm_fan_h")])
+
 
 [node name="Part_m_mid" type="Node2D" parent="VisualRoot" unique_id=1760000016 node_paths=PackedStringArray("shooters")]
 position = Vector2(-1, 210)
@@ -376,6 +386,10 @@ one_shot = true
 patterns = Array[ExtResource("x7")]([ExtResource("x16"), ExtResource("x19")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("an_a2_scissors")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tm_aim_e"), ExtResource("l2_tm_aim_n"), ExtResource("l2_tm_aim_h")])
+
 
 [node name="Part_w3_l" type="Node2D" parent="VisualRoot" unique_id=1760000025 node_paths=PackedStringArray("shooters")]
 position = Vector2(-19.5, 517.5)

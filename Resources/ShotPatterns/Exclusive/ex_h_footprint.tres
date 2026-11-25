@@ -26,6 +26,7 @@ speed_ease = 0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
+also_another = null
 bullet_count = 2
 spread_angle = 180.0
 aim_at_player = false
@@ -38,6 +39,7 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 2
 max_difficulty = 2
+also_another = null
 skip_auto_tuning = true
 start_delay = 0.4
 shot_count = 16

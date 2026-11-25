@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/transition_test.gd" id="1"]
+
+[node name="TransitionTest" type="Node"]
+script = ExtResource("1")

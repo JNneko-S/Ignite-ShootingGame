@@ -25,6 +25,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_7oibl")
 bullet_scene = ExtResource("1_pink")
+also_another = null
 normal_version = ExtResource("normal_ver")
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")

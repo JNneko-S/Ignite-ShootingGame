@@ -100,7 +100,7 @@ func _save() -> void:
 # ---------------------------------------------------------------- 難易度 ANOTHER の解禁
 ## 次のどれかで解禁する:
 ##   ・NORMAL の二周目を、ノーコンティニューで RATE A 以上でクリア
-##   ・HARD の二周目を、ノーコンティニューでクリア
+##   ・HARD の一周目を、ノーコンティニューでクリア(最終面をクリアした時点で解禁)
 ##   ・RATE A 以上を合わせて 5 回取り、実績を 8 個解除している
 ## 解禁したら、機体選択の画面で HARD のときに右を何回も押すと、ANOTHER が出る。デバッグ機能が使えるときは、いつでも出る
 func can_choose_another() -> bool:
@@ -117,7 +117,7 @@ func on_run_recorded(entry : Dictionary) -> void:
 	var all_clear := ScoreBoard.result_of(entry) == ScoreBoard.ALL_CLEAR
 	var no_continue := RunConfig.continues_used == 0
 	var difficulty := int(entry.get("difficulty", 1))
-	if all_clear and no_continue and ((difficulty == 1 and rate_a) or difficulty == 2):
+	if all_clear and no_continue and difficulty == 1 and rate_a:
 		_unlock_another()
 	_check_another()
 	_save()
@@ -170,7 +170,10 @@ func _on_game_clear() -> void:
 		match RunConfig.difficulty:
 			0: unlock("rookie")
 			1: unlock("secret_mission")
-			2: unlock("excite")
+			2:
+				unlock("excite")
+				if RunConfig.loop == 1:
+					_unlock_another() # HARD の一周目をノーコンティニューでクリア: ANOTHER を解禁
 			RunConfig.ANOTHER: unlock("another_dimension")
 	if not RunConfig.shot_damage_used and RunConfig.ship:
 		unlock("ignite_only_" + RunConfig.ship.ship_name.to_lower())

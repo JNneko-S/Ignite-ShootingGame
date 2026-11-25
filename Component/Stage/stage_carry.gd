@@ -16,6 +16,10 @@ static var score : int = 0
 static var next_extend : int = 0
 static var lives : int = 3
 static var ignite_value : float = 0.0
+## イグナイトゲージのレベルと、レベルの中の進み具合(0〜1)。ステージごとにグレイズの必要量が違うので、
+## 値そのままではなく、レベルと進み具合で持ち越す(持ち越すと、レベルが上下してしまう)
+static var ignite_level : int = 0
+static var ignite_ratio : float = 0.0
 static var shot_stage : int = 0
 static var option_count : int = 0
 static var lock_speed_level : int = 0
@@ -40,6 +44,8 @@ static func save(tree : SceneTree) -> void:
 		power_boost = player.power_boost
 	if game_manager:
 		ignite_value = game_manager.ignite.value
+		ignite_level = game_manager.ignite.level
+		ignite_ratio = game_manager.ignite.ratio() if ignite_level < IgniteGauge.MAX_LEVEL else 0.0
 	pending = true
 
 ## 覚えた状態を、新しいステージに入れる。全ノードの準備が終わってから呼ぶ
@@ -70,7 +76,10 @@ static func apply(tree : SceneTree) -> void:
 	HazardRank.on_next_stage()
 	if game_manager:
 		game_manager._shown_level = 99 # 持ち越したレベルを入れるときは、LEVEL UP を出さない
-		game_manager.ignite.value = ignite_value
+		var gauge := game_manager.ignite
+		var low := gauge.threshold(ignite_level)
+		var high := gauge.threshold(mini(ignite_level + 1, IgniteGauge.MAX_LEVEL))
+		gauge.value = minf(low + (high - low) * ignite_ratio, gauge.max_value())
 		game_manager.ignite._update(true)
 
 static func find_player(tree : SceneTree) -> Player:

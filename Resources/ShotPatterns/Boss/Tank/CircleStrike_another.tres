@@ -22,6 +22,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_7oibl")
 bullet_scene = ExtResource("1_pink")
+also_another = null
 shot_count = 14
 loop = false
 pause = 3.0

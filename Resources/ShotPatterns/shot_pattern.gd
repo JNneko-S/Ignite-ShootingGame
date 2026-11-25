@@ -36,6 +36,10 @@ enum TimingUnit {
 ## (最終面のように、弾幕だけ一段上の難易度として扱うステージでも、選んだ難易度のまま)。
 ## 例) Min 1・Max 1 なら NORMAL を選んだときだけ撃つ。ANOTHER では、限定弾幕は撃たない
 @export_range(0, 3) var max_difficulty : int = 3
+## オンなら、ANOTHER のときだけ撃つ(Min・Max Difficulty より先。手で作った ANOTHER 用の限定弾幕。裏ボスなど)
+@export var another_only : bool = false
+## オンなら、Max Difficulty が 2(HARD まで)の限定弾幕を、ANOTHER でも撃つ(HARD 用の限定弾幕を、ANOTHER の元にする。裏ボスなど)
+@export var also_another : bool = false
 ## オンなら、この限定弾幕を撃つ難易度では、同じ砲口の「同時に撃つ弾幕(Patterns)」のほかの弾幕を撃たず、この弾幕に差し替える
 ## (雑魚の弾幕を、難易度ごとに別物にするとき)
 @export var replaces_others : bool = false
@@ -212,6 +216,9 @@ enum TimingUnit {
 ## 加速度(px/秒²)。マイナスで減速(止まったらそこで止まる)。Motion を使うときは無視される
 @export var bullet_accel : float = 0.0
 @export var damage : float = 1.0
+## 0 より大きければ「カウンター弾」: イグナイトで返して敵(ボス)に当てると、その敵の最大HPのこの割合を、一気に削る
+## (カウンター大技の巨大弾などに使う。返さなければ、ふつうの弾)
+@export_range(0.0, 0.5, 0.01) var counter_hp_ratio : float = 0.0
 ## 弾の大きさの倍率(当たり判定も一緒に大きくなる)。2 以上で巨大弾。割れたあとの弾には掛からない
 @export var bullet_scale : float = 1.0
 

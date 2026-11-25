@@ -13,6 +13,7 @@ speed_trans = 4
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("split_bullet")
+also_another = null
 shot_count = 8
 interval = 0.05
 loop = false
@@ -24,6 +25,7 @@ bullet_speed = 90.0
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("bullet")
+also_another = null
 start_delay = 0.3
 shot_count = 3
 interval = 0.75

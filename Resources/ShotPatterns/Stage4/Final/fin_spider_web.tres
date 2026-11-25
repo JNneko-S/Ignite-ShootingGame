@@ -56,6 +56,7 @@ speed_ease = 0
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 start_delay = 0.4
 pause = 3.6
 bullet_count = 22
@@ -70,6 +71,7 @@ motion = Array[ExtResource("e3")]([SubResource("st3"), SubResource("st4"), SubRe
 [sub_resource type="Resource" id="p6"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
+also_another = null
 start_delay = 2.3
 shot_count = 3
 interval = 0.4
@@ -81,6 +83,7 @@ bullet_speed = 165.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 skip_auto_tuning = true
 with_patterns = Array[ExtResource("e1")]([SubResource("p2"), SubResource("p6")])
 start_delay = 0.4
@@ -112,6 +115,7 @@ speed_ease = 0
 [sub_resource type="Resource" id="p10"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 start_delay = 0.4
 pause = 3.6
 bullet_count = 30
@@ -126,6 +130,7 @@ motion = Array[ExtResource("e3")]([SubResource("st11"), SubResource("st12"), Sub
 [sub_resource type="Resource" id="p14"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
+also_another = null
 start_delay = 2.3
 shot_count = 3
 interval = 0.4
@@ -137,6 +142,7 @@ bullet_speed = 165.0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+also_another = null
 normal_version = SubResource("p1")
 with_patterns = Array[ExtResource("e1")]([SubResource("p10"), SubResource("p14")])
 start_delay = 0.4

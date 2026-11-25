@@ -45,6 +45,13 @@ signal pattern_started(pattern : ShotPattern)
 @export var another_replace : bool = false
 @export var another_patterns : Array[ShotPattern] = []
 @export var another_sequence : Array[ShotPattern] = []
+## オンなら、二周目(RunConfig.second_round())のときは、Patterns / Sequence の代わりに、下の2つを撃つ(ANOTHER より先)。
+## Phases を使う砲口は、ShooterPhase の二周目の設定を使う。二周目の弾幕は、同時に撃つ数を難易度で絞らない
+@export var loop2_replace : bool = false
+@export var loop2_patterns : Array[ShotPattern] = []
+@export var loop2_sequence : Array[ShotPattern] = []
+## いま撃っている弾幕を、難易度で絞らずに全部撃つか(二周目の弾幕・カウンター大技)
+var _all_layers : bool = false
 
 ## いちばん最近撃った弾の向き(ラジアン。全方位の弾幕など、向きがないときは NAN)。砲身を振る砲台が見る
 var last_fire_angle : float = NAN
@@ -119,6 +126,11 @@ func _ready() -> void:
 	if not phases.is_empty() and phases[0]:
 		patterns = phases[0].patterns_for_difficulty()
 		sequence = phases[0].sequence_for_difficulty()
+		_all_layers = phases[0].is_loop2()
+	elif loop2_replace and RunConfig.second_round():
+		patterns = loop2_patterns
+		sequence = loop2_sequence
+		_all_layers = true
 	elif another_replace and HazardRank.active:
 		patterns = another_patterns
 		sequence = another_sequence
@@ -134,7 +146,7 @@ func _ready() -> void:
 		return # 外から撃たせる
 	if _has_conductor():
 		return # 譜面で撃つので、Patterns では撃たない
-	for pattern in DifficultyTuning.layers(patterns):
+	for pattern in (DifficultyTuning.layers(patterns, true) if _all_layers else DifficultyTuning.layers(patterns)):
 		_run_pattern(pattern)
 	_run_sequence()
 
@@ -154,15 +166,18 @@ func stop() -> void:
 
 ## 撃っている弾幕を止めて、new_patterns(同時に撃つ)と new_sequence(順番に撃つ)に切り替える(ボスの段階の切り替えなど)
 ## keep_position: オンなら、順番に撃つ弾幕(Sequence)を、前に止めたところの続きから撃つ(ボスが雑魚を呼んだあと、攻撃に戻るときなど)
-func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPattern] = [], keep_position : bool = false) -> void:
+## all_layers: オンなら、難易度で同時に撃つ数を絞らない(カウンター大技など、全部そろって意味がある弾幕)
+func set_patterns(new_patterns : Array[ShotPattern], new_sequence : Array[ShotPattern] = [], keep_position : bool = false,
+		all_layers : bool = false) -> void:
 	stop()
 	patterns = new_patterns
 	sequence = new_sequence
+	_all_layers = all_layers
 	if not keep_position:
 		_sequence_pos = 0
 	if _has_conductor():
 		return
-	for pattern in DifficultyTuning.layers(patterns):
+	for pattern in (DifficultyTuning.layers(patterns, true) if all_layers else DifficultyTuning.layers(patterns)):
 		_run_pattern(pattern)
 	_run_sequence()
 
@@ -178,7 +193,7 @@ func set_phase(index : int, keep_position : bool = false) -> void:
 	if phase == null:
 		set_patterns([], [])
 		return
-	set_patterns(phase.patterns_for_difficulty(), phase.sequence_for_difficulty(), keep_position)
+	set_patterns(phase.patterns_for_difficulty(), phase.sequence_for_difficulty(), keep_position, phase.is_loop2())
 
 ## 次に撃つ、順番に撃つ弾幕(Sequence)の番号
 var _sequence_pos : int = 0
@@ -191,6 +206,8 @@ func _run_sequence() -> void:
 		return
 	var generation := _generation
 	while generation == _generation and not sequence.is_empty():
+		if not is_inside_tree():
+			return # シーンから外れた砲口は、撃つのをやめる(外れたまま回り続けて、ゲームが固まらないように)
 		var index := _sequence_pos % sequence.size()
 		_run_fired = false
 		await _run_once(sequence[index], generation)
@@ -277,6 +294,9 @@ func _run_pattern(pattern : ShotPattern) -> void:
 	await _wait_with_warning(pattern, (pattern.start_delay + _unit_delay(pattern)) * unit, generation)
 	var shot_index := 0
 	while generation == _generation:
+		if not is_inside_tree():
+			return # シーンから外れた砲口は、撃つのをやめる
+		var cycle_start := Engine.get_process_frames()
 		var burst_aim := _aim_angle()
 		for i in maxi(pattern.shot_count, 1):
 			if generation != _generation:
@@ -294,6 +314,8 @@ func _run_pattern(pattern : ShotPattern) -> void:
 		if not pattern.loop:
 			return
 		await _wait_with_warning(pattern, pattern.pause * unit * pause_scale * (_soften_factor() if pattern.yields else 1.0), generation)
+		if Engine.get_process_frames() == cycle_start and is_inside_tree():
+			await get_tree().process_frame # 間も休みも 0 の弾幕でも、1回ごとに必ず1フレーム待つ(固まらないように)
 		# ANOTHER: ランクが変わっていたら、撃ち終わったところで、次の段階の弾幕(ANOTHER 用の弾幕)に切り替える
 		if HazardRank.active:
 			pattern = DifficultyTuning.tune(original, is_zako())
@@ -427,6 +449,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 				bullet.setup(Vector2.from_angle(shot["angle"] + turn), speed, pattern.damage, accel)
 			# 片側だけ曲がりを反転する弾(Mirror Curve By Side)は、その弾だけ左右反転として扱う
 			var bullet_mirror : bool = mirror != shot.get("flip", false)
+			if pattern.counter_hp_ratio > 0.0 and "counter_hp_ratio" in bullet:
+				bullet.counter_hp_ratio = pattern.counter_hp_ratio # カウンター弾(返すと、ボスを大きく削れる)
 			if bullet.has_method("set_motion"):
 				bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
 			if bullet.has_method("set_split"):

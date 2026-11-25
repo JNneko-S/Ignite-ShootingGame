@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bhhqdacjuo817"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_k60hg"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e2"]
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+also_another = null
+skip_auto_tuning = true
+start_delay = 0.3
+shot_count = 7
+interval = 0.66
+pause = 0.0
+bullet_count = 7
+aim_at_player = false
+base_angle = -26.0
+parallel_spacing = 60.0
+bullet_speed = 70.0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+max_difficulty = 0
+also_another = null
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
+start_delay = 0.4
+shot_count = 7
+interval = 0.66
+pause = 1.8
+soften_others = 6.0
+bullet_count = 7
+aim_at_player = false
+base_angle = 26.0
+parallel_spacing = 60.0
+bullet_speed = 70.0

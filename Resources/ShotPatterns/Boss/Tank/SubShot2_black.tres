@@ -12,6 +12,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_uhcpt")
 bullet_scene = ExtResource("1_48ea2")
+also_another = null
 start_delay = 0.425
 shot_count = 30
 pause = 1.125

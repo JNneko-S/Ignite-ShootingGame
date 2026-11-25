@@ -14,6 +14,7 @@ angular_velocity = 40.0
 [resource]
 script = ExtResource("3_0517n")
 bullet_scene = ExtResource("1_hsuvv")
+also_another = null
 another_made = true
 with_patterns = Array[ExtResource("3_0517n")]([ExtResource("4_f5drh")])
 start_delay = 0.6

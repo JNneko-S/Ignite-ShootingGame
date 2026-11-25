@@ -150,7 +150,7 @@ func _on_stage_bonus(lines : Array, total : int) -> void:
 	title.text = "STAGE CLEAR"
 	var rows : Array[Control] = [title]
 	for line in lines:
-		rows.append(_row(str(line[0]), int(line[1]), COLOR_TEXT))
+		rows.append(_row(str(line[0]), line[1], COLOR_TEXT)) # 点(数)か、クリアタイムのような文字
 	rows.append(_row("BONUS", total, COLOR_HI))
 	for row in rows:
 		row.modulate.a = 0.0
@@ -159,7 +159,7 @@ func _on_stage_bonus(lines : Array, total : int) -> void:
 		tween.tween_property(row, "modulate:a", 1.0, 0.15)
 		tween.tween_interval(0.25)
 
-func _row(name_text : String, value : int, color : Color) -> Control:
+func _row(name_text : String, value : Variant, color : Color) -> Control:
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_result.add_child(row)

@@ -14,6 +14,7 @@ angular_velocity = 35.0
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_curve")
+also_another = null
 black_version = ExtResource("black_ver")
 another_made = true
 start_delay = 0.4

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Lines_Yellow.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 24
+interval = 0.26
+pause = 1.0
+bullet_count = 13
+parallel_spacing = 33.0
+aim_at_player = false
+gap_size = 2
+gap_wave_amplitude = 0.6
+gap_wave_shots = 10
+bullet_speed = 110.0
+soften_others = 2.0
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true

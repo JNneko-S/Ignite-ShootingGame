@@ -16,3 +16,7 @@ static var pending_start_time : float = 0.0
 static var skip_intro_once : bool = false
 ## 次にステージを読み込んだら、出てきた最後のボス(ラスボス)をすぐ倒す(エンディングへ飛ぶ)。読んだら false に戻る
 static var pending_ending : bool = false
+## オンなら、次のエンディングで Bエンドの条件を満たしたことにする(裏ボス Union を出す。難易度も問わない)。使ったら false に戻る
+static var force_b_end : bool = false
+## オンなら、次のエンディングで、ラスボスの最期・緊急事態・脱出を飛ばして、すぐ回収の場面(裏ボス Union の登場)から始める。使ったら false に戻る
+static var union_direct : bool = false

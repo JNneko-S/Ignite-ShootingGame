@@ -39,18 +39,21 @@ const EASY_SPEED_ZAKO := 0.65
 static var _cache : Dictionary = {}
 
 ## 同時に撃つ弾幕のうち、この難易度で撃つもの(前から上限の数まで)
-static func layers(list : Array[ShotPattern]) -> Array[ShotPattern]:
+## no_cap: オンなら、数を絞らない(限定弾幕の振り分けだけをする。二周目の弾幕・カウンター大技)
+static func layers(list : Array[ShotPattern], no_cap : bool = false) -> Array[ShotPattern]:
 	# 限定弾幕: この難易度で撃たない限定弾幕は、枠を使わない。撃つ限定弾幕が「差し替え」(Replaces Others)なら、それだけを撃つ
 	var replacing : Array[ShotPattern] = []
 	var kept : Array[ShotPattern] = []
 	for p in list:
-		if p and p.max_difficulty < 3:
+		if p and (p.max_difficulty < 3 or p.another_only):
 			if not allows(p):
 				continue
 			if p.replaces_others:
 				replacing.append(p)
 		kept.append(p)
 	list = replacing if not replacing.is_empty() else kept
+	if no_cap:
+		return list
 	var cap : int = MAX_LAYERS[clampi(level, 0, MAX_LAYERS.size() - 1)]
 	if cap <= 0 or list.size() <= cap:
 		return list
@@ -63,9 +66,13 @@ static func is_easy() -> bool:
 static func allows(pattern : ShotPattern) -> bool:
 	if pattern == null:
 		return false
+	if pattern.another_only:
+		return chosen() == 3 # ANOTHER 用の限定弾幕
 	if pattern.max_difficulty < 3:
 		# 限定弾幕: 選んだ難易度が Min 〜 Max のときだけ撃つ(ANOTHER は 3 として扱うので撃たない)
 		var c := chosen()
+		if c == 3 and pattern.also_another and pattern.max_difficulty == 2:
+			return true # HARD 用の限定弾幕を、ANOTHER でも撃つ
 		return c >= pattern.min_difficulty and c <= pattern.max_difficulty
 	return level >= pattern.min_difficulty
 

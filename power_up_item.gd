@@ -10,7 +10,12 @@ enum Kind {
 	LOCK_SPEED, ## ロックするまでの時間が短くなる(最大 Player の Lock Time Scales の段階まで)
 	RATE,       ## (ANOTHER)連射速度UP。5 段階まで。自爆しても失わない
 	POWER,      ## (ANOTHER)威力UP。5 段階まで。自爆しても失わない
+	HEAL,       ## 回復: イグナイトのレベル(体力)が Heal Level より低ければ、そこまで戻す
+	OPTION_PAIR, ## 子機(オプション)が2つ増える
 }
+
+## 回復(HEAL)で戻すイグナイトのレベル
+@export var heal_level : int = 3
 
 signal collected(kind : Kind)
 
@@ -150,6 +155,8 @@ func _collect(player : Player) -> void:
 	tween.tween_property(self, "modulate:a", 0.0, 0.15)
 	tween.chain().tween_callback(queue_free)
 	get_tree().create_timer(0.5, true, false, true).timeout.connect(func(): if is_instance_valid(self): queue_free())
+	if kind == Kind.HEAL:
+		player.set_meta(&"heal_level", heal_level)
 	player.apply_power_up(kind)
 	collected.emit(kind)
 
@@ -162,6 +169,20 @@ func _draw() -> void:
 		color = Color(0.4, 0.8, 1.0)
 	elif kind == Kind.POWER:
 		color = Color(1.0, 0.75, 0.25)
+	elif kind == Kind.HEAL:
+		# 回復: 赤い十字
+		draw_circle(Vector2.ZERO, 13.0, Color(1.0, 0.3, 0.35, 0.3))
+		draw_circle(Vector2.ZERO, 10.0, Color(1.0, 1.0, 1.0, 0.9))
+		draw_rect(Rect2(-2.5, -7, 5, 14), Color(0.95, 0.15, 0.2))
+		draw_rect(Rect2(-7, -2.5, 14, 5), Color(0.95, 0.15, 0.2))
+		return
+	elif kind == Kind.OPTION_PAIR:
+		color = Color(0.4, 1.0, 0.6)
+		for x in [-8.0, 8.0]:
+			draw_circle(Vector2(x, 0), 9.0, Color(color, 0.25))
+			draw_rect(Rect2(x - 5, -5, 10, 10), color)
+			draw_rect(Rect2(x - 5, -5, 10, 10), Color.WHITE, false, 1.0)
+		return
 	draw_circle(Vector2.ZERO, 10.0, Color(color, 0.25))
 	draw_rect(Rect2(-6, -5, 12, 10), color)
 	draw_rect(Rect2(-6, -5, 12, 10), Color.WHITE, false, 1.0)

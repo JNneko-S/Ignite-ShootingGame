@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://tnqqdf13wx5b"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_hxoj2"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Tank_Aim.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+max_difficulty = 0
+also_another = null
+skip_auto_tuning = true
+start_delay = 1.1
+start_delay_per_unit = 0.2
+pause = 3.3
+bullet_speed = 100.0

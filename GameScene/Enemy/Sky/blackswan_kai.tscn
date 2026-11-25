@@ -21,6 +21,13 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_bloom_dome.tres" id="an3_a3_bloom_dome"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Another/a3_ignite_crush.tres" id="an3_a3_ignite_crush"]
 [ext_resource type="Script" path="res://Component/Boss/swan_usurper.gd" id="swan_usurper"]
+[ext_resource type="Script" path="res://Component/Boss/counter_spell.gd" id="counter_spell"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_pattern_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp3_sand_wind_L.tres" id="spell_sp3_sand_wind_L"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp3_sand_wind_R.tres" id="spell_sp3_sand_wind_R"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp3_light_fan.tres" id="spell_sp3_light_fan"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp3_storm_giant.tres" id="spell_sp3_storm_giant"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp3_sand_swirl.tres" id="spell_sp3_sand_swirl"]
 [sub_resource type="Animation" id="IdleAnim"]
 resource_name = "idle"
 length = 0.6
@@ -128,3 +135,11 @@ next_state = "AWinder"
 
 [node name="SwanUsurper" type="Node" parent="." unique_id=1840000401]
 script = ExtResource("swan_usurper")
+
+[node name="CounterSpell" type="Node" parent="." node_paths=PackedStringArray("freeze_nodes")]
+script = ExtResource("counter_spell")
+spell_name = "大砂嵐 -サンドストーム-"
+trigger_hp_ratio = 0.5
+duration = 14.0
+freeze_nodes = [NodePath("../StateMachine"), NodePath("../FighterMover"), NodePath("../AfterburnerDive"), NodePath("../BossShadowRush")]
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp3_sand_wind_L"), ExtResource("spell_sp3_sand_wind_R"), ExtResource("spell_sp3_sand_swirl"), ExtResource("spell_sp3_light_fan"), ExtResource("spell_sp3_storm_giant")])

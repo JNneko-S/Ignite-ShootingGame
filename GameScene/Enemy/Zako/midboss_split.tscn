@@ -11,6 +11,12 @@
 [ext_resource type="Resource" uid="uid://d03d5hh87wr7y" path="res://Resources/ShotPatterns/Enemies/shot_pod_spiral_r.tres" id="pod_r"]
 [ext_resource type="PackedScene" uid="uid://bq3me11tcmm5" path="res://Component/Shooter/enemy_shooter_component.tscn" id="shooter_scene"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_wave_e.tres" id="l2_mb1_wave_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_wave_n.tres" id="l2_mb1_wave_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_wave_h.tres" id="l2_mb1_wave_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_rotor_e.tres" id="l2_mb1_rotor_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_rotor_n.tres" id="l2_mb1_rotor_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/mb1_rotor_h.tres" id="l2_mb1_rotor_h"]
 
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(176, 70)
@@ -40,6 +46,10 @@ hp = 5000
 [node name="EnemyShooterComponent" parent="." index="4" unique_id=140393654]
 patterns = Array[ExtResource("shot_script")]([ExtResource("pat0")])
 only_when_on_screen = false
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_mb1_wave_e"), ExtResource("l2_mb1_wave_n"), ExtResource("l2_mb1_wave_h"), ExtResource("l2_mb1_rotor_e"), ExtResource("l2_mb1_rotor_n"), ExtResource("l2_mb1_rotor_h")])
+
 
 [node name="PodLeft" type="Node2D" parent="." index="5" unique_id=1545476026]
 position = Vector2(-40, 26)

@@ -13,6 +13,7 @@ angular_velocity = 46.0
 [resource]
 script = ExtResource("3_ety4s")
 bullet_scene = ExtResource("1_6y15l")
+also_another = null
 another_made = true
 start_delay = 0.4
 shot_count = 12

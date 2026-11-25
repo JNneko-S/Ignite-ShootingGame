@@ -27,6 +27,11 @@ static var hidden_boss_defeated : bool = false
 ## この出撃で、ショット(自機・子機の弾)で敵にダメージを与えたか。与えていなければ「イグナイトだけ」で戦っている(実績)
 static var shot_damage_used : bool = false
 
+## 二周目の作り直し(二周目用のステージ・弾幕・雑魚の隊列)を使うか。二周目で、ANOTHER でないとき
+## (ANOTHER の二周目は BLACK ANOTHER なので、ANOTHER の弾幕のまま)
+static func second_round() -> bool:
+	return loop >= 2 and not (has_selection and difficulty == ANOTHER)
+
 ## ノーコンティニューで、まだ一周目なら true(クリアしたら二周目に入れる)
 static func can_enter_second_loop() -> bool:
 	return loop == 1 and continues_used == 0

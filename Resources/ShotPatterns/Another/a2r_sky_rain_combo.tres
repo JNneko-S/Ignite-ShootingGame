@@ -22,6 +22,7 @@ target_speed = 150.0
 [resource]
 script = ExtResource("3_u3d48")
 bullet_scene = ExtResource("1_gc1bs")
+also_another = null
 another_made = true
 with_patterns = Array[ExtResource("3_u3d48")]([ExtResource("4_wkdm6")])
 start_delay = 0.6

@@ -33,6 +33,24 @@
 [ext_resource type="Script" uid="uid://hlk5r7h3h1bl" path="res://Component/Boss/States/boss_dive_state.gd" id="st_dive"]
 [ext_resource type="Script" uid="uid://ds7744w0iej0f" path="res://Component/Boss/States/boss_shoot_state.gd" id="st_shoot"]
 [ext_resource type="Script" path="res://Component/Death/crash_fall.gd" id="crash_fall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_aimfan_e.tres" id="l2_k1_aimfan_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_aimfan_n.tres" id="l2_k1_aimfan_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_aimfan_h.tres" id="l2_k1_aimfan_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_q_rainbow_e.tres" id="l2_k1_q_rainbow_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_q_rainbow_n.tres" id="l2_k1_q_rainbow_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k1_q_rainbow_h.tres" id="l2_k1_q_rainbow_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_band_e.tres" id="l2_k2_band_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_band_n.tres" id="l2_k2_band_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_band_h.tres" id="l2_k2_band_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_q_snake_e.tres" id="l2_k2_q_snake_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_q_snake_n.tres" id="l2_k2_q_snake_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k2_q_snake_h.tres" id="l2_k2_q_snake_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_needle_e.tres" id="l2_k3_needle_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_needle_n.tres" id="l2_k3_needle_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_needle_h.tres" id="l2_k3_needle_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_q_dragon_e.tres" id="l2_k3_q_dragon_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_q_dragon_n.tres" id="l2_k3_q_dragon_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/k3_q_dragon_h.tres" id="l2_k3_q_dragon_h"]
 
 [sub_resource type="RectangleShape2D" id="ram_main"]
 size = Vector2(131, 76.02041)
@@ -52,15 +70,27 @@ size = Vector2(263, 154)
 [sub_resource type="Resource" id="main_p1"]
 script = ExtResource("shooter_phase")
 sequence = Array[ExtResource("shot_script")]([ExtResource("9_40gf8")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_k1_aimfan_e"), ExtResource("l2_k1_aimfan_n"), ExtResource("l2_k1_aimfan_h"), ExtResource("l2_k1_q_rainbow_e"), ExtResource("l2_k1_q_rainbow_n"), ExtResource("l2_k1_q_rainbow_h")])
+
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
 sequence = Array[ExtResource("shot_script")]([ExtResource("p_shotgun"), ExtResource("9_40gf8")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_k2_band_e"), ExtResource("l2_k2_band_n"), ExtResource("l2_k2_band_h"), ExtResource("l2_k2_q_snake_e"), ExtResource("l2_k2_q_snake_n"), ExtResource("l2_k2_q_snake_h")])
+
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
 patterns = Array[ExtResource("shot_script")]([ExtResource("p_shotgun")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("9_40gf8")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("shot_script")]([])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_k3_needle_e"), ExtResource("l2_k3_needle_n"), ExtResource("l2_k3_needle_h"), ExtResource("l2_k3_q_dragon_e"), ExtResource("l2_k3_q_dragon_n"), ExtResource("l2_k3_q_dragon_h")])
+
 
 [sub_resource type="Resource" id="swan_phase_1"]
 script = ExtResource("boss_phase")

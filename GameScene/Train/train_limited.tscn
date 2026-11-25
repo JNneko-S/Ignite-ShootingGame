@@ -93,6 +93,32 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_e_worm.tres" id="ex_ex_e_worm"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_n_worm_twin.tres" id="ex_ex_n_worm_twin"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Exclusive/ex_h_sandworm.tres" id="ex_ex_h_sandworm"]
+[ext_resource type="Script" path="res://Component/Boss/counter_spell.gd" id="counter_spell"]
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot_pattern_script"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp2_sand_slide.tres" id="spell_sp2_sand_slide"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp2_light_line.tres" id="spell_sp2_light_line"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/sp2_jaw.tres" id="spell_sp2_jaw"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_spread_e.tres" id="l2_tr1_spread_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_spread_n.tres" id="l2_tr1_spread_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_spread_h.tres" id="l2_tr1_spread_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_q_railgap_e.tres" id="l2_tr1_q_railgap_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_q_railgap_n.tres" id="l2_tr1_q_railgap_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr1_q_railgap_h.tres" id="l2_tr1_q_railgap_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr_mid_aim_e.tres" id="l2_tr_mid_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr_mid_aim_n.tres" id="l2_tr_mid_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr_mid_aim_h.tres" id="l2_tr_mid_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_ring_e.tres" id="l2_tr2_ring_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_ring_n.tres" id="l2_tr2_ring_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_ring_h.tres" id="l2_tr2_ring_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_q_crossfire_e.tres" id="l2_tr2_q_crossfire_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_q_crossfire_n.tres" id="l2_tr2_q_crossfire_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr2_q_crossfire_h.tres" id="l2_tr2_q_crossfire_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_burst_e.tres" id="l2_tr3_burst_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_burst_n.tres" id="l2_tr3_burst_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_burst_h.tres" id="l2_tr3_burst_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_e.tres" id="l2_tr3_q_boomerang_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_n.tres" id="l2_tr3_q_boomerang_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_h.tres" id="l2_tr3_q_boomerang_h"]
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
 
@@ -299,6 +325,10 @@ patterns = Array[ExtResource("x7")]([ExtResource("x10"), ExtResource("x11"), Ext
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p0")])
 another_sequence = Array[ExtResource("x7")]([])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr1_spread_e"), ExtResource("l2_tr1_spread_n"), ExtResource("l2_tr1_spread_h"), ExtResource("l2_tr1_q_railgap_e"), ExtResource("l2_tr1_q_railgap_n"), ExtResource("l2_tr1_q_railgap_h")])
+
 
 [sub_resource type="Resource" id="sp_m_top_1"]
 script = ExtResource("x8")
@@ -306,6 +336,10 @@ patterns = Array[ExtResource("x7")]([ExtResource("x12"), ExtResource("x11"), Ext
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p1")])
 another_sequence = Array[ExtResource("x7")]([])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr2_ring_e"), ExtResource("l2_tr2_ring_n"), ExtResource("l2_tr2_ring_h"), ExtResource("l2_tr2_q_crossfire_e"), ExtResource("l2_tr2_q_crossfire_n"), ExtResource("l2_tr2_q_crossfire_h")])
+
 
 [sub_resource type="Resource" id="sp_m_top_2"]
 script = ExtResource("x8")
@@ -313,24 +347,40 @@ patterns = Array[ExtResource("x7")]([ExtResource("x13"), ExtResource("x11"), Ext
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_main_p2")])
 another_sequence = Array[ExtResource("x7")]([])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr3_burst_e"), ExtResource("l2_tr3_burst_n"), ExtResource("l2_tr3_burst_h"), ExtResource("l2_tr3_q_boomerang_e"), ExtResource("l2_tr3_q_boomerang_n"), ExtResource("l2_tr3_q_boomerang_h")])
+
 
 [sub_resource type="Resource" id="sp_m_mid_0"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr_mid_aim_e"), ExtResource("l2_tr_mid_aim_n"), ExtResource("l2_tr_mid_aim_h")])
+
 
 [sub_resource type="Resource" id="sp_m_mid_1"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr_mid_aim_e"), ExtResource("l2_tr_mid_aim_n"), ExtResource("l2_tr_mid_aim_h")])
+
 
 [sub_resource type="Resource" id="sp_m_mid_2"]
 script = ExtResource("x8")
 patterns = Array[ExtResource("x7")]([ExtResource("x14"), ExtResource("x15")])
 another_replace = true
 another_patterns = Array[ExtResource("x7")]([ExtResource("a2r_mid_rails_combo")])
+loop2_replace = true
+loop2_patterns = Array[ExtResource("x7")]([])
+loop2_sequence = Array[ExtResource("x7")]([ExtResource("l2_tr_mid_aim_e"), ExtResource("l2_tr_mid_aim_n"), ExtResource("l2_tr_mid_aim_h")])
+
 
 [sub_resource type="Resource" id="sp_w3_l_0"]
 script = ExtResource("x8")
@@ -1617,3 +1667,11 @@ shooters = [NodePath("../Gun_push_0"), NodePath("../Gun_push_1")]
 
 [node name="SupportBomberRaid" type="Node" parent="." unique_id=1900000101]
 script = ExtResource("support_bomber_raid")
+
+[node name="CounterSpell" type="Node" parent="." node_paths=PackedStringArray("shooter")]
+script = ExtResource("counter_spell")
+spell_name = "蟻地獄 -アリジゴク-"
+trigger_phase = 2
+duration = 14.0
+shooter = NodePath("../Gun_m_top")
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp2_sand_slide"), ExtResource("spell_sp2_light_line"), ExtResource("spell_sp2_jaw")])

@@ -16,6 +16,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_uf758")
 bullet_scene = ExtResource("1_3tong")
+also_another = null
 skip_auto_tuning = true
 start_delay = 1.0
 shot_count = 12

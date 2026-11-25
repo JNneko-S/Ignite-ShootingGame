@@ -1,14 +1,18 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bcbu16iu4vo8y"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_jndsl"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_qars5"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
-[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Giga.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e3"]
-[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e4"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e4"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e5"]
+[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="e6"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e7"]
 
-[sub_resource type="Resource" id="p2"]
+[sub_resource type="Resource" id="p6"]
 script = ExtResource("e1")
-bullet_scene = ExtResource("e4")
+bullet_scene = ExtResource("e5")
+also_another = null
 shot_count = 2
 interval = 0.14
 bullet_count = 30
@@ -21,6 +25,7 @@ bullet_accel = 48.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
+also_another = null
 skip_auto_tuning = true
 start_delay = 0.2
 shot_count = 8
@@ -35,17 +40,85 @@ bullet_speed = 200.0
 split_time = 1.25
 split_vanish = true
 
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+also_another = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 30
+ring3d_radius = 58.0
+ring3d_grow = 4.0
+ring3d_max_radius = 69.6
+ring3d_spin = 28.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+
+[sub_resource type="Resource" id="p3"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e5")
+also_another = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 20
+ring3d_radius = 42.0
+ring3d_grow = 3.0
+ring3d_max_radius = 50.4
+ring3d_spin = -55.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+
+[sub_resource type="Resource" id="p4"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e6")
+also_another = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 12
+ring3d_radius = 27.0
+ring3d_max_radius = 32.4
+ring3d_spin = 120.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+
+[sub_resource type="Resource" id="p5"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e7")
+also_another = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 6
+ring3d_radius = 14.0
+ring3d_max_radius = 16.8
+ring3d_spin = -200.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
+also_another = null
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2"), SubResource("p3"), SubResource("p4"), SubResource("p5")])
 start_delay = 2.15
-pause = 1.6
+pause = 4.0
 soften_others = 3.0
 muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
-bullet_speed = 52.0
-bullet_accel = 14.0
-bullet_scale = 4.5
-split_time = 2.1
-split_pattern = SubResource("p2")
+bullet_speed = 46.0
+bullet_accel = 12.0
+counter_hp_ratio = 0.08
+bullet_scale = 3.0
+split_time = 2.6
+split_pattern = SubResource("p6")
 split_follow_direction = false

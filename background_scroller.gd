@@ -104,8 +104,8 @@ func _process(delta : float) -> void:
 		progress = 1.0
 		is_at_top = true
 		reached_top.emit()
-		if loop_sprite:
-			_start_loop()
+		if loop_sprite and loop_sprite.texture:
+			_start_loop() # 繰り返す絵がない(画像を外した)ステージでは、繰り返さない
 
 ## 繰り返しの準備: 絵の下の端(背景の上の端とのつなぎ目)を固定して、上へ伸ばせるようにする
 func _start_loop() -> void:

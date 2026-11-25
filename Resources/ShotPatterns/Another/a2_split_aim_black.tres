@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_aim")
+also_another = null
 bullet_count = 10
 spread_angle = 40.0
 bullet_speed = 144.0
@@ -15,6 +16,7 @@ bullet_speed = 144.0
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
+also_another = null
 another_made = true
 shot_count = 4
 interval = 0.35

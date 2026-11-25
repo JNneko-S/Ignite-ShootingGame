@@ -20,6 +20,7 @@ speed_ease = 0
 [sub_resource type="Resource" id="ring"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_accel")
+also_another = null
 bullet_count = 24
 spread_angle = 360.0
 aim_at_player = false
@@ -29,6 +30,7 @@ motion = Array[ExtResource("step")]([SubResource("ring_accel")])
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
+also_another = null
 start_delay = 1.0
 pause = 1.4
 bullet_count = 4
