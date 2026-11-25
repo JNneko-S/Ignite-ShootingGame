@@ -29,14 +29,23 @@ class_name PauseMenu
 @export var debug_code : String = "debug"
 @export var debug_code_time : float = 2.0
 
-enum Item { RESUME, RETRY, SHIP_SELECT }
+enum Item { RESUME, RETRY, SHIP_SELECT, RETIRE }
+## リタイアの確かめ: 記録を残す・残さない・もどる(コンティニューしたあとは、リタイア・もどる)
+const CONFIRM_TEXTS : Array[String] = ["RECORD", "NO RECORD", "BACK"]
+const CONFIRM_TEXTS_CONTINUED : Array[String] = ["RETIRE", "BACK"]
+const MENU_TEXTS : Array[String] = ["RESUME", "RETRY", "SHIP SELECT", "RETIRE"]
 
 @onready var _root : Control = $Root
 @onready var _board : LedBoard = $Root/Board
 @onready var _panel : TechPanel = $Root/Panel
-@onready var _items : Array[Label] = [$Root/Panel/Resume, $Root/Panel/Retry, $Root/Panel/ShipSelect]
+@onready var _items : Array[Label] = [$Root/Panel/Resume, $Root/Panel/Retry, $Root/Panel/ShipSelect, $Root/Panel/Retire]
 @onready var _cursor : Control = $Root/Panel/Cursor
 @onready var _fx : ColorRect = $Root/ScreenFx
+@onready var _note : Label = $Root/Note
+## リタイアしたあとに出る、タイトル画面
+@export_file("*.tscn") var title_scene : String = "res://title.tscn"
+## リタイアの確かめをしているところか
+var _confirm : bool = false
 
 ## 自機(いないときは開かない)。GameManager が入れる
 var player : Node
@@ -65,7 +74,10 @@ func _process(delta : float) -> void:
 	_check_debug_chord(delta)
 	if _code_left > 0.0 or Input.is_key_pressed(KEY_SHIFT) or Input.is_key_pressed(KEY_F1):
 		return # 隠しコマンドの入力中は、メニューを動かさない(Shift + Space で決定しないように)
-	if _pressed([pause_action]):
+	if _confirm and _pressed([pause_action, "UI_Ignite", "ui_cancel"]):
+		SoundManager.play(move_sound, 0.7)
+		_close_confirm()
+	elif _pressed([pause_action]):
 		_close_menu()
 	elif _pressed(["UI_Forward", "UI_StickUp", "ui_up"]):
 		_select(_index - 1)
@@ -130,6 +142,8 @@ func _can_open() -> bool:
 	return not get_tree().paused and is_instance_valid(player) and player.is_inside_tree()
 
 func _open_menu() -> void:
+	if _confirm:
+		_close_confirm()
 	_open = true
 	get_tree().paused = true
 	visible = true
@@ -152,7 +166,7 @@ func _close_menu() -> void:
 	get_tree().paused = false
 
 func _select(index : int, with_sound : bool = true) -> void:
-	_index = wrapi(index, 0, _items.size())
+	_index = wrapi(index, 0, _visible_count())
 	for i in _items.size():
 		_items[i].modulate = selected_color if i == _index else normal_color
 	_cursor.position.y = _items[_index].position.y + _items[_index].size.y * 0.5 - _cursor.size.y * 0.5
@@ -160,6 +174,9 @@ func _select(index : int, with_sound : bool = true) -> void:
 		SoundManager.play(move_sound)
 
 func _decide() -> void:
+	if _confirm:
+		_decide_confirm()
+		return
 	match _index:
 		Item.RESUME:
 			_close_menu()
@@ -168,6 +185,8 @@ func _decide() -> void:
 			_leave(get_tree().current_scene.scene_file_path, true)
 		Item.SHIP_SELECT:
 			_leave(ship_select_scene, false)
+		Item.RETIRE:
+			_open_confirm()
 
 ## シャッターが閉まってから、ステージを出る。
 ## reopen がオンなら、読み込んだ先でシャッターが開く(やり直し)。オフなら、閉まったまま切り替える
@@ -194,3 +213,49 @@ func _leave(path : String, reopen : bool) -> void:
 	else:
 		get_tree().paused = false
 		SceneSwitcher.change(path)
+
+# ---------------------------------------------------------------- リタイア
+
+## いま並んでいる項目の数
+func _visible_count() -> int:
+	var count := 0
+	for item in _items:
+		if item.visible:
+			count += 1
+	return count
+
+## リタイアの確かめ: ノーコンティニューなら、記録を残すか選べる。コンティニューしたあとは、記録は残せない
+func _open_confirm() -> void:
+	_confirm = true
+	SoundManager.play(confirm_sound)
+	var continued := RunConfig.continues_used > 0
+	var texts : Array[String] = CONFIRM_TEXTS_CONTINUED if continued else CONFIRM_TEXTS
+	for i in _items.size():
+		_items[i].visible = i < texts.size()
+		if i < texts.size():
+			_items[i].text = texts[i]
+	_note.text = "コンティニューしたので、記録は残せません" if continued else "リタイアします。記録を残しますか?"
+	_note.visible = true
+	_select(0, false)
+
+func _close_confirm() -> void:
+	_confirm = false
+	for i in _items.size():
+		_items[i].visible = true
+		_items[i].text = MENU_TEXTS[i]
+	_note.visible = false
+	_select(Item.RETIRE, false)
+
+func _decide_confirm() -> void:
+	var continued := RunConfig.continues_used > 0
+	var back_index := 1 if continued else 2
+	if _index == back_index:
+		SoundManager.play(move_sound, 0.7)
+		_close_confirm()
+		return
+	if not continued and _index == 0:
+		ScoreBoard.finish_run(get_tree(), ScoreBoard.FAILED) # 記録を残す
+	else:
+		ScoreBoard.discard_run() # 記録を残さない
+	RunConfig.loop = 1
+	_leave(title_scene, false)

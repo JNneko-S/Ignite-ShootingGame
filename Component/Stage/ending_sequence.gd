@@ -11,6 +11,7 @@ class_name EndingSequence
 ##   5. 母艦と一緒に飛び去って、白くなり、ゲームクリア(タイトルへ)
 ##   Bエンド(GameManager.end_b_conditions_met)のときは、回収されようとした瞬間に、変化が起きる(_b_end_event)
 
+const STAFF_ROLL := "res://GameScene/Ending/staff_roll.tscn"
 const INTRO_SCENE := preload("res://GameScene/Intro/stage_intro.tscn")
 const ALARM_SOUND := preload("res://Assets/Sounds/Warn/AS_816725_アラーム_警告音（ループ） (1).mp3")
 const BEE := preload("res://GameScene/Enemy/Stage4/bee_worker.tscn")
@@ -70,8 +71,9 @@ func _on_final_boss_defeated() -> void:
 	_player = get_tree().get_first_node_in_group("player") as Player
 	# 1. ラスボスの最期を待つ
 	var finale : NucleoFinale = null
-	for node in get_tree().current_scene.find_children("*", "NucleoFinale", true, false):
-		finale = node
+	for node in get_tree().current_scene.find_children("*", "", true, false):
+		if node is NucleoFinale:
+			finale = node
 	if finale:
 		await finale.finished
 	else:
@@ -253,6 +255,7 @@ func _pickup() -> void:
 	fade_white.tween_property(white, "color:a", 1.0, 2.0)
 	await fade_white.finished
 	await tree.create_timer(1.0, false).timeout
+	_set_banner()
 	# ノーコンティニューの一周目なら、二周目(Another Round)へ: 自機と点数を覚えて、タイトルで合図を見せてから一面へ
 	if RunConfig.can_enter_second_loop():
 		StageCarry.save(tree)
@@ -260,11 +263,12 @@ func _pickup() -> void:
 		if HazardRank.active:
 			HazardRank.start_black_loop() # ANOTHER の二周目は BLACK ANOTHER
 		TitleScreen.another_round_pending = true
-	SceneSwitcher.change(title_scene, 1.0)
+	_to_staff_roll()
 
 ## Bエンド: 回収されようとした瞬間に、変化が起きる。
 ## (中身はこれから決める。今は、母艦が赤く明滅して、アームがちぎれ、画面が暗転して止まる)
 func _b_end_event(mothership : Node2D) -> void:
+	Achievements.unlock("b_end")
 	var tree := get_tree()
 	var flicker := create_tween().set_loops(8)
 	flicker.tween_property(mothership, "modulate", Color(2.0, 0.3, 0.3), 0.06)
@@ -289,7 +293,24 @@ func _b_end_event(mothership : Node2D) -> void:
 	if _runner:
 		_runner.stage_cleared.emit()
 	await tree.create_timer(2.0, false).timeout
-	SceneSwitcher.change(title_scene, 1.0)
+	_set_banner()
+	_to_staff_roll()
+
+## クリアの合図: 一周目は NORMAL ROUND CLEAR!(黄)、二周目は ANOTHER ROUND CLEAR!(赤)、
+## 隠しボスを倒して二周目を終えたら congratulation!
+func _set_banner() -> void:
+	if RunConfig.loop >= 2:
+		StaffRoll.banner = "congratulation!" if RunConfig.hidden_boss_defeated else "ANOTHER ROUND CLEAR!"
+		StaffRoll.banner_color = Color(0.85, 0.08, 0.05)
+	else:
+		StaffRoll.banner = "NORMAL ROUND CLEAR!"
+		StaffRoll.banner_color = Color(0.86, 0.62, 0.0)
+	Achievements.on_round_clear()
+
+## エンディング(スタッフロール)へ。終わったらタイトルへ(二周目へ進むときは、タイトルが合図を見せて一面へ)
+func _to_staff_roll() -> void:
+	StaffRoll.next_scene = title_scene
+	SceneSwitcher.change(STAFF_ROLL, 1.0)
 
 ## 出撃の演出のシーンを、スクリプト抜きで借りて、雲・母艦・アームだけを使う
 func _build_sky() -> void:

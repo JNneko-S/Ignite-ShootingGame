@@ -340,6 +340,7 @@ func _on_player_damaged() -> void:
 		score_system.on_player_hit(dead) # 被弾で倍率が下がる。撃墜なら倍率がなくなる
 	if dead:
 		death_count += 1
+		Achievements.on_player_died(get_tree())
 		# 復活するまで(と、復活して少しのあいだ)、敵に撃たせない
 		EnemyShooter.hold_fire(player.respawn_delay + respawn_ceasefire_time)
 		player.die() # 発動中なら、効果も止まる
@@ -372,7 +373,9 @@ func _scatter_items(level_before : int, progress_before : float) -> void:
 
 ## 残機が尽きた: ゲームオーバーの画面を出す
 func _on_game_over() -> void:
-	ScoreBoard.finish_run(get_tree(), false) # スコアボードに記録する(Slow Mode で遊んだときは記録しない)
+	# スコアボードに記録する(コンティニューしたあとのゲームオーバーは記録しない。Slow Mode で遊んだときも記録しない)
+	if RunConfig.continues_used == 0:
+		ScoreBoard.finish_run(get_tree(), ScoreBoard.FAILED)
 	if game_over_scene == null:
 		return
 	var screen := game_over_scene.instantiate() as GameOverScreen

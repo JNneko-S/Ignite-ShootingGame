@@ -226,7 +226,8 @@ func _on_died(_e : Enemy) -> void:
 		return
 	var fade := create_tween().set_parallel(true)
 	for key in ["vignette", "heat", "aberration", "desaturate", "wave_strength"]:
-		fade.tween_method(_set_param.bind(key), _fx.get_shader_parameter(key), 0.0, 1.5)
+		var from = _fx.get_shader_parameter(key)
+		fade.tween_method(_set_param.bind(key), float(from) if from != null else 0.0, 0.0, 1.5)
 	if _rays:
 		fade.tween_property(_rays, "power", 0.0, 0.5)
 	fade.chain().tween_callback(func() -> void:

@@ -21,6 +21,12 @@ static var continues_used : int = 0
 ## この出撃で、イグナイトのチャンス(おとりの雑魚)を、イグナイトで返して倒した数(エンドBの選択条件)
 static var ignite_counter_kills : int = 0
 
+## 隠しボスを倒したか(二周目をこれで終えると、クリアの合図が congratulation! になる)。隠しボスが倒されたときに true にする
+static var hidden_boss_defeated : bool = false
+
+## この出撃で、ショット(自機・子機の弾)で敵にダメージを与えたか。与えていなければ「イグナイトだけ」で戦っている(実績)
+static var shot_damage_used : bool = false
+
 ## ノーコンティニューで、まだ一周目なら true(クリアしたら二周目に入れる)
 static func can_enter_second_loop() -> bool:
 	return loop == 1 and continues_used == 0

@@ -11,17 +11,18 @@ config_version=5
 [application]
 
 config/name="Ignite"
-config/version="0.0.0alpha"
+config/version="0.9Beta"
 run/main_scene="uid://bwyu1auys3uxw"
 config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=144
-config/icon="res://icon.svg"
+config/icon="uid://e2fl1ogwe50x"
 
 [autoload]
 
 GameSettings="*res://Component/Settings/game_settings.gd"
 SceneSwitcher="*res://Component/Scene/scene_switcher.gd"
 SoundManager="*res://sound_manager.gd"
+Achievements="*res://Component/Achievements/achievements.gd"
 
 [display]
 

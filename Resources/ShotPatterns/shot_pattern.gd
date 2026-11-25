@@ -199,6 +199,13 @@ enum TimingUnit {
 ## 奥と手前の大きさの差(0 なら同じ大きさ)
 @export_range(0.0, 0.8, 0.05) var ring3d_depth_scale : float = 0.35
 
+@export_group("回る帯(大玉に変わる)")
+## 0 より大きければ、撃った中心から見た向きが、回る帯の中にある弾だけ、大きく(Window Big Scale 倍)なる。
+## 帯は Window Speed Deg 度/秒で回る(マイナスで逆回り)。幅は Window Width Deg 度
+@export var window_width_deg : float = 0.0
+@export var window_speed_deg : float = 90.0
+@export var window_big_scale : float = 1.9
+
 @export_group("弾の性質")
 ## 撃った瞬間の速さ(px/秒)
 @export var bullet_speed : float = 250.0

@@ -272,7 +272,7 @@ func _change_difficulty(direction : int) -> void:
 			SoundManager.play(back_sound) # これより先はない
 		return
 	var last := difficulty_names.size() - 1
-	if direction > 0 and _difficulty == last and another_secret_presses > 0:
+	if direction > 0 and _difficulty == last and another_secret_presses > 0 and Achievements.can_choose_another():
 		# HARD で右を何回も押すと、隠し難易度 ANOTHER が出てくる
 		_secret_presses += 1
 		if _secret_presses >= another_secret_presses:
@@ -432,6 +432,8 @@ func _launch() -> void:
 	RunConfig.has_selection = true
 	RunConfig.consecutive_game_overs = 0
 	RunConfig.loop = 1 # 出撃し直したら、一周目から
+	RunConfig.hidden_boss_defeated = false
+	RunConfig.shot_damage_used = false
 	RunConfig.continues_used = 0
 	RunConfig.ignite_counter_kills = 0
 	_stop_music()

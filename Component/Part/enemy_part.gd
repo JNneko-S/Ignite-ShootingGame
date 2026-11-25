@@ -131,6 +131,8 @@ func _on_damage(damage : float, _knockback_dir : Vector2 = Vector2.ZERO) -> void
 
 func _destroy() -> void:
 	_destroyed = true
+	if String(name).contains("MiniCannon"):
+		Achievements.unlock("hidden_gunner") # タンクの副砲を壊した
 	_was_lock_target = is_in_group("lock_target")
 	remove_from_group("lock_target")
 	var stopped : Array = shooters.duplicate()

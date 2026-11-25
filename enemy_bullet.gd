@@ -35,6 +35,11 @@ var _speed_scale : float = 1.0
 var _step_index : int = -1
 var _step_time : float = 0.0
 var _step_from_speed : float = 0.0 # 区間の始めの速さ(倍率をかける前)
+var _step_from_alpha : float = 1.0 # 区間の始めの不透明度
+## 回る帯(ShotPattern の Window): 撃った中心からの向きが、回る帯の中にある弾だけ大きくなる
+var _window_pattern : ShotPattern
+var _window_origin : Vector2 = Vector2.ZERO
+var _window_base_scale : Vector2 = Vector2.ONE
 var _mirror : bool = false # 左右反転して出た敵の弾(曲がる向き・回す向きが逆)
 
 # ---- 分裂(ShotPattern の Split。割れたら、Split Pattern の弾になって消える) ----
@@ -99,6 +104,25 @@ func setup(dir : Vector2, spd : float, dmg : float, acc : float = 0.0) -> void:
 	damage = dmg
 	accel = acc
 	rotation = direction.angle() + PI / 2.0
+
+## 回る帯に入れる。origin は撃った中心。setup のあとに呼ぶ
+func set_window(pattern : ShotPattern, origin : Vector2) -> void:
+	_window_pattern = pattern
+	_window_origin = origin
+	_window_base_scale = scale
+	_apply_window()
+
+## 中心から見た向きが、回る帯([速さ × 時刻, + 幅] 度)の中なら大きく、外ならふつうの大きさ。帯はすべての弾で同じ時計で回る
+func _apply_window() -> void:
+	var p := _window_pattern
+	var t := Time.get_ticks_msec() / 1000.0
+	var start := fposmod(p.window_speed_deg * t, 360.0)
+	var angle := fposmod(rad_to_deg((global_position - _window_origin).angle()), 360.0)
+	var inside := fposmod(angle - start, 360.0) <= p.window_width_deg
+	if p.window_speed_deg < 0.0:
+		inside = fposmod(start - angle, 360.0) <= p.window_width_deg
+	var target := _window_base_scale * (p.window_big_scale if inside else 1.0)
+	scale = scale.lerp(target, 0.35)
 
 ## 立体弾幕の輪に並べる。index は輪の中の何番目か、heading は輪が飛ぶ向き(ラジアン)。setup のあとに呼ぶ
 func set_ring3d(pattern : ShotPattern, index : int, heading : float, mirror : bool = false) -> void:
@@ -337,6 +361,8 @@ func _physics_process(delta : float) -> void:
 				_update_motion(delta)
 			if _ring_pattern:
 				_apply_ring(delta)
+			if _window_pattern:
+				_apply_window()
 		BulletState.IGNITED:
 			_move_ignited(delta)
 
@@ -348,6 +374,8 @@ func _update_motion(delta : float) -> void:
 	var step := _motion[_step_index]
 	_step_time += delta
 	speed = ShotMath.step_speed(step, _step_from_speed, minf(_step_time, step.duration)) * _speed_scale
+	if step.fade_to >= 0.0:
+		modulate.a = lerpf(_step_from_alpha, step.fade_to, clampf(_step_time / maxf(step.duration, 0.001), 0.0, 1.0))
 	if step.angular_velocity != 0.0:
 		direction = direction.rotated(ShotMath.angular_velocity(step, _mirror) * delta)
 		rotation = direction.angle() + PI / 2.0
@@ -360,6 +388,7 @@ func _update_motion(delta : float) -> void:
 func _begin_step(index : int) -> void:
 	_step_index = index
 	_step_time = 0.0
+	_step_from_alpha = modulate.a
 	if index >= _motion.size():
 		return
 	var player := get_tree().get_first_node_in_group("player") as Node2D if is_inside_tree() else null

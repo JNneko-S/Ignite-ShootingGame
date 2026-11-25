@@ -41,15 +41,16 @@ static var another_round_pending : bool = false
 @export_file("*.tscn") var second_loop_scene : String = "res://stage1.tscn"
 
 enum Phase { PRESS, MENU, PANEL, LEAVING }
-enum Item { START, OPTION, SCORE_BOARD, REPLAY, EXIT }
+enum Item { START, OPTION, SCORE_BOARD, ACHIEVEMENTS, REPLAY, EXIT }
 
 @onready var _press_label : Label = $PressLabel
 @onready var _menu : Control = $Menu
 @onready var _bar : ColorRect = $Menu/Bar
-@onready var _items : Array[Label] = [$Menu/Start, $Menu/Option, $Menu/ScoreBoard, $Menu/Replay, $Menu/Exit]
+@onready var _items : Array[Label] = [$Menu/Start, $Menu/Option, $Menu/ScoreBoard, $Menu/Achievements, $Menu/Replay, $Menu/Exit]
 @onready var _toast : Label = $Toast
 @onready var _option : OptionPanel = $OptionPanel
 @onready var _score_board : ScoreBoardPanel = $ScoreBoardPanel
+@onready var _achievements : AchievementsPanel = $AchievementsPanel
 @onready var _fade : ColorRect = $Fade
 @onready var _rings : Array[Control] = [$Ring, $Ring2]
 
@@ -68,6 +69,7 @@ func _ready() -> void:
 		ring.pivot_offset = ring.size * 0.5
 	_option.closed.connect(_on_panel_closed)
 	_score_board.closed.connect(_on_panel_closed)
+	_achievements.closed.connect(_on_panel_closed)
 	# 黒から明ける
 	_fade.visible = true
 	_fade.color.a = 1.0
@@ -224,6 +226,8 @@ func _decide() -> void:
 			_open_panel(_option)
 		Item.SCORE_BOARD:
 			_open_panel(_score_board)
+		Item.ACHIEVEMENTS:
+			_open_panel(_achievements)
 		Item.REPLAY:
 			SoundManager.play(back_sound)
 			_show_toast(replay_message)

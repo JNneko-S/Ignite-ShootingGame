@@ -33,3 +33,7 @@ enum TurnMode {
 @export_group("曲がり")
 ## この区間の間、向きが毎秒この角度だけ回る(度/秒)。正の値は反時計回り
 @export var angular_velocity : float = 0.0
+
+@export_group("見え方")
+## 0 以上なら、この区間のあいだに、弾の不透明度をこの値まで変える(0 = 透明。当たり判定は残る)。マイナスなら変えない
+@export_range(-1.0, 1.0, 0.05) var fade_to : float = -1.0

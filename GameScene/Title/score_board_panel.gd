@@ -104,6 +104,10 @@ func _refresh() -> void:
 		if not has:
 			continue
 		var entry : Dictionary = _sorted[r]
+		if r != _row:
+			var result_color := _result_color(entry)
+			for label in labels:
+				set_color(label, result_color)
 		labels[0].text = "%02d" % (r + 1)
 		labels[1].text = _short_date(entry)
 		labels[2].text = format_score(int(entry.get("score", 0)))
@@ -123,11 +127,21 @@ func _refresh() -> void:
 func _show_detail(entry : Dictionary) -> void:
 	var stage := str(entry.get("stage", "---"))
 	_detail[0].text = "%s    %s" % [str(entry.get("date", "")).replace("T", " ").left(16), str(entry.get("ship", "---"))]
-	_detail[1].text = "%s  /  %s  /  %s" % [ScoreBoard.difficulty_name(entry), "ALL CLEAR" if entry.get("cleared", false) else stage,
+	_detail[1].text = "%s  /  %s  /  %s" % [ScoreBoard.difficulty_name(entry), ScoreBoard.result_of(entry) + ("" if ScoreBoard.result_of(entry) != ScoreBoard.FAILED else "  (" + stage + ")"),
 		format_score(int(entry.get("score", 0)))]
+	set_color(_detail[1], _result_color(entry))
 	_detail[2].text = "被弾 %d    ボム %d    撃破 %d" % [int(entry.get("hits", 0)), int(entry.get("bombs", 0)), int(entry.get("kills", 0))]
 	_detail[3].text = "RATE  %.1f   ( %s )" % [ScoreBoard.rate_value(entry), ScoreBoard.grade(entry)]
 	set_color(_detail[3], accent_color)
+
+## 結果の色: 一周目のクリア(CLEAR)は黄色、二周目のクリア(ALL CLEAR)は赤、それ以外は墨
+func _result_color(entry : Dictionary) -> Color:
+	match ScoreBoard.result_of(entry):
+		ScoreBoard.CLEAR:
+			return Color(0.86, 0.62, 0.0)
+		ScoreBoard.ALL_CLEAR:
+			return Color(0.85, 0.08, 0.05)
+	return ink_color
 
 func _short_date(entry : Dictionary) -> String:
 	var date := str(entry.get("date", ""))

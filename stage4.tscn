@@ -1,110 +1,108 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cdvvc86bg801e"]
 
+[ext_resource type="AudioStream" uid="uid://db16gftfe8xra" path="res://Assets/Sounds/Music/AS_1609786_ゲーム／ループ・疾走感あるバトルBGM.mp3" id="10_32ul0"]
+[ext_resource type="Script" uid="uid://cyfaycsma447k" path="res://Component/Stage/nucleo_ambience.gd" id="ambience"]
 [ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
-[ext_resource type="Resource" path="res://Resources/StageData/Stage4.tres" id="stage"]
+[ext_resource type="Script" uid="uid://b0dwis407fneo" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
+[ext_resource type="Script" uid="uid://bbo6kpo1mxrll" path="res://Component/Stage/breach_sequence.gd" id="breach"]
+[ext_resource type="Script" uid="uid://dm0wqm2ddxv6w" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
+[ext_resource type="Script" uid="uid://cc6dx6pmwhmpo" path="res://Component/Stage/ending_sequence.gd" id="ending"]
+[ext_resource type="Texture2D" uid="uid://bl41vuxusb8w3" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Industy/BG.png" id="industy"]
+[ext_resource type="AudioStream" uid="uid://u2j1svbuhh8e" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_final"]
+[ext_resource type="AudioStream" uid="uid://bu65611iqelhe" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
+[ext_resource type="Texture2D" uid="uid://b65b114vgc73o" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer0.png" id="nucleo0"]
+[ext_resource type="Texture2D" uid="uid://bbqojbj7m1nh6" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer1.png" id="nucleo1"]
+[ext_resource type="Texture2D" uid="uid://7sqho837pqpw" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer2_strip6.png" id="nucleo2"]
+[ext_resource type="Resource" uid="uid://blkm2cc1bvajc" path="res://Resources/StageData/Stage4.tres" id="stage"]
 [ext_resource type="Script" uid="uid://g18nyoka7ga0" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Industy/BG.png" id="industy"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer0.png" id="nucleo0"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer1.png" id="nucleo1"]
-[ext_resource type="Texture2D" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer2_strip6.png" id="nucleo2"]
-[ext_resource type="Script" path="res://Component/Motion/texture_cycle.gd" id="cycle"]
-[ext_resource type="Script" path="res://Component/Stage/breach_sequence.gd" id="breach"]
-[ext_resource type="Script" path="res://Component/Ground/ground_block_area.gd" id="block_area"]
-[ext_resource type="Script" path="res://Component/Stage/ending_sequence.gd" id="ending"]
-[ext_resource type="Script" path="res://Component/Stage/nucleo_ambience.gd" id="ambience"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1637238_激しいサイバーアラビアンエレクトロ.mp3" id="music_stage4"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_final"]
-[ext_resource type="AudioStream" path="res://Assets/Sounds/Music/AS_951085_ハードコア＆DANCE：EDM【ループ】.mp3" id="music_boss4"]
 
-[node name="Stage4" instance=ExtResource("base")]
+[node name="Stage4" unique_id=1476515919 instance=ExtResource("base")]
 
-[node name="StageRunner" parent="."]
-final_boss_clear_delay = 9999.0
+[node name="StageRunner" parent="." index="2" unique_id=1973239994]
 stage = ExtResource("stage")
+final_boss_clear_delay = 9999.0
 
-[node name="Scroller" parent="."]
-preroll = true
-loop_sprite = null
+[node name="Scroller" parent="." index="4" unique_id=944740712]
 arrive_at_time = 106.0
+preroll = true
 auto_detect_bounds = false
 manual_top = -6918.8
-manual_bottom = 0.0
 
-[node name="LoopThisAtTheEnd" parent="Scroller"]
+[node name="LoopThisAtTheEnd" parent="Scroller" index="0" unique_id=395927672]
 visible = false
 texture = null
 
-[node name="Sprite2D3" parent="Scroller"]
+[node name="Sprite2D3" parent="Scroller" index="1" unique_id=1652895685]
 position = Vector2(242, -3035.5)
-scale = Vector2(2.6, 2.6)
 texture = ExtResource("industy")
 
-[node name="Sprite2D" parent="Scroller/Sprite2D3"]
+[node name="Sprite2D" parent="Scroller/Sprite2D3" index="0" unique_id=731957679]
 texture = null
 
-[node name="WallBlockLowerLeft" type="Polygon2D" parent="Scroller/Sprite2D3"]
+[node name="WallBlockLowerLeft" type="Polygon2D" parent="Scroller/Sprite2D3" index="1" unique_id=1543177772]
 color = Color(1, 0.15, 0.15, 0.45)
 polygon = PackedVector2Array(-120, -123.5, -84, -123.5, 40, -0.5, 40, 37.5, 30, 44.5, -120, 44.5)
 script = ExtResource("block_area")
 
-[node name="WallBlockUpperRight" type="Polygon2D" parent="Scroller/Sprite2D3"]
+[node name="WallBlockUpperRight" type="Polygon2D" parent="Scroller/Sprite2D3" index="2" unique_id=997500178]
 color = Color(1, 0.15, 0.15, 0.45)
 polygon = PackedVector2Array(-56, -142.5, 120, -142.5, 120, -75.5, 85, -34.5, 58, -34.5)
 script = ExtResource("block_area")
 
-[node name="Sprite2D2" parent="Scroller"]
+[node name="Sprite2D2" parent="Scroller" index="3" unique_id=574165957]
 visible = false
 texture = null
 
-[node name="NucleoLayer0" type="Sprite2D" parent="Scroller"]
+[node name="NucleoLayer0" type="Sprite2D" parent="Scroller" index="4" unique_id=2069799600]
 z_index = -1
 position = Vector2(242, -12915.5)
 scale = Vector2(2.6, 2.6)
 texture = ExtResource("nucleo0")
 
-[node name="NucleoLayer1" type="Sprite2D" parent="Scroller"]
+[node name="NucleoLayer1" type="Sprite2D" parent="Scroller" index="5" unique_id=926843602]
 z_index = -1
 position = Vector2(242, -12915.5)
 scale = Vector2(2.6, 2.6)
 texture = ExtResource("nucleo1")
 
-[node name="NucleoLayer2" type="Sprite2D" parent="Scroller"]
+[node name="NucleoLayer2" type="Sprite2D" parent="Scroller" index="6" unique_id=359114268]
 z_index = -1
 position = Vector2(242, -12915.5)
 scale = Vector2(2.6, 2.6)
 texture = ExtResource("nucleo2")
 hframes = 6
 
-[node name="TextureCycle" type="Node" parent="Scroller/NucleoLayer2"]
+[node name="TextureCycle" type="Node" parent="Scroller/NucleoLayer2" index="0" unique_id=314892798]
 script = ExtResource("cycle")
 fps = 6.0
 
-[node name="AudioStreamPlayer" parent="."]
+[node name="BackgroundSway" parent="." index="6" unique_id=418265093 node_paths=PackedStringArray("targets")]
+targets = [NodePath("../Scroller/Sprite2D3"), NodePath("../Scroller/Sprite2D2"), NodePath("../Scroller/LoopThisAtTheEnd"), NodePath("../Scroller/NucleoLayer0"), NodePath("../Scroller/NucleoLayer1"), NodePath("../Scroller/NucleoLayer2")]
+depth_scales = Array[float]([0.7, 1.0, 0.7, 0.7, 0.7, 0.7])
+
+[node name="AudioStreamPlayer" parent="." index="11" unique_id=1308156288]
 stage_music = ExtResource("music_stage4")
-boss_music = ExtResource("music_boss4")
-resume_after_midboss = true
+boss_music = ExtResource("10_32ul0")
 boss_music_by_name = Dictionary[String, AudioStream]({
 "最終兵器 ヌクレオ": ExtResource("music_final")
 })
+another_boss_music = ExtResource("10_32ul0")
+resume_after_midboss = true
 
-[node name="StageTransition" type="Node" parent="."]
+[node name="StageTransition" type="Node" parent="." index="14" unique_id=409532695]
 script = ExtResource("stage_transition")
-dissolve_time = 4.5
 arrive_hold_time = 0.8
+dissolve_time = 4.5
 
-[node name="BreachSequence" type="Node" parent="." node_paths=PackedStringArray("scroller")]
+[node name="BreachSequence" type="Node" parent="." index="15" unique_id=34756892 node_paths=PackedStringArray("scroller")]
 script = ExtResource("breach")
 scroller = NodePath("../Scroller")
 next_arrive_time = 212.5
 
-[node name="EndingSequence" type="Node" parent="."]
+[node name="EndingSequence" type="Node" parent="." index="16" unique_id=472167731]
 script = ExtResource("ending")
 
-[node name="BackgroundSway" parent="." node_paths=PackedStringArray("targets")]
-targets = [NodePath("../Scroller/Sprite2D3"), NodePath("../Scroller/Sprite2D2"), NodePath("../Scroller/LoopThisAtTheEnd"), NodePath("../Scroller/NucleoLayer0"), NodePath("../Scroller/NucleoLayer1"), NodePath("../Scroller/NucleoLayer2")]
-depth_scales = Array[float]([0.7, 1.0, 0.7, 0.7, 0.7, 0.7])
-
-[node name="NucleoAmbience" type="Node2D" parent="."]
+[node name="NucleoAmbience" type="Node2D" parent="." index="17" unique_id=1747991681]
 script = ExtResource("ambience")
 
 [editable path="UI/ScoreUI"]

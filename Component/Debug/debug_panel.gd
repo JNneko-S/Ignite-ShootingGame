@@ -11,6 +11,8 @@ class_name DebugPanel
 
 ## ジャンプしたときに、中ボス・ボスが出る何秒前から始めるか
 const JUMP_LEAD : float = 2.0
+## ラスボスのいるステージ
+const FINAL_STAGE : String = "res://stage4.tscn"
 const SLOW_STEPS : Array[float] = [1.0, 0.5, 0.25]
 
 var game_manager : GameManager
@@ -29,6 +31,7 @@ func _ready() -> void:
 	_box.position = Vector2(4, 64)
 	_box.size = Vector2(178, 262)
 	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_watch_pending_ending.call_deferred()
 	add_child(_box)
 	_label = Label.new()
 	_label.position = Vector2(8, 4)
@@ -69,6 +72,8 @@ func _input(event : InputEvent) -> void:
 		KEY_0: _clear_bullets()
 		KEY_MINUS: _kill_zako()
 		KEY_P: _next_stage()
+		KEY_L: _to_final_boss(false)
+		KEY_E: _to_final_boss(true)
 		_: handled = false
 	if handled and viewport:
 		viewport.set_input_as_handled()
@@ -95,6 +100,7 @@ func _build_text() -> String:
 	lines.append("9 当たり判定: %s" % ("ON" if get_tree().debug_collisions_hint else "OFF"))
 	lines.append("0 弾消し  - 雑魚を倒す")
 	lines.append("P 次のステージへ")
+	lines.append("L ラスボス戦へ  E エンディングへ")
 	lines.append("")
 	lines.append("FPS %d  弾 %d  敵 %d" % [Engine.get_frames_per_second(),
 		get_tree().get_nodes_in_group("enemy_bullet").size(), get_tree().get_nodes_in_group("enemy").size()])
@@ -167,6 +173,50 @@ func _jump(boss : bool) -> void:
 	Engine.time_scale = 1.0 # 読み直すと、パネルのスローの表示も 1 倍に戻るので、合わせる
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+## ラスボス戦へ(ending がオンなら、ラスボスが出たらすぐ倒して、エンディングへ)。
+## 今のステージの状態(自機・点数)を持ち越して、ラストステージのラスボスの少し前から始める
+func _to_final_boss(ending : bool) -> void:
+	var data = load(FINAL_STAGE).instantiate()
+	var runner := data.get_node_or_null("StageRunner") as StageRunner
+	var time := -1.0
+	if runner and runner.stage:
+		for event in runner.stage.events:
+			if event is SpawnEvent and event.boss_time_bonus:
+				time = event.time
+	data.free()
+	if time < 0.0:
+		_say("ラスボスが見つかりません")
+		return
+	DebugTools.used = true
+	DebugTools.pending_start_time = maxf(time - 4.0, 0.1)
+	DebugTools.skip_intro_once = true
+	DebugTools.pending_ending = ending
+	Engine.time_scale = 1.0
+	get_tree().paused = false
+	StageCarry.save(get_tree())
+	SceneSwitcher.change(FINAL_STAGE)
+
+## エンディングへ飛ぶとき: ラスボスが出てきたら、少し待ってから倒す
+func _watch_pending_ending() -> void:
+	if not DebugTools.pending_ending:
+		return
+	DebugTools.pending_ending = false
+	var runner := _runner()
+	if runner == null:
+		return
+	var boss : Enemy = null
+	while boss == null and is_inside_tree():
+		await get_tree().create_timer(0.5, false).timeout
+		for node in get_tree().get_nodes_in_group("enemy"):
+			if node is Enemy and node.boss_reach_time >= 0.0 and node.get_node_or_null("HPComponent"):
+				boss = node
+	if boss == null:
+		return
+	await get_tree().create_timer(2.0, false).timeout
+	if is_instance_valid(boss):
+		boss.hp_component.hp = 0
+		_say("ラスボスを倒した")
 
 ## 次のステージへ(StageTransition の Next Stage)。今の状態を持ち越して、霧の中から始める
 func _next_stage() -> void:

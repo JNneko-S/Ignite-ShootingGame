@@ -10,6 +10,8 @@ class_name EnemyShooter
 signal fired
 ## Sequence(順番に撃つ弾幕)の1つを撃ち終わった(休みに入る前)。ボスの仕掛け(列車など)が、弾幕の切れ目を知るのに使う
 signal sequence_step_finished(pattern : ShotPattern)
+## 順番に撃つ弾幕(とその前の弾幕)を撃ち始めたとき(BeamShooter の Sync Pattern が、合わせて光線を撃つのに使う)。pattern は調整する前の元の弾幕
+signal pattern_started(pattern : ShotPattern)
 
 @export var patterns : Array[ShotPattern] = []
 ## 順番に撃つ弾幕。1つ撃ち終わったら(Pause だけ待って)次へ進み、最後まで行ったら最初に戻る。
@@ -180,6 +182,8 @@ func set_phase(index : int, keep_position : bool = false) -> void:
 
 ## 次に撃つ、順番に撃つ弾幕(Sequence)の番号
 var _sequence_pos : int = 0
+## いま撃っている順番の弾幕が、もう1発でも撃ったか(止められたとき、次の弾幕へ進むかを決める)
+var _run_fired : bool = false
 
 ## sequence の弾幕を、1つずつ順番に撃つ(最後まで行ったら最初に戻る)
 func _run_sequence() -> void:
@@ -188,9 +192,14 @@ func _run_sequence() -> void:
 	var generation := _generation
 	while generation == _generation and not sequence.is_empty():
 		var index := _sequence_pos % sequence.size()
+		_run_fired = false
 		await _run_once(sequence[index], generation)
 		if generation != _generation:
-			break # 途中で止められた弾幕は、次に戻ったとき、もう一度最初から撃つ
+			# 途中で止められた弾幕: まだ撃ち始めていなければ、次に戻ったとき最初から。撃ち始めていたら、次の弾幕へ進む
+			# (援護を呼ぶたびに止まるボスで、同じ弾幕ばかりくり返さないように)
+			if _run_fired:
+				_sequence_pos = index + 1
+			break
 		_sequence_pos = index + 1
 		if is_inside_tree():
 			await get_tree().process_frame # 時間のかからない弾幕だけでも、止まらないように
@@ -203,6 +212,7 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 		return
 	if debug_pattern_started.is_valid():
 		debug_pattern_started.call(self, pattern)
+	pattern_started.emit(pattern)
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
 	var unit := ShotMath.time_unit(pattern, clock.seconds_per_beat() if clock else 0.5)
@@ -225,6 +235,7 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 			return
 		if _can_fire():
 			_fire(pattern, i, burst_aim if pattern.aim_once_per_burst else _aim_angle())
+			_run_fired = true
 		await _wait(pattern.interval * unit)
 	if generation != _generation:
 		together["on"] = false
@@ -422,6 +433,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 				bullet.set_split(pattern, bullet_mirror, split_depth)
 				if not is_nan(split_heading) and "split_heading" in bullet:
 					bullet.split_heading = split_heading
+			if pattern.window_width_deg > 0.0 and bullet.has_method("set_window"):
+				bullet.set_window(pattern, origin)
 			if ring > 0 and bullet.has_method("set_ring3d"):
 				bullet.set_ring3d(pattern, member_index, shot["angle"] + turn, bullet_mirror)
 

@@ -165,6 +165,8 @@ var hi_score : int = 0
 var graze_multiplier : float = 1.0
 ## 撃破の内訳(デバッグ・リザルト用)
 var kill_count : int = 0
+## このステージで倒した雑魚(ボス・中ボス以外)の数
+var zako_kill_count : int = 0
 ## スコアアイテムを、画面の下へ落とさずに拾い続けた数
 var item_chain : int = 0
 ## 今の発動で焼いた弾の数(発動していなければ、直前の発動の数)
@@ -248,6 +250,8 @@ func current_ignite_multiplier() -> float:
 ## Enemy._die から呼ばれる
 func on_enemy_killed(enemy : Enemy) -> void:
 	kill_count += 1
+	if enemy.boss_reach_time < 0.0 and not enemy.is_midboss:
+		zako_kill_count += 1 # 雑魚を倒した数(実績「今日はボスだけでいいよ」)
 	if enemy.boss_reach_time >= 0.0:
 		# ボスの点は、大爆発が終わって消えるときに、勲章になって出る
 		var bonus := _boss_bonus(enemy)
@@ -541,6 +545,7 @@ func item_chain_multiplier() -> float:
 # ---------------------------------------------------------------- ステージクリア
 
 func _on_stage_cleared() -> void:
+	Achievements.on_stage_cleared(get_tree())
 	RunConfig.consecutive_game_overs = 0 # クリアしたら、続けてのゲームオーバーは数え直し
 	var lines : Array = []
 	var deaths := game_manager.death_count if game_manager else 0

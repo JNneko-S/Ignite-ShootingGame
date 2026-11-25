@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShotPattern" format=3]
+[gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://b2j6ctqmeig4k"]
 
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Spiky_Split.tscn" id="e2"]
@@ -8,7 +8,6 @@
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
 duration = 0.5
-target_speed = 0.0
 
 [sub_resource type="Resource" id="st3"]
 script = ExtResource("e4")
@@ -29,8 +28,8 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
 bullet_count = 2
 spread_angle = 180.0
-base_angle = 90.0
 aim_at_player = false
+base_angle = 90.0
 bullet_speed = 26.0
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4")])
 
@@ -46,8 +45,6 @@ interval = 0.16
 pause = 1.8
 bullet_count = 3
 spread_angle = 26.0
-aim_at_player = true
 bullet_speed = 165.0
 split_time = 0.75
-split_follow_direction = true
 split_pattern = SubResource("p1")

@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://ctusdf1x37n0w" path="res://player.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://ckgsvcihgntb" path="res://GameScene/Player/vespa_player.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://b85j0qulfkw8x" path="res://Assets/VESPα.png" id="3_tex"]
-[ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="4_center"]
-[ext_resource type="AudioStream" uid="uid://c4xsafusixpej" path="res://Assets/Sounds/Score/AS_897229_ポチン（報酬獲得・クーポン・エントリー）.mp3" id="5_counter"]
+[ext_resource type="AudioStream" uid="uid://c4qoom8lexfrd" path="res://Assets/Sounds/Shot/AS_862365_衝撃が強そうな銃声音.mp3" id="4_rg3fw"]
+[ext_resource type="AudioStream" uid="uid://cbigv35265d62" path="res://Assets/Sounds/Parry/AS_1242853_激しい攻撃をはじくガード音_.mp3" id="5_6ld6k"]
 
 [node name="Player" unique_id=257047966 node_paths=PackedStringArray("center_hit_sound", "counter_sound") instance=ExtResource("1_base")]
 script = ExtResource("2_script")
@@ -21,6 +21,15 @@ sniper_speed = 1500.0
 sniper_scale = Vector2(0.5, 2)
 sniper_color = Color(0.85, 0.55, 1.6, 1)
 center_hit_sound = NodePath("CenterHitSound")
+sniper_bursts = Array[int]([1, 1, 2, 2, 3, 3])
+sniper_burst_gap = 0.06
+sniper_power_scales = Array[float]([1.0, 1.0, 1.0, 1.2, 1.2, 1.4])
+vulcan_power_scales = Array[float]([1.0, 1.0, 1.2, 1.2, 1.2, 1.4])
+vulcan_interval_scales = Array[float]([1.0, 1.0, 1.0, 0.9, 0.9, 0.7])
+vulcan_ways = Array[int]([1, 1, 1, 1, 2, 2])
+vulcan_way_spread = 8.0
+counter_reflect_scale = 2.0
+counter_reflect_scale_another = 3.0
 graze_boost_time = 0.3
 graze_boost_scale = 1.5
 graze_boost_color = Color(0.55, 1.3, 1.6, 1)
@@ -55,11 +64,11 @@ focus_multiplier = 1.2
 perspective = 2360.0
 
 [node name="CenterHitSound" type="AudioStreamPlayer" parent="." index="18" unique_id=257047967]
-stream = ExtResource("4_center")
+stream = ExtResource("4_rg3fw")
 volume_db = -8.0
 
 [node name="CounterSound" type="AudioStreamPlayer" parent="." index="19" unique_id=257047968]
-stream = ExtResource("5_counter")
+stream = ExtResource("5_6ld6k")
 volume_db = -4.0
 pitch_scale = 0.8
 

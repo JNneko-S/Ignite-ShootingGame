@@ -41,4 +41,3 @@ time = 6.0
 script = ExtResource("stage_script")
 stage_name = "BlackSwan テスト"
 events = Array[ExtResource("event_script")]([SubResource("scroll_start"), SubResource("warning"), SubResource("boss"), SubResource("wait_boss")])
-zako_fire_interval_scale = null

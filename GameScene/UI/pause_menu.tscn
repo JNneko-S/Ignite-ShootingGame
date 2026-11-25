@@ -81,8 +81,8 @@ layout_mode = 0
 offset_left = 58.0
 offset_top = 178.0
 offset_right = 278.0
-offset_bottom = 300.0
-pivot_offset = Vector2(110, 61)
+offset_bottom = 330.0
+pivot_offset = Vector2(110, 76)
 mouse_filter = 2
 script = ExtResource("3_panel")
 fill_color = Color(1, 0.99, 0.97, 0.95)
@@ -131,11 +131,31 @@ label_settings = SubResource("ls_item")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Retire" type="Label" parent="Root/Panel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 108.0
+offset_right = 200.0
+offset_bottom = 132.0
+text = "RETIRE"
+label_settings = SubResource("ls_item")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Note" type="Label" parent="Root"]
+visible = false
+layout_mode = 0
+offset_top = 360.0
+offset_right = 336.0
+offset_bottom = 374.0
+label_settings = SubResource("ls_hint")
+horizontal_alignment = 1
+
 [node name="Hint" type="Label" parent="Root"]
 layout_mode = 0
-offset_top = 312.0
+offset_top = 342.0
 offset_right = 336.0
-offset_bottom = 326.0
+offset_bottom = 356.0
 text = "U/D: SELECT   SHOT: OK   ESC/START: RESUME"
 label_settings = SubResource("ls_hint")
 horizontal_alignment = 1

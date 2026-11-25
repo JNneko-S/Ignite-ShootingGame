@@ -1,0 +1,266 @@
+extends Node
+## 実績(自動読み込み: Achievements)。user://achievements.cfg に保存する。
+## 解除すると、画面の右上に小さく知らせる。デバッグ機能を使ったプレイ(DebugTools.used)では解除しない。
+##
+## 実績を足すときは、LIST に [id, 名前, 説明, 隠す(解除するまで説明を伏せる)] を足して、
+## 条件を満たしたところで Achievements.unlock("id") を呼ぶ。
+
+const PATH : String = "user://achievements.cfg"
+
+## [id, 名前, 説明, 隠す]
+const LIST : Array = [
+	["first_ignite", "点火", "イグナイトを初めて発動する", false],
+	["full_ignite", "全開放", "Lv5 のイグナイトを長押しで全て解き放つ", false],
+	["stage1", "初陣", "ステージ1 をクリアする", false],
+	["stage2", "線路の果て", "ステージ2 をクリアする", false],
+	["stage3", "黒鳥を越えて", "ステージ3 をクリアする", false],
+	["stage4", "中枢突破", "ラストステージをクリアする", false],
+	["no_miss", "無傷の帰還", "一度もミスせずにステージをクリアする", false],
+	["graze_1000", "紙一重", "1つのステージで 1000 回グレイズする", false],
+	["score_10m", "一千万", "スコア 10,000,000 点に到達する", false],
+	["score_30m", "三千万", "スコア 30,000,000 点に到達する", false],
+	["hard_clear", "地獄帰り", "HARD でラストステージをクリアする", false],
+	["rookie", "ルーキーはもう居ない！", "EASY をノーコンティニューでクリアする", false],
+	["secret_mission", "極秘任務完了", "NORMAL をノーコンティニューでクリアする", false],
+	["excite", "エキサイト", "HARD をノーコンティニューでクリアする", false],
+	["another_clear", "アナザースペシャル", "ANOTHER をクリアする", true],
+	["another_dimension", "アナザーディメンション", "ANOTHER をノーコンティニューでクリアする", true],
+	["limit_break", "リミットブレイク", "ANOTHER で条件を満たして、BLACK ANOTHER に突入する", true],
+	["ignite_only_vespa", "イグナイトオンリーヴェスパ", "VESPA で、ショットを敵に当てずにクリアする(イグナイトだけで戦う)", false],
+	["ignite_only_bastion", "イグナイトオンリーバスティオン", "BASTION で、ショットを敵に当てずにクリアする(イグナイトだけで戦う)", false],
+	["ignite_only_phoenix", "イグナイトオンリーフェニックス", "PHOENIX で、ショットを敵に当てずにクリアする(イグナイトだけで戦う)", false],
+	["boss_only", "今日はボスだけでいいよ", "雑魚を1体も倒さずに、ステージのボスを倒してクリアする", false],
+	["hidden_gunner", "伏兵、見つかる", "タンクの副砲を破壊する", false],
+	["one_more", "ワンモアチャレンジ", "ボス戦で撃墜される", false],
+	["hidden_boss_met", "目覚める災厄", "隠しボスに出会う", true],
+	["hidden_boss_down", "子の親殺し", "隠しボスを倒す", true],
+	["normal_round", "NORMAL ROUND CLEAR", "一周目をクリアする", false],
+	["another_round", "ANOTHER ROUND CLEAR", "二周目をクリアする", true],
+	["congratulation", "congratulation!", "隠しボスを倒して、二周目をクリアする", true],
+	["b_end", "もうひとつの結末", "Bエンドを見る", true],
+]
+
+signal unlocked(id : String)
+
+var _unlocked : Dictionary = {}
+var _toast_layer : CanvasLayer
+var _toast_queue : Array = []
+var _toasting : bool = false
+var _check_left : float = 0.0
+## 難易度 ANOTHER を解禁したか・RATE A 以上を取った回数(achievements.cfg の [progress] に保存)
+var another_unlocked : bool = false
+var rate_a_count : int = 0
+## ANOTHER の解禁に要る、RATE A の回数と、実績の数
+const ANOTHER_RATE_A_NEEDED : int = 5
+const ANOTHER_ACHIEVEMENTS_NEEDED : int = 8
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var config := ConfigFile.new()
+	if config.load(PATH) == OK:
+		for id in config.get_section_keys("unlocked") if config.has_section("unlocked") else []:
+			_unlocked[id] = config.get_value("unlocked", id)
+		another_unlocked = config.get_value("progress", "another_unlocked", false)
+		rate_a_count = config.get_value("progress", "rate_a_count", 0)
+
+func is_unlocked(id : String) -> bool:
+	return _unlocked.has(id)
+
+## 解除した日時(なければ空)
+func unlocked_date(id : String) -> String:
+	return str(_unlocked.get(id, ""))
+
+func unlocked_count() -> int:
+	return _unlocked.size()
+
+## 実績を解除する(もう解除していたら、何もしない)
+func unlock(id : String) -> void:
+	if _unlocked.has(id) or DebugTools.used:
+		return
+	var entry := _entry(id)
+	if entry.is_empty():
+		push_warning("Achievements: 知らない実績 %s" % id)
+		return
+	_unlocked[id] = Time.get_datetime_string_from_system(false, true)
+	_save()
+	unlocked.emit(id)
+	_toast_queue.append(["実績解除", entry[1]])
+	_check_another()
+	if not _toasting:
+		_show_toasts()
+
+func _save() -> void:
+	var config := ConfigFile.new()
+	for key in _unlocked:
+		config.set_value("unlocked", key, _unlocked[key])
+	config.set_value("progress", "another_unlocked", another_unlocked)
+	config.set_value("progress", "rate_a_count", rate_a_count)
+	config.save(PATH)
+
+# ---------------------------------------------------------------- 難易度 ANOTHER の解禁
+## 次のどれかで解禁する:
+##   ・NORMAL の二周目を、ノーコンティニューで RATE A 以上でクリア
+##   ・HARD の二周目を、ノーコンティニューでクリア
+##   ・RATE A 以上を合わせて 5 回取り、実績を 8 個解除している
+## 解禁したら、機体選択の画面で HARD のときに右を何回も押すと、ANOTHER が出る。デバッグ機能が使えるときは、いつでも出る
+func can_choose_another() -> bool:
+	return another_unlocked or DebugTools.unlocked
+
+## スコアボードに記録したとき(ScoreBoard が呼ぶ)
+func on_run_recorded(entry : Dictionary) -> void:
+	if DebugTools.used:
+		return
+	var grade := ScoreBoard.grade(entry)
+	var rate_a := grade == "S" or grade == "A"
+	if rate_a:
+		rate_a_count += 1
+	var all_clear := ScoreBoard.result_of(entry) == ScoreBoard.ALL_CLEAR
+	var no_continue := RunConfig.continues_used == 0
+	var difficulty := int(entry.get("difficulty", 1))
+	if all_clear and no_continue and ((difficulty == 1 and rate_a) or difficulty == 2):
+		_unlock_another()
+	_check_another()
+	_save()
+
+func _check_another() -> void:
+	if rate_a_count >= ANOTHER_RATE_A_NEEDED and _unlocked.size() >= ANOTHER_ACHIEVEMENTS_NEEDED:
+		_unlock_another()
+
+func _unlock_another() -> void:
+	if another_unlocked:
+		return
+	another_unlocked = true
+	_save()
+	_toast_queue.append(["解禁", "難易度 ANOTHER"])
+	if not _toasting:
+		_show_toasts()
+
+func _entry(id : String) -> Array:
+	for entry in LIST:
+		if entry[0] == id:
+			return entry
+	return []
+
+# ---------------------------------------------------------------- 条件(ほかの部品から呼ぶ)
+
+## ステージをクリアした(ScoreSystem が呼ぶ)
+func on_stage_cleared(tree : SceneTree) -> void:
+	var file := tree.current_scene.scene_file_path.get_file() if tree.current_scene else ""
+	for n in 4:
+		if file == "stage%d.tscn" % (n + 1):
+			unlock("stage%d" % (n + 1))
+	var gm := tree.current_scene as GameManager
+	if gm and gm.death_count == 0:
+		unlock("no_miss")
+	if file == "stage4.tscn" and RunConfig.has_selection:
+		if RunConfig.difficulty == RunConfig.ANOTHER:
+			unlock("another_clear")
+		elif RunConfig.difficulty == 2:
+			unlock("hard_clear")
+		_on_game_clear()
+	# 雑魚を1体も倒さずに、ステージのボスを倒した
+	var score_system := tree.get_first_node_in_group(&"score_system") as ScoreSystem
+	if score_system and score_system.zako_kill_count == 0:
+		unlock("boss_only")
+
+## ラストステージをクリアした: ノーコンティニューの難易度別・ANOTHER・イグナイトだけ
+func _on_game_clear() -> void:
+	var no_continue := RunConfig.continues_used == 0
+	if no_continue:
+		match RunConfig.difficulty:
+			0: unlock("rookie")
+			1: unlock("secret_mission")
+			2: unlock("excite")
+			RunConfig.ANOTHER: unlock("another_dimension")
+	if not RunConfig.shot_damage_used and RunConfig.ship:
+		unlock("ignite_only_" + RunConfig.ship.ship_name.to_lower())
+
+## 自機が撃墜された(GameManager が呼ぶ): ボス・中ボスがいる(ボス戦の)ときなら
+func on_player_died(tree : SceneTree) -> void:
+	for node in tree.get_nodes_in_group(&"enemy"):
+		if node is Enemy and (node.is_midboss or node.boss_reach_time >= 0.0) and node.hp_component and node.hp_component.hp > 0:
+			unlock("one_more")
+			return
+
+## 隠しボス(HiddenBoss)が出てきた・倒された
+func on_hidden_boss_appeared() -> void:
+	unlock("hidden_boss_met")
+
+func on_hidden_boss_defeated() -> void:
+	RunConfig.hidden_boss_defeated = true
+	unlock("hidden_boss_down")
+
+## 周をクリアした(EndingSequence が呼ぶ)
+func on_round_clear() -> void:
+	if RunConfig.loop >= 2:
+		unlock("another_round")
+		if RunConfig.hidden_boss_defeated:
+			unlock("congratulation")
+	else:
+		unlock("normal_round")
+
+## スコア・グレイズ・イグナイトは、ステージのあいだ、ときどき見て調べる
+func _process(delta : float) -> void:
+	_check_left -= delta
+	if _check_left > 0.0:
+		return
+	_check_left = 0.5
+	var tree := get_tree()
+	var score_system := tree.get_first_node_in_group(&"score_system") as ScoreSystem
+	if score_system:
+		if score_system.score >= 10000000:
+			unlock("score_10m")
+		if score_system.score >= 30000000:
+			unlock("score_30m")
+	var player := tree.get_first_node_in_group(&"player") as Player
+	if player and player.graze_count >= 1000:
+		unlock("graze_1000")
+	var gm := tree.current_scene as GameManager
+	if gm:
+		if gm.ignite_activation_count > 0:
+			unlock("first_ignite")
+		if gm.full_use_count > 0:
+			unlock("full_ignite")
+
+# ---------------------------------------------------------------- 知らせ
+
+## 画面の右上に、墨の帯に朱の線で「実績解除」と名前を出す。いくつかあれば順番に
+func _show_toasts() -> void:
+	_toasting = true
+	if _toast_layer == null:
+		_toast_layer = CanvasLayer.new()
+		_toast_layer.layer = 120
+		add_child(_toast_layer)
+	while not _toast_queue.is_empty():
+		var item : Array = _toast_queue.pop_front()
+		var name : String = item[1]
+		var view := get_viewport().get_visible_rect().size
+		var panel := ColorRect.new()
+		panel.color = Color(0.08, 0.05, 0.05, 0.85)
+		panel.size = Vector2(170.0, 34.0)
+		panel.position = Vector2(view.x + 4.0, 52.0)
+		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_toast_layer.add_child(panel)
+		var line := ColorRect.new()
+		line.color = Color(0.85, 0.16, 0.07)
+		line.size = Vector2(3.0, 34.0)
+		panel.add_child(line)
+		var head := Label.new()
+		head.text = item[0]
+		head.position = Vector2(10.0, 1.0)
+		head.add_theme_font_size_override("font_size", 9)
+		head.add_theme_color_override("font_color", Color(1.0, 0.45, 0.25))
+		panel.add_child(head)
+		var body := Label.new()
+		body.text = name
+		body.position = Vector2(10.0, 13.0)
+		body.add_theme_font_size_override("font_size", 13)
+		body.add_theme_color_override("font_color", Color(1.0, 0.97, 0.92))
+		panel.add_child(body)
+		var tween := create_tween()
+		tween.tween_property(panel, "position:x", view.x - 176.0, 0.3).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+		tween.tween_interval(2.4)
+		tween.tween_property(panel, "position:x", view.x + 4.0, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_callback(panel.queue_free)
+		await tween.finished
+	_toasting = false

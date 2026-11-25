@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://k0t63g5fjkmx"]
 
+[ext_resource type="AudioStream" uid="uid://bp816gb4m1pbj" path="res://Assets/Sounds/Music/AS_1594938_臨戦体制ブレイクビーツ・ループ.mp3" id="5_ensf7"]
+[ext_resource type="AudioStream" uid="uid://cy03smqtitfhk" path="res://Assets/Sounds/Music/AS_1259553_テンポ速めのメタルドラムンベース.mp3" id="7_c6o3c"]
 [ext_resource type="PackedScene" uid="uid://bs4dp2bu5owql" path="res://scroll_test.tscn" id="base"]
 [ext_resource type="AudioStream" uid="uid://u2j1svbuhh8e" path="res://Assets/Sounds/Music/Another/AS_1743126_ビッグビート色が強いブレイクビーツ.mp3" id="music_boss3"]
 [ext_resource type="AudioStream" uid="uid://dk506wt1c7udi" path="res://Assets/Sounds/Music/AS_114335_ＦＭ音源、ＳＴＧ、ＲＰＧ向け.mp3" id="music_stage3"]
@@ -33,9 +35,11 @@ play_intro = false
 
 [node name="AudioStreamPlayer" parent="." index="11" unique_id=1308156288]
 stage_music = ExtResource("music_stage3")
+boss_music = ExtResource("5_ensf7")
 boss_music_by_name = Dictionary[String, AudioStream]({
 "ブラックスワン -改-": ExtResource("music_boss3")
 })
+another_boss_music = ExtResource("7_c6o3c")
 
 [node name="SkyBackground" type="Node2D" parent="." index="14" unique_id=1800000001]
 script = ExtResource("sky_background")

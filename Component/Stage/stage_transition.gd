@@ -65,11 +65,18 @@ func _connect() -> void:
 		# 最後のステージ: クリアしたら、全クリアとしてスコアボードに記録する
 		var last_runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 		if last_runner:
-			last_runner.stage_cleared.connect(func() -> void: ScoreBoard.finish_run(get_tree(), true), CONNECT_ONE_SHOT)
+			last_runner.stage_cleared.connect(_record_final_clear, CONNECT_ONE_SHOT)
 		return
 	var runner := get_tree().get_first_node_in_group("stage_runner") as StageRunner
 	if runner:
 		runner.stage_cleared.connect(_on_stage_cleared, CONNECT_ONE_SHOT)
+
+## 最後のステージのクリアを記録する: 二周目のクリアは ALL CLEAR。ノーコンティニューの一周目は、二周目へ続くので記録しない
+func _record_final_clear() -> void:
+	if RunConfig.loop >= 2:
+		ScoreBoard.finish_run(get_tree(), ScoreBoard.ALL_CLEAR)
+	elif not RunConfig.can_enter_second_loop():
+		ScoreBoard.finish_run(get_tree(), ScoreBoard.CLEAR)
 
 # ---------------------------------------------------------------- 出ていく
 

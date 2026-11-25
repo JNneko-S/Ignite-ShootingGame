@@ -7,11 +7,13 @@
 [ext_resource type="Texture2D" uid="uid://b7ucwdnclxd3t" path="res://Assets/1106_20261120122203.png" id="4_nuqgq"]
 [ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="5_mom7w"]
 [ext_resource type="Script" uid="uid://b4sle2t8etstr" path="res://GameScene/Title/option_panel.gd" id="6_option"]
+[ext_resource type="Script" uid="uid://b1m8t5xen4qag" path="res://GameScene/Title/achievements_panel.gd" id="7_achieve"]
 [ext_resource type="Script" uid="uid://bdm0yap07eb3n" path="res://GameScene/Title/score_board_panel.gd" id="7_score"]
 [ext_resource type="AudioStream" uid="uid://bogedhf8wfhaw" path="res://Assets/Sounds/UI/AS_868154_しっくりくるゲーム操作音02_選択.mp3" id="8_ui_select"]
 [ext_resource type="AudioStream" uid="uid://dit7bq3jw5b3m" path="res://Assets/Sounds/UI/AS_1213023_ゲームスタート（SFシューティング）10.mp3" id="9_ui_decide"]
 [ext_resource type="AudioStream" uid="uid://81et5uvnfcpp" path="res://Assets/Sounds/Rockon/AS_119891_コックピットなどの細かい電子音_10.mp3" id="10_beep"]
 [ext_resource type="AudioStream" uid="uid://cqqubfb3jkxj" path="res://Assets/Sounds/Music/AS_1161150_戦闘準備・近未来・エレクトロ・ポップ.mp3" id="12_upcoo"]
+[ext_resource type="FontFile" uid="uid://dy711ao2u2w0u" path="res://Assets/Fonts/micronian.ttf" id="14_3ranr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_06r0y"]
 font = ExtResource("5_mom7w")
@@ -20,6 +22,13 @@ font_color = Color(1, 0.55605084, 0.49481243, 1)
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
 shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jhy2k"]
+font = ExtResource("14_3ranr")
+font_color = Color(0, 0, 0, 1)
+outline_size = 4
+shadow_size = 3
+shadow_color = Color(1, 1, 1, 1)
 
 [node name="Title" type="Control" unique_id=1021295001 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound", "music")]
 layout_mode = 3
@@ -109,7 +118,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -72.0
-offset_top = -134.0
+offset_top = -158.0
 offset_right = 72.0
 offset_bottom = -14.0
 grow_horizontal = 2
@@ -162,11 +171,24 @@ text = "SCORE BOARD"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Replay" type="Label" parent="Menu" unique_id=1500000006]
+[node name="Achievements" type="Label" parent="Menu" unique_id=1500000016]
 layout_mode = 0
 offset_top = 72.0
 offset_right = 144.0
 offset_bottom = 94.0
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("5_mom7w")
+theme_override_font_sizes/font_size = 15
+text = "ACHIEVEMENTS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Replay" type="Label" parent="Menu" unique_id=1500000006]
+layout_mode = 0
+offset_top = 96.0
+offset_right = 144.0
+offset_bottom = 118.0
 theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("5_mom7w")
@@ -177,9 +199,9 @@ vertical_alignment = 1
 
 [node name="Exit" type="Label" parent="Menu" unique_id=1500000007]
 layout_mode = 0
-offset_top = 96.0
+offset_top = 120.0
 offset_right = 144.0
-offset_bottom = 118.0
+offset_bottom = 142.0
 theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("5_mom7w")
@@ -233,7 +255,22 @@ move_sound = NodePath("../MoveSound")
 confirm_sound = NodePath("../ConfirmSound")
 back_sound = NodePath("../BackSound")
 
+[node name="AchievementsPanel" type="Control" parent="." unique_id=1500000017 node_paths=PackedStringArray("move_sound", "confirm_sound", "back_sound")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_achieve")
+font = ExtResource("5_mom7w")
+move_sound = NodePath("../MoveSound")
+confirm_sound = NodePath("../ConfirmSound")
+back_sound = NodePath("../BackSound")
+
 [node name="Fade" type="ColorRect" parent="." unique_id=1500000011]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -259,3 +296,12 @@ pitch_scale = 0.6
 [node name="Music" type="AudioStreamPlayer" parent="." unique_id=1500000015]
 stream = ExtResource("12_upcoo")
 volume_db = -19.0
+
+[node name="Label" type="Label" parent="." unique_id=643233873]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 86.0
+offset_bottom = 20.0
+text = "v0.9beta"
+label_settings = SubResource("LabelSettings_jhy2k")

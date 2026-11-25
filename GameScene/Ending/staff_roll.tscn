@@ -1,0 +1,327 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://GameScene/Ending/staff_roll.gd" id="script"]
+[ext_resource type="FontFile" uid="uid://c6l5nx7okgnhu" path="res://Assets/Fonts/ShitataruMinchoShogo-EB.otf" id="font"]
+[ext_resource type="Texture2D" uid="uid://d00nq6kgqrfh0" path="res://Assets/1106_20261120122130.png" id="bg"]
+
+[sub_resource type="LabelSettings" id="ls_heading"]
+font = ExtResource("font")
+font_size = 12
+font_color = Color(0.85, 0.16, 0.07, 1)
+
+[sub_resource type="LabelSettings" id="ls_name"]
+font = ExtResource("font")
+font_size = 15
+font_color = Color(0.1, 0.07, 0.07, 1)
+
+[sub_resource type="LabelSettings" id="ls_title"]
+font = ExtResource("font")
+font_size = 30
+font_color = Color(0.1, 0.07, 0.07, 1)
+
+[sub_resource type="LabelSettings" id="ls_banner"]
+font = ExtResource("font")
+font_size = 30
+outline_size = 6
+outline_color = Color(0.08, 0.05, 0.05, 1)
+shadow_size = 0
+
+[node name="StaffRoll" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("bg")
+expand_mode = 1
+
+[node name="Wash" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0.99, 0.97, 0.72)
+
+[node name="BannerBand" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -34.0
+offset_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.08, 0.05, 0.05, 0.88)
+
+[node name="Banner" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "NORMAL ROUND CLEAR!"
+label_settings = SubResource("ls_banner")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Credits" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 800.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Title1" type="Label" parent="Credits"]
+layout_mode = 2
+text = "IGNITE"
+label_settings = SubResource("ls_title")
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading3" type="Label" parent="Credits"]
+layout_mode = 2
+text = "DIRECTOR"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name4" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer5" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading6" type="Label" parent="Credits"]
+layout_mode = 2
+text = "GAME DESIGN"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name7" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer8" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading9" type="Label" parent="Credits"]
+layout_mode = 2
+text = "PROGRAM"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name10" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer11" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading12" type="Label" parent="Credits"]
+layout_mode = 2
+text = "ENEMY & BARRAGE DESIGN"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name13" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer14" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading15" type="Label" parent="Credits"]
+layout_mode = 2
+text = "GRAPHICS"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name16" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer17" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading18" type="Label" parent="Credits"]
+layout_mode = 2
+text = "MUSIC"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name19" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer20" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading21" type="Label" parent="Credits"]
+layout_mode = 2
+text = "SOUND EFFECTS"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name22" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer23" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading24" type="Label" parent="Credits"]
+layout_mode = 2
+text = "ASSETS"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name25" type="Label" parent="Credits"]
+layout_mode = 2
+text = "Full Shmup Asset Pack"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Name26" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(作者名)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer27" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading28" type="Label" parent="Credits"]
+layout_mode = 2
+text = "FONTS"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name29" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(フォント名・作者名)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer30" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading31" type="Label" parent="Credits"]
+layout_mode = 2
+text = "ENGINE"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name32" type="Label" parent="Credits"]
+layout_mode = 2
+text = "Godot Engine"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer33" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading34" type="Label" parent="Credits"]
+layout_mode = 2
+text = "SPECIAL THANKS"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Name35" type="Label" parent="Credits"]
+layout_mode = 2
+text = "(名前)"
+label_settings = SubResource("ls_name")
+horizontal_alignment = 1
+
+[node name="Spacer36" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Heading37" type="Label" parent="Credits"]
+layout_mode = 2
+text = "AND YOU"
+label_settings = SubResource("ls_heading")
+horizontal_alignment = 1
+
+[node name="Spacer38" type="Control" parent="Credits"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="White" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Black" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

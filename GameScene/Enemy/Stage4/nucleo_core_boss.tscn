@@ -31,6 +31,20 @@
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_down.tres" id="m_bomber_down"]
 [ext_resource type="Resource" path="res://Resources/MovePatterns/Stage4/m4_bomber_side.tres" id="m_bomber_side"]
 [ext_resource type="Script" path="res://Component/Beam/beam_shooter.gd" id="beam"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_rose_a.tres" id="l2_rose_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_rose_b.tres" id="l2_rose_b"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_rose_c.tres" id="l2_rose_c"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_rose_d.tres" id="l2_rose_d"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_lunatic_gun.tres" id="l2_lunatic_gun"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_spark_stars.tres" id="l2_spark_stars"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_cage_wall.tres" id="l2_cage_wall"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_backdraft.tres" id="l2_backdraft"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_staff_1.tres" id="l2_staff_1"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2_carpet.tres" id="l2_carpet"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2r_residue_spiral.tres" id="l2r_spiral"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2r_residue_terraces.tres" id="l2r_terraces"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2r_residue_net.tres" id="l2r_net"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/Loop2/l2r_residue_turncoat.tres" id="l2r_turncoat"]
 [ext_resource type="Script" path="res://Component/Boss/final_battle_intro.gd" id="intro"]
 [ext_resource type="Script" path="res://Component/Part/phase_break.gd" id="phase_break"]
 [ext_resource type="Script" path="res://Component/Boss/nucleo_finale.gd" id="finale"]
@@ -92,10 +106,14 @@ sequence = Array[ExtResource("shot_script")]([ExtResource("fin_hexagram"), ExtRe
 
 [sub_resource type="Resource" id="main_p2"]
 script = ExtResource("shooter_phase")
+loop2_replace = true
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("fin_spider_web"), ExtResource("l2_lunatic_gun"), ExtResource("l2r_spiral"), ExtResource("l2r_net"), ExtResource("l2_staff_1"), ExtResource("l2r_turncoat"), ExtResource("fin_giga_core"), ExtResource("l2_backdraft"), ExtResource("l2r_terraces"), ExtResource("l2_carpet")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("fin_spider_web"), ExtResource("fin_aim_lace"), ExtResource("fin_washer_easy"), ExtResource("fin_residue_spiral"), ExtResource("ex_n_residue_net"), ExtResource("ex_h_residue_turncoat"), ExtResource("fin_giga_core"), ExtResource("ex_frozen"), ExtResource("fin_residue_terraces"), ExtResource("fin_aim_lace"), ExtResource("n_blizzard_fall")])
 
 [sub_resource type="Resource" id="main_p3"]
 script = ExtResource("shooter_phase")
+loop2_replace = true
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("fin_web_hydra"), ExtResource("l2r_spiral"), ExtResource("l2_cage_wall"), ExtResource("l2r_terraces"), ExtResource("l2_spark_stars"), ExtResource("l2r_net"), ExtResource("l2_backdraft"), ExtResource("l2r_turncoat"), ExtResource("l2_cage_wall"), ExtResource("fin_hexagram_rage")])
 sequence = Array[ExtResource("shot_script")]([ExtResource("fin_web_hydra"), ExtResource("fin_washer_hard"), ExtResource("fin_residue_terraces"), ExtResource("ex_h_footprint"), ExtResource("ex_n_residue_net"), ExtResource("fin_aim_lace"), ExtResource("fin_giga_core"), ExtResource("fin_residue_spiral"), ExtResource("ex_h_residue_turncoat"), ExtResource("fin_washer_hard"), ExtResource("fin_hexagram_rage"), ExtResource("n_hell_gate")])
 
 [sub_resource type="Resource" id="main_p4"]
@@ -1163,3 +1181,114 @@ script = ExtResource("intro")
 
 [node name="NucleoFinale" type="Node" parent="."]
 script = ExtResource("finale")
+
+[node name="MasterSpark" type="Node2D" parent="."]
+position = Vector2(0.7, 3.9)
+script = ExtResource("beam")
+start_angle_deg = -12.0
+sweep_deg = 24.0
+width = 78.0
+warn_time = 1.2
+fire_time = 2.4
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+active_until_phase = 2
+sync_pattern = "l2_spark_stars"
+color = Color(1, 0.85, 0.4, 1)
+aim_at_player = true
+loop2_only = true
+
+[node name="CageBeamm150" type="Node2D" parent="."]
+position = Vector2(-150, 40)
+script = ExtResource("beam")
+sweep_deg = 0.0
+width = 10.0
+warn_time = 0.8
+fire_time = 4.0
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+sync_pattern = "l2_cage_wall"
+color = Color(0.55, 0.8, 1, 1)
+loop2_only = true
+active_until_phase = 2
+
+[node name="CageBeamm55" type="Node2D" parent="."]
+position = Vector2(-55, 40)
+script = ExtResource("beam")
+sweep_deg = 0.0
+width = 10.0
+warn_time = 0.8
+fire_time = 4.0
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+sync_pattern = "l2_cage_wall"
+color = Color(0.55, 0.8, 1, 1)
+loop2_only = true
+active_until_phase = 2
+
+[node name="CageBeam55" type="Node2D" parent="."]
+position = Vector2(55, 40)
+script = ExtResource("beam")
+sweep_deg = 0.0
+width = 10.0
+warn_time = 0.8
+fire_time = 4.0
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+sync_pattern = "l2_cage_wall"
+color = Color(0.55, 0.8, 1, 1)
+loop2_only = true
+active_until_phase = 2
+
+[node name="CageBeam150" type="Node2D" parent="."]
+position = Vector2(150, 40)
+script = ExtResource("beam")
+sweep_deg = 0.0
+width = 10.0
+warn_time = 0.8
+fire_time = 4.0
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+sync_pattern = "l2_cage_wall"
+color = Color(0.55, 0.8, 1, 1)
+loop2_only = true
+active_until_phase = 2
+
+[node name="SweepBeamL" type="Node2D" parent="."]
+position = Vector2(-110, 20)
+script = ExtResource("beam")
+start_angle_deg = 150
+sweep_deg = 80.0
+clockwise = false
+width = 16.0
+warn_time = 1.0
+fire_time = 2.6
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+color = Color(1, 0.45, 0.7, 1)
+loop2_only = true
+active_until_phase = 2
+sync_pattern = "l2r_residue_spiral"
+
+[node name="SweepBeamR" type="Node2D" parent="."]
+position = Vector2(110, 20)
+script = ExtResource("beam")
+start_angle_deg = 30
+sweep_deg = 80.0
+clockwise = true
+width = 16.0
+warn_time = 1.0
+fire_time = 2.6
+rest_time = 0.0
+start_delay = 0.0
+active_from_phase = 2
+color = Color(1, 0.45, 0.7, 1)
+loop2_only = true
+active_until_phase = 2
+sync_pattern = "l2r_residue_spiral"

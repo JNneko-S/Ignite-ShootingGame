@@ -21,6 +21,9 @@ var _last_spark_msec : int = -1000
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:
 		last_hitbox = hitbox
+		# 自機・子機のショットで敵に当てた(イグナイトの反射弾は、敵の弾なので数えない)。実績「イグナイトオンリー」に使う
+		if hitbox is Bullet and not (hitbox is EnemyBullet) and hitbox.damage_source_type == Hitbox.DamageSourceType.Player:
+			RunConfig.shot_damage_used = true
 		recieved_damage.emit(_scaled_damage(hitbox))
 		_hit_spark(hitbox)
 		hitbox.damage_dealt.emit(self)

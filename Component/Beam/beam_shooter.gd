@@ -31,6 +31,15 @@ class_name BeamShooter
 @export var autostart : bool = true
 ## このビームを撃つ部位(砲台)。ビームはこの砲台の位置から出て、壊れたら撃たない(空なら、親をたどって EnemyPart を探す)
 @export var part : EnemyPart
+## オンなら、撃ち始める向きを自機の方にする(Start Angle Deg は、自機の方からのずれ)。太くすれば極太の光線になる
+@export var aim_at_player : bool = false
+## オンなら、二周目(RunConfig.loop が 2 以上)のときだけ撃つ
+@export var loop2_only : bool = false
+## 0 以上なら、ボスのこの段階より後では撃たない(Active From Phase〜この段階のあいだだけ撃つ)
+@export var active_until_phase : int = -1
+## 空でなければ、くり返しては撃たず、持ち主のボスの砲口が、この名前の弾幕(ファイル名。.tres は省く)を撃ち始めたときだけ、1回撃つ
+## (光線を、決まった弾幕と組にする。ほかの弾幕と重ならない)
+@export var sync_pattern : String = ""
 
 enum BeamState { IDLE, WARN, FIRE }
 var state : BeamState = BeamState.IDLE
@@ -42,6 +51,9 @@ var _time : float = 0.0
 var _serial : int = 0
 
 func _ready() -> void:
+	if sync_pattern != "":
+		autostart = false
+		_connect_sync.call_deferred()
 	_build_hitbox()
 	_set_hit(false)
 	if autostart:
@@ -79,6 +91,25 @@ func _loop() -> void:
 			continue
 		await _wait(rest_time)
 
+## 持ち主のボスの砲口が、組の弾幕を撃ち始めたら、1回撃つ
+func _connect_sync() -> void:
+	var enemy := _owner_enemy()
+	if enemy == null:
+		return
+	for node in enemy.find_children("*", "", true, false):
+		if node is EnemyShooter:
+			node.pattern_started.connect(_on_pattern_started)
+
+func _on_pattern_started(pattern : ShotPattern) -> void:
+	if pattern == null or pattern.resource_path.get_file().get_basename() != sync_pattern:
+		return
+	# 援護のあとで撃つのに戻るときは、弾幕を撃ち始めてから、光線の「黙る」が解ける。1フレーム待ってから決める
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	if _can_fire():
+		start_beam()
+
 ## 1回だけ撃つ(ステートなどから呼ぶ)
 func start_beam() -> void:
 	_serial += 1
@@ -105,6 +136,10 @@ func stop_beam() -> void:
 
 func _fire_once(serial : int) -> void:
 	_angle = deg_to_rad(start_angle_deg)
+	if aim_at_player:
+		var player := get_tree().get_first_node_in_group("player") as Node2D
+		if player:
+			_angle = (player.global_position - global_position).angle() + deg_to_rad(start_angle_deg)
 	rotation = 0.0
 	state = BeamState.WARN
 	_time = 0.0
@@ -122,6 +157,8 @@ func _fire_once(serial : int) -> void:
 	queue_redraw()
 
 func _can_fire() -> bool:
+	if loop2_only and RunConfig.loop < 2:
+		return false
 	if _silenced or _part_destroyed():
 		return false
 	var enemy := _owner_enemy()
@@ -137,7 +174,8 @@ func _can_fire() -> bool:
 		return true
 	for child in enemy.get_children():
 		if child is BossPhaseController:
-			return child.current_phase() >= active_from_phase
+			var phase : int = child.current_phase()
+			return phase >= active_from_phase and (active_until_phase < 0 or phase <= active_until_phase)
 	return true
 
 func _process(delta : float) -> void:

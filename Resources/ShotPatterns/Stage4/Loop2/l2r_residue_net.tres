@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("e3")
+duration = 1.6
+speed_trans = 0
+
+[sub_resource type="Resource" id="st6"]
+script = ExtResource("e3")
+duration = 3.0
+change_speed = false
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 3
+target_speed = 60.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 1.6
+speed_trans = 0
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 3.0
+change_speed = false
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 3
+target_speed = 60.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+skip_auto_tuning = true
+start_delay = 0.4
+shot_count = 5
+interval = 0.14
+pause = 3.0
+bullet_count = 9
+aim_at_player = false
+base_angle = -28.0
+parallel_spacing = 50.0
+launch_speed_step = 0.32
+bullet_speed = 150.0
+motion = Array[ExtResource("e3")]([SubResource("st2"), SubResource("st3"), SubResource("st4")])
+
+[sub_resource type="Resource" id="rose_red_twin"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+skip_auto_tuning = true
+start_delay = 0.8
+shot_count = 5
+interval = 0.14
+pause = 3.0
+bullet_count = 12
+aim_at_player = false
+base_angle = -28.0
+parallel_spacing = 50.0
+launch_speed_step = 0.32
+bullet_speed = 150.0
+motion = Array[ExtResource("e3")]([SubResource("st5"), SubResource("st6"), SubResource("st7")])
+window_width_deg = 55
+window_speed_deg = -100
+window_big_scale = 2.3
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+soften_others = 6.0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("rose_red_twin")])
+start_delay = 0.4
+shot_count = 5
+interval = 0.14
+pause = 5
+bullet_count = 12
+aim_at_player = false
+base_angle = 28.0
+parallel_spacing = 50.0
+launch_speed_step = 0.32
+bullet_speed = 150.0
+motion = Array[ExtResource("e3")]([SubResource("st5"), SubResource("st6"), SubResource("st7")])
+window_width_deg = 55
+window_speed_deg = 100
+window_big_scale = 2.3

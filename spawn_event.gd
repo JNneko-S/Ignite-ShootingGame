@@ -56,6 +56,8 @@ class_name SpawnEvent
 ## EASY / NORMAL / HARD のときに出す数。-1 なら Count のまま。0 ならこの敵は出ない。
 ## ANOTHER のときは、いつも Count の数が出る(道中の雑魚を、HARD 以下だけ減らすのに使う)
 @export var count_below_another : int = -1
+## オンなら、選んだ難易度が HARD か ANOTHER のときだけ出す(隠しボスなど)。EASY / NORMAL では、この敵は出ない
+@export var hard_and_above_only : bool = false
 
 @export_group("背景から出てくる")
 ## 0: ふつうに出る / 1: 背景から近づいてくる(小さく暗い姿から大きく濃くなって前に出る) /
@@ -71,6 +73,8 @@ class_name SpawnEvent
 @export var flight_curve : FlightCurve
 
 func unit_count() -> int:
+	if hard_and_above_only and DifficultyTuning.chosen() < 2:
+		return 0
 	if count_below_another >= 0 and not HazardRank.active:
 		return mini(count_below_another, maxi(count, 1)) # 0 なら、この敵は出ない
 	return maxi(count, 1)

@@ -14,3 +14,5 @@ static var invincible : bool = false
 static var pending_start_time : float = 0.0
 ## 次にステージを読み込んだとき、出撃の演出を飛ばす(読んだら false に戻る)
 static var skip_intro_once : bool = false
+## 次にステージを読み込んだら、出てきた最後のボス(ラスボス)をすぐ倒す(エンディングへ飛ぶ)。読んだら false に戻る
+static var pending_ending : bool = false

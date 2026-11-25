@@ -256,6 +256,7 @@ static func barrage_tier(boss : bool) -> Tier:
 
 ## ANOTHER をクリアした: 二周目(BLACK ANOTHER)に入る。ランクと下限はそのまま持ち越す
 static func start_black_loop() -> void:
+	Achievements.unlock("limit_break")
 	black_loop = true
 	last_reason = "BLACK ANOTHER"
 

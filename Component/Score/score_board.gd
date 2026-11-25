@@ -53,10 +53,15 @@ static func carry_stage(tree : SceneTree) -> void:
 	carried_bombs += stats["bombs"]
 	carried_kills += stats["kills"]
 
-## プレイが終わった: 記録して、次のプレイの準備をする。記録したら true
-static func finish_run(tree : SceneTree, cleared : bool) -> bool:
+## 記録の結果の種類(スコアボードに出す)
+const FAILED : String = "FAILED"
+const CLEAR : String = "CLEAR"
+const ALL_CLEAR : String = "ALL CLEAR"
+
+## プレイが終わった: result(FAILED / CLEAR / ALL CLEAR)で記録して、次のプレイの準備をする。記録したら true
+static func finish_run(tree : SceneTree, result : String) -> bool:
 	var saved := false
-	if not slow_used and not GameSettings.slow_mode:
+	if not slow_used and not GameSettings.slow_mode and not DebugTools.used: # デバッグ機能を使ったプレイは記録しない
 		var stats := _stage_stats(tree)
 		var entry := {
 			"time": Time.get_unix_time_from_system(),
@@ -68,9 +73,12 @@ static func finish_run(tree : SceneTree, cleared : bool) -> bool:
 			"difficulty": stats["difficulty"],
 			"ship": RunConfig.ship.ship_name if RunConfig.ship else "---",
 			"stage": _stage_name(tree),
-			"cleared": cleared,
+			"cleared": result != FAILED,
+			"result": result,
+			"loop": RunConfig.loop,
 		}
 		record(entry)
+		Achievements.on_run_recorded(entry) # RATE A の回数と、ANOTHER の解禁
 		saved = true
 	begin_run()
 	return saved
@@ -140,6 +148,16 @@ static func grade(entry : Dictionary) -> String:
 		if value >= pair[1]:
 			return pair[0]
 	return "D"
+
+## 記録の結果(古い記録は cleared から決める)
+static func result_of(entry : Dictionary) -> String:
+	if entry.has("result"):
+		return str(entry["result"])
+	return CLEAR if entry.get("cleared", false) else FAILED
+
+## 記録を、記録しないで終える(続きの周へ進むときなど)。持ち越した数だけ残す
+static func discard_run() -> void:
+	begin_run()
 
 static func difficulty_name(entry : Dictionary) -> String:
 	return DIFFICULTY_NAMES[clampi(int(entry.get("difficulty", 1)), 0, DIFFICULTY_NAMES.size() - 1)]
