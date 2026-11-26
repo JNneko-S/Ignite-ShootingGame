@@ -433,22 +433,31 @@ reg(COUNTER + "sp2_jaw.tres", P(              # カウンター弾: 大顎。近
     aim_at_player=True, bullet_scale=2.8, counter_hp_ratio=0.06, bullet_speed=95.0,
     motion=[S(2.0, 0.0, trans="sine"), S(1.0, None), S(0.9, 170.0, turn="aim", trans="quad", ease="in")]))
 
-# ---- 3面: 大砂嵐(立体弾幕)
-for side, off, ang in (("L", (-210.0, 30.0), -62.0), ("R", (210.0, 90.0), 62.0)):
+# ---- 3面: 大砂嵐(立体弾幕)。竜巻の柱・舞い上がる砂・吹き付ける砂・砂礫の渦・速い自機狙いが、一度に吹き荒れる
+for side, offs, ang in (("L", [(-210.0, 30.0), (-150.0, -20.0)], -62.0), ("R", [(210.0, 90.0), (150.0, 40.0)], 62.0)):
     reg(COUNTER + "sp3_sand_wind_%s.tres" % side, P(   # 砂の竜巻: 立てて回る輪を重ねた柱。流れてきて止まり、回り続けてから、また流れる(ふちでグレイズ)
-        bullet="E_Pink_Medium", muzzle_offsets=[off], start_delay=0.3, shot_count=4, interval=0.24, pause=2.6,
-        aim_at_player=False, base_angle=ang, random_shot_angle=8.0, random_seed=71,
-        ring3d_count=7, ring3d_radius=12.0, ring3d_grow=7.0, ring3d_max_radius=26.0, ring3d_spin=330.0,
-        ring3d_tilt=80.0, ring3d_depth_scale=0.45, bullet_speed=70.0,
-        motion=[S(1.4, 0.0, trans="sine"), S(1.8, None), S(2.4, 75.0, trans="sine", ease="in")]))
-reg(COUNTER + "sp3_sand_swirl.tres", P(          # 舞い上がる砂: でんぐり返りながら回る砂の輪を、ボスから放つ
-    bullet="E_Bermuda", start_delay=0.8, shot_count=1, pause=2.8,
-    bullet_count=2, spread_angle=70.0, aim_at_player=True,
-    ring3d_count=8, ring3d_radius=10.0, ring3d_grow=12.0, ring3d_max_radius=34.0, ring3d_spin=200.0,
-    ring3d_tilt=55.0, ring3d_tumble=110.0, bullet_speed=62.0))
-reg(COUNTER + "sp3_light_fan.tres", P(        # 軽い攻撃: 遅い5way
-    bullet="E_Red_Normal", start_delay=1.0, shot_count=1, pause=2.0,
-    bullet_count=5, spread_angle=56.0, aim_at_player=True, bullet_speed=95.0))
+        bullet="E_Pink_Medium", muzzle_offsets=offs, start_delay=0.3, shot_count=7, interval=0.18, pause=1.6,
+        aim_at_player=False, base_angle=ang, random_shot_angle=10.0, random_seed=71,
+        ring3d_count=9, ring3d_radius=12.0, ring3d_grow=8.0, ring3d_max_radius=28.0, ring3d_spin=360.0,
+        ring3d_tilt=80.0, ring3d_depth_scale=0.45, bullet_speed=90.0,
+        motion=[S(1.1, 0.0, trans="sine"), S(1.4, None), S(2.0, 110.0, trans="sine", ease="in")]))
+reg(COUNTER + "sp3_sand_swirl.tres", P(          # 舞い上がる砂: でんぐり返りながら回る砂の輪を、ボスから続けて放つ
+    bullet="E_Bermuda", start_delay=0.8, shot_count=3, interval=0.5, pause=1.6,
+    bullet_count=4, spread_angle=130.0, aim_at_player=True,
+    ring3d_count=9, ring3d_radius=10.0, ring3d_grow=14.0, ring3d_max_radius=36.0, ring3d_spin=240.0,
+    ring3d_tilt=55.0, ring3d_tumble=120.0, bullet_speed=95.0))
+for side, off, ang in (("L", (-235.0, 40.0), -58.0), ("R", (235.0, 40.0), 58.0)):
+    reg(COUNTER + "sp3_sand_gust_%s.tres" % side, P(   # 砂の吹き付け: 画面の端から、斜めに吹き付ける砂粒の突風(左右交互)
+        bullet="E_Bermuda", muzzle_offsets=[off], start_delay=1.2 if side == "L" else 2.6, shot_count=30, interval=0.045,
+        pause=1.8, bullet_count=2, spread_angle=26.0, aim_at_player=False, base_angle=ang,
+        random_angle=10.0, random_speed_ratio=0.3, random_seed=73, bullet_speed=170.0))
+reg(COUNTER + "sp3_debris.tres", P(             # 砂礫の渦: ボスから、回る向きが入れ替わる6本腕の渦
+    bullet="E_Red_Normal", start_delay=1.5, shot_count=40, interval=0.08, pause=1.2,
+    bullet_count=6, spread_angle=360.0, aim_at_player=False, rotate_per_shot=9.0, reverse_every_shots=20,
+    bullet_speed=130.0))
+reg(COUNTER + "sp3_light_fan.tres", P(        # 自機狙い: 速い7way
+    bullet="E_Magenta_Aim", start_delay=1.0, shot_count=2, interval=0.2, pause=1.4,
+    bullet_count=7, spread_angle=60.0, aim_at_player=True, bullet_speed=190.0))
 reg(COUNTER + "sp3_storm_giant.tres", P(      # カウンター弾: 風に乗って曲がりながら横切る巨大弾
     bullet="E_Massive_Light_Green", muzzle_offsets=[(-200.0, 60.0), (200.0, 100.0)], start_delay=2.2, warning_time=0.6,
     shot_count=1, pause=3.2, aim_at_player=True, mirror_curve_by_side=True, bullet_scale=2.3, counter_hp_ratio=0.05,
@@ -566,6 +575,27 @@ reg(WG + "w_wagon_fan.tres", P(
     bullet_count=7, spread_angle=84.0, aim_at_player=False, bullet_speed=105.0,
     with_=[P(bullet="E_Magenta_Aim", start_delay=1.5, shot_count=3, interval=0.1, pause=2.08,
              bullet_count=1, aim_at_player=True, bullet_speed=190.0)]))
+
+
+# =============================================================== 中枢防衛艦の追加弾幕
+# 鉄蛇(1面戦車の八岐大蛇版): 戦車の主砲と左右の小砲の位置から、うねる蛇の首(胴は赤い弾、頭は炎の大玉)が自機へ伸びる
+_wig = [S(0.25, None, av=95.0)] + [S(0.5, None, av=(-95.0 if i % 2 == 0 else 95.0)) for i in range(6)]
+reg(GD + "g_iron_serpent.tres", P(
+    bullet="E_Red_Normal", muzzle_offsets=[(0.0, 10.0), (-110.0, 30.0), (110.0, 30.0)], start_delay=0.4, shot_count=16,
+    interval=0.06, pause=1.2, aim_at_player=True, aim_once_per_burst=True, bullet_speed=175.0, motion=_wig,
+    soften_others=2.0,
+    with_=[P(bullet="E_medium_flamy", muzzle_offsets=[(0.0, 10.0), (-110.0, 30.0), (110.0, 30.0)], start_delay=0.35,
+             shot_count=1, interval=0.96, pause=1.2, aim_at_player=True, aim_once_per_burst=True, bullet_scale=1.6,
+             bullet_speed=175.0, motion=_wig)]))
+# 改・洗濯機(2面ボスの洗濯機の改造版): 6本の腕(速さの違う2列)が回り、向きが入れ替わりながら少しずつ速くなる。
+# 逆に回る、ゆっくりした4本腕の層を重ねる
+reg(GD + "g_washer_mod.tres", P(
+    bullet="E_Blue_Cian", start_delay=0.3, shot_count=48, interval=0.07, pause=1.0,
+    bullet_count=5, spread_angle=360.0, aim_at_player=False, rotate_per_shot=9.0, rotate_accel=0.04,
+    reverse_every_shots=24, line_count=2, line_speed_ratio=0.25, bullet_speed=135.0, soften_others=2.0,
+    with_=[P(bullet="E_Indigo_Slow", start_delay=0.1, shot_count=48, interval=0.07, pause=0.0,
+             bullet_count=4, spread_angle=360.0, aim_at_player=False, base_angle=45.0, rotate_per_shot=-6.0,
+             bullet_speed=100.0)]))
 
 
 # ---- 1つずつ: 重い攻撃のあいだは、ほかの砲台(Yields の弾幕)をやさしくする

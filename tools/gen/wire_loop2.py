@@ -83,8 +83,12 @@ def set_sequence(scene, header, paths):
 for i, (one, two) in enumerate(zip(BS.phases(1), BS.phases(2))):
     set_sequence("GameScene/Enemy/Stage4/blood_swan.tscn", sub("bs_main_p%d" % (i + 1)), one)
     wire("GameScene/Enemy/Stage4/blood_swan.tscn", sub("bs_main_p%d" % (i + 1)), two)
+# 中枢防衛艦: 二周目の並びの先頭に、鉄蛇(1面戦車の八岐大蛇版)・改・洗濯機(2面ボスの洗濯機の改造版)を入れる(一周目の並びにも入っている)
+GD = "res://Resources/ShotPatterns/Stage4/Guard/"
+GUARD_EXTRA = [[GD + "g_iron_serpent.tres"], [GD + "g_washer_mod.tres"], [GD + "g_washer_mod.tres", GD + "g_iron_serpent.tres"]]
 for i, phase in enumerate(L.GUARD):
-    wire("GameScene/Enemy/Stage4/final_weapon.tscn", sub("main_p%d" % (i + 1)), S(phase))
-for i, phase in enumerate(L.NUCLEO):
-    wire("GameScene/Enemy/Stage4/nucleo_core_boss.tscn", sub("main_p%d" % (i + 1)), S(phase))
+    wire("GameScene/Enemy/Stage4/final_weapon.tscn", sub("main_p%d" % (i + 1)), GUARD_EXTRA[i] + S(phase))
+# ヌクレオ: 鬼畜にした残留弾(2つ × 形態)と、強めた元の弾幕を交互に
+for i in range(len(L.NUCLEO)):
+    wire("GameScene/Enemy/Stage4/nucleo_core_boss.tscn", sub("main_p%d" % (i + 1)), L.nucleo_loop2_sequence(i))
 print("wired")

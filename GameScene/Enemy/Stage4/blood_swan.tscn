@@ -46,29 +46,61 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_l2_n.tres" id="l2_bsx_rampage_l2_n"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_l2_h.tres" id="l2_bsx_rampage_l2_h"]
 [ext_resource type="Script" path="res://Component/Boss/boss_rampage.gd" id="boss_rampage"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_e.tres" id="l2_bsx_crossfire_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_n.tres" id="l2_bsx_crossfire_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_h.tres" id="l2_bsx_crossfire_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_a.tres" id="l2_bsx_crossfire_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_veins_a.tres" id="l2_bsx_veins_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_e.tres" id="l2_bsx_shotgun_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_n.tres" id="l2_bsx_shotgun_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_h.tres" id="l2_bsx_shotgun_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_a.tres" id="l2_bsx_shotgun_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_thorns_a.tres" id="l2_bsx_thorns_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_l2_e.tres" id="l2_bsx_crossfire_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_l2_n.tres" id="l2_bsx_crossfire_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_crossfire_l2_h.tres" id="l2_bsx_crossfire_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_l2_e.tres" id="l2_bsx_shotgun_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_l2_n.tres" id="l2_bsx_shotgun_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_shotgun_l2_h.tres" id="l2_bsx_shotgun_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_e.tres" id="l2_bsx_firework_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_n.tres" id="l2_bsx_firework_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_h.tres" id="l2_bsx_firework_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_a.tres" id="l2_bsx_firework_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_bloodlet_a.tres" id="l2_bsx_bloodlet_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_l2_e.tres" id="l2_bsx_firework_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_l2_n.tres" id="l2_bsx_firework_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_firework_l2_h.tres" id="l2_bsx_firework_l2_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_rampage_a.tres" id="l2_bsx_rampage_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_e.tres" id="l2_bsx_windmill_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_n.tres" id="l2_bsx_windmill_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_h.tres" id="l2_bsx_windmill_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_a.tres" id="l2_bsx_windmill_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_l2_e.tres" id="l2_bsx_windmill_l2_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_l2_n.tres" id="l2_bsx_windmill_l2_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/bsx_windmill_l2_h.tres" id="l2_bsx_windmill_l2_h"]
 
 [sub_resource type="Resource" id="bs_main_p1"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_crossfire_e"), ExtResource("l2_bsx_crossfire_n"), ExtResource("l2_bsx_crossfire_h"), ExtResource("l2_bsx_crossfire_a"), ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_veins_a"), ExtResource("l2_bsx_shotgun_e"), ExtResource("l2_bsx_shotgun_n"), ExtResource("l2_bsx_shotgun_h"), ExtResource("l2_bsx_shotgun_a"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h"), ExtResource("l2_bsx_thorns_a")])
 loop2_replace = true
 loop2_patterns = Array[ExtResource("shot_script")]([])
-loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_crossfire_l2_e"), ExtResource("l2_bsx_crossfire_l2_n"), ExtResource("l2_bsx_crossfire_l2_h"), ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_shotgun_l2_e"), ExtResource("l2_bsx_shotgun_l2_n"), ExtResource("l2_bsx_shotgun_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
 
 
 [sub_resource type="Resource" id="bs_main_p2"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_firework_e"), ExtResource("l2_bsx_firework_n"), ExtResource("l2_bsx_firework_h"), ExtResource("l2_bsx_firework_a"), ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_bloodlet_a"), ExtResource("l2_bsx_crossfire_e"), ExtResource("l2_bsx_crossfire_n"), ExtResource("l2_bsx_crossfire_h"), ExtResource("l2_bsx_crossfire_a"), ExtResource("l2_bsx_veins_e"), ExtResource("l2_bsx_veins_n"), ExtResource("l2_bsx_veins_h"), ExtResource("l2_bsx_veins_a"), ExtResource("l2_bsx_shotgun_e"), ExtResource("l2_bsx_shotgun_n"), ExtResource("l2_bsx_shotgun_h"), ExtResource("l2_bsx_shotgun_a")])
 loop2_replace = true
 loop2_patterns = Array[ExtResource("shot_script")]([])
-loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_firework_l2_e"), ExtResource("l2_bsx_firework_l2_n"), ExtResource("l2_bsx_firework_l2_h"), ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_crossfire_l2_e"), ExtResource("l2_bsx_crossfire_l2_n"), ExtResource("l2_bsx_crossfire_l2_h"), ExtResource("l2_bsx_veins_l2_e"), ExtResource("l2_bsx_veins_l2_n"), ExtResource("l2_bsx_veins_l2_h"), ExtResource("l2_bsx_shotgun_l2_e"), ExtResource("l2_bsx_shotgun_l2_n"), ExtResource("l2_bsx_shotgun_l2_h")])
 
 
 [sub_resource type="Resource" id="bs_main_p3"]
 script = ExtResource("shooter_phase")
-sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_e"), ExtResource("l2_bsx_rampage_n"), ExtResource("l2_bsx_rampage_h"), ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h")])
+sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_e"), ExtResource("l2_bsx_rampage_n"), ExtResource("l2_bsx_rampage_h"), ExtResource("l2_bsx_rampage_a"), ExtResource("l2_bsx_windmill_e"), ExtResource("l2_bsx_windmill_n"), ExtResource("l2_bsx_windmill_h"), ExtResource("l2_bsx_windmill_a"), ExtResource("l2_bsx_bloodlet_e"), ExtResource("l2_bsx_bloodlet_n"), ExtResource("l2_bsx_bloodlet_h"), ExtResource("l2_bsx_bloodlet_a"), ExtResource("l2_bsx_crossfire_e"), ExtResource("l2_bsx_crossfire_n"), ExtResource("l2_bsx_crossfire_h"), ExtResource("l2_bsx_crossfire_a"), ExtResource("l2_bsx_thorns_e"), ExtResource("l2_bsx_thorns_n"), ExtResource("l2_bsx_thorns_h"), ExtResource("l2_bsx_thorns_a"), ExtResource("l2_bsx_firework_e"), ExtResource("l2_bsx_firework_n"), ExtResource("l2_bsx_firework_h"), ExtResource("l2_bsx_firework_a")])
 loop2_replace = true
 loop2_patterns = Array[ExtResource("shot_script")]([])
-loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_l2_e"), ExtResource("l2_bsx_rampage_l2_n"), ExtResource("l2_bsx_rampage_l2_h"), ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h")])
+loop2_sequence = Array[ExtResource("shot_script")]([ExtResource("l2_bsx_rampage_l2_e"), ExtResource("l2_bsx_rampage_l2_n"), ExtResource("l2_bsx_rampage_l2_h"), ExtResource("l2_bsx_windmill_l2_e"), ExtResource("l2_bsx_windmill_l2_n"), ExtResource("l2_bsx_windmill_l2_h"), ExtResource("l2_bsx_bloodlet_l2_e"), ExtResource("l2_bsx_bloodlet_l2_n"), ExtResource("l2_bsx_bloodlet_l2_h"), ExtResource("l2_bsx_crossfire_l2_e"), ExtResource("l2_bsx_crossfire_l2_n"), ExtResource("l2_bsx_crossfire_l2_h"), ExtResource("l2_bsx_thorns_l2_e"), ExtResource("l2_bsx_thorns_l2_n"), ExtResource("l2_bsx_thorns_l2_h"), ExtResource("l2_bsx_firework_l2_e"), ExtResource("l2_bsx_firework_l2_n"), ExtResource("l2_bsx_firework_l2_h")])
 
 
 [sub_resource type="Resource" id="bs_wings"]
@@ -122,6 +154,9 @@ patterns = Array[ExtResource("shot_script")]([])
 
 [node name="BossPhaseController" parent="."]
 phases = Array[ExtResource("boss_phase")]([SubResource("bs_phase_1"), SubResource("bs_phase_2"), SubResource("bs_phase_3")])
+
+[node name="Intro" parent="StateMachine"]
+another_next_state = "Barrage"
 
 [node name="Barrage" parent="StateMachine"]
 next_state = "Barrage2"

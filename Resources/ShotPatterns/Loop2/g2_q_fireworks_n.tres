@@ -1,38 +1,35 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://bvg3v5kfanhxi"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_3te5d"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
-[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-marker_only = null
 bullet_count = 14
 spread_angle = 360.0
+aim_at_player = true
 base_angle = 10.0
 bullet_speed = 64.0
 bullet_accel = 20.0
-break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-min_difficulty = 1
-max_difficulty = 1
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.4
 shot_count = 4
 interval = 0.75
 pause = 1.3
-soften_others = 2.0
 bullet_count = 2
 spread_angle = 40.0
+aim_at_player = true
 bullet_speed = 80.0
-break_hp = null
 split_time = 1.8
 split_time_random = 0.5
-split_pattern = SubResource("p1")
 split_follow_direction = false
+soften_others = 2.0
+min_difficulty = 1
+max_difficulty = 1
+skip_auto_tuning = true
+split_pattern = SubResource("p1")

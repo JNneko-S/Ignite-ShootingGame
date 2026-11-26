@@ -1,6 +1,5 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://deim0pyq2rftn"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_udh5e"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
@@ -8,44 +7,43 @@
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-marker_only = null
 bullet_count = 2
 spread_angle = 180.0
 aim_at_player = false
-bullet_speed = 48.0
-break_hp = null
+bullet_speed = 57.6
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.3
-shot_count = 3
-interval = 0.55
+shot_count = 4
+interval = 0.4125
 pause = 0.0
 bullet_count = 3
 spread_angle = 70.0
-bullet_speed = 110.0
-break_hp = null
+aim_at_player = true
+bullet_speed = 132.0
 split_time = 0.75
+split_follow_direction = true
+skip_auto_tuning = true
 split_pattern = SubResource("p2")
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-max_difficulty = 0
-skip_auto_tuning = true
-marker_only = null
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
-shot_count = 18
-interval = 0.11
-pause = 1.4
-soften_others = 2.0
+shot_count = 26
+interval = 0.0825
+pause = 1.05
 bullet_count = 3
 spread_angle = 70.0
-angle_wave_amplitude = 18.0
+aim_at_player = true
 aim_once_per_burst = true
-bullet_speed = 145.0
-break_hp = null
+angle_wave_amplitude = 18.0
+angle_wave_shots = 20
+bullet_speed = 174.0
+soften_others = 2.0
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])

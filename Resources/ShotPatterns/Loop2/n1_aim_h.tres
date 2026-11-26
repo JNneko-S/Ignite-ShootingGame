@@ -7,13 +7,13 @@
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 start_delay = 0.3
-shot_count = 8
+shot_count = 10
 interval = 0.12
-pause = 0.85
-bullet_count = 7
+pause = 0.7225
+bullet_count = 8
 spread_angle = 56.0
 aim_at_player = true
-bullet_speed = 190.0
+bullet_speed = 212.8
 min_difficulty = 2
 max_difficulty = 2
 skip_auto_tuning = true

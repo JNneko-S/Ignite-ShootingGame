@@ -6,6 +6,9 @@ class_name StageData
 @export var stage_name : String = "Stage 1"
 ## イベントの並び。順番は自由(time の小さい順に実行される)
 @export var events : Array[StageEvent] = []
+## 難易度 ANOTHER のとき(一周目も二周目も)、このステージの代わりに使うタイムライン。空ならこのまま。
+## 一周目だけ軽くしたステージ(4面)で、ANOTHER は元のタイムラインを使うのに使う
+@export var another_timeline : StageData
 ## 二周目(Another Round。ANOTHER 以外)で、このステージの代わりに使うタイムライン(雑魚の数・並び・弾を作り直したもの)。
 ## 空なら、二周目もこのタイムラインのまま
 @export var second_loop : StageData

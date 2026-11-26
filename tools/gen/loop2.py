@@ -531,6 +531,112 @@ Z2_MID = tri("z2_mid_spiral", lambda d: P(
     bullet_count=d(3, 4, 5), spread_angle=360.0, aim_at_player=False, rotate_per_shot=12.0,
     bullet_speed=d(60.0, 70.0, 80.0)))
 
+# ======================================================================= 二周目のヌクレオ: 一周目の残留弾を、さらに鬼畜にしたもの(2つ × 形態)
+# 止まった弾が長く残り、その上に、強めた元の弾幕(NUCLEO)が重なる。並びは「残留弾 → 元の弾幕 → 残留弾 → 元の弾幕」
+def _stay(stop, hold, go_speed, turn="abs", go_time=2.0, angle=0.0):
+    return [S(stop, 0.0, trans="linear"), S(hold, None), S(go_time, go_speed, turn=turn, angle=angle, trans="sine", ease="in")]
+
+
+NUCLEO_RESIDUE = [
+    [   # 第一形態
+        # 段々畑・改: 止まる弧の段を増やし、くねる道を細く、うねりを速く。道の出口へ速い自機狙い
+        tri("nr1_terraces", lambda d: P(
+            bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(6, 7, 8), interval=0.11, pause=d(2.8, 2.5, 2.2), soften_others=2.5,
+            bullet_count=d(24, 28, 32), spread_angle=d(150.0, 160.0, 170.0), aim_at_player=False, gap_size=d(4, 3, 3),
+            gap_wave_amplitude=d(0.6, 0.65, 0.7), gap_wave_shots=d(6, 5, 4), launch_speed_step=0.26, bullet_speed=150.0,
+            motion=_stay(1.6, d(3.4, 3.8, 4.2), d(70.0, 80.0, 90.0)),
+            with_=[P(bullet="E_Magenta_Aim", start_delay=2.2, shot_count=d(4, 6, 8), interval=d(0.5, 0.4, 0.32), pause=2.4,
+                     bullet_count=d(1, 3, 3), spread_angle=d(0.0, 16.0, 14.0), aim_at_player=True,
+                     bullet_speed=d(190.0, 220.0, 250.0))])),
+        # 渦・改: 3本腕の渦が、だんだん遠くで止まって迷路になる。残ったあと、回りながら外へ流れる
+        tri("nr1_spiral", lambda d: P(
+            bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(46, 54, 62), interval=d(0.045, 0.04, 0.036), pause=d(2.6, 2.3, 2.0),
+            soften_others=2.5, bullet_count=3, spread_angle=360.0, aim_at_player=False, rotate_per_shot=d(13.0, 12.0, 11.0),
+            launch_speed_step=d(0.045, 0.042, 0.04), bullet_speed=110.0,
+            motion=_stay(1.5, d(3.2, 3.6, 4.0), d(50.0, 60.0, 70.0), turn="add", go_time=2.2, angle=25.0),
+            with_=[P(bullet="E_Magenta_Aim", start_delay=2.2, shot_count=d(3, 4, 5), interval=0.6, pause=2.4,
+                     bullet_count=1, line_count=d(3, 4, 5), line_speed_ratio=0.15, aim_at_player=True,
+                     bullet_speed=d(200.0, 230.0, 260.0))])),
+    ],
+    [   # 第二形態
+        # 網・改: ななめ2方向と縦の、3方向の止まる線で、三角の網を張る。網の目はグレイズしながら抜ける広さ
+        tri("nr2_net", lambda d: P(
+            bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(4, 5, 6), interval=0.14, pause=d(2.8, 2.5, 2.2),
+            bullet_count=d(8, 9, 10), parallel_spacing=d(56.0, 52.0, 48.0), aim_at_player=False, base_angle=30.0,
+            launch_speed_step=0.32, bullet_speed=150.0, motion=_stay(1.5, d(3.2, 3.6, 4.0), d(60.0, 70.0, 80.0)),
+            with_=[P(bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(4, 5, 6), interval=0.14, pause=0.0,
+                     bullet_count=d(8, 9, 10), parallel_spacing=d(56.0, 52.0, 48.0), aim_at_player=False, base_angle=-30.0,
+                     launch_speed_step=0.32, bullet_speed=150.0, motion=_stay(1.5, d(3.2, 3.6, 4.0), d(60.0, 70.0, 80.0))),
+                   P(bullet="E_Pink_Medium", start_delay=0.55, shot_count=d(3, 4, 5), interval=0.16, pause=0.0,
+                     bullet_count=d(6, 7, 8), parallel_spacing=d(64.0, 60.0, 56.0), aim_at_player=False,
+                     launch_speed_step=0.35, bullet_speed=140.0, motion=_stay(1.4, d(3.2, 3.6, 4.0), d(60.0, 70.0, 80.0)))])),
+        # 足跡・改: 自機狙いの弾が、通った跡に止まる弾を5方向に落とす。長く残り、ばらばらの向きへ速く動き出す
+        tri("nr2_footprint", lambda d: P(
+            bullet="E_Spiky_Split", start_delay=0.4, shot_count=d(14, 18, 22), interval=d(0.18, 0.15, 0.13), pause=d(1.6, 1.4, 1.2),
+            bullet_count=d(3, 3, 5), spread_angle=d(26.0, 24.0, 40.0), aim_at_player=True, bullet_speed=d(170.0, 190.0, 210.0),
+            split_time=0.7, split_follow_direction=True,
+            split=P(bullet="E_Pink_Medium", bullet_count=d(3, 4, 5), spread_angle=360.0, aim_at_player=False,
+                    bullet_speed=30.0, motion=[S(0.4, 0.0), S(d(3.0, 3.4, 3.8), None),
+                                               S(1.2, d(110.0, 130.0, 150.0), turn="random", angle=50.0, trans="quad", ease="in")]))),
+    ],
+    [   # 第三形態(第四形態にも使う)
+        # 豹変する残留弾・改: 止まる格子を2段に張り、内側の段と外側の段が、時間をずらして自機の方へ動き出す
+        tri("nr3_turncoat", lambda d: P(
+            bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(4, 5, 6), interval=0.14, pause=d(2.6, 2.3, 2.0),
+            bullet_count=d(18, 22, 26), spread_angle=d(140.0, 150.0, 160.0), aim_at_player=False, launch_speed_step=0.3,
+            bullet_speed=150.0, random_angle=2.0, random_seed=31,
+            motion=[S(1.6, 0.0, trans="linear"), S(d(1.6, 1.4, 1.2), None), S(1.4, d(80.0, 95.0, 110.0), turn="aim", trans="sine", ease="in_out")],
+            with_=[P(bullet="E_Pink_Medium", start_delay=0.6, shot_count=d(3, 4, 5), interval=0.14, pause=0.0,
+                     bullet_count=d(16, 20, 24), spread_angle=d(130.0, 140.0, 150.0), aim_at_player=False, launch_speed_step=0.3,
+                     bullet_speed=120.0, random_angle=2.0, random_seed=37,
+                     motion=[S(1.5, 0.0, trans="linear"), S(d(2.6, 2.4, 2.2), None),
+                             S(1.4, d(80.0, 95.0, 110.0), turn="aim", trans="sine", ease="in_out")])])),
+        # 残留の檻(新): 輪が少しずつ遠くで止まり、内側の輪から順に、その時の自機の方へ迫ってくる。輪の切れ目を順にくぐる
+        tri("nr3_cage", lambda d: P(
+            bullet="E_Pink_Medium", start_delay=0.4, shot_count=d(4, 5, 6), interval=0.2, pause=d(2.4, 2.1, 1.8),
+            bullet_count=d(16, 20, 24), spread_angle=360.0, aim_at_player=True, base_angle=8.0, gap_size=d(4, 3, 3),
+            gap_random=True, random_seed=43, launch_speed_step=0.22, bullet_speed=130.0,
+            motion=[S(1.2, 0.0, trans="linear"), S(d(1.4, 1.2, 1.0), None), S(0.6, d(120.0, 140.0, 160.0), turn="aim")])),
+    ],
+]
+
+
+def _boost(p, count=1.2, speed=1.12, pause=0.85):
+    """元の二周目の弾幕を強める(数・速さ・休み)。一緒に撃つ弾幕も"""
+    if not isinstance(p, dict):
+        return
+    if p.get("bullet_count", 1) >= 3 and not p.get("muzzle_offsets"):
+        p["bullet_count"] = int(round(p["bullet_count"] * count))
+    if p.get("shot_count", 1) >= 2:
+        p["shot_count"] = int(round(p["shot_count"] * count))
+    for key in ("bullet_speed", "bullet_accel"):
+        if key in p:
+            p[key] = p[key] * speed
+    if "pause" in p:
+        p["pause"] = p["pause"] * pause
+    for w in p.get("with_") or []:
+        _boost(w, count, speed, pause)
+
+
+# 元のヌクレオの弾幕(n1_〜n4_)を強める
+for _path, _p in ALL.items():
+    if any("/%s_" % k in _path for k in ("n1", "n2", "n3", "n4")):
+        _boost(_p)
+
+
+def nucleo_loop2_sequence(i):
+    """ヌクレオの二周目の、i 番目(0 から)の形態の並び: 残留弾 → 元の弾幕 → 残留弾 → 元の弾幕"""
+    res = NUCLEO_RESIDUE[min(i, 2)]
+    orig = NUCLEO[i]
+    out = []
+    for k in range(max(len(res), len(orig))):
+        if k < len(res):
+            out.extend(res[k])
+        if k < len(orig):
+            out.extend(orig[k])
+    return out
+
+
 def seq(group):
     """[[e,n,h], [e,n,h], …] を、順番に撃つ並び(難易度ごとに1つずつ撃つ)に広げる"""
     out = []

@@ -1,6 +1,5 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://c5gdi1uocai8i"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_tn0cm"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
@@ -8,27 +7,29 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-marker_only = null
 bullet_count = 4
 spread_angle = 360.0
 aim_at_player = false
 base_angle = 45.0
-bullet_speed = 34.0
-bullet_accel = 30.0
-break_hp = null
+bullet_speed = 40.8
+bullet_accel = 36.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-max_difficulty = 0
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.4
-shot_count = 3
-interval = 0.55
+shot_count = 4
+interval = 0.4125
+pause = 1.125
+bullet_count = 1
+spread_angle = 0.0
+aim_at_player = true
 line_count = 4
 line_speed_ratio = 0.14
-bullet_speed = 130.0
-break_hp = null
+bullet_speed = 156.0
 split_time = 0.75
+split_follow_direction = true
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
 split_pattern = SubResource("p1")

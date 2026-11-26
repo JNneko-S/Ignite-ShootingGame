@@ -2,8 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cqvde4f5agnls" path="res://boss_phase.gd" id="4_58da7"]
 [ext_resource type="Resource" uid="uid://cff51e5n3b6da" path="res://Resources/MovePatterns/Stage3/m3_bomber_sweep.tres" id="18_58da7"]
+[ext_resource type="Resource" uid="uid://xkpwo21qo13b" path="res://Resources/ShotPatterns/Stage3/s3_bomber_updown.tres" id="19_p15fs"]
 [ext_resource type="Resource" uid="uid://btvxq3s8v11ue" path="res://Resources/MovePatterns/Stage3/m3_net_col_down.tres" id="23_s8xme"]
+[ext_resource type="Resource" uid="uid://drjdop65t6p36" path="res://Resources/ShotPatterns/Stage3/s3_net_side.tres" id="24_5rnv4"]
 [ext_resource type="Resource" uid="uid://c2lk3jjl3gr8n" path="res://Resources/MovePatterns/Stage3/m3_net_row.tres" id="25_tf1j2"]
+[ext_resource type="Resource" uid="uid://dwik63oq3ake8" path="res://Resources/ShotPatterns/Stage3/s3_net_vert.tres" id="26_x3gml"]
 [ext_resource type="Resource" uid="uid://bfbcammrjgkpt" path="res://Resources/MovePatterns/Stage3/m3_net_col_up.tres" id="27_do38r"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/bomber.tscn" id="bomber"]
 [ext_resource type="PackedScene" uid="uid://i131tu5hvwxs" path="res://GameScene/Enemy/Zako/armored.tscn" id="carrier"]
@@ -15,15 +18,10 @@
 [ext_resource type="PackedScene" uid="uid://clbmtdcaxjoka" path="res://GameScene/Enemy/Zako/formation.tscn" id="formation"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai.tscn" id="kai"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/blackswan_kai_intro.tscn" id="kai_intro"]
-[ext_resource type="Resource" uid="uid://c8voad2o3cseg" path="res://Resources/MovePatterns/Loop2/m_l2_column.tres" id="l2_column_move"]
-[ext_resource type="Resource" uid="uid://myj44m6o1u1c" path="res://Resources/ShotPatterns/Loop2/z_air_e.tres" id="l2_z_air_e"]
-[ext_resource type="Resource" uid="uid://7h3ythwu5wp" path="res://Resources/ShotPatterns/Loop2/z_air_h.tres" id="l2_z_air_h"]
-[ext_resource type="Resource" uid="uid://cudv4sqm8shvi" path="res://Resources/ShotPatterns/Loop2/z_air_n.tres" id="l2_z_air_n"]
-[ext_resource type="Resource" uid="uid://bd2o0q3rha50w" path="res://Resources/ShotPatterns/Loop2/z_column_e.tres" id="l2_z_column_e"]
-[ext_resource type="Resource" uid="uid://dlfp8avbeqnkb" path="res://Resources/ShotPatterns/Loop2/z_column_h.tres" id="l2_z_column_h"]
-[ext_resource type="Resource" uid="uid://piayq5o5v1xk" path="res://Resources/ShotPatterns/Loop2/z_column_n.tres" id="l2_z_column_n"]
 [ext_resource type="Resource" uid="uid://ujid7vd1nm36" path="res://Resources/MovePatterns/Stage3/m3_rise.tres" id="m_rise"]
 [ext_resource type="Resource" uid="uid://b8puvsyq2gfeo" path="res://Resources/MovePatterns/Stage3/m3_side_dash.tres" id="m_side"]
+[ext_resource type="Resource" uid="uid://byalnpdisln0b" path="res://Resources/ShotPatterns/Stage3/s3_rise_aim.tres" id="p_rise"]
+[ext_resource type="Resource" uid="uid://dklkjm6i17q7u" path="res://Resources/ShotPatterns/Stage3/s3_side_aim.tres" id="p_side"]
 [ext_resource type="Script" uid="uid://cvjxvvhodi6e5" path="res://scroll_speed_event.gd" id="scroll"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/flak_ship.tscn" id="ship"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="shot"]
@@ -33,6 +31,23 @@
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Sky/strike_gunship.tscn" id="strike"]
 [ext_resource type="PackedScene" uid="uid://t26vdwy8qwct" path="res://GameScene/Enemy/Sky/black_swans.tscn" id="swans"]
 [ext_resource type="Script" uid="uid://depy2j673fkg5" path="res://wait_clear_event.gd" id="wait"]
+[ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_e.tres" id="l2_z_air_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_n.tres" id="l2_z_air_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_h.tres" id="l2_z_air_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_e.tres" id="l2_z_ground_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_n.tres" id="l2_z_ground_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_h.tres" id="l2_z_ground_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_e.tres" id="l2_z_column_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_n.tres" id="l2_z_column_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_h.tres" id="l2_z_column_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_e.tres" id="l2_z2_tank_bloom_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_n.tres" id="l2_z2_tank_bloom_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_h.tres" id="l2_z2_tank_bloom_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_e.tres" id="l2_z2_mid_spiral_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_n.tres" id="l2_z2_mid_spiral_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_h.tres" id="l2_z2_mid_spiral_h"]
+[ext_resource type="Resource" path="res://Resources/MovePatterns/Loop2/m_l2_column.tres" id="l2_column_move"]
 
 [sub_resource type="Resource" id="e1"]
 script = ExtResource("scroll")
@@ -60,14 +75,14 @@ time = 13.0
 [sub_resource type="Resource" id="e4"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 4
 interval = 0.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(40, 0)
-mirror_x = true
-count_by_difficulty = Array[int]([3, 3, 4])
 time = 15.5
+count_by_difficulty = Array[int]([3, 3, 4])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+mirror_x = true
 
 [sub_resource type="Resource" id="e5"]
 script = ExtResource("spawn")
@@ -77,8 +92,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 8
 interval = 0.094
 offset_step = Vector2(18.857, 12.857)
-count_by_difficulty = Array[int]([6, 7, 8])
 time = 14.0
+count_by_difficulty = Array[int]([6, 7, 8])
 
 [sub_resource type="Resource" id="e6"]
 script = ExtResource("spawn")
@@ -89,9 +104,9 @@ count = 6
 interval = 0.072
 offset = Vector2(-110, 0)
 offset_step = Vector2(44, 0)
-mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 20.0
+count_by_difficulty = Array[int]([4, 5, 6])
+mirror_x = true
 
 [sub_resource type="Resource" id="c1"]
 script = ExtResource("curve")
@@ -113,10 +128,10 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
-interval = 0.172
-count_by_difficulty = Array[int]([11, 14, 16])
 emerge = 1
 time = 17.0
+interval = 0.172
+count_by_difficulty = Array[int]([11, 14, 16])
 
 [sub_resource type="Resource" id="e9"]
 script = ExtResource("spawn")
@@ -126,21 +141,21 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 8
 interval = 0.094
 offset_step = Vector2(18.857, 12.857)
-count_by_difficulty = Array[int]([6, 7, 8])
 time = 23.5
+count_by_difficulty = Array[int]([6, 7, 8])
 
 [sub_resource type="Resource" id="e10"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.06
 offset = Vector2(-120, 0)
 offset_step = Vector2(48, 0)
-count_by_difficulty = Array[int]([4, 5, 6])
 emerge = 2
 emerge_time = 1.4
 time = 22.0
+count_by_difficulty = Array[int]([4, 5, 6])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="e11"]
 script = ExtResource("spawn")
@@ -151,9 +166,9 @@ count = 8
 interval = 0.077
 offset = Vector2(-165, 0)
 offset_step = Vector2(47.143, 0)
-mirror_x = true
-count_by_difficulty = Array[int]([6, 7, 8])
 time = 31.0
+count_by_difficulty = Array[int]([6, 7, 8])
+mirror_x = true
 
 [sub_resource type="Resource" id="e12"]
 script = ExtResource("spawn")
@@ -176,8 +191,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 25.0
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_p15fs"]
 script = ExtResource("spawn")
@@ -187,8 +202,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 35.4
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_q7f36"]
 script = ExtResource("spawn")
@@ -198,20 +213,20 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 33.2
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_x3gml"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("sniper")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 12
 interval = 0.114
 offset = Vector2(-25, 0)
 offset_step = Vector2(27.273, 0)
-mirror_x = true
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 37.6
+count_by_difficulty = Array[int]([8, 10, 12])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+mirror_x = true
 
 [sub_resource type="Resource" id="Resource_441jl"]
 script = ExtResource("spawn")
@@ -222,8 +237,8 @@ count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
 mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 37.0
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_o7j5x"]
 script = ExtResource("spawn")
@@ -233,9 +248,9 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 42.0
+count_by_difficulty = Array[int]([4, 5, 6])
+mirror_x = true
 
 [sub_resource type="Resource" id="Resource_s8xme"]
 script = ExtResource("spawn")
@@ -246,8 +261,8 @@ count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
 mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 39.8
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="e22"]
 script = ExtResource("spawn")
@@ -282,9 +297,9 @@ count = 8
 interval = 0.077
 offset = Vector2(-165, 0)
 offset_step = Vector2(47.143, 0)
-mirror_x = true
-count_by_difficulty = Array[int]([6, 7, 8])
 time = 46.0
+count_by_difficulty = Array[int]([6, 7, 8])
+mirror_x = true
 
 [sub_resource type="Resource" id="e25"]
 script = ExtResource("wait")
@@ -334,8 +349,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 54.5
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_2181a"]
 script = ExtResource("spawn")
@@ -345,8 +360,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 54.5
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_wq42m"]
 script = ExtResource("spawn")
@@ -356,8 +371,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 54.5
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_akd68"]
 script = ExtResource("spawn")
@@ -367,8 +382,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 54.5
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_ixama"]
 script = ExtResource("spawn")
@@ -377,8 +392,8 @@ move_pattern = ExtResource("25_tf1j2")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 18
 interval = 0.077
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 57.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_fq7rf"]
 script = ExtResource("spawn")
@@ -388,8 +403,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 90)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 57.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_8s5lw"]
 script = ExtResource("spawn")
@@ -399,8 +414,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 180)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 57.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_lpk2e"]
 script = ExtResource("spawn")
@@ -410,8 +425,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 270)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 57.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_kw1ew"]
 script = ExtResource("spawn")
@@ -421,8 +436,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 60.9
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_tnjie"]
 script = ExtResource("spawn")
@@ -432,8 +447,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 60.9
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_3frt2"]
 script = ExtResource("spawn")
@@ -443,8 +458,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 60.9
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_bwvay"]
 script = ExtResource("spawn")
@@ -454,8 +469,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 60.9
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_smf0q"]
 script = ExtResource("spawn")
@@ -466,8 +481,8 @@ count = 18
 interval = 0.077
 offset = Vector2(0, 270)
 mirror_x = true
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 61.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_4olo3"]
 script = ExtResource("spawn")
@@ -478,8 +493,8 @@ count = 18
 interval = 0.077
 offset = Vector2(0, 180)
 mirror_x = true
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 61.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_jbwio"]
 script = ExtResource("spawn")
@@ -490,8 +505,8 @@ count = 18
 interval = 0.077
 offset = Vector2(0, 90)
 mirror_x = true
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 61.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_rxxra"]
 script = ExtResource("spawn")
@@ -501,8 +516,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 mirror_x = true
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 61.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_72j23"]
 script = ExtResource("spawn")
@@ -512,8 +527,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_mf72h"]
 script = ExtResource("spawn")
@@ -523,8 +538,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(-60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_0xpx4"]
 script = ExtResource("spawn")
@@ -534,8 +549,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(60, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_jqv86"]
 script = ExtResource("spawn")
@@ -545,8 +560,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.102
 offset = Vector2(180, 0)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.3
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_cqs6l"]
 script = ExtResource("spawn")
@@ -555,8 +570,8 @@ move_pattern = ExtResource("25_tf1j2")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 18
 interval = 0.077
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_2ye6s"]
 script = ExtResource("spawn")
@@ -566,8 +581,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 90)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_5o84p"]
 script = ExtResource("spawn")
@@ -577,8 +592,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 180)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="Resource_yuf8c"]
 script = ExtResource("spawn")
@@ -588,19 +603,19 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 18
 interval = 0.077
 offset = Vector2(0, 270)
-count_by_difficulty = Array[int]([13, 15, 18])
 time = 64.7
+count_by_difficulty = Array[int]([13, 15, 18])
 
 [sub_resource type="Resource" id="e30"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 8
 interval = 0.0
 offset = Vector2(-180, 0)
 offset_step = Vector2(51.429, 0)
-count_by_difficulty = Array[int]([6, 7, 8])
 time = 68.0
+count_by_difficulty = Array[int]([6, 7, 8])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="e31"]
 script = ExtResource("spawn")
@@ -610,8 +625,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 10
 interval = 0.098
 offset_step = Vector2(19.556, 13.333)
-count_by_difficulty = Array[int]([7, 8, 10])
 time = 69.0
+count_by_difficulty = Array[int]([7, 8, 10])
 
 [sub_resource type="Resource" id="e32"]
 script = ExtResource("spawn")
@@ -622,8 +637,8 @@ count = 10
 interval = 0.098
 offset_step = Vector2(19.556, 13.333)
 mirror_x = true
-count_by_difficulty = Array[int]([7, 8, 10])
 time = 69.3
+count_by_difficulty = Array[int]([7, 8, 10])
 
 [sub_resource type="Resource" id="e33"]
 script = ExtResource("spawn")
@@ -634,8 +649,8 @@ count = 12
 interval = 0.082
 offset = Vector2(-275, 0)
 offset_step = Vector2(50, 0)
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 70.5
+count_by_difficulty = Array[int]([8, 10, 12])
 
 [sub_resource type="Resource" id="e34"]
 script = ExtResource("spawn")
@@ -670,9 +685,9 @@ enemy_scene = ExtResource("formation")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 30
 interval = 0.135
-count_by_difficulty = Array[int]([21, 26, 30])
 emerge = 1
 time = 75.0
+count_by_difficulty = Array[int]([21, 26, 30])
 
 [sub_resource type="Resource" id="e37"]
 script = ExtResource("spawn")
@@ -683,8 +698,8 @@ count = 12
 interval = 0.082
 offset = Vector2(-275, 0)
 offset_step = Vector2(50, 0)
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 76.5
+count_by_difficulty = Array[int]([8, 10, 12])
 
 [sub_resource type="Resource" id="e38"]
 script = ExtResource("spawn")
@@ -707,8 +722,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 82.5
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_tf1j2"]
 script = ExtResource("spawn")
@@ -719,8 +734,8 @@ count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
 mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 84.7
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_do38r"]
 script = ExtResource("spawn")
@@ -730,8 +745,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 86.9
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_x6uah"]
 script = ExtResource("spawn")
@@ -742,19 +757,19 @@ count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
 mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 89.10000000000001
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_770st"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("sniper")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 12
 interval = 0.114
 offset = Vector2(-25, 0)
 offset_step = Vector2(27.273, 0)
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 89.5
+count_by_difficulty = Array[int]([8, 10, 12])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="Resource_ueefj"]
 script = ExtResource("spawn")
@@ -764,8 +779,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 91.3
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_wm3d5"]
 script = ExtResource("spawn")
@@ -776,8 +791,8 @@ count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
 mirror_x = true
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 93.5
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="Resource_s32yp"]
 script = ExtResource("spawn")
@@ -787,8 +802,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 6
 interval = 0.18
 offset_step = Vector2(0, 32)
-count_by_difficulty = Array[int]([4, 5, 6])
 time = 95.7
+count_by_difficulty = Array[int]([4, 5, 6])
 
 [sub_resource type="Resource" id="e48"]
 script = ExtResource("spawn")
@@ -804,11 +819,11 @@ time = 96.5
 [sub_resource type="Resource" id="e49"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("charger")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
-count_by_difficulty = Array[int]([7, 8, 10])
 time = 97.0
+count_by_difficulty = Array[int]([7, 8, 10])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="e50"]
 script = ExtResource("spawn")
@@ -819,8 +834,8 @@ count = 12
 interval = 0.082
 offset = Vector2(-275, 0)
 offset_step = Vector2(50, 0)
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 98.5
+count_by_difficulty = Array[int]([8, 10, 12])
 
 [sub_resource type="Resource" id="e51"]
 script = ExtResource("wait")
@@ -865,15 +880,15 @@ time = 106.0
 [sub_resource type="Resource" id="e56"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 8
 interval = 0.064
 offset = Vector2(-180, 0)
 offset_step = Vector2(51.429, 0)
-count_by_difficulty = Array[int]([6, 7, 8])
 emerge = 2
 emerge_time = 1.4
 time = 107.0
+count_by_difficulty = Array[int]([6, 7, 8])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="e57"]
 script = ExtResource("spawn")
@@ -883,8 +898,8 @@ shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResour
 count = 10
 interval = 0.098
 offset_step = Vector2(19.556, 13.333)
-count_by_difficulty = Array[int]([7, 8, 10])
 time = 108.0
+count_by_difficulty = Array[int]([7, 8, 10])
 
 [sub_resource type="Resource" id="e58"]
 script = ExtResource("spawn")
@@ -895,8 +910,8 @@ count = 10
 interval = 0.098
 offset_step = Vector2(19.556, 13.333)
 mirror_x = true
-count_by_difficulty = Array[int]([7, 8, 10])
 time = 108.3
+count_by_difficulty = Array[int]([7, 8, 10])
 
 [sub_resource type="Resource" id="e59"]
 script = ExtResource("spawn")
@@ -907,8 +922,8 @@ count = 12
 interval = 0.082
 offset = Vector2(-275, 0)
 offset_step = Vector2(50, 0)
-count_by_difficulty = Array[int]([8, 10, 12])
 time = 109.5
+count_by_difficulty = Array[int]([8, 10, 12])
 
 [sub_resource type="Resource" id="c7"]
 script = ExtResource("curve")
@@ -943,13 +958,13 @@ time = 114.0
 [sub_resource type="Resource" id="e63"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("bomber")
-shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 4
 interval = 0.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(40, 0)
-count_by_difficulty = Array[int]([3, 3, 4])
 time = 117.0
+count_by_difficulty = Array[int]([3, 3, 4])
+shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 
 [sub_resource type="Resource" id="e64"]
 script = ExtResource("wait")
@@ -996,29 +1011,30 @@ offset = Vector2(-90, 30)
 offset_step = Vector2(90, 0)
 time = 75.5
 
+
 [sub_resource type="Resource" id="l2_column_0_l"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 10.5
 
 [sub_resource type="Resource" id="l2_column_0_r"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
+mirror_x = true
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
-mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 10.85
 
 [sub_resource type="Resource" id="l2_column_1_l"]
@@ -1026,24 +1042,24 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 47.5
 
 [sub_resource type="Resource" id="l2_column_1_r"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
+mirror_x = true
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
-mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 47.85
 
 [sub_resource type="Resource" id="l2_column_2_l"]
@@ -1051,24 +1067,24 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 67.0
 
 [sub_resource type="Resource" id="l2_column_2_r"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
+mirror_x = true
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
-mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 67.35
 
 [sub_resource type="Resource" id="l2_column_3_l"]
@@ -1076,24 +1092,24 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 86.0
 
 [sub_resource type="Resource" id="l2_column_3_r"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
+mirror_x = true
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
-mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 86.35
 
 [sub_resource type="Resource" id="l2_column_4_l"]
@@ -1101,26 +1117,25 @@ script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 116.0
 
 [sub_resource type="Resource" id="l2_column_4_r"]
 script = ExtResource("spawn")
 enemy_scene = ExtResource("formation")
 move_pattern = ExtResource("l2_column_move")
+mirror_x = true
 shot_patterns = Array[ExtResource("shot")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
-power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
-mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
+power_drop_chance = 0.0
 time = 116.35
-
 [resource]
 script = ExtResource("data")
 stage_name = "Stage 3 (2nd)"

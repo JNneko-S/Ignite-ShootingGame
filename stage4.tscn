@@ -14,7 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://b65b114vgc73o" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer0.png" id="nucleo0"]
 [ext_resource type="Texture2D" uid="uid://bbqojbj7m1nh6" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer1.png" id="nucleo1"]
 [ext_resource type="Texture2D" uid="uid://7sqho837pqpw" path="res://Assets/Full Shmup Asset Pack/Backgrounds/Nucleo Stage/BG/Stage_BG_Layer2_strip6.png" id="nucleo2"]
-[ext_resource type="Resource" uid="uid://blkm2cc1bvajc" path="res://Resources/StageData/Stage4.tres" id="stage"]
+[ext_resource type="Resource" path="res://Resources/StageData/Stage4_Loop1.tres" id="stage"]
 [ext_resource type="Script" uid="uid://g18nyoka7ga0" path="res://Component/Stage/stage_transition.gd" id="stage_transition"]
 
 [node name="Stage4" unique_id=1476515919 instance=ExtResource("base")]

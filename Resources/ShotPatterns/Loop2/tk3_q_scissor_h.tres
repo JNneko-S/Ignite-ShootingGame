@@ -5,45 +5,42 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
 
-[sub_resource type="Resource" id="st2"]
-script = ExtResource("e4")
-duration = 1.6
-target_speed = 130.0
-angular_velocity = -52.0
-
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.6
 shot_count = 5
 interval = 0.7
 pause = 0.0
 bullet_count = 3
 spread_angle = 16.0
+aim_at_player = true
 bullet_speed = 160.0
-break_hp = null
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e4")
+duration = 1.6
+target_speed = 130.0
+angular_velocity = -52.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-min_difficulty = 2
-max_difficulty = 2
-skip_auto_tuning = true
-marker_only = null
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 22
 interval = 0.12
 pause = 1.1
-soften_others = 2.0
 bullet_count = 2
 spread_angle = 150.0
 aim_at_player = false
-angle_wave_amplitude = 14.0
-angle_wave_shots = 14
 mirror_curve_by_side = true
 bullet_speed = 145.0
-break_hp = null
+angle_wave_amplitude = 14.0
+angle_wave_shots = 14
+soften_others = 2.0
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 motion = Array[ExtResource("e4")]([SubResource("st2")])

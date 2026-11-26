@@ -5,18 +5,6 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
 
-[sub_resource type="Resource" id="st4"]
-script = ExtResource("e4")
-duration = 0.6
-target_speed = 40.0
-speed_trans = 4
-
-[sub_resource type="Resource" id="st5"]
-script = ExtResource("e4")
-duration = 1.4
-target_speed = 90.0
-angular_velocity = 34.0
-
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
 duration = 0.6
@@ -32,8 +20,6 @@ angular_velocity = -34.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.08
 shot_count = 22
 interval = 0.16
@@ -44,25 +30,36 @@ aim_at_player = false
 base_angle = 36.0
 rotate_per_shot = -8.0
 bullet_speed = 110.0
-break_hp = null
+skip_auto_tuning = true
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3")])
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e4")
+duration = 0.6
+target_speed = 40.0
+speed_trans = 4
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("e4")
+duration = 1.4
+target_speed = 90.0
+angular_velocity = 34.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-max_difficulty = 0
-skip_auto_tuning = true
-marker_only = null
-with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 22
 interval = 0.16
 pause = 1.6
-soften_others = 2.5
 bullet_count = 5
 spread_angle = 360.0
 aim_at_player = false
 rotate_per_shot = 8.0
 bullet_speed = 110.0
-break_hp = null
+soften_others = 2.5
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 motion = Array[ExtResource("e4")]([SubResource("st4"), SubResource("st5")])

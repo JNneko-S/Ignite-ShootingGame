@@ -31,8 +31,7 @@ STAGES = [
      dict(mid_scenes={"gunship", "armored", "absorber"}, heavy_times=[14.0, 31.0, 47.5, 66.5, 77.5, 83.5], heavy_hp=2200)),
     ("Resources/StageData/Stage3.tres", "Resources/StageData/Loop2/Stage3_Loop2.tres", False,
      "res://GameScene/Enemy/Zako/formation.tscn", [10.5, 47.5, 67.0, 86.0, 116.0]),
-    ("Resources/StageData/Stage4.tres", "Resources/StageData/Loop2/Stage4_Loop2.tres", False,
-     "res://GameScene/Enemy/Stage4/formation_kai.tscn", [4.0, 30.0, 67.5, 95.0, 134.5, 172.0]),
+    # 4面は、一周目と二周目を入れ替える(build_stage4_swap)
 ]
 
 BLOCK = re.compile(r'\[sub_resource type="Resource" id="([^"]+)"\]\n(.*?)(?=\n\n\[|\n\[|\Z)', re.S)
@@ -274,6 +273,147 @@ def build(src, dst, ground_more, column_scene, column_times, extra=None):
     return sum(1 for b in blocks if b["scene"] in AIR | GROUND), len(new_blocks)
 
 
+# ======================================================================= 4面: 一周目と二周目の入れ替え
+# 4面は、雑魚がボスより難しく、一周目のほうが難しく感じられたので、入れ替える(作者の指示):
+#   二周目 = 元のタイムライン(Stage4.tres)の写し(雑魚の弾も元のまま。硬さだけ二周目用)
+#   一周目 = 元のタイムラインを軽くした版(Stage4_Loop1.tres)。3面よりは難しく、直す前の4面よりは簡単に:
+#     ・空中フェーズの雑魚は数を LIGHT_AIR 倍(弾は元のまま)。地上の小さな戦車の弾は、軽い自機狙い(Z_GROUND)
+#     ・爆撃機地帯(BOMBER_ZONE 秒)から後ろ: 爆撃機以外の雑魚は LIGHT_LATE 倍、小ボスは1つおきに間引く
+#     ・爆撃機・レーンを走る戦車・ボス・おとり・ワゴンは、そのまま
+# 4面のシーン(stage4.tscn)は、一周目の版を読む。元の Stage4.tres は、両方の作り元
+STAGE4_SRC = "Resources/StageData/Stage4.tres"
+STAGE4_LOOP1 = "Resources/StageData/Stage4_Loop1.tres"
+STAGE4_LOOP2 = "Resources/StageData/Loop2/Stage4_Loop2.tres"
+STAGE4_SCENE = "stage4.tscn"
+LIGHT_AIR = 0.7
+LIGHT_LATE = 0.6
+BOMBER_ZONE = 110.0
+S4_AIR = {"formation_kai", "formation", "bee_worker", "charger", "sniper"}
+S4_BOMBERS = {"bomber_kai", "bomber"}
+S4_GROUND_SMALL = {"tank_small_kai", "tank_squad_kai", "tank_parked_small_kai"}
+S4_MINI_BOSSES = {"carrier_kai", "gunship_kai", "strike_gunship", "flak_ship", "tank_heavy_kai", "tank_parked_kai"}
+
+
+def _read(path):
+    return open(os.path.join(ROOT, path), encoding="utf-8").read()
+
+
+def _keep_uid(dst, s):
+    out = os.path.normpath(os.path.join(ROOT, dst))
+    s = re.sub(r'^(\[gd_resource [^\]]*?) uid="[^"]*"', r'\1', s, count=1)
+    if os.path.exists(out):
+        old = open(out, encoding="utf-8").read().split("\n", 1)[0]
+        if 'uid="' in old:
+            s = old + s[s.index("\n"):]
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    write_text(out, s)
+
+
+def _strip_loop_links(s):
+    s = re.sub(r'^\[ext_resource [^\n]*id="l2_second_loop"\]\n', "", s, flags=re.M)
+    return re.sub(r'^second_loop = .*\n?', "", s, flags=re.M)
+
+
+def build_stage4_swap():
+    src = _strip_loop_links(_read(STAGE4_SRC))
+    # ---- 二周目: 元のタイムラインの写し(硬さだけ上げる)
+    loop2 = src
+    for key, k in (("zako_hp_scale_below_another", ZAKO_HP), ("boss_hp_scale_below_another", BOSS_HP)):
+        m = re.search(r'^%s = (.*)$' % key, loop2, re.M)
+        base = float(m.group(1)) if m else 1.0
+        loop2 = re.sub(r'^%s = .*\n' % key, "", loop2, flags=re.M)
+        loop2 = loop2.rstrip("\n") + "\n%s = %s\n" % (key, ffloat(min(base * k, 2.0)))
+    loop2 = re.sub(r'^(stage_name = ")(.*)(")$', lambda mm: mm.group(1) + mm.group(2) + " (2nd)" + mm.group(3), loop2, count=1, flags=re.M)
+    _keep_uid(STAGE4_LOOP2, loop2)
+
+    # ---- 一周目: 軽くした版
+    s = src
+    ext = {m.group(2): m.group(1) for m in re.finditer(r'\[ext_resource [^\]]*path="([^"]+)" id="([^"]+)"\]', s)}
+    pid = {v: k for k, v in ext.items()}
+    spawn_id = pid["res://spawn_event.gd"]
+    shot_id = pid.get("res://Resources/ShotPatterns/shot_pattern.gd")
+    lines = []
+    for p in L.Z_AIR + L.Z_GROUND:
+        if p not in pid:
+            rid = "l1_" + os.path.basename(p)[:-5]
+            lines.append('[ext_resource type="Resource" path="%s" id="%s"]\n' % (p, rid))
+            pid[p] = rid
+            ext[rid] = p
+    if shot_id is None:
+        shot_id = "l1_shot_script"
+        lines.append('[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="l1_shot_script"]\n')
+    last = list(re.finditer(r'^\[ext_resource [^\n]*\n', s, re.M))[-1]
+    s = s[:last.end()] + "".join(lines) + s[last.end():]
+
+    def pattern_array(paths):
+        return 'Array[ExtResource("%s")]([%s])' % (shot_id, ", ".join('ExtResource("%s")' % pid[p] for p in paths))
+
+    blocks = []
+    for m in BLOCK.finditer(s):
+        rid, body = m.group(1), m.group(2)
+        if kv_get(body, "script") != 'ExtResource("%s")' % spawn_id or kv_get(body, "enemy_scene") is None:
+            continue
+        scene = os.path.basename(ext[re.search(r'"([^"]+)"', kv_get(body, "enemy_scene")).group(1)])[:-5]
+        blocks.append(dict(id=rid, body=body, start=m.start(2), end=m.end(2), scene=scene,
+                           time=float(kv_get(body, "time") or 0.0)))
+    dropped = []
+    mini_seen = {}
+    for b in sorted(blocks, key=lambda b: b["time"]):
+        body = b["body"]
+        if kv_get(body, "is_boss") == "true" or kv_get(body, "tag"):
+            continue
+        late = b["time"] >= BOMBER_ZONE
+        n = int(kv_get(body, "count") or 1)
+        if b["scene"] in S4_AIR:
+            k = LIGHT_LATE if late else LIGHT_AIR
+            if n >= 2:
+                new = max(1, int(round(n * k)))
+                step = vec(kv_get(body, "offset_step"))
+                if step != (0.0, 0.0) and new > 1:
+                    body = kv_set(body, "offset_step", fvec(step[0] * (n - 1) / (new - 1), step[1] * (n - 1) / (new - 1)))
+                body = kv_set(body, "count", str(new))
+                cba = kv_get(body, "count_below_another")
+                if cba is not None:
+                    body = kv_set(body, "count_below_another", str(max(1, int(round(int(cba) * k)))))
+            # 空の雑魚の弾は、元のまま(数だけ減らす。4面らしさは残す)
+        elif b["scene"] in S4_GROUND_SMALL:
+            body = kv_set(body, "shot_patterns", pattern_array(L.Z_GROUND))
+        elif b["scene"] in S4_MINI_BOSSES and late:
+            if n >= 2:
+                body = kv_set(body, "count", str(n - 1))
+            else:
+                mini_seen[b["scene"]] = mini_seen.get(b["scene"], 0) + 1
+                if mini_seen[b["scene"]] % 2 == 0:
+                    dropped.append(b["id"]) # 1つおきに間引く
+        b["body"] = body
+    for b in sorted(blocks, key=lambda b: -b["start"]):
+        s = s[:b["start"]] + b["body"] + s[b["end"]:]
+    # 間引いた出現を、イベントの並びから外す
+    m = re.search(r'^(events = Array\[[^\]]+\]\(\[)(.*?)(\]\))$', s, re.M)
+    inner = m.group(2)
+    for rid in dropped:
+        inner = inner.replace('SubResource("%s"), ' % rid, "").replace(', SubResource("%s")' % rid, "")
+    s = s[:m.start(2)] + inner + s[m.end(2):]
+    # 二周目は入れ替えた版、ANOTHER は元のタイムライン(一周目も二周目も)につなぐ
+    line = ('[ext_resource type="Resource" path="res://%s" id="l2_second_loop"]\n' % STAGE4_LOOP2
+            + '[ext_resource type="Resource" path="res://%s" id="l1_another_timeline"]\n' % STAGE4_SRC)
+    last = list(re.finditer(r'^\[ext_resource [^\n]*\n', s, re.M))[-1]
+    s = s[:last.end()] + line + s[last.end():]
+    s = s.rstrip("\n") + '\nsecond_loop = ExtResource("l2_second_loop")\nanother_timeline = ExtResource("l1_another_timeline")\n'
+    s = re.sub(r'^(stage_name = ")(.*)(")$', lambda mm: mm.group(1) + mm.group(2) + " (1st)" + mm.group(3), s, count=1, flags=re.M)
+    _keep_uid(STAGE4_LOOP1, s)
+    # 元のタイムラインからは、二周目へのつなぎを外す(作り元として残す)
+    write_text(os.path.normpath(os.path.join(ROOT, STAGE4_SRC)), src)
+    # 4面のシーンは、一周目の版を読む
+    scene_path = os.path.normpath(os.path.join(ROOT, STAGE4_SCENE))
+    sc = open(scene_path, encoding="utf-8").read()
+    sc = re.sub(r'\[ext_resource type="Resource"[^\]]*path="res://Resources/StageData/Stage4(_Loop1)?\.tres" id="stage"\]',
+                '[ext_resource type="Resource" path="res://%s" id="stage"]' % STAGE4_LOOP1, sc, count=1)
+    write_text(scene_path, sc)
+    return len(dropped)
+
+
 if __name__ == "__main__":
     for row in STAGES:
         print(row[1], build(*row))
+    print("stage4 swap: dropped mini-bosses", build_stage4_swap())

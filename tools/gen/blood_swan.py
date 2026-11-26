@@ -8,8 +8,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from shotgen import P, S, write
 
 OUT = "res://Resources/ShotPatterns/Stage4/BloodSwan/Unique/"
-LV = "enh"
+LV = "enha"
 ALL = {}
+
+## 作者の指示で、全体を難しくする(数 ×BOOST_COUNT、速さ ×BOOST_SPEED、間 ×BOOST_TIME)
+BOOST_COUNT = 1.45
+BOOST_SPEED = 1.2
+BOOST_TIME = 0.75
+## ANOTHER(4つ目の版): HARD から、NORMAL → HARD の差の EXTRA 倍ぶん先へ伸ばす(間は HARD の FLOOR 倍まで)
+EXTRA = 0.8
+FLOOR = 0.7
 
 
 class D:
@@ -18,30 +26,44 @@ class D:
         self.loop = loop
 
     def __call__(self, e, n, h):
-        return (e, n, h)[self.lv]
+        if self.lv < 3:
+            return (e, n, h)[self.lv]
+        if isinstance(h, bool) or not isinstance(h, (int, float)) or n == h:
+            return h
+        a = h + (h - n) * EXTRA
+        if h < n:
+            a = max(a, h * FLOOR)
+        if isinstance(h, int) and isinstance(n, int):
+            return max(1, int(round(a)))
+        return a
 
     def c(self, e, n, h):
         """数(二周目は 15% 多い)"""
-        v = (e, n, h)[self.lv]
-        return int(round(v * 1.15)) if self.loop == 2 else v
+        v = self(e, n, h) * BOOST_COUNT
+        return int(round(v * 1.15)) if self.loop == 2 else int(round(v))
 
     def s(self, e, n, h):
         """速さ(二周目は 6% 速い)"""
-        v = (e, n, h)[self.lv]
+        v = self(e, n, h) * BOOST_SPEED
         return v * 1.06 if self.loop == 2 else v
 
     def t(self, e, n, h):
         """間(二周目は 12% 短い)"""
-        v = (e, n, h)[self.lv]
+        v = self(e, n, h) * BOOST_TIME
         return v * 0.88 if self.loop == 2 else v
 
 
 def tri(name, fn):
+    """一周目(EASY / NORMAL / HARD / ANOTHER)と二周目(EASY / NORMAL / HARD)の版を作る。
+    ANOTHER は二周目の差し替えを使わないので、ANOTHER 用は一周目の並びにだけ入る"""
     out = {1: [], 2: []}
     for loop in (1, 2):
-        for lv in range(3):
+        for lv in range(4 if loop == 1 else 3):
             p = fn(D(lv, loop))
-            p.update(min_difficulty=lv, max_difficulty=lv, skip_auto_tuning=True)
+            if lv < 3:
+                p.update(min_difficulty=lv, max_difficulty=lv, skip_auto_tuning=True)
+            else:
+                p.update(another_only=True, another_made=True, skip_auto_tuning=True)
             for w in p.get("with_") or []:
                 w["skip_auto_tuning"] = True
             path = OUT + "%s%s_%s.tres" % (name, "" if loop == 1 else "_l2", LV[lv])
@@ -94,6 +116,32 @@ RAMPAGE = tri("bsx_rampage", lambda d: P(
              split=P(bullet="E_Red_Normal", bullet_count=4, spread_angle=360.0, aim_at_player=False, base_angle=45.0,
                      bullet_speed=d.s(34.0, 40.0, 46.0), bullet_accel=36.0))]))
 
+# ---- 3面ボス(ブラックスワン改)のオマージュ
+# 血の十字砲火: 左右の砲口から、速い流しが自機へ向かって交差する(十字砲火のオマージュ)。流れはゆっくり首を振る
+CROSSFIRE = tri("bsx_crossfire", lambda d: P(
+    bullet="E_Red_Normal", start_delay=0.4, shot_count=d.c(16, 22, 28), interval=d.t(0.1, 0.085, 0.072), pause=d.t(1.4, 1.15, 0.95),
+    bullet_count=d(1, 1, 2), spread_angle=d(0.0, 0.0, 8.0), aim_at_player=True, muzzle_offsets=[(-82.0, -10.0), (80.0, -10.0)],
+    angle_wave_amplitude=d(8.0, 10.0, 12.0), angle_wave_shots=14, bullet_speed=d.s(190.0, 215.0, 240.0), soften_others=2.0))
+# 血の散弾: 速さのばらつく自機狙いの散弾を、左右に少しずらして連射する(5way 散弾のオマージュ)
+SHOTGUN = tri("bsx_shotgun", lambda d: P(
+    bullet="E_Purple_Revenge", start_delay=0.3, shot_count=d.c(3, 4, 5), interval=d.t(0.3, 0.26, 0.22), pause=d.t(1.3, 1.05, 0.9),
+    bullet_count=d.c(5, 7, 9), spread_angle=d(40.0, 50.0, 60.0), aim_at_player=True, rotate_per_shot=6.0, reverse_every_shots=1,
+    random_speed_ratio=0.3, random_seed=81, bullet_speed=d.s(170.0, 195.0, 220.0)))
+# 血の花火: 上へ打ち上げた弾が止まり、速い輪に弾けて降ってくる(バルカンの花火のオマージュ)
+FIREWORK = tri("bsx_firework", lambda d: P(
+    bullet="E_Spiky_Split", start_delay=0.4, shot_count=d.c(3, 4, 5), interval=d.t(0.35, 0.3, 0.26), pause=d.t(1.5, 1.25, 1.05),
+    bullet_count=d(2, 3, 4), spread_angle=d(100.0, 120.0, 140.0), aim_at_player=False, base_angle=180.0,
+    random_shot_angle=20.0, random_seed=83, bullet_speed=d.s(170.0, 185.0, 200.0),
+    motion=[S(0.7, 0.0, trans="quad")], split_time=0.8,
+    split=P(bullet="E_Red_Normal", bullet_count=d.c(8, 10, 12), spread_angle=360.0, aim_at_player=True,
+            bullet_speed=d.s(120.0, 140.0, 160.0))))
+# 血の風車: 4本の腕の風車が回り、ときどき回る向きが入れ替わる(ANOTHER の風車のオマージュ)
+WINDMILL = tri("bsx_windmill", lambda d: P(
+    bullet="E_Red_Normal", start_delay=0.3, shot_count=d.c(36, 46, 56), interval=d.t(0.075, 0.065, 0.056), pause=d.t(1.3, 1.05, 0.9),
+    bullet_count=4, spread_angle=360.0, aim_at_player=False, rotate_per_shot=d(7.0, 8.0, 9.0), reverse_every_shots=d(24, 20, 16),
+    line_count=2, line_speed_ratio=0.2, bullet_speed=d.s(150.0, 170.0, 190.0)))
+
+
 def phases(loop):
     """形態ごとの、順番に撃つ弾幕(第三形態は暴走)"""
     def flat(*groups):
@@ -101,7 +149,9 @@ def phases(loop):
         for g in groups:
             out.extend(g[loop] if isinstance(g, dict) else [g])
         return out
-    return [flat(VEINS, THORNS), flat(BLOODLET, VEINS, THORNS), flat(RAMPAGE, BLOODLET, THORNS)]
+    return [flat(CROSSFIRE, VEINS, SHOTGUN, THORNS),
+            flat(FIREWORK, BLOODLET, CROSSFIRE, VEINS, SHOTGUN),
+            flat(RAMPAGE, WINDMILL, BLOODLET, CROSSFIRE, THORNS, FIREWORK)]
 
 
 if __name__ == "__main__":

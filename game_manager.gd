@@ -154,8 +154,12 @@ func _enter_tree() -> void:
 	# ステージによっては、弾幕だけ一段上の難易度として扱う(最終面など。ゲージなどは選んだ難易度のまま)
 	var runner := get_node_or_null("StageRunner")
 	HazardRank.small_bullet_hitbox = false
+	# ANOTHER: ANOTHER 用のタイムラインがあれば、それにする(一周目だけ軽くしたステージでも、ANOTHER は元のまま)
+	var another := RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
+	if runner and runner.get("stage") and another and runner.stage.another_timeline:
+		runner.stage = runner.stage.another_timeline
 	# 二周目(ANOTHER 以外): 作り直した二周目用のタイムラインに差し替える(雑魚の数・並び・弾)
-	if runner and runner.get("stage") and RunConfig.second_round() and runner.stage.second_loop:
+	elif runner and runner.get("stage") and RunConfig.second_round() and runner.stage.second_loop:
 		runner.stage = runner.stage.second_loop
 	if runner and runner.get("stage"):
 		# HARD を選んだとき、ステージによっては ANOTHER と同じく敵弾の当たり判定を半分にする

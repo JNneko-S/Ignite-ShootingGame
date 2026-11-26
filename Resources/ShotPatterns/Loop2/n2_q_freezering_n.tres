@@ -7,6 +7,7 @@
 [sub_resource type="Resource" id="st1"]
 script = ExtResource("e3")
 duration = 0.8
+target_speed = 0.0
 speed_trans = 4
 
 [sub_resource type="Resource" id="st2"]
@@ -23,19 +24,18 @@ target_speed = 130.0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 6
+interval = 0.42
+pause = 1.445
+bullet_count = 22
+spread_angle = 360.0
+aim_at_player = true
+base_angle = 10.0
+launch_speed_step = 0.18
+bullet_speed = 123.2
+soften_others = 2.5
 min_difficulty = 1
 max_difficulty = 1
 skip_auto_tuning = true
-marker_only = null
-start_delay = 0.4
-shot_count = 5
-interval = 0.42
-pause = 1.7
-soften_others = 2.5
-bullet_count = 18
-spread_angle = 360.0
-base_angle = 10.0
-launch_speed_step = 0.18
-bullet_speed = 110.0
-break_hp = null
 motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])

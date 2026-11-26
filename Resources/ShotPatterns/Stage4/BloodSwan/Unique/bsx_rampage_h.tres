@@ -1,6 +1,5 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://cl4k5hlbgtbbc"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_x6e1w"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e3"]
@@ -9,63 +8,59 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.05
-shot_count = 60
-interval = 0.072
+shot_count = 87
+interval = 0.054
 pause = 0.0
 bullet_count = 5
 spread_angle = 360.0
 aim_at_player = false
 base_angle = 30.0
 rotate_per_shot = -11.0
-bullet_speed = 90.0
-break_hp = null
+bullet_speed = 108.0
+skip_auto_tuning = true
 
 [sub_resource type="Resource" id="p3"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-marker_only = null
 bullet_count = 4
 spread_angle = 360.0
 aim_at_player = false
 base_angle = 45.0
-bullet_speed = 46.0
+bullet_speed = 55.2
 bullet_accel = 36.0
-break_hp = null
 
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.8
 shot_count = 4
 interval = 0.9
 pause = 0.0
+bullet_count = 1
 line_count = 3
-bullet_speed = 170.0
-break_hp = null
+line_speed_ratio = 0.15
+aim_at_player = true
+bullet_speed = 204.0
 split_time = 0.7
+split_follow_direction = true
+skip_auto_tuning = true
 split_pattern = SubResource("p3")
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-min_difficulty = 2
-max_difficulty = 2
-skip_auto_tuning = true
-marker_only = null
-with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])
 start_delay = 0.3
-shot_count = 60
-interval = 0.072
-pause = 0.95
-soften_others = 2.0
+shot_count = 87
+interval = 0.054
+pause = 0.7125
 bullet_count = 6
 spread_angle = 360.0
 aim_at_player = false
 rotate_per_shot = 15.0
-bullet_speed = 130.0
-break_hp = null
+bullet_speed = 156.0
+soften_others = 2.0
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])

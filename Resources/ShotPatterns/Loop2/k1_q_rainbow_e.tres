@@ -1,54 +1,52 @@
 [gd_resource type="Resource" script_class="ShotPattern" format=3 uid="uid://vdiwks41i4r8"]
 
-[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_j8t2a"]
 [ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e3"]
-[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="e4"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="e4"]
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.18
 shot_count = 2
 interval = 1.0
 pause = 0.0
 bullet_count = 14
 spread_angle = 360.0
+aim_at_player = true
+base_angle = 0.0
 bullet_speed = 72.0
-break_hp = null
+skip_auto_tuning = true
 
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
-skip_auto_tuning = true
-marker_only = null
 start_delay = 0.36
 shot_count = 2
 interval = 1.0
 pause = 0.0
 bullet_count = 10
 spread_angle = 360.0
+aim_at_player = true
 base_angle = 12.0
 bullet_speed = 44.0
-break_hp = null
+skip_auto_tuning = true
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-max_difficulty = 0
-skip_auto_tuning = true
-marker_only = null
-with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])
 start_delay = 0.4
 shot_count = 2
 interval = 1.0
 pause = 1.6
-soften_others = 2.0
 bullet_count = 18
 spread_angle = 360.0
+aim_at_player = true
 base_angle = 7.0
 bullet_speed = 105.0
-break_hp = null
+soften_others = 2.0
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])
