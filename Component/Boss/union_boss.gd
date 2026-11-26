@@ -34,6 +34,33 @@ const _SHOOTER_SCENE := preload("res://Component/Shooter/enemy_shooter_component
 ## 突進しながら撃つ弾幕(突進専用の砲口から、同時に撃つ)
 @export var rush_patterns : Array[ShotPattern] = []
 
+@export_group("急降下")
+## この段階(0 から)で、急降下する: 口を開け、自機の上へ寄って、青い予告線 → 波動(Dive Patterns)を撃ちながら下へ突き抜ける →
+## 画面の上へ瞬間移動して、もう一度急降下(Dive Count 回) → 元の場所へ瞬間移動して、口を閉じる
+@export var dive_phases : Array[int] = [0, 2]
+## 急降下の間隔(秒。暴走中は Rush Rage Scale 倍)・回数・1回の時間(秒)・予告の時間(秒)
+@export var dive_interval : float = 14.0
+@export var dive_count : int = 2
+@export var dive_time : float = 0.95
+@export var dive_warning_time : float = 0.55
+## 急降下しながら撃つ弾幕(難易度ごとの版を並べる。合う難易度のものだけ撃つ)
+@export var dive_patterns : Array[ShotPattern] = []
+## 画面の下に突き当たったときに、画面の弾を上へ押し上げる距離(px)
+@export var land_push : float = 40.0
+## この段階(0 から)の急降下では、通った後ろに、青いエネルギー弾を V 字に並べて置く。
+## エネルギー弾は、ばらばらのタイミングで、自機へ5列の弾を撃って、消える
+@export var energy_phase : int = 2
+@export var energy_scene : PackedScene
+@export var energy_shot_scene : PackedScene
+@export var energy_scale : float = 2.4
+## 難易度ごと(EASY, NORMAL, HARD, ANOTHER): V の片側の数・自機狙いの速さ・1つのエネルギー弾が撃つ回数(1回撃ったら消える)
+@export var energy_pairs : Array[int] = [4, 5, 6, 7]
+@export var energy_shot_speed : Array[float] = [170.0, 200.0, 235.0, 265.0]
+@export var energy_volleys : Array[int] = [1, 1, 1, 1]
+## 自機狙いの列の数と、広がり(度)
+@export var energy_ways : int = 5
+@export var energy_spread : float = 32.0
+
 @export_group("瞬間移動")
 ## 瞬間移動の間隔(秒。暴走中は Rush Rage Scale 倍)。0 なら、しない
 @export var teleport_interval : float = 6.5
@@ -100,6 +127,9 @@ var _fighting : bool = false
 var _rushing : bool = false
 var _t : float = 0.0
 var _rush_wait : float = 0.0
+var _dive_wait : float = 0.0
+## 前の急降下の列(0 = 左, 1 = 真ん中, 2 = 右。続けて同じ列にしない)
+var last_lane : int = -1
 var _teleport_wait : float = 0.0
 var _phase : int = 0
 
@@ -129,6 +159,7 @@ func begin_fight(home : Vector2) -> void:
 	_home = home
 	_t = 0.0
 	_rush_wait = rush_interval * 0.6
+	_dive_wait = dive_interval * 0.75
 	_teleport_wait = teleport_interval
 	_fighting = true
 	if _hp:
@@ -180,6 +211,213 @@ func _physics_process(delta : float) -> void:
 		if _rush_wait <= 0.0:
 			_rush_wait = rush_interval * (rush_rage_scale if _phase >= rage_phase else 1.0)
 			_rush()
+			return
+	# 急降下の合図(倒れる直前の大技のあいだは、しない)
+	if dive_phases.has(_phase) and not dive_patterns.is_empty() and not _calm \
+			and not _enemy.get_meta(&"counter_spell", false):
+		_dive_wait -= delta
+		if _dive_wait <= 0.0:
+			_dive_wait = dive_interval * (rush_rage_scale if _phase >= rage_phase else 1.0)
+			_dive()
+
+## 急降下: 口を開ける → 左・真ん中・右のどれかの上へ瞬間移動(口は下向き) → 青い予告線 → 波動を撃ちながら下へ突き抜ける、を Dive Count 回 →
+## 元の場所へ瞬間移動して、口を閉じる
+func _dive() -> void:
+	_rushing = true
+	var tree := get_tree()
+	_set_main_silent(true)
+	if _view:
+		_view.set_jaw(1.0, 0.7) # 口を大きく開ける(下向きにしても、あごが開いて見える)
+	var level := clampi(DifficultyTuning.chosen(), 0, 3)
+	var with_energy := _phase == energy_phase and energy_scene != null
+	for d in dive_count:
+		if not _dive_alive():
+			break
+		var rect := CameraView.visible_rect(_enemy)
+		# 左・真ん中・右のどれかの上へ瞬間移動する(続けて同じ列にはしない)
+		var lanes : Array[int] = [0, 1, 2]
+		lanes.erase(last_lane)
+		var lane : int = lanes[randi() % lanes.size()]
+		last_lane = lane
+		var lane_ratios : Array[float] = [0.2, 0.5, 0.8]
+		var x : float = rect.position.x + rect.size.x * lane_ratios[lane]
+		var top := rect.position.y + rect.size.y * 0.16
+		if d == 0:
+			_BlackWave.spawn(tree, _enemy.global_position, 140.0, 0.3, 18.0)
+			await _fade_visual(0.0, 0.12)
+		_enemy.global_position = Vector2(x, top)
+		if _view:
+			_view.face_screen(Vector2.DOWN) # 口を下へ向ける(あごが下へ開く)
+		_BlackWave.spawn(tree, _enemy.global_position, 160.0, 0.35, 20.0)
+		await _fade_visual(1.0, 0.12)
+		if not _dive_alive():
+			break
+		# 予告: 青い線が、突き抜ける道を点滅する。そのあいだ、少し上へ身を引いて溜める
+		_warning_column(x, rect)
+		var crouch := _enemy.create_tween()
+		crouch.tween_property(_enemy, "global_position:y", top - 18.0, dive_warning_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		await crouch.finished
+		if not _dive_alive():
+			break
+		# 波動を撃ちながら、下へ突き抜ける
+		var shooter := _SHOOTER_SCENE.instantiate() as EnemyShooter
+		shooter.autostart = false
+		shooter.only_when_on_screen = false
+		shooter.name = "UnionDiveShooter"
+		_enemy.add_child(shooter)
+		shooter.set_patterns(dive_patterns, [], false, false)
+		var camera := StageCamera.of(_enemy)
+		if camera:
+			camera.shake(5.0, dive_time)
+		_BlackWave.spawn(tree, _enemy.global_position, 200.0, 0.4, 24.0)
+		var start_y := _enemy.global_position.y
+		var end_y := rect.end.y + 170.0
+		# V 字に置くエネルギー弾: 通る道の、画面の上から 2 割〜6 割のあいだに、均等に置く
+		var slots : Array[float] = []
+		var pairs : int = energy_pairs[level]
+		if with_energy:
+			var from_y := maxf(start_y + 30.0, rect.position.y + rect.size.y * 0.2)
+			var to_y := rect.position.y + rect.size.y * 0.6
+			for k in pairs:
+				slots.append(lerpf(from_y, to_y, (k + 0.5) / pairs))
+		var dropped := 0
+		var dash := _enemy.create_tween()
+		dash.tween_property(_enemy, "global_position:y", end_y, dive_time).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+		var landed := false
+		var ghost_wait := 0.0
+		var snap_wait := 0.0
+		var ghost : Texture2D = null
+		while dash.is_running():
+			var step := get_process_delta_time()
+			while dropped < slots.size() and _enemy.global_position.y >= slots[dropped]:
+				_drop_energy_pair(x, slots[dropped], dropped, pairs, rect, level)
+				dropped += 1
+			# 残像
+			ghost_wait -= step
+			snap_wait -= step
+			if ghost_wait <= 0.0 and _view:
+				ghost_wait = 0.03
+				if snap_wait <= 0.0:
+					snap_wait = 0.1
+					ghost = _view.snapshot()
+				_spawn_ghost(ghost)
+			# 画面の下に着いた瞬間: 画面が揺れ、画面の弾幕が少し上へ押し上げられる
+			if not landed and _enemy.global_position.y >= rect.end.y - 10.0:
+				landed = true
+				_land_impact(rect)
+			await tree.process_frame
+		if is_instance_valid(shooter):
+			shooter.stop()
+			shooter.queue_free()
+		await _fade_visual(0.0, 0.08)
+	# 元の場所へ瞬間移動して、口を閉じる
+	if _still_fighting():
+		_enemy.global_position = _home
+		if _view:
+			_view.face_screen(Vector2.ZERO) # 正面に向き直る
+		_BlackWave.spawn(tree, _home, 180.0, 0.4, 22.0)
+		await _fade_visual(1.0, 0.18)
+		if _view:
+			_view.play(&"Close", 0.1)
+			_view.queue(&"Raging" if _phase >= rage_phase else &"Idle")
+	_set_main_silent(false)
+	_rushing = false
+
+## 急降下の残像: 黒紫に沈んだ Union の姿が、その場に残って薄れていく
+func _spawn_ghost(texture : Texture2D) -> void:
+	if texture == null or _view == null:
+		return
+	var g := Sprite2D.new()
+	g.texture = texture
+	g.scale = _view.sprite_scale()
+	g.rotation = _view.sprite_rotation()
+	g.z_index = _enemy.z_index
+	g.modulate = Color(0.85, 0.25, 1.1, 0.55)
+	get_tree().current_scene.add_child(g)
+	g.global_position = _enemy.global_position
+	var fade := g.create_tween().set_parallel(true)
+	fade.tween_property(g, "modulate", Color(0.35, 0.0, 0.5, 0.0), 0.3)
+	fade.tween_property(g, "scale", g.scale * 1.05, 0.3)
+	fade.chain().tween_callback(g.queue_free)
+
+## 画面の下に突き当たった: 画面が大きく揺れ、下に黒い波動。画面にある敵の弾は、少し上へ押し上げられる
+func _land_impact(rect : Rect2) -> void:
+	var tree := get_tree()
+	var camera := StageCamera.of(_enemy)
+	if camera:
+		camera.shake(13.0, 0.45)
+	_BlackWave.spawn(tree, Vector2(_enemy.global_position.x, rect.end.y), 320.0, 0.5, 36.0)
+	for node in tree.get_nodes_in_group("enemy_bullet"):
+		if node is EnemyBullet and node.is_normal() and rect.grow(20.0).has_point(node.global_position):
+			(node as EnemyBullet).kick(Vector2(0.0, -land_push), 0.22)
+
+func _dive_alive() -> bool:
+	return _still_fighting() and not _enemy.get_meta(&"counter_spell", false)
+
+## 急降下の予告: 突き抜ける道に、青い縦の線が点滅する
+func _warning_column(x : float, rect : Rect2) -> void:
+	var line := Line2D.new()
+	line.width = 26.0
+	line.default_color = Color(0.25, 0.55, 1.0, 0.0)
+	line.z_as_relative = false
+	line.z_index = 30
+	line.points = PackedVector2Array([Vector2(x, rect.position.y), Vector2(x, rect.end.y)])
+	get_tree().current_scene.add_child(line)
+	var core := Line2D.new()
+	core.width = 2.0
+	core.default_color = Color(0.7, 0.9, 1.0, 0.9)
+	core.points = line.points
+	line.add_child(core)
+	var blink := line.create_tween().set_loops(3)
+	blink.tween_property(line, "default_color:a", 0.35, dive_warning_time / 6.0)
+	blink.tween_property(line, "default_color:a", 0.05, dive_warning_time / 6.0)
+	get_tree().create_timer(dive_warning_time + 0.05, false).timeout.connect(func() -> void:
+		if is_instance_valid(line):
+			line.queue_free())
+
+## V 字の k 番目の2つ(左右)を置く。上ほど外へ開き、下ほど道に近い(V の字)。
+## Union の通ったところから、左右の場所へすっと滑り出る
+func _drop_energy_pair(x : float, y : float, k : int, pairs : int, rect : Rect2, level : int) -> void:
+	var tree := get_tree()
+	var spread := rect.size.x * 0.42
+	var offset := spread * (1.0 - float(k) / pairs)
+	for side in [-1.0, 1.0]:
+		var slot_x := clampf(x + side * offset, rect.position.x + 14.0, rect.end.x - 14.0)
+		var orb := energy_scene.instantiate() as EnemyBullet
+		tree.current_scene.add_child(orb)
+		orb.global_position = Vector2(x, y)
+		orb.setup(Vector2.DOWN, 0.0, 1.0)
+		orb.scale = Vector2.ONE * energy_scale
+		var slide := orb.create_tween()
+		slide.tween_property(orb, "global_position:x", slot_x, 0.32).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+		_energy_orb_life(orb, level)
+
+## エネルギー弾: ばらばらのタイミングで、自機へ5列の弾を撃ち、撃ち終わったら消える
+func _energy_orb_life(orb : EnemyBullet, level : int) -> void:
+	var tree := get_tree()
+	var volley := ShotPattern.new()
+	volley.bullet_scene = energy_shot_scene
+	volley.bullet_count = energy_ways
+	volley.spread_angle = energy_spread
+	volley.aim_at_player = true
+	volley.bullet_speed = energy_shot_speed[level]
+	volley.skip_auto_tuning = true
+	volley.set_meta("difficulty_tuned", true)
+	await tree.create_timer(randf_range(0.5, 1.9), false).timeout
+	for i in energy_volleys[level]:
+		if not is_instance_valid(orb) or not orb.is_normal() or not _still_fighting():
+			return
+		var player := tree.get_first_node_in_group("player") as Node2D
+		var aim := (player.global_position - orb.global_position).angle() if player else PI / 2.0
+		EnemyShooter.spawn_bullets(volley, i, aim, orb.global_position, tree.current_scene, energy_shot_scene)
+		# 撃った瞬間に、ふくらんで光る
+		var flash := orb.create_tween()
+		flash.tween_property(orb, "scale", Vector2.ONE * energy_scale * 1.35, 0.06)
+		flash.tween_property(orb, "scale", Vector2.ONE * energy_scale, 0.18)
+		if i < energy_volleys[level] - 1:
+			await tree.create_timer(randf_range(0.55, 1.1), false).timeout
+	if is_instance_valid(orb):
+		orb.vanish(0.08) # 撃ち終わったら、すぐ消える
 
 ## 突進: 予告 → 端へ下がる → 横切りながら撃つ → 戻る
 func _rush() -> void:
@@ -425,8 +663,10 @@ func _still_fighting() -> bool:
 
 ## いつもの砲口を、黙らせる・戻す(突進のあいだ)
 func _set_main_silent(silent : bool) -> void:
+	if not silent and _enemy.get_meta(&"counter_spell", false):
+		return # 倒れる直前の大技のあいだは、いつもの砲口を黙らせたままにする
 	for node in _enemy.get_children():
-		if node is EnemyShooter and not node.name in ["UnionRushShooter", "UnionBlinkShooter", "CounterSpellShooter"]:
+		if node is EnemyShooter and not node.name in ["UnionRushShooter", "UnionBlinkShooter", "UnionDiveShooter", "CounterSpellShooter"]:
 			(node as EnemyShooter).suppressed = silent
 
 func _on_phase_started(index : int) -> void:

@@ -741,9 +741,20 @@ func _respawn() -> void:
 func start_invincibility(seconds: float) -> void:
 	invincibility.start(seconds)
 
-## 無敵状態か(死亡中・無敵時間中のどれか)
+## 演出のあいだの無敵(強制移動・突入の演出など)。begin_guard と end_guard を同じ数だけ呼ぶ(重なってもよい)
+var _guard_count : int = 0
+
+func begin_guard() -> void:
+	_guard_count += 1
+
+func end_guard() -> void:
+	_guard_count = maxi(_guard_count - 1, 0)
+	if _guard_count == 0:
+		start_invincibility(1.0) # 終わった直後に、すぐ当たらないように
+
+## 無敵状態か(死亡中・無敵時間中・演出のあいだのどれか)
 func is_invincible() -> bool:
-	return not _is_alive or invincibility.is_active()
+	return not _is_alive or invincibility.is_active() or _guard_count > 0
 
 ## 残機を増やす(1UPアイテムなどから呼ぶ)
 func add_life(amount: int = 1) -> void:

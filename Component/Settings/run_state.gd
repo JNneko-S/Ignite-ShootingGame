@@ -29,6 +29,7 @@ static func begin_run() -> void:
 	RunConfig.continues_used = 0
 	RunConfig.ignite_counter_kills = 0
 	RunConfig.reset_loop_stats(true)
+	Achievements.reset_run()
 	RunConfig.consecutive_game_overs = 0
 	HazardRank.reset_run()
 	ScoreBoard.begin_run()

@@ -1,5 +1,7 @@
 extends Node
 class_name BreachSequence
+## 演出のあいだの無敵・アイテム回収(新しいクラスなので、ファイルを直接読み込む)
+const _Safety := preload("res://Component/Stage/cinematic_safety.gd")
 ## 中枢への突入の演出。タイムラインの StageSignalEvent(signal_name)で始まる。
 ##   1. 一瞬ためてから、背景が一気に流れる(風の筋が出て、加速しているように見せる)
 ##   2. 行く手の隔壁が次々に開き、自機がくぐった直後に、後ろで勢いよく閉まる
@@ -63,6 +65,8 @@ func start() -> void:
 	if scroller == null or _doors.is_empty():
 		return
 	_running = true
+	# 突入の演出: 残っている敵弾はスコアアイテムに変えて全部回収し、終わるまで自機は無敵
+	_Safety.begin(get_tree(), true)
 	scroller.external_control = true
 	_banner(start_text, Color(1.0, 0.85, 0.35), 1.6)
 	var streaks := DashStreaks.new()
@@ -130,6 +134,7 @@ func _release_player() -> void:
 
 func _finish(streaks : DashStreaks) -> void:
 	_release_player()
+	_Safety.end(get_tree(), true)
 	for i in _doors.size():
 		if not _closed[i]:
 			_close(i) # 自機が画面の下のほうにいて、まだくぐっていなくても閉める

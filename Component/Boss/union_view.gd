@@ -101,6 +101,7 @@ func set_jaw(kuti : float, hiraku : float) -> void:
 		return
 	if _anim:
 		_anim.stop(true)
+		mesh.rotation = Vector3.ZERO # 待機のゆらぎ(Idle が回していた傾き)を残さない
 	mesh.set("blend_shapes/kuti", kuti)
 	mesh.set("blend_shapes/hiraku", hiraku)
 
@@ -123,3 +124,23 @@ func snapshot() -> Texture2D:
 ## 姿の Sprite2D の大きさ(残像を同じ大きさで出すのに使う)
 func sprite_scale() -> Vector2:
 	return _sprite.scale if _sprite else Vector2.ONE
+
+## 口の向きを、画面の上下左右へ向ける(Vector2.DOWN で下向き、Vector2.ZERO で正面に戻す)。
+## 3D では真横(右)を向かせ(口が横に開いた姿)、映した絵(Sprite2D)を画面の上で回して、向きを合わせる
+func face_screen(direction : Vector2, time : float = 0.0) -> void:
+	var legion := _model.get_node_or_null("legion") as Node3D if _model else null
+	if legion == null or _sprite == null:
+		return
+	var turn := 90.0 if direction != Vector2.ZERO else 0.0
+	var spin := direction.angle() if direction != Vector2.ZERO else 0.0
+	if time <= 0.0:
+		legion.rotation_degrees = Vector3(0.0, turn, 0.0)
+		_sprite.rotation = spin
+		return
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(legion, "rotation_degrees", Vector3(0.0, turn, 0.0), time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(_sprite, "rotation", spin, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+## 姿の Sprite2D の向き(残像を同じ向きで出すのに使う)
+func sprite_rotation() -> float:
+	return _sprite.rotation if _sprite else 0.0

@@ -38,6 +38,12 @@ const LIST : Array = [
 	["another_round", "ANOTHER ROUND CLEAR", "二周目をクリアする", true],
 	["congratulation", "congratulation!", "隠しボスを倒して、二周目をクリアする", true],
 	["b_end", "もうひとつの結末", "Bエンドを見る", true],
+	["perfect_ignite", "パーフェクトイグナイト", "一回のイグナイトで、敵を 10 体以上倒す", false],
+	["max_phoenix", "MAX・ザ・フェニックス", "Lv MAX になってから、一度も被弾せずに 5 分以上生き残る", false],
+	["phoenix_revival", "不死鳥、起死回生。", "一度のゲームで、Lv0 から Lv MAX まで戻した回数が 10 回以上になる", false],
+	["daioujou", "大往生", "二周目をノーダメージで進み、隠しボスを撃破する", true],
+	["title_wait_10", "ここで何を待っているの？", "タイトル画面で 10 分間、何も操作しない", true],
+	["title_wait_30", "だから何を待っているの？", "タイトル画面で 30 分間、何も操作しない", true],
 ]
 
 signal unlocked(id : String)
@@ -192,6 +198,62 @@ func on_hidden_boss_appeared() -> void:
 func on_hidden_boss_defeated() -> void:
 	RunConfig.hidden_boss_defeated = true
 	unlock("hidden_boss_down")
+	if RunConfig.loop >= 2 and RunConfig.loop_hits == 0:
+		unlock("daioujou") # 二周目を一度も被弾せずに進み、隠しボスを倒した
+
+# ---------------------------------------------------------------- イグナイトとレベルの実績
+
+## 今のイグナイト(いちばん最近の発動)で倒した敵の数
+var _ignite_kills : int = 0
+## Lv MAX になってから、被弾せずに生き残っている時間(秒)。マイナスなら数えていない(Lv MAX になったら数え始め、被弾で止まる)
+var _max_survive : float = -1.0
+## Lv0 まで落ちたことがあるか(このあと Lv MAX まで戻したら、起死回生を1回と数える)と、その回数
+var _was_zero : bool = false
+var _revivals : int = 0
+
+## 出撃し直したとき(RunState.begin_run が呼ぶ): 一回のゲームの記録を戻す
+func reset_run() -> void:
+	_ignite_kills = 0
+	_max_survive = -1.0
+	_was_zero = false
+	_revivals = 0
+
+## イグナイトを発動した(GameManager が呼ぶ)
+func on_ignite_started() -> void:
+	_ignite_kills = 0
+
+## 敵を倒した(ScoreSystem が呼ぶ)。イグナイトで倒したなら数える(発動中、またはとどめが返した弾)
+func on_enemy_killed(enemy : Enemy, gm : GameManager) -> void:
+	if gm == null or not gm._killed_by_ignite(enemy):
+		return
+	_ignite_kills += 1
+	if _ignite_kills >= 10:
+		unlock("perfect_ignite")
+
+## イグナイトのレベルが変わった(GameManager が呼ぶ)
+func on_ignite_level(level : int) -> void:
+	if level <= 0:
+		_was_zero = true
+	if level >= IgniteGauge.MAX_LEVEL:
+		if _max_survive < 0.0:
+			_max_survive = 0.0
+		if _was_zero:
+			_was_zero = false
+			_revivals += 1
+			if _revivals >= 10:
+				unlock("phoenix_revival")
+
+## 被弾した(GameManager が呼ぶ): Lv MAX からの生き残りの時間は、数え直し(また Lv MAX になってから)
+func on_player_hit() -> void:
+	_max_survive = -1.0
+
+## Lv MAX からの生き残りの時間を進める(ステージで、ポーズしていないあいだ)
+func _tick_max_survive(delta : float) -> void:
+	if _max_survive < 0.0 or get_tree().paused or not (get_tree().current_scene is GameManager):
+		return
+	_max_survive += delta
+	if _max_survive >= 300.0:
+		unlock("max_phoenix")
 
 ## 周をクリアした(EndingSequence が呼ぶ)
 func on_round_clear() -> void:
@@ -204,6 +266,7 @@ func on_round_clear() -> void:
 
 ## スコア・グレイズ・イグナイトは、ステージのあいだ、ときどき見て調べる
 func _process(delta : float) -> void:
+	_tick_max_survive(delta)
 	_check_left -= delta
 	if _check_left > 0.0:
 		return

@@ -39,7 +39,7 @@ const ROAR_SOUNDS : Array[AudioStream] = [
 ## タイトル画面(ゲームクリアのあと)
 @export_file("*.tscn") var title_scene : String = "res://title.tscn"
 ## 裏ボス Union 戦の曲
-@export var union_music : AudioStream = preload("res://Assets/Sounds/Music/AS_1259553_テンポ速めのメタルドラムンベース.mp3")
+@export var union_music : AudioStream = preload("res://Assets/Sounds/Music/終焉の目覚め.mp3")
 
 var _runner : StageRunner
 var _player : Player

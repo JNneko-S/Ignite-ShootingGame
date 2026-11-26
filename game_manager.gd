@@ -345,6 +345,7 @@ func _graze_scale_now() -> float:
 func _on_player_damaged() -> void:
 	hit_count += 1
 	RunConfig.loop_hits += 1
+	Achievements.on_player_hit()
 	player.reset_shot_power()
 	var level_before := ignite.level
 	var progress_before := ignite.ratio() # 被弾したときのレベル内の進捗(アイテムの量に使う)
@@ -427,6 +428,7 @@ func refill_ignite(to_level : int) -> bool:
 
 func _on_level_changed(level : int) -> void:
 	_apply_level_stats()
+	Achievements.on_ignite_level(level)
 	# レベルが上がったら、自機の後ろに「LEVEL UP!!!」を出す(下がったときは出さない)
 	# 最大(Lv5)になったときは「LEVEL MAX」。復活でレベルが戻ったときは出さない
 	if level > _shown_level and not _respawning and is_instance_valid(player) and player.visible:
@@ -509,6 +511,7 @@ func _start_ignite_effect(levels : int) -> void:
 ## 効果の開始・終了。終了(時間切れ、または死亡)で、焼却範囲とフレアを止める
 func _on_ignite_toggled(on : bool) -> void:
 	if on:
+		Achievements.on_ignite_started()
 		return
 	_ignite_time_left = 0.0
 	_extend_left = 0.0

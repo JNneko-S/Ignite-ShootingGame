@@ -331,6 +331,14 @@ func _on_damage_dealt(_hurtbox : Hurtbox) -> void:
 			score_system.on_reflect_hit(global_position)
 	queue_free()
 
+## 外から押される(Union が画面の下に突き当たった衝撃など): time 秒かけて、offset だけずれる(自分の動きはそのまま)
+var _kick_velocity : Vector2 = Vector2.ZERO
+var _kick_left : float = 0.0
+
+func kick(offset : Vector2, time : float = 0.2) -> void:
+	_kick_left = maxf(time, 0.01)
+	_kick_velocity = offset / _kick_left
+
 func is_normal() -> bool:
 	return _state == BulletState.NORMAL
 
@@ -429,6 +437,10 @@ func _on_area_entered(area : Area2D) -> void:
 
 func _physics_process(delta : float) -> void:
 	lifetime_check -= delta
+	if _kick_left > 0.0:
+		var push := minf(delta, _kick_left)
+		global_position += _kick_velocity * push
+		_kick_left -= push
 	if lifetime_check <= 0.0:
 		lifetime_check = 0.5
 		_check_far_away()

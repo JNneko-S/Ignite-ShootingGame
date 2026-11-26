@@ -125,6 +125,7 @@ func _start_music() -> void:
 
 func _process(delta : float) -> void:
 	_time += delta
+	_tick_idle(delta)
 	for i in _rings.size():
 		_rings[i].rotation_degrees += ring_spin_speeds[i % ring_spin_speeds.size()] * delta
 	match _state:
@@ -135,6 +136,8 @@ func _process(delta : float) -> void:
 
 ## 「Press Any Key」: キー・ボタン・クリックのどれでも
 func _input(event : InputEvent) -> void:
+	if _is_activity(event):
+		_idle_time = 0.0 # 何か操作したら、放置の時間は数え直し
 	if _state != Phase.PRESS:
 		return
 	var any : bool = (event is InputEventKey and event.pressed and not event.echo) \
@@ -276,3 +279,25 @@ func _leave(after : Callable) -> void:
 	tween.tween_property(_fade, "color:a", 1.0, music_fade_time)
 	await tween.finished
 	after.call()
+
+# ---------------------------------------------------------------- 放置の実績
+
+## タイトル画面で、何も操作していない時間(秒)
+var _idle_time : float = 0.0
+
+func _tick_idle(delta : float) -> void:
+	_idle_time += delta
+	if _idle_time >= 600.0:
+		Achievements.unlock("title_wait_10") # 10 分「ここで何を待っているの？」
+	if _idle_time >= 1800.0:
+		Achievements.unlock("title_wait_30") # 30 分「だから何を待っているの？」
+
+## 操作したか(キー・ボタン・クリック・スティックを倒す・マウスを大きく動かす)
+func _is_activity(event : InputEvent) -> bool:
+	if event is InputEventKey or event is InputEventJoypadButton or event is InputEventMouseButton:
+		return event.is_pressed()
+	if event is InputEventJoypadMotion:
+		return absf((event as InputEventJoypadMotion).axis_value) > 0.5
+	if event is InputEventMouseMotion:
+		return (event as InputEventMouseMotion).relative.length() > 2.0
+	return false

@@ -1,5 +1,7 @@
 extends Camera2D
 class_name StageCamera
+## 演出のあいだの無敵・アイテム回収(新しいクラスなので、ファイルを直接読み込む)
+const _Safety := preload("res://Component/Stage/cinematic_safety.gd")
 ## 横に広いステージ(ステージ2の線路など)で、描画範囲を左右に動かすカメラ。ステージの Camera2D にアタッチする。
 ##
 ## 動き方(Mode):
@@ -142,11 +144,15 @@ func _end_freeze(player : Player) -> void:
 ## カメラだけが向く演出のあいだ、自機を止める(操作・画面内への押し戻し・被弾を止める)
 func _freeze_player(player : Player, frozen : bool) -> void:
 	if frozen:
+		if player.has_meta("camera_frozen"):
+			return # もう止めている(無敵を二重に数えない)
 		player.set_meta("camera_frozen", true)
+		player.begin_guard() # 止められているあいだは無敵
 		player.set_physics_process(false)
 		player.velocity = Vector2.ZERO
 	else:
 		player.remove_meta("camera_frozen")
+		player.end_guard()
 		player.set_physics_process(true)
 		player.start_invincibility(1.0) # 戻った直後に、すぐ当たらないように
 
@@ -204,8 +210,17 @@ func _move_to(x : float, time : float) -> void:
 		return
 	_move_tween = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	_move_tween.tween_method(_shift, global_position.x, x, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await _move_tween.finished
-	_moving = false
+	# 自機も運ぶ強制移動のあいだは、自機を無敵にして、落ちているアイテムを全部回収する(画面の外へ置いていかないように)
+	var guarded := _carry and _get_player() is Player
+	if guarded:
+		_Safety.begin(get_tree(), false)
+	var tween := _move_tween
+	while is_instance_valid(tween) and tween.is_valid() and tween.is_running():
+		await get_tree().physics_frame
+	if guarded:
+		_Safety.end(get_tree())
+	if tween == _move_tween:
+		_moving = false
 
 func _kill_move() -> void:
 	if _move_tween and _move_tween.is_valid():

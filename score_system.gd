@@ -254,6 +254,7 @@ const LOOP2_EXTRA_ITEMS := Vector2i(2, 5)
 
 func on_enemy_killed(enemy : Enemy) -> void:
 	kill_count += 1
+	Achievements.on_enemy_killed(enemy, game_manager)
 	if enemy.boss_reach_time < 0.0 and not enemy.is_midboss:
 		zako_kill_count += 1 # 雑魚を倒した数(実績「今日はボスだけでいいよ」)
 	if enemy.boss_reach_time >= 0.0:
