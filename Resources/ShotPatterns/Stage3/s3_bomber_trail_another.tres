@@ -8,23 +8,25 @@
 [sub_resource type="Resource" id="Resource_5yarr"]
 script = ExtResource("1")
 bullet_scene = ExtResource("4_0v7bi")
-also_another = null
+marker_only = null
 bullet_count = 4
 spread_angle = 360.0
 aim_at_player = false
 base_angle = 90.0
 bullet_speed = 100.0
+break_hp = null
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("1_7qsht")
-also_another = null
+marker_only = null
 another_made = true
 start_delay = 0.6
 interval = 0.26
 pause = 0.0
 aim_at_player = false
 bullet_speed = 10.0
+break_hp = null
 split_time = 0.9
 split_pattern = SubResource("Resource_5yarr")
 split_follow_direction = false

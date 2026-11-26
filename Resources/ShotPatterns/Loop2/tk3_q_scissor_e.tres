@@ -14,20 +14,21 @@ angular_velocity = -40.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 start_delay = 0.6
 shot_count = 3
 interval = 0.7
 pause = 0.0
 bullet_speed = 120.0
+break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 max_difficulty = 0
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 14
@@ -41,4 +42,5 @@ angle_wave_amplitude = 10.0
 angle_wave_shots = 18
 mirror_curve_by_side = true
 bullet_speed = 115.0
+break_hp = null
 motion = Array[ExtResource("e4")]([SubResource("st2")])

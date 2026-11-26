@@ -82,3 +82,44 @@ func length_of(anim_name : StringName) -> float:
 ## 画面に出している半径(px。当たり判定の目安)
 func radius() -> float:
 	return display_size * 0.5
+
+## 向きを変える(度。0 で正面、90 で右向き、-90 で左向き。横向きにすると、口が進む向きに開く)
+func set_facing(degrees : float, time : float = 0.0) -> void:
+	var legion := _model.get_node_or_null("legion") as Node3D if _model else null
+	if legion == null:
+		return
+	if time <= 0.0:
+		legion.rotation_degrees.y = degrees
+		return
+	var tween := legion.create_tween()
+	tween.tween_property(legion, "rotation_degrees:y", degrees, time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+## 口の開き方を、アニメーションを止めて直に決める(kuti: 口の縁が開く / hiraku: 上下にあごが開く。どちらも 0〜1)
+func set_jaw(kuti : float, hiraku : float) -> void:
+	var mesh := _mesh()
+	if mesh == null:
+		return
+	if _anim:
+		_anim.stop(true)
+	mesh.set("blend_shapes/kuti", kuti)
+	mesh.set("blend_shapes/hiraku", hiraku)
+
+## 今の口の開き方 [kuti, hiraku]
+func jaw() -> Vector2:
+	var mesh := _mesh()
+	if mesh == null:
+		return Vector2.ZERO
+	return Vector2(float(mesh.get("blend_shapes/kuti")), float(mesh.get("blend_shapes/hiraku")))
+
+func _mesh() -> Node3D:
+	return _model.get_node_or_null("legion/球_003") as Node3D if _model else null
+
+## 今の姿を写した絵(残像に使う)。画面のない実行では null
+func snapshot() -> Texture2D:
+	if _viewport == null:
+		return null
+	return ImageTexture.create_from_image(_viewport.get_texture().get_image())
+
+## 姿の Sprite2D の大きさ(残像を同じ大きさで出すのに使う)
+func sprite_scale() -> Vector2:
+	return _sprite.scale if _sprite else Vector2.ONE

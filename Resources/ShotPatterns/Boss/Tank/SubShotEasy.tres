@@ -16,8 +16,8 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_uf758")
 bullet_scene = ExtResource("1_3tong")
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 start_delay = 1.0
 shot_count = 12
 interval = 0.16
@@ -27,5 +27,6 @@ base_angle = -60.0
 rotate_per_shot = 20.0
 reverse_every_shots = 6
 bullet_speed = 160.0
+break_hp = null
 motion = Array[ExtResource("2_3cyk5")]([SubResource("Resource_3oyle")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

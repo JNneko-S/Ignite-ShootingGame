@@ -45,6 +45,9 @@ enum TimingUnit {
 @export var replaces_others : bool = false
 ## オンなら、NORMAL・EASY でも、数や速さを自動で調整しない(EASY 用に作った弾幕など)
 @export var skip_auto_tuning : bool = false
+## オンなら、弾を撃たない「目印」の弾幕。撃ち始めた合図(pattern_started)と、Start Delay・Pause の時間だけを使う
+## (ボスの動きの台本が、この目印に合わせて弾を撃つ: Union の鎖のすだれなど)
+@export var marker_only : bool = false
 ## NORMAL のときは、この弾幕の代わりに、こちらを撃つ(自動の調整はしない)。
 ## EASY でも、Easy Version がなければ、こちらを元に EASY 用に自動で調整して撃つ
 @export var normal_version : ShotPattern
@@ -221,6 +224,9 @@ enum TimingUnit {
 @export_range(0.0, 0.5, 0.01) var counter_hp_ratio : float = 0.0
 ## 弾の大きさの倍率(当たり判定も一緒に大きくなる)。2 以上で巨大弾。割れたあとの弾には掛からない
 @export var bullet_scale : float = 1.0
+## 0 より大きければ「壊せる弾」: 自機のショットでこれだけダメージを与えると、壊れて消える(点とスコアアイテムが出る)。
+## 壊せずに Split Time が来たら、ふつうどおり Split Pattern の弾幕に割れる(巨大弾の破裂など)
+@export var break_hp : int = 0
 
 @export_group("弾の動き")
 ## 撃ったあとの動きを、区間ごとに並べる(速度のイージング、向きの変更、曲がり)。

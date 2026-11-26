@@ -12,7 +12,7 @@ speed_trans = 7
 [sub_resource type="Resource" id="ring_to_player"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("bullet")
-also_another = null
+marker_only = null
 ring3d_count = 4
 ring3d_radius = 2.0
 ring3d_grow = 45.0
@@ -21,11 +21,12 @@ ring3d_spin = 300.0
 ring3d_tumble = 80.0
 bullet_speed = 30.0
 bullet_accel = 180.0
+break_hp = null
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("bullet")
-also_another = null
+marker_only = null
 start_delay = 0.4
 shot_count = 2
 interval = 0.45
@@ -38,6 +39,7 @@ random_angle = 6.0
 random_speed_ratio = 0.45
 random_seed = 17
 bullet_speed = 520.0
+break_hp = null
 motion = Array[ExtResource("step")]([SubResource("st1")])
 split_time = 1.0
 split_pattern = SubResource("ring_to_player")

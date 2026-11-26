@@ -22,7 +22,7 @@ speed_ease = 0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 start_delay = 0.3
 shot_count = 4
 interval = 0.24
@@ -40,4 +40,5 @@ ring3d_spin = 330.0
 ring3d_tilt = 80.0
 ring3d_depth_scale = 0.45
 bullet_speed = 70.0
+break_hp = null
 motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])

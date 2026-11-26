@@ -26,19 +26,20 @@ speed_ease = 0
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_stop")
-also_another = null
+marker_only = null
 shot_count = 24
 interval = 0.035
 aim_at_player = false
 rotate_per_shot = 15.0
 launch_speed_step = 0.333
 bullet_speed = 495.0
+break_hp = null
 motion = Array[ExtResource("step")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
-also_another = null
+marker_only = null
 another_made = true
 shot_count = 4
 interval = 1.2
@@ -48,5 +49,6 @@ bullet_count = 4
 spread_angle = 70.0
 aim_at_player = false
 bullet_speed = 300.0
+break_hp = null
 split_time = 1.1
 split_pattern = SubResource("split")

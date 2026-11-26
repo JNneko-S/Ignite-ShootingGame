@@ -37,6 +37,8 @@ const FX_SHADER := preload("res://GameScene/UI/game_over_screen_fx.gdshader")
 @export var clear_bullets : bool = true
 ## 弾が消えてから WARNING が出るまでの時間(秒)
 @export var clear_wait : float = 0.4
+## オンなら、画面ぜんたいにグリッチが走る(四角いかたまりのずれ・色ずれ・反転・文字化け)。裏ボスの WARNING に使う
+@export var glitch : bool = false
 
 @export_group("文字のあふれ")
 ## 1回にあふれる文字の数と、あふれる時刻(表示を始めてからの秒)
@@ -73,6 +75,13 @@ var _serial : int = 0
 var _boss_label : Label
 var _boss_line : ColorRect
 var _runner : StageRunner
+var _glitch_rect : ColorRect
+var _glitch_material : ShaderMaterial
+var _glitch_amount : float = 0.0
+var _glitch_next : float = 0.0
+var _word : String = ""
+const GLITCH_SHADER_PATH := "res://Shaders/warning_glitch.gdshader"
+const GLITCH_CHARS := "#%&@$!?/|_=+*"
 
 func _ready() -> void:
 	_root.visible = false
@@ -165,6 +174,20 @@ func _build() -> void:
 		_band.add_child(echo)
 		_band.move_child(echo, _title.get_index()) # 本体の文字の後ろ
 		_echoes.append(echo)
+	# グリッチ(いちばん手前。帯も文字も、まとめて壊す)
+	if glitch:
+		_glitch_rect = ColorRect.new()
+		_glitch_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_glitch_rect.size = size
+		_glitch_material = ShaderMaterial.new()
+		_glitch_material.shader = load(GLITCH_SHADER_PATH)
+		_glitch_rect.material = _glitch_material
+		# 帯と文字を描いたあとの画面を、もう一度写してから壊す(写さないと、砂嵐の層が写した、帯と文字のない画面になる)
+		var copy := BackBufferCopy.new()
+		copy.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+		_root.add_child(copy)
+		_glitch_rect.visible = false
+		_root.add_child(_glitch_rect)
 
 # ---------------------------------------------------------------- 表示
 
@@ -181,6 +204,9 @@ func show_warning(text : String = "") -> void:
 		if serial != _serial:
 			return
 	var word := text if text != "" else "WARNING"
+	_word = word
+	_glitch_amount = 1.0 if glitch else 0.0 # 出た瞬間は、いちばん強く壊れる
+	_glitch_next = 0.3
 	_title.text = word
 	for echo in _echoes:
 		echo.text = word
@@ -321,10 +347,15 @@ func _process(delta : float) -> void:
 	var size := _flood_layer.size
 	_scan.position.y = size.y * 0.5 + sin(_time * 3.1) * size.y * 0.32
 	_rings.spin = _time
+	if glitch:
+		_update_glitch(delta)
 
 func _hide() -> void:
 	_root.visible = false
 	_set_noise(0.0)
+	if _glitch_rect:
+		_glitch_rect.visible = false
+		_glitch_amount = 0.0
 	if _blink_tween:
 		_blink_tween.kill()
 	for child in _flood_layer.get_children():
@@ -359,3 +390,27 @@ class WarningRings extends Control:
 		for i in count:
 			var from := offset + i * step
 			draw_arc(center, radius, from, from + step * fill, 24, color, width)
+
+## グリッチ: ときどき強く壊れる(壊れ具合はすぐ引いて、弱いざらつきが残る)。強いときは、文字も化ける
+func _update_glitch(delta : float) -> void:
+	if _glitch_material == null:
+		return
+	_glitch_next -= delta
+	if _glitch_next <= 0.0:
+		_glitch_next = randf_range(0.14, 0.55)
+		_glitch_amount = maxf(_glitch_amount, randf_range(0.5, 1.0))
+	_glitch_amount = move_toward(_glitch_amount, 0.12, delta * 3.5)
+	_glitch_material.set_shader_parameter("amount", _glitch_amount)
+	_glitch_rect.visible = _glitch_amount > 0.01
+	# 文字化け: 強く壊れているあいだ、何文字かが記号に化ける
+	var text := _word
+	if _glitch_amount > 0.45 and text != "":
+		var chars := text.split("")
+		for k in randi_range(1, 3):
+			var at := randi() % chars.size()
+			chars[at] = GLITCH_CHARS[randi() % GLITCH_CHARS.length()]
+		text = "".join(chars)
+	if _title.text != text:
+		_title.text = text
+		for echo in _echoes:
+			echo.text = text

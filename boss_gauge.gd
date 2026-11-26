@@ -55,9 +55,14 @@ var _flash_tween : Tween
 var _shake_tween : Tween
 var _pulse_tween : Tween
 var _outro_tween : Tween
+## 次に出るボスのゲージを、すぐには出さずに待たせる(裏ボス Union: 登場の演出と咆哮が終わってから出す)。
+## 待たせたゲージは、release_intro() で出る
+static var hold_next_intro : bool = false
+var _intro_held : bool = false
 
 func _ready() -> void:
 	_root.visible = false
+	add_to_group("boss_gauge")
 	_root_base = _root.position
 	var back := $Root/Back as ColorRect
 	_bar_width = back.size.x
@@ -160,6 +165,13 @@ func _set_damage(ratio : float) -> void:
 # ---------------------------------------------------------------- 出現
 
 func _play_intro() -> void:
+	if hold_next_intro:
+		hold_next_intro = false
+		_intro_held = true
+		_active = true
+		_root.visible = false
+		return
+	_intro_held = false
 	_active = true
 	_outro_started = false
 	_intro_playing = true
@@ -322,3 +334,11 @@ func _finish_outro() -> void:
 	_root.visible = false
 	_root.position = _root_base
 	_unbind(false)
+
+## 待たせていたゲージを出す(hold_next_intro で待たせたとき)
+func release_intro() -> void:
+	if not _intro_held:
+		return
+	_intro_held = false
+	_target_ratio = _ratio_of(_hp) if _hp else _target_ratio
+	_play_intro()

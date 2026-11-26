@@ -18,8 +18,13 @@ class_name HudFader
 
 var _wrappers : Array[Control] = []
 var _alpha : float = 1.0
+## 演出のあいだ、UI をまとめて隠す(0 で隠れる、1 で出る)。自機の位置での半透明に、掛け合わせる
+var _cinematic : float = 1.0
+var _cinematic_tween : Tween
+var _targets : Array[CanvasLayer] = []
 
 func _ready() -> void:
+	add_to_group("hud_fader")
 	_setup.call_deferred() # 各 UI が中身を作り終えてから包む
 
 func _setup() -> void:
@@ -29,6 +34,7 @@ func _setup() -> void:
 	for node in get_tree().get_nodes_in_group("hud"):
 		if node is CanvasLayer and not targets.has(node):
 			targets.append(node)
+	_targets = targets
 	for target in targets:
 		_wrappers.append(_wrap(target))
 
@@ -56,4 +62,30 @@ func _process(delta : float) -> void:
 	_alpha = move_toward(_alpha, wanted, fade_speed * delta)
 	for wrapper in _wrappers:
 		if is_instance_valid(wrapper):
-			wrapper.modulate.a = _alpha
+			wrapper.modulate.a = _alpha * _cinematic
+
+## 演出のあいだ、UI を全部隠す(hidden = true)・出す(false)。time 秒かけて薄れる・現れる。
+## 中に入れ子になった CanvasLayer(焼却数の表示など)は、透明度が効かないので、出し入れする
+func set_cinematic(hidden : bool, time : float = 0.5) -> void:
+	if _cinematic_tween:
+		_cinematic_tween.kill()
+	var nested : Array[CanvasLayer] = []
+	for target in _targets:
+		if is_instance_valid(target):
+			for node in target.find_children("*", "CanvasLayer", true, false):
+				nested.append(node)
+	if not hidden:
+		for layer in nested:
+			layer.visible = true
+	_cinematic_tween = create_tween()
+	_cinematic_tween.tween_property(self, "_cinematic", 0.0 if hidden else 1.0, maxf(time, 0.01))
+	if hidden:
+		_cinematic_tween.tween_callback(func() -> void:
+			for layer in nested:
+				if is_instance_valid(layer):
+					layer.visible = false)
+
+## 場面にある HudFader 全部に、set_cinematic する
+static func cinematic(tree : SceneTree, hidden : bool, time : float = 0.5) -> void:
+	for node in tree.get_nodes_in_group("hud_fader"):
+		node.set_cinematic(hidden, time)

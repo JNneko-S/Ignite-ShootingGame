@@ -80,19 +80,20 @@ angular_velocity = -72.0
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
+marker_only = null
 start_delay = 0.35
 interval = 1.05
 aim_once_per_burst = true
 muzzle_offsets = Array[Vector2]([Vector2(0, 0), Vector2(-37.49, 9.66), Vector2(35.075, 8.97), Vector2(-157.78, -12.765), Vector2(156.17, -12.765)])
 bullet_speed = 148.0
 bullet_scale = 1.5
+break_hp = null
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5"), SubResource("st6"), SubResource("st7")])
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 15
@@ -105,4 +106,5 @@ ring3d_radius = 10.0
 ring3d_spin = 300.0
 ring3d_tilt = 76.0
 bullet_speed = 148.0
+break_hp = null
 motion = Array[ExtResource("e4")]([SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12"), SubResource("st13")])

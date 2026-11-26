@@ -7,8 +7,8 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 start_delay = 0.3
 shot_count = 10
 interval = 0.52
@@ -18,14 +18,15 @@ aim_at_player = false
 base_angle = -26.0
 parallel_spacing = 49.0
 bullet_speed = 90.0
+break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 min_difficulty = 2
 max_difficulty = 2
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.4
 shot_count = 10
@@ -37,3 +38,4 @@ aim_at_player = false
 base_angle = 26.0
 parallel_spacing = 49.0
 bullet_speed = 90.0
+break_hp = null

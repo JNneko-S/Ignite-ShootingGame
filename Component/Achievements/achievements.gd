@@ -127,8 +127,8 @@ func _check_another() -> void:
 		_unlock_another()
 
 func _unlock_another() -> void:
-	if another_unlocked:
-		return
+	if another_unlocked or DebugTools.used:
+		return # デバッグ機能を使ったプレイでは、解禁しない(セーブを汚さない)
 	another_unlocked = true
 	_save()
 	_toast_queue.append(["解禁", "難易度 ANOTHER"])

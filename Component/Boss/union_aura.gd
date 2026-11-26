@@ -1,90 +1,131 @@
 extends Node2D
-## 裏ボス Union の、禍々しい黒いオーラ。Union の姿(UnionView)の後ろに置く。
-##   ・暗い光が脈打つ
-##   ・黒から紫へ色の変わる触手が、うねりながら伸び縮みする
-##   ・黒い粒が、ゆっくり外へ漂い出て消える
+## 裏ボス Union の、黒い太陽のオーラ。Union の姿(UnionView)の後ろに置く。
+##   ・真ん中は真っ黒に塗りつぶした円(黒い太陽の本体)。ふちが、日食のように暗い深紅に光る
+##   ・ふちから、黒い棘が放射状に突き出る。細く鋭く、長さも曲がり方もばらばらで、ゆっくり回りながら、うごめくように伸び縮みする
+##   ・まわりに、暗い紫の光の輪(コロナ)がにじむ。黒い粒が、ゆっくり外へ漂い出て消える
 ## 暴走(BossRampage)のときは、強く・速くなる(Intensity を上げる)
 
 ## オーラの大きさ(px)
 @export var radius : float = 150.0
-## 触手の数と長さ(px)
-@export var tendrils : int = 12
-@export var tendril_length : float = 95.0
+## 棘の数(長い棘。その間に、同じ数の短い棘がはさまる)と、長い棘のいちばん長い長さ(px)
+@export var tendrils : int = 18
+@export var tendril_length : float = 105.0
 ## 強さ(1 がふつう。暴走で上げる)
 @export var intensity : float = 1.0
-## オンなら、Union の姿の手前に重ねる「まとう炎」: 体のふち(Radius の約 85%)から、黒い炎の舌がちらちら伸びる
+## オンなら、Union の姿の手前に重ねる「まとう棘」: 体のふち(Radius の約 85%)から、鋭く曲がった黒い棘がうごめく
 @export var front : bool = false
-@export var flame_count : int = 22
+@export var flame_count : int = 16
 
 const MOTES := 26
+## 黒い太陽の本体(塗りつぶす円)の大きさ(Radius に対する割合)
+const CORE_RATIO := 0.64
+
+const BLACK := Color(0.0, 0.0, 0.0, 1.0)
+const RIM := Color(0.62, 0.0, 0.14)
+const CORONA := Color(0.32, 0.0, 0.2)
 
 var _t : float = 0.0
 var _motes : Array[Vector3] = [] # x, y = 位置、z = 年齢(0〜1)
 var _mote_dirs : Array[Vector2] = []
+## 棘ごとの、ばらばらの性質 [長さの割合, 曲がり(ラジアン), うごめく速さ, うごめく位相, 太さ(ラジアン)]
+var _spikes : Array[PackedFloat32Array] = []
 
 func _ready() -> void:
 	z_as_relative = true
 	for i in MOTES:
 		_motes.append(Vector3(0.0, 0.0, randf()))
 		_mote_dirs.append(Vector2.from_angle(randf() * TAU) * randf_range(25.0, 60.0))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 6661 if not front else 1666 # 毎回同じ形(戦うたびに形が変わらないように)
+	var count := (flame_count if front else tendrils * 2)
+	for i in count:
+		var long := front or i % 2 == 0
+		_spikes.append(PackedFloat32Array([
+			rng.randf_range(0.55, 1.0) if long else rng.randf_range(0.18, 0.4),
+			rng.randf_range(-0.55, 0.55),
+			rng.randf_range(0.6, 1.8),
+			rng.randf_range(0.0, TAU),
+			rng.randf_range(0.035, 0.06) if long else rng.randf_range(0.025, 0.04),
+		]))
 
 func _process(delta : float) -> void:
 	_t += delta * (0.8 + 0.5 * intensity)
-	for i in MOTES:
-		var m := _motes[i]
-		m.z += delta * 0.45 * (0.7 + 0.3 * intensity)
-		if m.z >= 1.0:
-			m = Vector3(0.0, 0.0, 0.0)
-			_mote_dirs[i] = Vector2.from_angle(randf() * TAU) * randf_range(25.0, 60.0)
-		var p := Vector2.from_angle(atan2(_mote_dirs[i].y, _mote_dirs[i].x)) * radius * 0.45 + _mote_dirs[i] * m.z * 2.0
-		_motes[i] = Vector3(p.x, p.y, m.z)
+	if not front:
+		for i in MOTES:
+			var m := _motes[i]
+			m.z += delta * 0.45 * (0.7 + 0.3 * intensity)
+			if m.z >= 1.0:
+				m = Vector3(0.0, 0.0, 0.0)
+				_mote_dirs[i] = Vector2.from_angle(randf() * TAU) * randf_range(25.0, 60.0)
+			var p := Vector2.from_angle(atan2(_mote_dirs[i].y, _mote_dirs[i].x)) * radius * 0.7 + _mote_dirs[i] * m.z * 2.4
+			_motes[i] = Vector3(p.x, p.y, m.z)
 	queue_redraw()
 
 func _draw() -> void:
 	if front:
 		_draw_front()
 		return
-	var pulse := 0.5 + 0.5 * sin(_t * 2.4)
-	# 脈打つ暗い光(外ほど薄い)
-	for i in 6:
-		var k := float(i) / 5.0
-		var r := radius * (0.55 + 0.55 * k) * (0.95 + 0.08 * pulse * intensity)
-		draw_circle(Vector2.ZERO, r, Color(0.06, 0.0, 0.08, (0.2 - 0.028 * i) * clampf(intensity, 0.6, 1.6)))
-	draw_arc(Vector2.ZERO, radius * (0.62 + 0.05 * pulse), 0.0, TAU, 64, Color(0.45, 0.0, 0.35, 0.35 * intensity), 3.0)
-	# うねる触手
-	for i in tendrils:
-		var base_a := TAU * i / tendrils + _t * 0.25
-		var length := tendril_length * (0.7 + 0.3 * sin(_t * 1.7 + i * 1.3)) * (0.8 + 0.25 * intensity)
-		var points := PackedVector2Array()
-		var colors := PackedColorArray()
-		var segs := 10
-		for s in segs + 1:
-			var f := float(s) / segs
-			var a := base_a + sin(_t * 3.0 + i + f * 4.0) * 0.35 * f
-			var d := radius * 0.5 + length * f
-			points.append(Vector2.from_angle(a) * d)
-			colors.append(Color(0.0, 0.0, 0.0, 0.85).lerp(Color(0.5, 0.0, 0.4, 0.0), f))
-		draw_polyline_colors(points, colors, 5.0 * (1.0 - 0.3 * pulse) + 1.0, true)
+	var pulse := 0.5 + 0.5 * sin(_t * 2.0)
+	var power := clampf(intensity, 0.6, 1.8)
+	var core := radius * CORE_RATIO
+	# にじむコロナ(外ほど薄い暗い紫)
+	for i in 7:
+		var k := float(i) / 6.0
+		var r := core * (1.05 + 0.75 * k) * (0.97 + 0.05 * pulse * intensity)
+		draw_circle(Vector2.ZERO, r, Color(CORONA, (0.13 - 0.016 * i) * power))
+	# 黒い棘(本体の後ろから突き出す)
+	var spin := _t * 0.07
+	for i in _spikes.size():
+		var s := _spikes[i]
+		var a := TAU * i / _spikes.size() + spin
+		var writhe := 0.5 + 0.5 * sin(_t * s[2] + s[3])
+		var length := tendril_length * s[0] * (0.72 + 0.4 * writhe) * (0.85 + 0.2 * intensity)
+		_draw_thorn(a, core * 0.96, length, s[4], s[1] * (0.7 + 0.5 * writhe), Color(RIM, 0.75 * power), s[3])
+	# 黒い太陽の本体: 真っ黒に塗りつぶす
+	draw_circle(Vector2.ZERO, core, BLACK)
+	# 日食のふち: 深紅の細い光と、その外のにじみ
+	draw_arc(Vector2.ZERO, core + 3.0, 0.0, TAU, 96, Color(CORONA, (0.35 + 0.2 * pulse) * power), 8.0, true)
+	draw_arc(Vector2.ZERO, core, 0.0, TAU, 96, Color(RIM, (0.65 + 0.3 * pulse) * minf(power, 1.2)), 2.0, true)
 	# 漂う黒い粒
 	for m in _motes:
-		var a := 1.0 - m.z
-		draw_circle(Vector2(m.x, m.y), 2.5 + 2.0 * a, Color(0.02, 0.0, 0.04, 0.8 * a))
-		draw_circle(Vector2(m.x, m.y), 1.2, Color(0.6, 0.05, 0.25, 0.6 * a))
+		var fade := 1.0 - m.z
+		draw_circle(Vector2(m.x, m.y), 2.5 + 2.0 * fade, Color(0.0, 0.0, 0.0, 0.85 * fade))
+		draw_circle(Vector2(m.x, m.y), 1.1, Color(RIM, 0.6 * fade))
 
-## 手前の、まとう黒い炎(体のふちに沿って、黒い炎の舌がちらちら伸び縮みする。ふちは暗い紫)
+## 黒い棘を1本描く: ふち(base)から外へ。根元は太く、先は針のように鋭い。途中で曲がり(bend)、先は鉤のように反る。
+## 棘は蛇のようにうねる(根元から先へ、波が伝わっていく)。ふちは深紅。phase: 棘ごとのうねりのずれ
+func _draw_thorn(angle : float, base : float, length : float, half_width : float, bend : float, edge : Color, phase : float = 0.0) -> void:
+	var dir := Vector2.from_angle(angle)
+	var side := dir.orthogonal()
+	var segs := 12
+	var left := PackedVector2Array()
+	var right := PackedVector2Array()
+	for k in segs + 1:
+		var f := float(k) / segs
+		# 根元は太く(内側を太く)、先へ行くほど急に細くなる(針のように)。曲がりは先ほど強い(鉤)
+		var width := base * half_width * 1.8 * pow(1.0 - f, 1.9)
+		var wave := sin(f * 7.0 - _t * 4.2 + phase) * length * 0.1 * f # 根元から先へ伝わるうねり(先ほど大きく振れる)
+		var curl := bend * f * f * length + wave
+		var center := dir * (base + length * f) + side * curl
+		left.append(center + side * width)
+		right.append(center - side * width)
+	right.reverse()
+	var outline := left + right
+	draw_colored_polygon(outline, BLACK)
+	draw_polyline(left, edge, 1.2, true)
+	draw_polyline(right, Color(edge, edge.a * 0.5), 1.0, true)
+
+## 手前の、まとう棘(体のふちから、鋭く曲がった黒い棘がうごめく。ふちは深紅)
 func _draw_front() -> void:
 	var r0 := radius * 0.85
-	# 体のふちに沿った、暗い輪(黒い靄)
-	draw_arc(Vector2.ZERO, r0, 0.0, TAU, 96, Color(0.0, 0.0, 0.0, 0.45 * clampf(intensity, 0.6, 1.6)), 14.0)
-	draw_arc(Vector2.ZERO, r0 + 7.0, 0.0, TAU, 96, Color(0.4, 0.0, 0.35, 0.35 * intensity), 2.0)
-	for i in flame_count:
-		var a := TAU * i / flame_count + sin(_t * 0.6 + i) * 0.08
-		var flick := 0.5 + 0.5 * sin(_t * (5.0 + i % 4) + i * 2.1)
-		var length := (16.0 + 26.0 * flick) * (0.8 + 0.3 * intensity)
-		var half := 0.07 + 0.03 * flick
-		var sway := sin(_t * 4.0 + i * 1.7) * 0.12
-		var base_l := Vector2.from_angle(a - half) * r0
-		var base_r := Vector2.from_angle(a + half) * r0
-		var tip := Vector2.from_angle(a + sway) * (r0 + length)
-		draw_colored_polygon(PackedVector2Array([base_l, tip, base_r]), Color(0.0, 0.0, 0.0, 0.8))
-		draw_polyline(PackedVector2Array([base_l, tip, base_r]), Color(0.5, 0.0, 0.42, 0.55 * clampf(intensity, 0.6, 1.6)), 1.5, true)
+	var power := clampf(intensity, 0.6, 1.8)
+	# 体のふちに沿った、黒い靄と深紅の細い線
+	draw_arc(Vector2.ZERO, r0, 0.0, TAU, 96, Color(0.0, 0.0, 0.0, 0.55 * power), 12.0, true)
+	draw_arc(Vector2.ZERO, r0 + 5.0, 0.0, TAU, 96, Color(RIM, 0.4 * power), 1.5, true)
+	var spin := -_t * 0.1
+	for i in _spikes.size():
+		var s := _spikes[i]
+		var a := TAU * i / _spikes.size() + spin + sin(_t * 0.5 + i) * 0.05
+		var writhe := 0.5 + 0.5 * sin(_t * (s[2] * 2.2) + s[3])
+		var length := (14.0 + 34.0 * s[0] * writhe) * (0.8 + 0.3 * intensity)
+		_draw_thorn(a, r0 - 2.0, length, s[4] * 0.8, s[1] * 1.4, Color(RIM, 0.7 * power), s[3])

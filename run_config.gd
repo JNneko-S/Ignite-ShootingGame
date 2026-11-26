@@ -27,6 +27,30 @@ static var hidden_boss_defeated : bool = false
 ## この出撃で、ショット(自機・子機の弾)で敵にダメージを与えたか。与えていなければ「イグナイトだけ」で戦っている(実績)
 static var shot_damage_used : bool = false
 
+## ---- エンドB(裏ボス Union)の条件に使う、1周ぶんの記録(二周目に入ると、周の記録は数え直す) ----
+## この周で、イグナイトを使って(発動中、または返した弾のとどめで)倒した中ボス・ボスの数
+static var loop_ignite_boss_kills : int = 0
+## この周で、イグナイトを全消費した(Lv5 を長押しで使い切った)回数
+static var loop_full_uses : int = 0
+## この周の被弾数
+static var loop_hits : int = 0
+## この周で、ショットを使わずに(イグナイトだけで)クリアしたステージがあるか
+static var loop_ignite_only_stage : bool = false
+## 一周目で、ミス(撃墜)したか(二周目に入っても残す)
+static var loop1_missed : bool = false
+## 今のステージで、ショットで敵にダメージを与えたか(ステージが始まるたびに戻す)
+static var stage_shot_damage_used : bool = false
+
+## 周の記録を戻す。whole_run なら、一周目のミスの記録も戻す(出撃し直したとき)
+static func reset_loop_stats(whole_run : bool) -> void:
+	loop_ignite_boss_kills = 0
+	loop_full_uses = 0
+	loop_hits = 0
+	loop_ignite_only_stage = false
+	stage_shot_damage_used = false
+	if whole_run:
+		loop1_missed = false
+
 ## 二周目の作り直し(二周目用のステージ・弾幕・雑魚の隊列)を使うか。二周目で、ANOTHER でないとき
 ## (ANOTHER の二周目は BLACK ANOTHER なので、ANOTHER の弾幕のまま)
 static func second_round() -> bool:

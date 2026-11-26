@@ -28,6 +28,7 @@ static func begin_run() -> void:
 	RunConfig.loop = 1
 	RunConfig.continues_used = 0
 	RunConfig.ignite_counter_kills = 0
+	RunConfig.reset_loop_stats(true)
 	RunConfig.consecutive_game_overs = 0
 	HazardRank.reset_run()
 	ScoreBoard.begin_run()
@@ -49,6 +50,7 @@ static func begin_stage() -> void:
 	CrossFireState._firing.clear()
 	ItemDrop.enabled = true
 	stage_clock = 0.0
+	RunConfig.stage_shot_damage_used = false
 
 static func to_title() -> void:
 	clear_checkpoint()

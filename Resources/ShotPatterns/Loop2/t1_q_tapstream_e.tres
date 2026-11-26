@@ -8,8 +8,8 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 start_delay = 0.2
 shot_count = 3
 interval = 0.8
@@ -20,15 +20,17 @@ gap_size = 6
 gap_random = true
 random_seed = 11
 bullet_speed = 46.0
+break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 max_difficulty = 0
-also_another = null
 skip_auto_tuning = true
+marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 shot_count = 10
 interval = 0.14
 soften_others = 2.0
 bullet_speed = 160.0
+break_hp = null

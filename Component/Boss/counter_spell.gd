@@ -29,6 +29,9 @@ signal finished
 @export var shooter : EnemyShooter
 ## 大技のあいだ止めておくもの(ボスを動かすステートや、移動の部品など)
 @export var freeze_nodes : Array[Node] = []
+## 大技のあいだにイグナイトで焼いた弾1発あたり、最後に落ちるスコアアイテムの点(0 なら落とさない)と、アイテムの数の上限
+@export var burn_reward_points : int = 400
+@export var burn_reward_max_items : int = 60
 
 const _SHOOTER_SCENE := preload("res://Component/Shooter/enemy_shooter_component.tscn")
 
@@ -38,6 +41,7 @@ var _hp : HPComponent
 var _spell_shooter : EnemyShooter
 var _done : bool = false
 var _active : bool = false
+var _burned_at_start : int = 0
 
 func _ready() -> void:
 	_enemy = get_parent() as Enemy
@@ -110,10 +114,22 @@ func _start() -> void:
 	_enemy.add_child(_spell_shooter)
 	_spell_shooter.global_position = shooter.global_position if is_instance_valid(shooter) else _enemy.global_position
 	_spell_shooter.set_patterns(patterns, [], false, true) # どの難易度でも、残留弾・軽い攻撃・カウンター弾をそろえて撃つ
+	_burned_at_start = EnemyBullet.burned_total
 	await tree.create_timer(duration, false).timeout
 	if not _still_alive():
 		return
 	_finish()
+
+## 大技のあいだにイグナイトで焼いた弾の数だけ、最後にボスからスコアアイテムが落ちる(たくさん焼くほど、たくさん落ちる)
+func _drop_burn_reward() -> void:
+	var burned := maxi(EnemyBullet.burned_total - _burned_at_start, 0)
+	if burned <= 0 or burn_reward_points <= 0:
+		return
+	var score_system := get_tree().get_first_node_in_group("score_system") as ScoreSystem
+	if score_system == null:
+		return
+	var count := clampi(ceili(burned / 3.0), 4, burn_reward_max_items)
+	score_system.spawn_items(_enemy.global_position, burned * burn_reward_points, count, 2.4)
 
 func _still_alive() -> bool:
 	return is_inside_tree() and is_instance_valid(_enemy) and not _enemy._is_dead
@@ -131,6 +147,7 @@ func _finish() -> void:
 	_hp.damage_lock = false
 	_enemy.remove_meta(&"counter_spell")
 	finished.emit()
+	_drop_burn_reward()
 	if lethal:
 		# 大技を撃ちきって、力尽きる
 		_hp.hp_floor = 0

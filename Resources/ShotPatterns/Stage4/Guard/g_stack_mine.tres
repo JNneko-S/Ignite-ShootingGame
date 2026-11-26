@@ -24,7 +24,7 @@ speed_ease = 0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 start_delay = 1.3
 shot_count = 2
 interval = 0.5
@@ -34,4 +34,5 @@ bullet_count = 5
 spread_angle = 140.0
 aim_at_player = false
 bullet_speed = 160.0
+break_hp = null
 motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])

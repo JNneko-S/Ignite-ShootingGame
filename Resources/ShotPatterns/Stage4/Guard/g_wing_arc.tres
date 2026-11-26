@@ -13,7 +13,7 @@ angular_velocity = -38.0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 start_delay = 1.2
 shot_count = 3
 interval = 0.22
@@ -23,4 +23,5 @@ bullet_count = 6
 spread_angle = 76.0
 mirror_curve_by_side = true
 bullet_speed = 135.0
+break_hp = null
 motion = Array[ExtResource("e3")]([SubResource("st1")])

@@ -14,7 +14,7 @@ angular_velocity = 35.0
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_curve")
-also_another = null
+marker_only = null
 black_version = ExtResource("black_ver")
 another_made = true
 start_delay = 0.4
@@ -26,4 +26,5 @@ aim_at_player = false
 rotate_per_shot = 6.0
 mirror_curve_by_side = true
 bullet_speed = 115.2
+break_hp = null
 motion = Array[ExtResource("step")]([SubResource("st1")])

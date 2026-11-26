@@ -97,13 +97,15 @@ signal score_changed(score : int)
 @export var shot_power_scales : Array[float] = [1.0, 1.1, 1.2, 1.3, 1.4, 1.45]
 
 @export_group("エンディング条件(エンドB)")
-## エンドBの選択条件①: 点火の使用回数(Lv5を長押しで全消費した回数)がこれ以上
-@export var end_b_use_count_required : int = 30
-## エンドBの選択条件②: 被弾(当たった回数)がこれ以下
+## 裏ボス Union が出る条件(難易度が HARD か ANOTHER のときだけ):
+##   必須: この周で、イグナイトを使って(発動中か、返した弾のとどめで)中ボス・ボスをこの数以上倒している
+@export var end_b_boss_ignite_kills_required : int = 2
+##   選択(このうち End B Optional Required 個以上):
+##   ① この周で、イグナイトを全消費した(Lv5 を長押しで使い切った)回数がこれ以上
+@export var end_b_use_count_required : int = 10
+##   ② この周の被弾がこれ以下
 @export var end_b_max_hits : int = 3
-## エンドBの選択条件③: イグナイトのチャンス(おとりの雑魚)を、イグナイトで返して倒した数がこれ以上(出撃の最初から数える)
-@export var end_b_counter_kills_required : int = 9
-## エンドBの選択条件のうち、満たす必要がある数
+##   ③ 難易度が ANOTHER  ④ 一周目をノーミス(撃墜なし)でクリアしている  ⑤ ショットを使わず、イグナイトだけでクリアしたステージがある
 @export var end_b_optional_required : int = 2
 
 @export_group("スコア")
@@ -270,6 +272,11 @@ func _ready() -> void:
 	if runner:
 		runner.final_boss_defeated.connect(_lock_ignite)
 		runner.stage_cleared.connect(_lock_ignite)
+		# エンドBの記録: 中ボス・ボスをイグナイトで倒したか、ショットを使わずにステージをクリアしたか
+		runner.boss_spawned.connect(func(enemy : Enemy, _name : String, _thresholds : Array[float]) -> void: _track_boss(enemy))
+		runner.stage_cleared.connect(func() -> void:
+			if not RunConfig.stage_shot_damage_used:
+				RunConfig.loop_ignite_only_stage = true)
 	if player.has_signal("counter_requested"):
 		player.connect("counter_requested", _on_counter_requested)
 	player.ignite_toggled.connect(_on_ignite_toggled)
@@ -337,6 +344,7 @@ func _graze_scale_now() -> float:
 ## 被弾: ゲージ(体力)が減る。0未満になったら死亡
 func _on_player_damaged() -> void:
 	hit_count += 1
+	RunConfig.loop_hits += 1
 	player.reset_shot_power()
 	var level_before := ignite.level
 	var progress_before := ignite.ratio() # 被弾したときのレベル内の進捗(アイテムの量に使う)
@@ -347,6 +355,8 @@ func _on_player_damaged() -> void:
 		score_system.on_player_hit(dead) # 被弾で倍率が下がる。撃墜なら倍率がなくなる
 	if dead:
 		death_count += 1
+		if RunConfig.loop == 1:
+			RunConfig.loop1_missed = true
 		Achievements.on_player_died(get_tree())
 		# 復活するまで(と、復活して少しのあいだ)、敵に撃たせない
 		EnemyShooter.hold_fire(player.respawn_delay + respawn_ceasefire_time)
@@ -448,6 +458,7 @@ func _on_ignite_requested(full : bool) -> void:
 	HazardRank.on_ignite(full)
 	if full and used >= IgniteGauge.MAX_LEVEL:
 		full_use_count += 1
+		RunConfig.loop_full_uses += 1
 	_start_ignite_effect(used)
 	# Lv5 のイグナイト(全部使った)で、ショットが1段階強くなる(被弾すると失う)
 	if used >= IgniteGauge.MAX_LEVEL:
@@ -555,22 +566,63 @@ func ignite_use_count() -> int:
 func is_finisher_state() -> bool:
 	return is_consuming()
 
-## エンドBの選択条件を、いくつ満たしているか(①使用回数 ②被弾数 ③イグナイトのカウンター撃破 ④HARD)
+## エンドBの選択条件を、いくつ満たしているか
+## (①全消費の回数 ②被弾数 ③ANOTHER ④一周目ノーミス ⑤イグナイトだけでクリアしたステージ)
 func end_b_optional_count() -> int:
 	var count := 0
-	if RunConfig.ignite_counter_kills >= end_b_counter_kills_required:
+	if RunConfig.loop_full_uses >= end_b_use_count_required:
 		count += 1
-	if ignite_use_count() >= end_b_use_count_required:
+	if RunConfig.loop_hits <= end_b_max_hits:
 		count += 1
-	if hit_count <= end_b_max_hits:
+	if DifficultyTuning.chosen() == 3:
 		count += 1
-	if difficulty == Difficulty.HARD:
+	if not RunConfig.loop1_missed:
 		count += 1
+	if RunConfig.loop_ignite_only_stage or not RunConfig.stage_shot_damage_used:
+		count += 1 # 最終面も、ここまでショットを使っていなければ数える
 	return count
 
-## 最終兵器を倒した瞬間に呼ぶ。エンドBの条件(とどめ+選択条件)を満たすか
+## 最終兵器を倒した瞬間に呼ぶ。エンドBの条件(難易度・イグナイトでのボス撃破・選択条件)を満たすか
 func end_b_conditions_met() -> bool:
-	return is_finisher_state() and end_b_optional_count() >= end_b_optional_required
+	_count_dead_bosses() # 倒したばかりのラスボスも、ここで数える
+	return DifficultyTuning.chosen() >= 2 \
+		and RunConfig.loop_ignite_boss_kills >= end_b_boss_ignite_kills_required \
+		and end_b_optional_count() >= end_b_optional_required
+
+# ---------------------------------------------------------------- エンドBの記録
+
+## 出てきた中ボス・ボス(イグナイトで倒したかを数える)
+var _tracked_bosses : Array[Enemy] = []
+
+func _track_boss(enemy : Enemy) -> void:
+	if enemy == null or _tracked_bosses.has(enemy):
+		return
+	_tracked_bosses.append(enemy)
+	enemy.died.connect(func(_e : Enemy) -> void: _count_boss_kill(enemy))
+
+## 倒されている中ボス・ボスのうち、まだ数えていないものを数える
+func _count_dead_bosses() -> void:
+	for enemy in _tracked_bosses:
+		if is_instance_valid(enemy) and enemy._is_dead:
+			_count_boss_kill(enemy)
+
+func _count_boss_kill(enemy : Enemy) -> void:
+	if not is_instance_valid(enemy) or enemy.has_meta(&"end_b_counted"):
+		return
+	enemy.set_meta(&"end_b_counted", true)
+	if _killed_by_ignite(enemy):
+		RunConfig.loop_ignite_boss_kills += 1
+
+## イグナイトで倒したか: 発動中に倒した、または、とどめが返した弾(イグナイトの反射弾)
+func _killed_by_ignite(enemy : Enemy) -> bool:
+	if is_finisher_state():
+		return true
+	var last : Hurtbox = null
+	for node in enemy.find_children("*", "", true, false):
+		if node is Hurtbox and (last == null or node.last_hit_msec > last.last_hit_msec):
+			last = node
+	return last != null and is_instance_valid(last.last_hitbox) and last.last_hitbox is EnemyBullet \
+		and last.last_hitbox.damage_source_type == Hitbox.DamageSourceType.Player
 
 ## 二周目の目印: 画面の左上(残機の下)に「2nd:難易度」と出す
 func _show_loop_mark() -> void:

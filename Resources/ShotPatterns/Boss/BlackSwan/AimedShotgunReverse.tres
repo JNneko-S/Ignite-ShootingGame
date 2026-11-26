@@ -24,7 +24,7 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [sub_resource type="Resource" id="Resource_gyea8"]
 script = ExtResource("2_85xu1")
 bullet_scene = ExtResource("b_stop")
-also_another = null
+marker_only = null
 loop = false
 pause = 3.0
 bullet_count = 5
@@ -32,17 +32,19 @@ spread_angle = 50.0
 aim_at_player = false
 line_count = 3
 random_angle = 1.0
+break_hp = null
 motion = Array[ExtResource("1_jolse")]([SubResource("Resource_3acpb"), SubResource("Resource_s3hdh")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"
 
 [resource]
 script = ExtResource("2_85xu1")
 bullet_scene = ExtResource("b_split")
-also_another = null
+marker_only = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 bullet_count = 2
 spread_angle = 30.0
+break_hp = null
 split_time = 0.6
 split_pattern = SubResource("Resource_gyea8")
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

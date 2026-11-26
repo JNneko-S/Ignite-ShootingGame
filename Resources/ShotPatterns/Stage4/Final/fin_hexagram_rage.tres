@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
+marker_only = null
 shot_count = 5
 interval = 0.32
 pause = 1.3
@@ -20,11 +20,12 @@ rotate_per_shot = -10.0
 polygon_sides = 3
 polygon_phase = 60.0
 bullet_speed = 100.0
+break_hp = null
 
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
-also_another = null
+marker_only = null
 start_delay = 0.65
 shot_count = 2
 interval = 0.64
@@ -36,11 +37,12 @@ rotate_per_shot = 15.0
 polygon_sides = 4
 polygon_phase = 45.0
 bullet_speed = 62.0
+break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])
 shot_count = 5
 interval = 0.32
@@ -52,3 +54,4 @@ aim_at_player = false
 rotate_per_shot = 10.0
 polygon_sides = 3
 bullet_speed = 100.0
+break_hp = null

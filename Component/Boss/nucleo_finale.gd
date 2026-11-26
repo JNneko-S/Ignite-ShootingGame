@@ -27,6 +27,8 @@ signal finished
 var _enemy : Enemy
 var _visual : Node2D
 var _area : Rect2 = Rect2(-180, -150, 360, 300)
+## 最期の演出が終わったか(finished を出したあとに待ち始めた人が、待ちぼうけにならないように)
+var done : bool = false
 
 func _ready() -> void:
 	_enemy = get_parent() as Enemy
@@ -43,6 +45,12 @@ func _ready() -> void:
 
 func _on_died(_e : Enemy) -> void:
 	var tree := get_tree()
+	if DebugTools.union_direct:
+		# デバッグ(裏ボス Union 戦へすぐ): 最期の演出を短くする
+		rage_time = 0.9
+		laser_count = 6
+		burn_time = 0.5
+		crash_time = 1.0
 	var camera := StageCamera.of(_enemy)
 	# 撃つのは止める(ビームも)
 	for node in _enemy.find_children("*", "", true, false):
@@ -74,6 +82,7 @@ func _on_died(_e : Enemy) -> void:
 		left -= burn_interval
 	# 3. 墜ちて、激突
 	await _crash()
+	done = true
 	finished.emit()
 
 ## レーザーを1本撃つ: 体のどこかから、下のほうのランダムな向きへ伸びて、なぎ払いながら消える。
@@ -139,7 +148,7 @@ func _crash() -> void:
 	for i in 18:
 		Explosion.spawn(get_tree(), Explosion.EXPLOSIVE, at + Vector2.from_angle(randf() * TAU) * randf_range(20.0, 170.0), randf_range(1.4, 2.6))
 	_enemy.visible = false
-	await get_tree().create_timer(1.2, false).timeout
+	await get_tree().create_timer(0.4 if rage_time < 1.0 else 1.2, false).timeout
 
 func _blast(scene : PackedScene, scale : float) -> void:
 	if not is_instance_valid(_enemy):

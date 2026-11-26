@@ -12,6 +12,8 @@ const _FireFx := preload("res://GameScene/Effect/fire_fx.gd")
 var current_area : Area2D
 ## 最後にダメージを与えてきた Hitbox(被弾の向きを調べるのに使う)。もう消えていることもある
 var last_hitbox : Hitbox
+## 最後にダメージを受けた時刻(ミリ秒。部位がいくつもある敵で、とどめを刺した当たり判定を探すのに使う)
+var last_hit_msec : int = 0
 
 signal recieved_damage(damage : int)
 
@@ -22,9 +24,11 @@ var _last_spark_msec : int = -1000
 func _apply_damage(hitbox : Hitbox) -> void:
 	if hitbox:
 		last_hitbox = hitbox
+		last_hit_msec = Time.get_ticks_msec()
 		# 自機・子機のショットで敵に当てた(イグナイトの反射弾は、敵の弾なので数えない)。実績「イグナイトオンリー」に使う
 		if hitbox is Bullet and not (hitbox is EnemyBullet) and hitbox.damage_source_type == Hitbox.DamageSourceType.Player:
 			RunConfig.shot_damage_used = true
+			RunConfig.stage_shot_damage_used = true
 		recieved_damage.emit(_scaled_damage(hitbox))
 		_hit_spark(hitbox)
 		hitbox.damage_dealt.emit(self)

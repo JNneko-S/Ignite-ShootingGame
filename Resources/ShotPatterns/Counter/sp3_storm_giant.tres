@@ -13,7 +13,7 @@ angular_velocity = 18.0
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 start_delay = 2.2
 pause = 3.2
 warning_time = 0.6
@@ -22,4 +22,5 @@ muzzle_offsets = Array[Vector2]([Vector2(-200, 60), Vector2(200, 100)])
 bullet_speed = 60.0
 counter_hp_ratio = 0.05
 bullet_scale = 2.3
+break_hp = null
 motion = Array[ExtResource("e3")]([SubResource("st1")])

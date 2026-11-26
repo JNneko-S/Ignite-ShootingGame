@@ -22,7 +22,7 @@ target_speed = 200.0
 [resource]
 script = ExtResource("3_eo535")
 bullet_scene = ExtResource("1_dhv5v")
-also_another = null
+marker_only = null
 another_made = true
 with_patterns = Array[ExtResource("3_eo535")]([ExtResource("4_b87c1")])
 pause = 1.6
@@ -30,4 +30,5 @@ bullet_count = 4
 spread_angle = 150.0
 aim_at_player = false
 bullet_speed = 150.0
+break_hp = null
 motion = Array[ExtResource("2_ex8yy")]([SubResource("Resource_gy7xt"), SubResource("Resource_728in"), SubResource("Resource_rh2mi")])

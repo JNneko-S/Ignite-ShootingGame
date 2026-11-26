@@ -8,6 +8,7 @@ class_name PauseMenu
 ##   SHIP SELECT: シャッターが閉まって、機体選択の画面へ戻る(選んでいた機体・難易度のまま)
 ## 上下で選び、ショットで決める。
 ## ゲームオーバーの画面が出ているあいだと、自機がいないときは開かない。
+## 裏ボス Union 戦のあいだ(union_mode)は、RESUME と CONTINUE だけになる(どちらも、続ける)。
 
 ## ポーズの切り替え(Input Map のアクション名。UI_Pause は Esc とゲームパッドの START)。
 @export var pause_action : StringName = &"UI_Pause"
@@ -34,6 +35,10 @@ enum Item { RESUME, RETRY, SHIP_SELECT, RETIRE }
 const CONFIRM_TEXTS : Array[String] = ["RECORD", "NO RECORD", "BACK"]
 const CONFIRM_TEXTS_CONTINUED : Array[String] = ["RETIRE", "BACK"]
 const MENU_TEXTS : Array[String] = ["RESUME", "RETRY", "SHIP SELECT", "RETIRE"]
+## 裏ボス Union 戦のあいだのメニュー(どちらを選んでも、続ける)
+const UNION_TEXTS : Array[String] = ["RESUME", "CONTINUE"]
+## 裏ボス Union 戦のあいだか(EndingSequence が入れる)。やり直し・機体選択・リタイアはできない
+static var union_mode : bool = false
 
 @onready var _root : Control = $Root
 @onready var _board : LedBoard = $Root/Board
@@ -148,6 +153,7 @@ func _open_menu() -> void:
 	get_tree().paused = true
 	visible = true
 	SoundManager.play(open_sound)
+	_apply_menu_texts()
 	_select(0, false)
 	# 画面が乱れてから、暗く・灰色になる
 	var material := _fx.material as ShaderMaterial
@@ -176,6 +182,9 @@ func _select(index : int, with_sound : bool = true) -> void:
 func _decide() -> void:
 	if _confirm:
 		_decide_confirm()
+		return
+	if union_mode:
+		_close_menu() # Union 戦: RESUME も CONTINUE も、続ける
 		return
 	match _index:
 		Item.RESUME:
@@ -259,3 +268,11 @@ func _decide_confirm() -> void:
 		ScoreBoard.discard_run() # 記録を残さない
 	RunConfig.loop = 1
 	_leave(title_scene, false)
+
+## メニューの項目を並べ直す(Union 戦のあいだは、RESUME と CONTINUE だけ)
+func _apply_menu_texts() -> void:
+	var texts : Array[String] = UNION_TEXTS if union_mode else MENU_TEXTS
+	for i in _items.size():
+		_items[i].visible = i < texts.size()
+		if i < texts.size():
+			_items[i].text = texts[i]

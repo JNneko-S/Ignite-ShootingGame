@@ -16,18 +16,19 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [sub_resource type="Resource" id="Resource_dcstt"]
 script = ExtResource("3_sjnay")
 bullet_scene = ExtResource("4_dcstt")
-also_another = null
+marker_only = null
 bullet_count = 20
 spread_angle = 360.0
 line_count = 3
 random_angle = 2.0
 random_speed_ratio = 0.2
+break_hp = null
 metadata/_custom_type_script = "uid://ct8u3n22w477n"
 
 [resource]
 script = ExtResource("3_sjnay")
 bullet_scene = ExtResource("3_jvvy8")
-also_another = null
+marker_only = null
 normal_version = ExtResource("normal_ver")
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
@@ -38,6 +39,7 @@ bullet_count = 3
 aim_at_player = false
 bullet_speed = 500.0
 bullet_accel = 30.0
+break_hp = null
 motion = Array[ExtResource("2_dcstt")]([SubResource("Resource_6wjy7")])
 split_time = 0.8
 split_pattern = SubResource("Resource_dcstt")

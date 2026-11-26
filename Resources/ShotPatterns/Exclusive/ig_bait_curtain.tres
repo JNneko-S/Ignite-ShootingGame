@@ -8,15 +8,16 @@
 [sub_resource type="Resource" id="p2"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
+marker_only = null
 start_delay = 1.6
 pause = 2.3
 bullet_speed = 55.0
+break_hp = null
 
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 another_made = true
 with_patterns = Array[ExtResource("e1")]([SubResource("p2")])
 start_delay = 1.0
@@ -30,19 +31,21 @@ gap_size = 2
 gap_random = true
 random_seed = 41
 bullet_speed = 62.0
+break_hp = null
 
 [sub_resource type="Resource" id="p3"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-also_another = null
+marker_only = null
 start_delay = 1.8
 pause = 3.3
 bullet_speed = 50.0
+break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-also_another = null
+marker_only = null
 another_version = SubResource("p1")
 with_patterns = Array[ExtResource("e1")]([SubResource("p3")])
 start_delay = 1.2
@@ -56,3 +59,4 @@ gap_size = 2
 gap_random = true
 random_seed = 41
 bullet_speed = 56.0
+break_hp = null

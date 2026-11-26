@@ -332,6 +332,8 @@ func _can_fire() -> bool:
 	return not only_when_on_screen or view.has_point(global_position)
 
 func _fire(pattern : ShotPattern, shot_index : int, aim_angle : float) -> void:
+	if pattern.marker_only:
+		return # 目印の弾幕は撃たない
 	var parent : Node = bullet_parent if bullet_parent else get_tree().current_scene
 	var mirror := _is_mirrored()
 	var heading := _motion_heading() if pattern.split_across_motion else NAN
@@ -451,6 +453,8 @@ static func spawn_bullets(pattern : ShotPattern, shot_index : int, aim_angle : f
 			var bullet_mirror : bool = mirror != shot.get("flip", false)
 			if pattern.counter_hp_ratio > 0.0 and "counter_hp_ratio" in bullet:
 				bullet.counter_hp_ratio = pattern.counter_hp_ratio # カウンター弾(返すと、ボスを大きく削れる)
+			if pattern.break_hp > 0 and bullet.has_method("make_breakable"):
+				bullet.make_breakable(pattern.break_hp) # 壊せる弾(ショットで壊せる。壊せなければ割れる)
 			if bullet.has_method("set_motion"):
 				bullet.set_motion(pattern.motion, shot["speed_scale"], bullet_mirror)
 			if bullet.has_method("set_split"):

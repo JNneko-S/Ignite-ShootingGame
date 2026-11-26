@@ -13,6 +13,8 @@ enum BulletState { NORMAL, IGNITED, BURNING, VANISHING }
 
 # ---- 連鎖の許可(イグナイトON中かつ高レベルのときだけ。全ての敵弾で共有) ----
 static var _chain_allowed : bool = false
+## これまでにイグナイトで焼いた敵弾の数(全部の弾で共有)。カウンター大技が、大技のあいだに焼かれた数を数えるのに使う
+static var burned_total : int = 0
 
 static func set_chain_allowed(allowed : bool) -> void:
 	_chain_allowed = allowed
@@ -71,6 +73,14 @@ var _born_msec : int = 0
 var _revealed_msec : int = 0
 
 var lifetime_check : float = randf() * 0.5
+
+# ---- 壊せる弾(ShotPattern の Break Hp)。自機のショットが当たる当たり判定を、あとから付ける ----
+const BREAK_HURTBOX_PATH : String = "res://Component/Hurtbox/hurtbox.tscn"
+## 壊したときの点と、出るスコアアイテムの合計
+const BREAK_POINTS : int = 5000
+const BREAK_ITEM_POINTS : int = 4000
+var _break_hp : int = 0
+var _break_hurtbox : Hurtbox
 
 ## 画面の外で生まれて、ついさっき(within_msec 以内に)画面に入ってきた弾か
 func just_revealed_from_offscreen(within_msec : int) -> bool:
@@ -215,6 +225,16 @@ func _split() -> void:
 		_emit_sequence(parent, child, aim, global_position, fallback, _mirror, turn, _split_depth + 1)
 	else:
 		EnemyShooter.spawn_bullets(child, 0, aim, global_position, parent, fallback, _mirror, turn, _split_depth + 1)
+	# 割れたあとの弾幕の With Patterns も、同じ場所から一緒に出す(大蛇と花火など、2種類を重ねて割れる)
+	if parent:
+		for companion in child.with_patterns:
+			if companion == null:
+				continue
+			var companion_aim := aim if companion.aim_at_player else Vector2.DOWN.angle()
+			if companion.shot_count > 1:
+				_emit_sequence(parent, companion, companion_aim, global_position, fallback, _mirror, 0.0, _split_depth + 1)
+			else:
+				EnemyShooter.spawn_bullets(companion, 0, companion_aim, global_position, parent, fallback, _mirror, 0.0, _split_depth + 1)
 	# 割れた場所が一瞬光る
 	if parent:
 		var flash := Sprite2D.new()
@@ -235,6 +255,65 @@ func _split() -> void:
 			tween.tween_property(flash, "modulate:a", 0.0, 0.15)
 			tween.chain().tween_callback(flash.queue_free)
 	queue_free()
+
+## 壊せる弾にする(撃ったときに EnemyShooter が呼ぶ)。自機のショットが当たる当たり判定を付ける。
+## 当たり判定は、弾の見た目より少し大きめ(大きい弾なので、狙って撃ち込めるように)
+func make_breakable(hp : int) -> void:
+	if hp <= 0 or _break_hurtbox:
+		return
+	_break_hp = hp
+	var scene : PackedScene = load(BREAK_HURTBOX_PATH)
+	_break_hurtbox = scene.instantiate() as Hurtbox
+	_break_hurtbox.collision_layer = 64 # 敵の当たり判定と同じ層(自機のショットが当たる)
+	_break_hurtbox.collision_mask = 8
+	var circle := CircleShape2D.new()
+	circle.radius = _base_radius() * 1.25
+	(_break_hurtbox.get_node("CollisionShape2D") as CollisionShape2D).shape = circle
+	add_child(_break_hurtbox)
+	_break_hurtbox.recieved_damage.connect(_on_break_damage)
+
+## 弾のもとの当たり判定の半径(ANOTHER で小さくした分は戻す)
+func _base_radius() -> float:
+	for child in get_children():
+		if child is CollisionShape2D and child.shape is CircleShape2D:
+			var shrink : float = HazardRank.BULLET_HITBOX_SCALE if HazardRank.active or HazardRank.small_bullet_hitbox else 1.0
+			return (child.shape as CircleShape2D).radius * child.scale.x / shrink
+	return 24.0
+
+## 壊せる弾の当たり判定を外す(返した・焼いた・消えた弾は、もうショットを受け止めない)
+func _drop_breakable() -> void:
+	if _break_hurtbox and is_instance_valid(_break_hurtbox):
+		_break_hurtbox.queue_free()
+	_break_hurtbox = null
+
+func _on_break_damage(amount : int) -> void:
+	if _state != BulletState.NORMAL or _break_hp <= 0:
+		return
+	_break_hp -= amount
+	if _break_hp <= 0:
+		_break()
+		return
+	# 当たった手応え: 一瞬白く光る
+	var sprite := _find_sprite()
+	if sprite:
+		sprite.modulate = Color(1.8, 1.8, 1.8)
+		var tween := sprite.create_tween()
+		tween.tween_property(sprite, "modulate", Color.WHITE, 0.08)
+
+## 壊れた: 割れずに、炎を上げて消える。点とスコアアイテムが出る
+func _break() -> void:
+	_split_in = -1.0
+	var tree := get_tree()
+	var at := global_position
+	(load("res://GameScene/Effect/fire_fx.gd") as GDScript).flame_burst(tree, at, 2.2)
+	var camera := StageCamera.of(self)
+	if camera:
+		camera.shake(3.0, 0.15)
+	var score_system := tree.get_first_node_in_group("score_system") as ScoreSystem
+	if score_system:
+		score_system.add_points(BREAK_POINTS, at)
+		score_system.spawn_items(at, BREAK_ITEM_POINTS, 8, 1.4)
+	vanish(0.0)
 
 func _find_sprite() -> Sprite2D:
 	for node in find_children("*", "", true, false):
@@ -263,6 +342,8 @@ func burn() -> bool:
 	if _state != BulletState.NORMAL:
 		return false
 	_state = BulletState.BURNING
+	burned_total += 1
+	_drop_breakable()
 	BurnPuff.spawn(get_tree(), global_position) # 燃え尽きる炎(そのあと、その場にスコアアイテムが残る)
 	remove_from_group("enemy_bullet")
 	set_deferred("monitorable", false) # 自機に当たらなくなる
@@ -280,6 +361,7 @@ func vanish(delay : float = 0.0) -> bool:
 	if _state != BulletState.NORMAL:
 		return false
 	_state = BulletState.VANISHING
+	_drop_breakable()
 	remove_from_group("enemy_bullet")
 	set_deferred("monitorable", false) # 自機に当たらず、グレイズもできなくなる
 	set_deferred("monitoring", false)
@@ -316,6 +398,7 @@ static func vanish_all(tree : SceneTree, from : Vector2, spread_time : float = 0
 func ignite(params : IgniteParams, chain_until_msec : int, is_chain : bool = false) -> void:
 	if _state != BulletState.NORMAL:
 		return
+	_drop_breakable() # 返した弾は、もう壊せない(自分の当たり判定に当たらないように)
 	_state = BulletState.IGNITED
 	_params = params
 	_chain_until_msec = chain_until_msec
