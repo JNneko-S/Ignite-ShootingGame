@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 27
+interval = 0.066
+pause = 0.924
+bullet_count = 1
+spread_angle = 0.0
+aim_at_player = true
+angle_wave_amplitude = 8.0
+angle_wave_shots = 14
+bullet_speed = 241.68
+soften_others = 2.0
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
+muzzle_offsets = Array[Vector2]([Vector2(-82.0, -10.0), Vector2(80.0, -10.0)])

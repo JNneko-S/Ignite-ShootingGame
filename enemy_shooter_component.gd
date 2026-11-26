@@ -1,5 +1,6 @@
 extends Node2D
 class_name EnemyShooter
+const _PracticeCatalog := preload("res://Component/Practice/practice_catalog.gd")
 ## 敵に付ける弾発射コンポーネント。ShotPattern を複数登録でき、それぞれ独立して撃つ。
 ## このノードの位置が発射位置(砲口)になるので、敵の子として好きな位置に置く。
 ## 自機への狙い撃ちには、Player が "player" グループに入っている必要がある。
@@ -229,6 +230,7 @@ func _run_once(pattern : ShotPattern, generation : int) -> void:
 		return
 	if debug_pattern_started.is_valid():
 		debug_pattern_started.call(self, pattern)
+	_PracticeCatalog.note_attack(self, pattern) # プラクティスの解禁(ボスの攻撃を受けた)
 	pattern_started.emit(pattern)
 	pattern = DifficultyTuning.tune(pattern, is_zako())
 	var clock := MusicClock.find_in(get_tree())
@@ -281,6 +283,7 @@ func _run_pattern(pattern : ShotPattern) -> void:
 		return # この難易度では撃たない弾幕
 	if debug_pattern_started.is_valid():
 		debug_pattern_started.call(self, pattern)
+	_PracticeCatalog.note_attack(self, pattern) # プラクティスの解禁(ボスの攻撃を受けた)
 	var original := pattern
 	pattern = DifficultyTuning.tune(pattern, is_zako()) # この難易度用に、数や速さを変えた写し(HARD ならそのまま)
 	var generation := _generation

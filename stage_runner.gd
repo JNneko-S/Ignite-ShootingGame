@@ -1,6 +1,7 @@
 extends Node
 class_name StageRunner
 const _RunState := preload("res://Component/Settings/run_state.gd")
+const _PracticeCatalog := preload("res://Component/Practice/practice_catalog.gd")
 ## ステージのタイムラインを実行する。ステージのシーンに子ノードとして置く。
 ##
 ## 使い方:
@@ -132,6 +133,12 @@ func start() -> void:
 		if last_camera and StageCamera.of(self):
 			StageCamera.of(self).change(last_camera.mode, last_camera.lane, 0.0)
 	_foreshadow_next = _next
+	# プラクティスの解禁: 道中の区間を、ミスせずに抜けたか
+	_seg_list = _PracticeCatalog.segments(stage)
+	_seg_index = 0
+	while _seg_index < _seg_list.size() and _seg_list[_seg_index]["end"] <= stage_time:
+		_seg_index += 1
+	_seg_deaths = -1
 	_running = true
 	stage_started.emit()
 	if debug_log:
@@ -205,6 +212,25 @@ func signal_passed(signal_name : String) -> bool:
 			return true
 	return false
 
+## プラクティスの解禁(道中の区間): 区間の並び・次に見る区間・区間に入ったときのミスの数(-1 なら、まだ入っていない)
+var _seg_list : Array = []
+var _seg_index : int = 0
+var _seg_deaths : int = -1
+
+func _check_segments() -> void:
+	if _seg_index >= _seg_list.size():
+		return
+	var gm := get_tree().current_scene as GameManager
+	var deaths := gm.death_count if gm else 0
+	var seg : Dictionary = _seg_list[_seg_index]
+	if _seg_deaths < 0 and stage_time >= seg["start"]:
+		_seg_deaths = deaths
+	if stage_time >= seg["end"]:
+		if _seg_deaths >= 0 and deaths == _seg_deaths:
+			_PracticeCatalog.note_segment(get_tree(), _seg_index)
+		_seg_index += 1
+		_seg_deaths = -1
+
 func _physics_process(delta : float) -> void:
 	if not _running or _finished:
 		return
@@ -213,6 +239,7 @@ func _physics_process(delta : float) -> void:
 		return
 
 	stage_time += delta
+	_check_segments()
 	# 背景から出てくる敵が来る少し前に、知らせる(背景に影を出す)
 	while _foreshadow_next < _entries.size() and _entries[_foreshadow_next]["time"] <= stage_time + foreshadow_lead:
 		var ahead := _entries[_foreshadow_next]

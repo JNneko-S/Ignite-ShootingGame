@@ -1,5 +1,6 @@
 extends Node
 class_name CounterSpell
+const _PracticeCatalog := preload("res://Component/Practice/practice_catalog.gd")
 ## カウンター大技。ボス(Enemy)の子に置く。
 ## 決まったきっかけで始まり、Duration 秒のあいだ、ボスはいつもの攻撃をやめて「大技」を撃つ:
 ##   ・残留弾をばらまく(自分からグレイズしにいって、イグナイトのゲージをためる)
@@ -91,6 +92,7 @@ func _start() -> void:
 	_enemy.set_meta(&"counter_spell", true)
 	_hp.damage_lock = true
 	started.emit()
+	_PracticeCatalog.note_spell(_enemy, spell_name) # プラクティスの解禁(カウンター大技を受けた)
 	var tree := get_tree()
 	EnemyBullet.vanish_all(tree, _enemy.global_position)
 	_announce()

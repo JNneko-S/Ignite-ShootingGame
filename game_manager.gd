@@ -2,6 +2,8 @@ extends Node2D
 class_name GameManager
 ## 共有の状態をまとめて戻す場所(エディタがクラス名を覚える前でも動くように、ファイルを直接読み込む)
 const _RunState := preload("res://Component/Settings/run_state.gd")
+const _PracticeRun := preload("res://Component/Practice/practice_run.gd")
+const _PracticeDirector := preload("res://Component/Practice/practice_director.gd")
 ## ScrollTest(ステージのルート)にアタッチする配線役。
 ## ゲージ(体力)・難易度・イグナイトの発動・スコアをまとめて管理する。
 ##
@@ -175,6 +177,13 @@ func _enter_tree() -> void:
 			DifficultyTuning.level += 1
 	# 隠し難易度 ANOTHER: 弾幕は HARD を元に、ハザードランクで強くなる
 	HazardRank.active = RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
+	# プラクティス: ステージは最後まで進んでもクリアにしない。ミッションを進める部品(PracticeDirector)を置く
+	if _PracticeRun.active and runner:
+		runner.auto_finish = false
+		var director := Node.new()
+		director.set_script(_PracticeDirector)
+		director.name = "PracticeDirector"
+		add_child.call_deferred(director)
 
 ## シーンを読み込んだ直後(まだツリーに入る前)に、選んだ機体へ入れ替える
 func _notification(what : int) -> void:

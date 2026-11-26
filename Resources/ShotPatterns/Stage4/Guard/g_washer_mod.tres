@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Indigo_Slow.tscn" id="e3"]
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+start_delay = 0.1
+shot_count = 48
+interval = 0.07
+pause = 0.0
+bullet_count = 4
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 45.0
+rotate_per_shot = -6.0
+bullet_speed = 100.0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.3
+shot_count = 48
+interval = 0.07
+pause = 1.0
+bullet_count = 5
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 9.0
+rotate_accel = 0.04
+reverse_every_shots = 24
+line_count = 2
+line_speed_ratio = 0.25
+bullet_speed = 135.0
+soften_others = 2.0
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])

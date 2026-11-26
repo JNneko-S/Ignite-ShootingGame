@@ -1,4 +1,5 @@
 extends Node
+const _PracticeRun := preload("res://Component/Practice/practice_run.gd")
 ## 実績(自動読み込み: Achievements)。user://achievements.cfg に保存する。
 ## 解除すると、画面の右上に小さく知らせる。デバッグ機能を使ったプレイ(DebugTools.used)では解除しない。
 ##
@@ -56,6 +57,13 @@ var _check_left : float = 0.0
 ## 難易度 ANOTHER を解禁したか・RATE A 以上を取った回数(achievements.cfg の [progress] に保存)
 var another_unlocked : bool = false
 var rate_a_count : int = 0
+## 裏ボス Union のプラクティスの解禁に使う記録(achievements.cfg の [progress])
+##   RATE S を取った回数 / ANOTHER を二周目までクリアしたか / NORMAL 以上でクリアした機体の名前
+var rate_s_count : int = 0
+var another_loop2_cleared : bool = false
+var ships_cleared : Array = []
+## 二周目をクリアした難易度(0〜2)。プラクティスの「2nd ○○」を出すのに使う
+var loop2_cleared : Array = []
 ## ANOTHER の解禁に要る、RATE A の回数と、実績の数
 const ANOTHER_RATE_A_NEEDED : int = 5
 const ANOTHER_ACHIEVEMENTS_NEEDED : int = 8
@@ -68,6 +76,10 @@ func _ready() -> void:
 			_unlocked[id] = config.get_value("unlocked", id)
 		another_unlocked = config.get_value("progress", "another_unlocked", false)
 		rate_a_count = config.get_value("progress", "rate_a_count", 0)
+		rate_s_count = config.get_value("progress", "rate_s_count", 0)
+		another_loop2_cleared = config.get_value("progress", "another_loop2_cleared", false)
+		ships_cleared = config.get_value("progress", "ships_cleared", [])
+		loop2_cleared = config.get_value("progress", "loop2_cleared", [])
 
 func is_unlocked(id : String) -> bool:
 	return _unlocked.has(id)
@@ -81,7 +93,7 @@ func unlocked_count() -> int:
 
 ## 実績を解除する(もう解除していたら、何もしない)
 func unlock(id : String) -> void:
-	if _unlocked.has(id) or DebugTools.used:
+	if _unlocked.has(id) or DebugTools.used or _PracticeRun.active: # プラクティス中は、実績を解除しない
 		return
 	var entry := _entry(id)
 	if entry.is_empty():
@@ -101,6 +113,10 @@ func _save() -> void:
 		config.set_value("unlocked", key, _unlocked[key])
 	config.set_value("progress", "another_unlocked", another_unlocked)
 	config.set_value("progress", "rate_a_count", rate_a_count)
+	config.set_value("progress", "rate_s_count", rate_s_count)
+	config.set_value("progress", "another_loop2_cleared", another_loop2_cleared)
+	config.set_value("progress", "ships_cleared", ships_cleared)
+	config.set_value("progress", "loop2_cleared", loop2_cleared)
 	config.save(PATH)
 
 # ---------------------------------------------------------------- 難易度 ANOTHER の解禁
@@ -120,6 +136,8 @@ func on_run_recorded(entry : Dictionary) -> void:
 	var rate_a := grade == "S" or grade == "A"
 	if rate_a:
 		rate_a_count += 1
+	if grade == "S":
+		rate_s_count += 1
 	var all_clear := ScoreBoard.result_of(entry) == ScoreBoard.ALL_CLEAR
 	var no_continue := RunConfig.continues_used == 0
 	var difficulty := int(entry.get("difficulty", 1))
@@ -183,6 +201,12 @@ func _on_game_clear() -> void:
 			RunConfig.ANOTHER: unlock("another_dimension")
 	if not RunConfig.shot_damage_used and RunConfig.ship:
 		unlock("ignite_only_" + RunConfig.ship.ship_name.to_lower())
+	# Union のプラクティスの解禁: NORMAL 以上でクリアした機体を覚える
+	if RunConfig.ship and RunConfig.difficulty >= 1 and not DebugTools.used and not _PracticeRun.active:
+		var ship_name := RunConfig.ship.ship_name
+		if not ship_name in ships_cleared:
+			ships_cleared.append(ship_name)
+			_save()
 
 ## 自機が撃墜された(GameManager が呼ぶ): ボス・中ボスがいる(ボス戦の)ときなら
 func on_player_died(tree : SceneTree) -> void:
@@ -257,6 +281,13 @@ func _tick_max_survive(delta : float) -> void:
 
 ## 周をクリアした(EndingSequence が呼ぶ)
 func on_round_clear() -> void:
+	var another_run := RunConfig.has_selection and RunConfig.difficulty == RunConfig.ANOTHER
+	if RunConfig.loop >= 2 and another_run and not DebugTools.used and not another_loop2_cleared:
+		another_loop2_cleared = true # Union のプラクティスの解禁: ANOTHER を二周目までクリアした
+		_save()
+	if RunConfig.loop >= 2 and RunConfig.has_selection and not another_run and not DebugTools.used and not RunConfig.difficulty in loop2_cleared:
+		loop2_cleared.append(RunConfig.difficulty) # プラクティスの「2nd ○○」を出す
+		_save()
 	if RunConfig.loop >= 2:
 		unlock("another_round")
 		if RunConfig.hidden_boss_defeated:

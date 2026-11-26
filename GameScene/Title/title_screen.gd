@@ -18,6 +18,10 @@ const _AnotherRound := preload("res://GameScene/Title/another_round.gd")
 
 ## 機体選択の画面のシーン
 @export_file("*.tscn") var ship_select_scene : String = "res://GameScene/Select/ship_select.tscn"
+## START で → を押すと切り替わる、プラクティスの一覧
+@export_file("*.tscn") var practice_scene : String = "res://GameScene/Practice/practice_menu.tscn"
+## START の項目が、今 PRACTICE になっているか
+var _practice : bool = false
 ## 選ぶものを変えたとき・決めたとき・戻ったとき(シーンに置いた AudioStreamPlayer)
 @export var move_sound : AudioStreamPlayer
 @export var confirm_sound : AudioStreamPlayer
@@ -61,6 +65,8 @@ var _index : int = 0
 var _time : float = 0.0
 var _bar_tween : Tween
 var _toast_tween : Tween
+## START の両側の ◀ ▶(← → で PRACTICE に切り替えられる印。フォントに ◀ ▶ の字がないので、三角形を描く)
+var _start_arrows : StartArrows
 
 func _ready() -> void:
 	_menu.visible = false
@@ -69,6 +75,11 @@ func _ready() -> void:
 	_bar.color = bar_color
 	for ring in _rings:
 		ring.pivot_offset = ring.size * 0.5
+	_start_arrows = StartArrows.new()
+	_start_arrows.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_items[Item.START].add_child(_start_arrows)
+	_start_arrows.size = _items[Item.START].size
+	_update_start_arrows()
 	_option.closed.connect(_on_panel_closed)
 	_score_board.closed.connect(_on_panel_closed)
 	_achievements.closed.connect(_on_panel_closed)
@@ -136,6 +147,9 @@ func _process(delta : float) -> void:
 			_press_label.modulate.a = 0.55 + 0.45 * cos(_time * 3.5)
 		Phase.MENU:
 			_handle_menu()
+	if _start_arrows:
+		# START を選んでいるときは、◀ ▶ が左右に小さく揺れる
+		_start_arrows.wobble = sin(_time * 6.0) * 2.0 if _index == Item.START else 0.0
 
 ## 「Press Any Key」: キー・ボタン・クリックのどれでも
 func _input(event : InputEvent) -> void:
@@ -184,6 +198,8 @@ func _handle_menu() -> void:
 		_select(_index - 1)
 	elif _pressed(["UI_Back", "UI_StickDown", "ui_down"]):
 		_select(_index + 1)
+	elif _index == Item.START and _pressed(["UI_Left", "UI_Right", "UI_StickLeft", "UI_StickRight", "ui_left", "ui_right"]):
+		_toggle_practice()
 	elif _pressed(["UI_Shoot", "ui_accept"]):
 		_decide()
 	elif _pressed(["UI_Ignite", "ui_cancel"]):
@@ -211,6 +227,8 @@ func _select(index : int, with_sound : bool = true) -> void:
 		elif i == Item.REPLAY:
 			color = disabled_color
 		_items[i].add_theme_color_override("font_color", color)
+		if i == Item.START and _start_arrows:
+			_start_arrows.color = color
 	# 赤い帯が、選んだ項目へ滑って、筆で引いたように左から伸びる
 	var item := _items[_index]
 	var target_y := item.position.y + 2.0
@@ -230,7 +248,8 @@ func _decide() -> void:
 	match _index:
 		Item.START:
 			SoundManager.play(confirm_sound)
-			_leave(func() -> void: SceneSwitcher.change(ship_select_scene))
+			var to := practice_scene if _practice else ship_select_scene
+			_leave(func() -> void: SceneSwitcher.change(to))
 		Item.OPTION:
 			_open_panel(_option)
 		Item.SCORE_BOARD:
@@ -243,6 +262,13 @@ func _decide() -> void:
 		Item.EXIT:
 			SoundManager.play(confirm_sound)
 			_leave(func() -> void: get_tree().quit())
+
+## START ⇔ PRACTICE(← → で切り替える)
+func _toggle_practice() -> void:
+	_practice = not _practice
+	_items[Item.START].text = "PRACTICE" if _practice else "START"
+	_update_start_arrows()
+	_select(_index)
 
 func _open_panel(panel : TitlePanel) -> void:
 	_state = Phase.PANEL
@@ -304,3 +330,37 @@ func _is_activity(event : InputEvent) -> bool:
 	if event is InputEventMouseMotion:
 		return (event as InputEventMouseMotion).relative.length() > 2.0
 	return false
+
+## ◀ ▶ を、START(PRACTICE)の文字の両側に置く
+func _update_start_arrows() -> void:
+	var label := _items[Item.START]
+	var font := label.get_theme_font("font")
+	var font_size := label.get_theme_font_size("font_size")
+	var width := font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x if font else 60.0
+	_start_arrows.half_width = width * 0.5 + 9.0
+	_start_arrows.queue_redraw()
+
+
+## START の両側の ◀ ▶
+class StartArrows extends Control:
+	var half_width : float = 40.0:
+		set(value):
+			half_width = value
+			queue_redraw()
+	var color : Color = Color.WHITE:
+		set(value):
+			color = value
+			queue_redraw()
+	var wobble : float = 0.0:
+		set(value):
+			wobble = value
+			queue_redraw()
+
+	func _draw() -> void:
+		var c := size * 0.5
+		var h := 4.5
+		var w := 6.0
+		var left := c.x - half_width - wobble
+		var right := c.x + half_width + wobble
+		draw_colored_polygon(PackedVector2Array([Vector2(left, c.y), Vector2(left + w, c.y - h), Vector2(left + w, c.y + h)]), color)
+		draw_colored_polygon(PackedVector2Array([Vector2(right, c.y), Vector2(right - w, c.y - h), Vector2(right - w, c.y + h)]), color)

@@ -1,0 +1,109 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 1.5
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 3.2
+change_speed = false
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 3
+target_speed = 60.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 4
+interval = 0.14
+pause = 0.0
+bullet_count = 8
+parallel_spacing = 56.0
+aim_at_player = false
+base_angle = -30.0
+launch_speed_step = 0.32
+bullet_speed = 150.0
+skip_auto_tuning = true
+motion = Array[ExtResource("e3")]([SubResource("st2"), SubResource("st3"), SubResource("st4")])
+
+[sub_resource type="Resource" id="st6"]
+script = ExtResource("e3")
+duration = 1.4
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("e3")
+duration = 3.2
+change_speed = false
+
+[sub_resource type="Resource" id="st8"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 3
+target_speed = 60.0
+speed_ease = 0
+
+[sub_resource type="Resource" id="p5"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.55
+shot_count = 3
+interval = 0.16
+pause = 0.0
+bullet_count = 6
+parallel_spacing = 64.0
+aim_at_player = false
+launch_speed_step = 0.35
+bullet_speed = 140.0
+skip_auto_tuning = true
+motion = Array[ExtResource("e3")]([SubResource("st6"), SubResource("st7"), SubResource("st8")])
+
+[sub_resource type="Resource" id="st9"]
+script = ExtResource("e3")
+duration = 1.5
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st10"]
+script = ExtResource("e3")
+duration = 3.2
+change_speed = false
+
+[sub_resource type="Resource" id="st11"]
+script = ExtResource("e3")
+duration = 2.0
+turn_mode = 3
+target_speed = 60.0
+speed_ease = 0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 4
+interval = 0.14
+pause = 2.8
+bullet_count = 8
+parallel_spacing = 56.0
+aim_at_player = false
+base_angle = 30.0
+launch_speed_step = 0.32
+bullet_speed = 150.0
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p5")])
+motion = Array[ExtResource("e3")]([SubResource("st9"), SubResource("st10"), SubResource("st11")])

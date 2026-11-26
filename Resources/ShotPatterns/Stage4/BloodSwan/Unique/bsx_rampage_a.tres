@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e3"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e4"]
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+start_delay = 0.05
+shot_count = 99
+interval = 0.0462
+pause = 0.0
+bullet_count = 6
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 30.0
+rotate_per_shot = -7.7
+bullet_speed = 117.6
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="p3"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+bullet_count = 4
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 45.0
+bullet_speed = 60.96
+bullet_accel = 36.0
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+start_delay = 0.8
+shot_count = 5
+interval = 0.9
+pause = 0.0
+bullet_count = 1
+line_count = 3
+line_speed_ratio = 0.15
+aim_at_player = true
+bullet_speed = 223.2
+split_time = 0.7
+split_follow_direction = true
+skip_auto_tuning = true
+split_pattern = SubResource("p3")
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.3
+shot_count = 99
+interval = 0.0462
+pause = 0.5925
+bullet_count = 7
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 15.8
+bullet_speed = 170.4
+soften_others = 2.0
+another_only = true
+another_made = true
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2")])

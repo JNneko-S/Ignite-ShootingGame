@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+bullet_count = 4
+spread_angle = 360.0
+aim_at_player = false
+base_angle = 45.0
+bullet_speed = 60.96
+bullet_accel = 62.88
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 9
+interval = 0.279
+pause = 0.63
+bullet_count = 5
+spread_angle = 61.2
+aim_at_player = true
+line_count = 5
+line_speed_ratio = 0.14
+bullet_speed = 212.4
+split_time = 0.61
+split_follow_direction = true
+another_only = true
+another_made = true
+skip_auto_tuning = true
+split_pattern = SubResource("p1")

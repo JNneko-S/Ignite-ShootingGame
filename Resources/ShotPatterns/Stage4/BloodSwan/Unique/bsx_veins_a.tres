@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e2"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e3"]
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+bullet_count = 2
+spread_angle = 180.0
+aim_at_player = false
+bullet_speed = 84.48
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+start_delay = 0.3
+shot_count = 12
+interval = 0.216
+pause = 0.0
+bullet_count = 3
+spread_angle = 98.0
+aim_at_player = true
+bullet_speed = 182.4
+split_time = 0.61
+split_follow_direction = true
+skip_auto_tuning = true
+split_pattern = SubResource("p2")
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 51
+interval = 0.0473
+pause = 0.5925
+bullet_count = 3
+spread_angle = 98.0
+aim_at_player = true
+aim_once_per_burst = true
+angle_wave_amplitude = 23.6
+angle_wave_shots = 20
+bullet_speed = 258.0
+soften_others = 2.0
+another_only = true
+another_made = true
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])

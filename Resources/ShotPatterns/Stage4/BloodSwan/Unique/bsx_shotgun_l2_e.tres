@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Purple_Revenge.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.3
+shot_count = 5
+interval = 0.198
+pause = 0.858
+bullet_count = 8
+spread_angle = 40.0
+aim_at_player = true
+rotate_per_shot = 6.0
+reverse_every_shots = 1
+random_speed_ratio = 0.3
+random_seed = 81
+bullet_speed = 216.24
+min_difficulty = 0
+max_difficulty = 0
+skip_auto_tuning = true

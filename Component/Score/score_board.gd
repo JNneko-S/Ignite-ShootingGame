@@ -1,6 +1,7 @@
 extends RefCounted
 class_name ScoreBoard
 const _RunState := preload("res://Component/Settings/run_state.gd")
+const _PracticeRun := preload("res://Component/Practice/practice_run.gd")
 ## スコアボード(過去 MAX_ENTRIES 回のプレイの記録)。user://scores.cfg に保存する。シーンを切り替えても残る(static)。
 ##
 ## 記録するとき:
@@ -62,7 +63,7 @@ const ALL_CLEAR : String = "ALL CLEAR"
 ## プレイが終わった: result(FAILED / CLEAR / ALL CLEAR)で記録して、次のプレイの準備をする。記録したら true
 static func finish_run(tree : SceneTree, result : String) -> bool:
 	var saved := false
-	if not slow_used and not GameSettings.slow_mode and not DebugTools.used: # デバッグ機能を使ったプレイは記録しない
+	if not slow_used and not GameSettings.slow_mode and not DebugTools.used and not _PracticeRun.active: # デバッグ機能を使ったプレイ・プラクティスは記録しない
 		var stats := _stage_stats(tree)
 		var entry := {
 			"time": Time.get_unix_time_from_system(),

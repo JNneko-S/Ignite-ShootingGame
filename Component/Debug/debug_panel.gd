@@ -74,6 +74,12 @@ func _input(event : InputEvent) -> void:
 		KEY_P: _next_stage()
 		KEY_L: _to_final_boss(false)
 		KEY_E: _to_final_boss(true)
+		KEY_O:
+			# プラクティスの全ミッションを解禁する
+			var catalog = load("res://Component/Practice/practice_catalog.gd")
+			var records = load("res://Component/Practice/practice_records.gd")
+			records.unlock_all(catalog.all_keys())
+			_say("プラクティスを全解禁")
 		KEY_U:
 			# 裏ボス Union 戦へ: Bエンドの条件を満たしたことにして、ラスボスをすぐ倒し、脱出を飛ばして Union の登場から
 			DebugTools.force_b_end = true
@@ -106,6 +112,7 @@ func _build_text() -> String:
 	lines.append("0 弾消し  - 雑魚を倒す")
 	lines.append("P 次のステージへ")
 	lines.append("L ラスボス戦へ  E エンディングへ  U 裏ボス(Union)戦へ")
+	lines.append("O プラクティス全解禁")
 	lines.append("")
 	lines.append("FPS %d  弾 %d  敵 %d" % [Engine.get_frames_per_second(),
 		get_tree().get_nodes_in_group("enemy_bullet").size(), get_tree().get_nodes_in_group("enemy").size()])

@@ -1,0 +1,78 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 1.5
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 2.2
+change_speed = false
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e3")
+duration = 1.4
+turn_mode = 2
+target_speed = 110.0
+speed_ease = 2
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.6
+shot_count = 5
+interval = 0.14
+pause = 0.0
+bullet_count = 24
+spread_angle = 150.0
+aim_at_player = false
+launch_speed_step = 0.3
+bullet_speed = 120.0
+random_angle = 2.0
+random_seed = 37
+skip_auto_tuning = true
+motion = Array[ExtResource("e3")]([SubResource("st2"), SubResource("st3"), SubResource("st4")])
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("e3")
+duration = 1.6
+target_speed = 0.0
+speed_trans = 0
+
+[sub_resource type="Resource" id="st6"]
+script = ExtResource("e3")
+duration = 1.2
+change_speed = false
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("e3")
+duration = 1.4
+turn_mode = 2
+target_speed = 110.0
+speed_ease = 2
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.4
+shot_count = 6
+interval = 0.14
+pause = 2.0
+bullet_count = 26
+spread_angle = 160.0
+aim_at_player = false
+launch_speed_step = 0.3
+bullet_speed = 150.0
+random_angle = 2.0
+random_seed = 31
+min_difficulty = 2
+max_difficulty = 2
+skip_auto_tuning = true
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
+motion = Array[ExtResource("e3")]([SubResource("st5"), SubResource("st6"), SubResource("st7")])

@@ -1,5 +1,6 @@
 extends RefCounted
 class_name RunState
+const _PracticeRun := preload("res://Component/Practice/practice_run.gd")
 ## シーンを切り替えても残る「共有の状態」(static)を、まとめて戻す場所。
 ## 状態を足したら、ここの戻す処理にも足す(戻し忘れると、前のプレイ・前のステージの状態が次に残る不具合になる)。
 ##   begin_run()   … 出撃したとき(機体選択から)。一回のプレイの状態を、全部まっさらにする
@@ -35,6 +36,7 @@ static func begin_run() -> void:
 	ScoreBoard.begin_run()
 	_clear_carry()
 	clear_checkpoint()
+	_PracticeRun.abort()
 	TitleScreen.another_round_pending = false
 	run_clock = 0.0
 	stage_clock = 0.0
@@ -55,6 +57,7 @@ static func begin_stage() -> void:
 
 static func to_title() -> void:
 	clear_checkpoint()
+	_PracticeRun.abort() # プラクティスを途中でやめた
 	if TitleScreen.another_round_pending:
 		return # 二周目へ入る途中: 引き継ぎは、まだ使う
 	_clear_carry()
