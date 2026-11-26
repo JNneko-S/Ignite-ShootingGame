@@ -22,6 +22,9 @@ class_name EntranceBlast
 ## 出現してから、この時間(秒)は撃たない。勢いよく前に出てくるあいだは撃たず、下がり始めてから撃ち始める
 @export var hold_fire_time : float = 1.25
 
+## 登場の間、撃たせずに止めているか(プラクティスで、登場の演出を秒数に数えないため)
+var holding : bool = false
+
 func _ready() -> void:
 	_play.call_deferred()
 	_hold_fire.call_deferred()
@@ -36,7 +39,9 @@ func _hold_fire() -> void:
 		if node is EnemyShooter:
 			shooters.append(node)
 			node.stop()
+	holding = true
 	await get_tree().create_timer(hold_fire_time).timeout
+	holding = false
 	if not is_instance_valid(boss) or (boss is Enemy and boss._is_dead):
 		return
 	var controller : BossPhaseController = null

@@ -27,12 +27,18 @@ class_name StageBGM
 ## オンなら、ステージの途中のボス(倒してもステージが終わらないボス)を倒したら、道中の曲に戻す(最終面の前半のボスなど)
 @export var resume_after_midboss : bool = false
 
+## 空でなければ、道中・ボスの曲の代わりに、ずっとこの曲を流す(プラクティスの戦闘曲。PracticeRun が入れる)
+static var override_music : AudioStream
+
 var _base_volume : float
 var _boss_pending : bool = false
 var _fade : Tween
 
 func _ready() -> void:
 	_base_volume = volume_db
+	if override_music:
+		_play_music(override_music) # 曲は切り替えない(warning やボスの登場も見ない)
+		return
 	_connect_runner.call_deferred() # 全ノードの準備が終わってから探す
 	_play_music(stage_music)
 

@@ -9,6 +9,7 @@ extends Node
 const _Run := preload("res://Component/Practice/practice_run.gd")
 const _Records := preload("res://Component/Practice/practice_records.gd")
 const _Catalog := preload("res://Component/Practice/practice_catalog.gd")
+const _ENTRANCE_BLAST := preload("res://Component/Boss/entrance_blast.gd")
 
 ## ボスの攻撃を、何秒生き残れば成功か
 const SURVIVE_TIME := 20.0
@@ -19,6 +20,8 @@ var _runner : StageRunner
 var _done : bool = false
 ## 0 より大きいあいだ、成功までの残り時間を数える
 var _survive_left : float = -1.0
+## 数えはじめる準備ができた(攻撃を撃ちはじめた)。登場の演出が終わったら、数えはじめる
+var _armed : bool = false
 var _boss : Enemy
 var _hud : Label
 
@@ -58,6 +61,10 @@ func _physics_process(delta : float) -> void:
 		_hud.text = "道中  あと %.1f 秒" % maxf(left, 0.0)
 		if left <= 0.0:
 			_succeed()
+	elif _armed and _survive_left < 0.0:
+		_hud.text = "登場中"
+		if _entrance_over():
+			_survive_left = SURVIVE_TIME # 登場の演出が終わってから数える
 	elif _survive_left > 0.0:
 		_survive_left -= delta
 		_hud.text = "生き残れ  あと %.1f 秒" % maxf(_survive_left, 0.0)
@@ -134,15 +141,35 @@ func _focus_attack() -> void:
 			seq.assign(main.sequence if not bool(_mission.get("whole", false)) else lists["sequence"])
 			main.set_patterns(pats, seq, false, int(_mission["loop"]) >= 2)
 	if main == null or bool(_mission.get("whole", false)) or pattern == null:
-		_survive_left = SURVIVE_TIME # 攻撃を選べないときは、出てきてからの時間で数える
+		_armed = true # 攻撃を選べないときは、出てきてからの時間で数える
+
+## ボスの登場の演出が終わったか: 撃つのを止める演出(ラスボスの目覚め・入場の爆発・列車の走り込み)と、
+## 画面に入って光る演出が、どれも済んでいる
+func _entrance_over() -> bool:
+	if not is_instance_valid(_boss):
+		return true
+	if EnemyShooter.is_holding_fire() or TrainBossMover.holds_fire(_boss):
+		return false
+	for child in _boss.get_children():
+		if child is BossEntranceFx and not child._done:
+			return false
+		if child.get_script() == _ENTRANCE_BLAST and child.holding:
+			return false
+	return true
 
 func _on_main_pattern(_p : ShotPattern) -> void:
-	if _survive_left < 0.0 and not _done:
-		_survive_left = SURVIVE_TIME
+	if not _done:
+		_armed = true
 
 ## カウンター大技を、すぐ始める(倒れる直前の大技も、終わってもボスが倒れないようにする)
 func _start_spell() -> void:
-	await get_tree().create_timer(1.5, false).timeout
+	# 登場の演出が終わるまで待つ(大技の時間に、登場を入れない)
+	var waited := 0.0
+	while waited < 12.0 and is_instance_valid(_boss) and not _done and not _entrance_over():
+		await get_tree().create_timer(0.1, false).timeout
+		waited += 0.1
+	_hud.text = ""
+	await get_tree().create_timer(0.5, false).timeout
 	if _done or not is_instance_valid(_boss):
 		return
 	for spell in _Catalog.spells_of(_boss):
@@ -157,7 +184,7 @@ func _start_spell() -> void:
 			return
 		else:
 			spell.queue_free()
-	_survive_left = SURVIVE_TIME
+	_armed = true
 
 ## 裏ボス Union を、ステージの上の真ん中に呼び出す
 func _spawn_union() -> void:

@@ -3,6 +3,8 @@ extends RefCounted
 ## begin() でステージを読み込み、ステージの中の PracticeDirector が、これを見てミッションを進める。
 
 const PRACTICE_MENU := "res://GameScene/Practice/practice_menu.tscn"
+## プラクティスの戦闘曲(どのミッションでも、これだけを流す)
+const BATTLE_MUSIC := "res://Assets/Sounds/Music/AS_1746358_シューティング・近未来＿戦闘曲＿激しい_プラクティス.mp3"
 
 static var active : bool = false
 ## ミッション(PracticeCatalog が作る辞書)
@@ -31,6 +33,7 @@ static func begin(tree : SceneTree, m : Dictionary, start_lives : int, practice_
 	if ship:
 		RunConfig.ship = ship
 	HazardRank.reset_run()
+	StageBGM.override_music = load(BATTLE_MUSIC) as AudioStream
 	HazardRank.carriers_off = str(m.get("kind", "")) != "zako" # ボスのミッションでは、ハザードキャリアを出さない
 	if RunConfig.difficulty == 3 and RunConfig.loop >= 2:
 		HazardRank.black_loop = true # 2nd ANOTHER は BLACK ANOTHER(ボス・中ボスは BLACK 用、雑魚は ANOTHER 用の弾幕)
@@ -43,6 +46,7 @@ static func begin(tree : SceneTree, m : Dictionary, start_lives : int, practice_
 ## ミッションを終える(一覧へ戻る)
 static func finish(tree : SceneTree) -> void:
 	active = false
+	StageBGM.override_music = null
 	HazardRank.carriers_off = false
 	RunConfig.loop = 1
 	RunConfig.continues_used = 0
@@ -53,6 +57,7 @@ static func finish(tree : SceneTree) -> void:
 ## タイトルなどへ戻った(ミッションを途中でやめた)
 static func abort() -> void:
 	active = false
+	StageBGM.override_music = null
 	HazardRank.carriers_off = false
 	RunConfig.loop = 1
 	RunConfig.continues_used = 0
