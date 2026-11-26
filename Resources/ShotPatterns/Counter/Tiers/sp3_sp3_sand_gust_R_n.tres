@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Bermuda.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 2.6
+shot_count = 26
+interval = 0.045
+pause = 1.98
+bullet_count = 2
+spread_angle = 26.0
+aim_at_player = false
+base_angle = 58.0
+random_angle = 10.0
+random_speed_ratio = 0.3
+random_seed = 73
+bullet_speed = 170.0
+muzzle_offsets = Array[Vector2]([Vector2(235.0, 40.0)])
+skip_auto_tuning = true
+min_difficulty = 1
+max_difficulty = 1

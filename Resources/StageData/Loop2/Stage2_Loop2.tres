@@ -31,45 +31,43 @@
 [ext_resource type="PackedScene" path="res://GameScene/Train/train_limited.tscn" id="e26"]
 [ext_resource type="Script" uid="uid://ceg02jlh6ynpy" path="res://stage_data.gd" id="e27"]
 [ext_resource type="PackedScene" path="res://GameScene/Enemy/Zako/ignite_bait.tscn" id="e_ignite_bait"]
-[ext_resource type="Resource" uid="uid://t03sy2b52ev6" path="res://Resources/ShotPatterns/Stage2/s2_z_fighter.tres" id="z_fighter"]
-[ext_resource type="Resource" uid="uid://bsnvi5b3qu5ki" path="res://Resources/ShotPatterns/Stage2/s2_z_tank.tres" id="z_tank"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_e.tres" id="l2_z_air_e"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_n.tres" id="l2_z_air_n"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_air_h.tres" id="l2_z_air_h"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_e.tres" id="l2_z_ground_e"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_n.tres" id="l2_z_ground_n"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_ground_h.tres" id="l2_z_ground_h"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_e.tres" id="l2_z_column_e"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_n.tres" id="l2_z_column_n"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z_column_h.tres" id="l2_z_column_h"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_e.tres" id="l2_z2_tank_bloom_e"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_n.tres" id="l2_z2_tank_bloom_n"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_h.tres" id="l2_z2_tank_bloom_h"]
+[ext_resource type="Resource" uid="uid://c8voad2o3cseg" path="res://Resources/MovePatterns/Loop2/m_l2_column.tres" id="l2_column_move"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_e.tres" id="l2_z2_mid_spiral_e"]
-[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_n.tres" id="l2_z2_mid_spiral_n"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_h.tres" id="l2_z2_mid_spiral_h"]
-[ext_resource type="Resource" path="res://Resources/MovePatterns/Loop2/m_l2_column.tres" id="l2_column_move"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/z2_mid_spiral_n.tres" id="l2_z2_mid_spiral_n"]
+[ext_resource type="Resource" uid="uid://b66sq23gylwrg" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_e.tres" id="l2_z2_tank_bloom_e"]
+[ext_resource type="Resource" uid="uid://xg5ske7dui0a" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_h.tres" id="l2_z2_tank_bloom_h"]
+[ext_resource type="Resource" uid="uid://tl7ts0qvxmaw" path="res://Resources/ShotPatterns/Loop2/z2_tank_bloom_n.tres" id="l2_z2_tank_bloom_n"]
+[ext_resource type="Resource" uid="uid://myj44m6o1u1c" path="res://Resources/ShotPatterns/Loop2/z_air_e.tres" id="l2_z_air_e"]
+[ext_resource type="Resource" uid="uid://7h3ythwu5wp" path="res://Resources/ShotPatterns/Loop2/z_air_h.tres" id="l2_z_air_h"]
+[ext_resource type="Resource" uid="uid://cudv4sqm8shvi" path="res://Resources/ShotPatterns/Loop2/z_air_n.tres" id="l2_z_air_n"]
+[ext_resource type="Resource" uid="uid://bd2o0q3rha50w" path="res://Resources/ShotPatterns/Loop2/z_column_e.tres" id="l2_z_column_e"]
+[ext_resource type="Resource" uid="uid://dlfp8avbeqnkb" path="res://Resources/ShotPatterns/Loop2/z_column_h.tres" id="l2_z_column_h"]
+[ext_resource type="Resource" uid="uid://piayq5o5v1xk" path="res://Resources/ShotPatterns/Loop2/z_column_n.tres" id="l2_z_column_n"]
+[ext_resource type="Resource" uid="uid://tnqqdf13wx5b" path="res://Resources/ShotPatterns/Loop2/z_ground_e.tres" id="l2_z_ground_e"]
+[ext_resource type="Resource" uid="uid://bmm5w6acgsq6h" path="res://Resources/ShotPatterns/Loop2/z_ground_h.tres" id="l2_z_ground_h"]
+[ext_resource type="Resource" uid="uid://b52wdrpnbn88j" path="res://Resources/ShotPatterns/Loop2/z_ground_n.tres" id="l2_z_ground_n"]
 
 [sub_resource type="Resource" id="ax1"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 0
-time = 13.5
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 13.5
 
 [sub_resource type="Resource" id="ax2"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 camera_lane = 0
-time = 16.8
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 16.8
 
 [sub_resource type="Resource" id="ax3"]
 script = ExtResource("e2")
@@ -78,50 +76,50 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 12
 interval = 0.201
 camera_lane = 2
-time = 20.0
 count_by_difficulty = Array[int]([8, 10, 12])
+time = 20.0
 
 [sub_resource type="Resource" id="ax4"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 23.0
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 23.0
 
 [sub_resource type="Resource" id="ax5"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 0
-time = 24.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 24.0
 
 [sub_resource type="Resource" id="ax6"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 mirror_x = true
 camera_lane = 0
-time = 26.8
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 26.8
 
 [sub_resource type="Resource" id="ax7"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 2
-time = 29.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 29.0
 
 [sub_resource type="Resource" id="ax8"]
 script = ExtResource("e2")
@@ -130,83 +128,83 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 10
 interval = 0.287
 camera_lane = 1
-time = 33.0
 count_by_difficulty = Array[int]([7, 8, 10])
+time = 33.0
 
 [sub_resource type="Resource" id="ax9"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 37.5
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 37.5
 
 [sub_resource type="Resource" id="ax10"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 camera_lane = 0
-time = 48.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 48.0
 
 [sub_resource type="Resource" id="ax11"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 1
-time = 50.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 50.0
 
 [sub_resource type="Resource" id="ax12"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 52.0
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 52.0
 
 [sub_resource type="Resource" id="ax13"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 0
-time = 54.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 54.0
 
 [sub_resource type="Resource" id="ax14"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.23
 mirror_x = true
 camera_lane = 2
-time = 55.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 55.0
 
 [sub_resource type="Resource" id="ax15"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 1
-time = 57.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 57.0
 
 [sub_resource type="Resource" id="ax16"]
 script = ExtResource("e2")
@@ -216,47 +214,47 @@ count = 10
 interval = 0.287
 mirror_x = true
 camera_lane = 1
-time = 59.0
 count_by_difficulty = Array[int]([7, 8, 10])
+time = 59.0
 
 [sub_resource type="Resource" id="ax17"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 0
-time = 61.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 61.0
 
 [sub_resource type="Resource" id="ax18"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
-time = 69.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 69.5
 
 [sub_resource type="Resource" id="ax19"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
-mirror_x = true
-time = 72.5
 interval = 0.172
+mirror_x = true
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 72.5
 
 [sub_resource type="Resource" id="ax20"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
 mirror_x = true
-time = 75.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 75.5
 
 [sub_resource type="Resource" id="ax21"]
 script = ExtResource("e2")
@@ -265,27 +263,27 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 17
 interval = 0.213
 mirror_x = true
-time = 78.0
 count_by_difficulty = Array[int]([12, 14, 17])
+time = 78.0
 
 [sub_resource type="Resource" id="ax22"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
 mirror_x = true
-time = 80.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 80.5
 
 [sub_resource type="Resource" id="ax23"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
-time = 81.5
 interval = 0.172
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 81.5
 
 [sub_resource type="Resource" id="ax24"]
 script = ExtResource("e2")
@@ -293,8 +291,8 @@ enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 17
 interval = 0.213
-time = 84.0
 count_by_difficulty = Array[int]([12, 14, 17])
+time = 84.0
 
 [sub_resource type="Resource" id="ax25"]
 script = ExtResource("e2")
@@ -338,12 +336,12 @@ time = 4.5
 [sub_resource type="Resource" id="s7"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 time = 2.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="n1"]
 script = ExtResource("e2")
@@ -359,24 +357,24 @@ time = 3.0
 [sub_resource type="Resource" id="s8"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 0
 time = 4.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s9"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 2
 time = 5.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="n2"]
 script = ExtResource("e2")
@@ -450,46 +448,46 @@ time = 8.5
 [sub_resource type="Resource" id="s22"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 1
 time = 1.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s23"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 0
 time = 3.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s24"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 2
 time = 6.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s25"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 1
 time = 8.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="n11"]
 script = ExtResource("e2")
@@ -556,12 +554,12 @@ time = 12.0
 [sub_resource type="Resource" id="s34"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 0
-time = 12.5
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 12.5
 
 [sub_resource type="Resource" id="s35"]
 script = ExtResource("e0")
@@ -575,13 +573,13 @@ time = 13.0
 [sub_resource type="Resource" id="s37"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 1
 time = 14.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="m1"]
 script = ExtResource("e2")
@@ -597,20 +595,20 @@ time = 14.5
 [sub_resource type="Resource" id="s38"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 15.0
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 15.0
 
 [sub_resource type="Resource" id="s39"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e12")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 1
 time = 16.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="n3"]
 script = ExtResource("e2")
@@ -636,13 +634,13 @@ time = 17.5
 [sub_resource type="Resource" id="s42"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 0
 time = 18.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="m2"]
 script = ExtResource("e2")
@@ -652,29 +650,29 @@ count = 12
 interval = 0.201
 mirror_x = true
 camera_lane = 2
-time = 18.5
 count_by_difficulty = Array[int]([8, 10, 12])
+time = 18.5
 
 [sub_resource type="Resource" id="s43"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 camera_lane = 0
-time = 19.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 19.0
 
 [sub_resource type="Resource" id="s44"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 2
-time = 20.5
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 20.5
 
 [sub_resource type="Resource" id="s45"]
 script = ExtResource("e0")
@@ -689,10 +687,10 @@ time = 21.0
 [sub_resource type="Resource" id="s47"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 22.0
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 22.0
 
 [sub_resource type="Resource" id="n4"]
 script = ExtResource("e2")
@@ -701,8 +699,8 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 10
 interval = 0.287
 camera_lane = 1
-time = 21.5
 count_by_difficulty = Array[int]([7, 8, 10])
+time = 21.5
 
 [sub_resource type="Resource" id="s49"]
 script = ExtResource("e2")
@@ -716,12 +714,12 @@ time = 25.0
 [sub_resource type="Resource" id="m3"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.23
 camera_lane = 0
-time = 24.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 24.5
 
 [sub_resource type="Resource" id="s50"]
 script = ExtResource("e0")
@@ -736,20 +734,20 @@ time = 26.0
 [sub_resource type="Resource" id="s52"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 2
 time = 26.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s53"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e17")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 1
 time = 28.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="n5"]
 script = ExtResource("e2")
@@ -759,19 +757,19 @@ count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 2
-time = 27.0
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 27.0
 
 [sub_resource type="Resource" id="s54"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 0
-time = 29.5
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 29.5
 
 [sub_resource type="Resource" id="s55"]
 script = ExtResource("e0")
@@ -786,13 +784,13 @@ time = 30.5
 [sub_resource type="Resource" id="s57"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.0
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 1
 time = 31.0
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="m4"]
 script = ExtResource("e2")
@@ -808,30 +806,30 @@ time = 30.5
 [sub_resource type="Resource" id="s58"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 17
 interval = 0.213
 camera_lane = 1
-time = 32.5
 count_by_difficulty = Array[int]([12, 14, 17])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 32.5
 
 [sub_resource type="Resource" id="s59"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e12")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 2
 time = 33.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="n6"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 34.0
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 34.0
 
 [sub_resource type="Resource" id="s60"]
 script = ExtResource("e2")
@@ -854,10 +852,10 @@ time = 36.0
 [sub_resource type="Resource" id="s63"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 1
-time = 36.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 1
+time = 36.5
 
 [sub_resource type="Resource" id="m5"]
 script = ExtResource("e2")
@@ -866,18 +864,18 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 12
 interval = 0.201
 camera_lane = 0
-time = 35.5
 count_by_difficulty = Array[int]([8, 10, 12])
+time = 35.5
 
 [sub_resource type="Resource" id="s64"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 camera_lane = 2
-time = 38.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 38.0
 
 [sub_resource type="Resource" id="n7"]
 script = ExtResource("e2")
@@ -893,13 +891,13 @@ time = 37.0
 [sub_resource type="Resource" id="s65"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 0
-time = 39.0
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 39.0
 
 [sub_resource type="Resource" id="s66"]
 script = ExtResource("e6")
@@ -946,23 +944,23 @@ time = 46.5
 [sub_resource type="Resource" id="s73"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 camera_lane = 1
-time = 47.5
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 47.5
 
 [sub_resource type="Resource" id="s74"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 0
-time = 48.5
 count_by_difficulty = Array[int]([11, 14, 16])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 48.5
 
 [sub_resource type="Resource" id="s75"]
 script = ExtResource("e0")
@@ -982,9 +980,9 @@ time = 49.5
 [sub_resource type="Resource" id="s78"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e12")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 1
 time = 50.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="m6"]
 script = ExtResource("e2")
@@ -1011,30 +1009,30 @@ time = 49.0
 [sub_resource type="Resource" id="s79"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 2
-time = 51.5
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 51.5
 
 [sub_resource type="Resource" id="s80"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.287
 camera_lane = 0
-time = 52.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 52.5
 
 [sub_resource type="Resource" id="s81"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e17")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 1
 time = 54.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="s82"]
 script = ExtResource("e2")
@@ -1048,9 +1046,9 @@ time = 55.5
 [sub_resource type="Resource" id="s83"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e20")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 0
 time = 56.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="n10"]
 script = ExtResource("e2")
@@ -1059,8 +1057,8 @@ shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResourc
 count = 10
 interval = 0.287
 camera_lane = 1
-time = 56.0
 count_by_difficulty = Array[int]([7, 8, 10])
+time = 56.0
 
 [sub_resource type="Resource" id="s84"]
 script = ExtResource("e0")
@@ -1087,51 +1085,51 @@ time = 59.5
 [sub_resource type="Resource" id="m7"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.23
 camera_lane = 2
-time = 58.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 58.0
 
 [sub_resource type="Resource" id="s88"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 17
 interval = 0.213
 camera_lane = 2
-time = 60.5
 count_by_difficulty = Array[int]([12, 14, 17])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 60.5
 
 [sub_resource type="Resource" id="s90"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e12")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 camera_lane = 1
 time = 63.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_mid_spiral_e"), ExtResource("l2_z2_mid_spiral_n"), ExtResource("l2_z2_mid_spiral_h")])
 
 [sub_resource type="Resource" id="s91"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e11")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 6
 interval = 0.345
 alternate_mirror = true
 camera_lane = 1
-time = 64.0
 count_by_difficulty = Array[int]([4, 5, 6])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 64.0
 
 [sub_resource type="Resource" id="s92"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e3")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 0.0
 offset = Vector2(-50, 0)
 offset_step = Vector2(50, -40)
 camera_lane = 1
 time = 53.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="n9"]
 script = ExtResource("e2")
@@ -1141,27 +1139,27 @@ count = 16
 interval = 0.201
 mirror_x = true
 camera_lane = 2
-time = 53.0
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 53.0
 
 [sub_resource type="Resource" id="s93"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 0
-time = 58.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 0
+time = 58.5
 
 [sub_resource type="Resource" id="s94"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e1")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 count = 3
 interval = 1.2
 offset = Vector2(-60, 0)
 offset_step = Vector2(60, 0)
 camera_lane = 2
 time = 62.5
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_ground_e"), ExtResource("l2_z_ground_n"), ExtResource("l2_z_ground_h")])
 
 [sub_resource type="Resource" id="s95"]
 script = ExtResource("e6")
@@ -1199,8 +1197,8 @@ enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 17
 interval = 0.213
-time = 71.5
 count_by_difficulty = Array[int]([12, 14, 17])
+time = 71.5
 
 [sub_resource type="Resource" id="b2"]
 script = ExtResource("e2")
@@ -1217,10 +1215,10 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
-mirror_x = true
-time = 74.5
 interval = 0.172
+mirror_x = true
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 74.5
 
 [sub_resource type="Resource" id="s99"]
 script = ExtResource("e2")
@@ -1252,28 +1250,28 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 16
-time = 79.0
 interval = 0.172
 count_by_difficulty = Array[int]([11, 14, 16])
+time = 79.0
 
 [sub_resource type="Resource" id="b6"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
-time = 83.0
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 83.0
 
 [sub_resource type="Resource" id="b7"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e13")
+shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
 count = 10
 interval = 0.201
 mirror_x = true
-time = 85.5
 count_by_difficulty = Array[int]([7, 8, 10])
-shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_air_e"), ExtResource("l2_z_air_n"), ExtResource("l2_z_air_h")])
+time = 85.5
 
 [sub_resource type="Resource" id="s101"]
 script = ExtResource("e6")
@@ -1333,30 +1331,29 @@ offset = Vector2(-90, 30)
 offset_step = Vector2(90, 0)
 time = 44.5
 
-
 [sub_resource type="Resource" id="l2_column_0_l"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 11.0
 
 [sub_resource type="Resource" id="l2_column_0_r"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
-mirror_x = true
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
+mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 11.35
 
 [sub_resource type="Resource" id="l2_column_1_l"]
@@ -1364,24 +1361,24 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 30.0
 
 [sub_resource type="Resource" id="l2_column_1_r"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
-mirror_x = true
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
+mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 30.35
 
 [sub_resource type="Resource" id="l2_column_2_l"]
@@ -1389,24 +1386,24 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 46.5
 
 [sub_resource type="Resource" id="l2_column_2_r"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
-mirror_x = true
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
+mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 46.85
 
 [sub_resource type="Resource" id="l2_column_3_l"]
@@ -1414,24 +1411,24 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 66.0
 
 [sub_resource type="Resource" id="l2_column_3_r"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
-mirror_x = true
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
+mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 66.35
 
 [sub_resource type="Resource" id="l2_column_4_l"]
@@ -1439,80 +1436,81 @@ script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 87.0
 
 [sub_resource type="Resource" id="l2_column_4_r"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e10")
 move_pattern = ExtResource("l2_column_move")
-mirror_x = true
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z_column_e"), ExtResource("l2_z_column_n"), ExtResource("l2_z_column_h")])
+power_drop_chance = 0.0
 count = 5
 interval = 0.0
 offset_step = Vector2(0, -32)
+mirror_x = true
 count_by_difficulty = Array[int]([3, 4, 5])
-power_drop_chance = 0.0
 time = 87.35
 
 [sub_resource type="Resource" id="l2_heavy_0"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 14.0
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 14.0
 
 [sub_resource type="Resource" id="l2_heavy_1"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 31.0
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 31.0
 
 [sub_resource type="Resource" id="l2_heavy_2"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 47.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 47.5
 
 [sub_resource type="Resource" id="l2_heavy_3"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 66.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 66.5
 
 [sub_resource type="Resource" id="l2_heavy_4"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 77.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 77.5
 
 [sub_resource type="Resource" id="l2_heavy_5"]
 script = ExtResource("e2")
 enemy_scene = ExtResource("e14")
-camera_lane = 2
-time = 83.5
 shot_patterns = Array[ExtResource("e21")]([ExtResource("l2_z2_tank_bloom_e"), ExtResource("l2_z2_tank_bloom_n"), ExtResource("l2_z2_tank_bloom_h")])
 hp_override = 2200
+camera_lane = 2
+time = 83.5
+
 [resource]
 script = ExtResource("e27")
 stage_name = "Stage 2 (2nd)"
 events = Array[ExtResource("e4")]([SubResource("s1"), SubResource("s2"), SubResource("s3"), SubResource("s4"), SubResource("s5"), SubResource("s6"), SubResource("s7"), SubResource("n1"), SubResource("s8"), SubResource("s9"), SubResource("n2"), SubResource("s26"), SubResource("s27"), SubResource("s28"), SubResource("s29"), SubResource("s30"), SubResource("s31"), SubResource("s32"), SubResource("s33"), SubResource("s34"), SubResource("s35"), SubResource("s36"), SubResource("s37"), SubResource("m1"), SubResource("s38"), SubResource("s39"), SubResource("n3"), SubResource("s40"), SubResource("s41"), SubResource("s42"), SubResource("m2"), SubResource("s43"), SubResource("s44"), SubResource("s45"), SubResource("s46"), SubResource("s47"), SubResource("n4"), SubResource("s49"), SubResource("m3"), SubResource("s50"), SubResource("s51"), SubResource("s52"), SubResource("s53"), SubResource("n5"), SubResource("s54"), SubResource("s55"), SubResource("s56"), SubResource("s57"), SubResource("m4"), SubResource("s58"), SubResource("s59"), SubResource("n6"), SubResource("s60"), SubResource("s61"), SubResource("s62"), SubResource("s63"), SubResource("m5"), SubResource("s64"), SubResource("n7"), SubResource("s65"), SubResource("s66"), SubResource("s67"), SubResource("s68"), SubResource("s69"), SubResource("s70"), SubResource("s71"), SubResource("s72"), SubResource("s73"), SubResource("s74"), SubResource("s75"), SubResource("s76"), SubResource("s77"), SubResource("s78"), SubResource("m6"), SubResource("n8"), SubResource("s79"), SubResource("s80"), SubResource("s81"), SubResource("s82"), SubResource("s83"), SubResource("n10"), SubResource("s84"), SubResource("s85"), SubResource("s86"), SubResource("s87"), SubResource("m7"), SubResource("s88"), SubResource("s90"), SubResource("s91"), SubResource("s92"), SubResource("n9"), SubResource("s93"), SubResource("s94"), SubResource("s95"), SubResource("s96"), SubResource("s97"), SubResource("b1"), SubResource("s98"), SubResource("b2"), SubResource("b3"), SubResource("s99"), SubResource("b4"), SubResource("s100"), SubResource("b5"), SubResource("b6"), SubResource("b7"), SubResource("s101"), SubResource("s102"), SubResource("s103"), SubResource("s104"), SubResource("s105"), SubResource("s106"), SubResource("ignite_chance_1"), SubResource("ignite_chance_2"), SubResource("l2_column_0_l"), SubResource("l2_column_0_r"), SubResource("l2_column_1_l"), SubResource("l2_column_1_r"), SubResource("l2_column_2_l"), SubResource("l2_column_2_r"), SubResource("l2_column_3_l"), SubResource("l2_column_3_r"), SubResource("l2_column_4_l"), SubResource("l2_column_4_r"), SubResource("l2_heavy_0"), SubResource("l2_heavy_1"), SubResource("l2_heavy_2"), SubResource("l2_heavy_3"), SubResource("l2_heavy_4"), SubResource("l2_heavy_5")])
 another_events = Array[ExtResource("e4")]([SubResource("ax1"), SubResource("ax2"), SubResource("ax3"), SubResource("ax4"), SubResource("ax5"), SubResource("ax6"), SubResource("ax7"), SubResource("ax8"), SubResource("ax9"), SubResource("ax10"), SubResource("ax11"), SubResource("ax12"), SubResource("ax13"), SubResource("ax14"), SubResource("ax15"), SubResource("ax16"), SubResource("ax17"), SubResource("ax18"), SubResource("ax19"), SubResource("ax20"), SubResource("ax21"), SubResource("ax22"), SubResource("ax23"), SubResource("ax24"), SubResource("ax25")])
+zako_hp_scale_below_another = 0.96
+boss_hp_scale_below_another = 0.896
 zako_power_drops = false
 train_clear_power_up = ExtResource("clear_power")
 train_clear_power_interval = 14.0
-zako_hp_scale_below_another = 0.96
-boss_hp_scale_below_another = 0.896

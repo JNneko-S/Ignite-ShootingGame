@@ -19,8 +19,14 @@ const IGNITE_ONLY := ["ignite_only_vespa", "ignite_only_bastion", "ignite_only_p
 static func mode_visible(difficulty : int, loop : int) -> bool:
 	if DebugTools.unlocked:
 		return true
-	if difficulty == 3:
+	if difficulty == 3 and loop < 2:
 		return Achievements.another_unlocked
+	if difficulty == 3:
+		# 2nd ANOTHER(BLACK ANOTHER): ANOTHER の二周目をクリアしたときだけ
+		if not Achievements.another_unlocked:
+			return false
+		if Achievements.another_loop2_cleared:
+			return true
 	if loop >= 2:
 		if difficulty in Achievements.loop2_cleared:
 			return true
@@ -84,6 +90,8 @@ static func union_conditions(ships : Array) -> Array:
 
 ## Union のミッションを解禁しているか
 static func union_unlocked(ships : Array) -> bool:
+	if DebugTools.unlocked:
+		return true # デバッグ機能が使えるときは、一時的に解禁
 	for c in union_conditions(ships):
 		if not c["done"]:
 			return false

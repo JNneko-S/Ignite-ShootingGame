@@ -51,7 +51,7 @@ static func build(difficulty : int, loop : int) -> Array:
 static func all_keys() -> Array:
 	var keys : Array = []
 	for d in 4:
-		for l in ([1, 2] if d < 3 else [1]):
+		for l in [1, 2]:
 			for group in build(d, l):
 				for m in group["missions"]:
 					keys.append(m["key"])

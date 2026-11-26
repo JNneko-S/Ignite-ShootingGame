@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 2.0
+shot_count = 34
+interval = 0.07
+pause = 1.6
+bullet_count = 1
+aim_at_player = false
+random_angle = 48.0
+random_speed_ratio = 0.35
+random_seed = 79
+bullet_speed = 165.0
+skip_auto_tuning = true
+min_difficulty = 2
+max_difficulty = 2
+muzzle_offsets = Array[Vector2]([Vector2(-150.0, -30.0), Vector2(-60.0, -40.0), Vector2(60.0, -40.0), Vector2(150.0, -30.0)])

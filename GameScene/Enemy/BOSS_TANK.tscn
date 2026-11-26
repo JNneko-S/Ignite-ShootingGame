@@ -90,6 +90,21 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_e.tres" id="l2_t3_q_turncoat_e"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_n.tres" id="l2_t3_q_turncoat_n"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/t3_q_turncoat_h.tres" id="l2_t3_q_turncoat_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_freeze_scatter_e.tres" id="ct_sp1_sp1_freeze_scatter_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_light_aim_e.tres" id="ct_sp1_sp1_light_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_frozen_giant_e.tres" id="ct_sp1_sp1_frozen_giant_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_freeze_scatter_n.tres" id="ct_sp1_sp1_freeze_scatter_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_light_aim_n.tres" id="ct_sp1_sp1_light_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_frozen_giant_n.tres" id="ct_sp1_sp1_frozen_giant_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_freeze_scatter_h.tres" id="ct_sp1_sp1_freeze_scatter_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_light_aim_h.tres" id="ct_sp1_sp1_light_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_frozen_giant_h.tres" id="ct_sp1_sp1_frozen_giant_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_extra1_h.tres" id="ct_sp1_extra1_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_freeze_scatter_a.tres" id="ct_sp1_sp1_freeze_scatter_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_light_aim_a.tres" id="ct_sp1_sp1_light_aim_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_sp1_frozen_giant_a.tres" id="ct_sp1_sp1_frozen_giant_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_extra1_a.tres" id="ct_sp1_extra1_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp1_extra2_a.tres" id="ct_sp1_extra2_a"]
 [sub_resource type="RectangleShape2D" id="hurt_shape"]
 size = Vector2(65, 80)
 
@@ -704,4 +719,4 @@ script = ExtResource("counter_spell")
 spell_name = "凍結 -フローズン・カウンター-"
 trigger_hp_ratio = 0.5
 duration = 14.0
-patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp1_freeze_scatter"), ExtResource("spell_sp1_light_aim"), ExtResource("spell_sp1_frozen_giant")])
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("ct_sp1_sp1_freeze_scatter_e"), ExtResource("ct_sp1_sp1_light_aim_e"), ExtResource("ct_sp1_sp1_frozen_giant_e"), ExtResource("ct_sp1_sp1_freeze_scatter_n"), ExtResource("ct_sp1_sp1_light_aim_n"), ExtResource("ct_sp1_sp1_frozen_giant_n"), ExtResource("ct_sp1_sp1_freeze_scatter_h"), ExtResource("ct_sp1_sp1_light_aim_h"), ExtResource("ct_sp1_sp1_frozen_giant_h"), ExtResource("ct_sp1_extra1_h"), ExtResource("ct_sp1_sp1_freeze_scatter_a"), ExtResource("ct_sp1_sp1_light_aim_a"), ExtResource("ct_sp1_sp1_frozen_giant_a"), ExtResource("ct_sp1_extra1_a"), ExtResource("ct_sp1_extra2_a")])

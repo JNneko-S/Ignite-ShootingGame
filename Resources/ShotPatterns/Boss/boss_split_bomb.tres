@@ -15,24 +15,20 @@ target_speed = 25.0
 [sub_resource type="Resource" id="ring"]
 script = ExtResource("1")
 bullet_scene = ExtResource("4_u6gbo")
-marker_only = null
 bullet_count = 14
 spread_angle = 360.0
 aim_at_player = false
 bullet_speed = 90.0
 bullet_accel = 45.0
-break_hp = null
 
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("big")
-marker_only = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 start_delay = 1.0
 pause = 2.4
 bullet_speed = 170.0
-break_hp = null
 motion = Array[ExtResource("2")]([SubResource("slow")])
 split_time = 1.0
 split_pattern = SubResource("ring")

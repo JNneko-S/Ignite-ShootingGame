@@ -33,6 +33,7 @@ func _ready() -> void:
 	_make_hud()
 	var kind : String = _mission.get("kind", "")
 	if kind != "zako":
+		_runner.practice_event_filter = _allow_event # ボスのほかの敵は出さない
 		_runner.boss_spawned.connect(_on_boss_spawned)
 	if kind == "union":
 		_spawn_union()
@@ -64,6 +65,18 @@ func _physics_process(delta : float) -> void:
 			_succeed()
 
 # ---------------------------------------------------------------- ボス
+
+## ボスのミッションで、タイムラインのイベントを実行するか: 練習するボスを出すイベントと、
+## 背景・スクロール・カメラ・合図(WARNING や曲)だけを通す。ほかの敵・列車・倒した数を待つイベントは飛ばす
+func _allow_event(event : StageEvent) -> bool:
+	if str(_mission.get("kind", "")) == "union":
+		return false # Union は、空の上で(タイムラインは使わない)
+	if event is SpawnEvent:
+		var spawn := event as SpawnEvent
+		return spawn.enemy_scene != null and spawn.enemy_scene.resource_path == str(_mission.get("boss_scene", "")) 			and absf(spawn.time - float(_mission.get("boss_time", spawn.time))) < 0.05
+	if event is TrainEvent or event is WaitKillsEvent:
+		return false
+	return true
 
 func _on_boss_spawned(enemy : Enemy, _boss_name : String, _t : Array[float]) -> void:
 	if _done or _boss != null or enemy.scene_file_path != str(_mission.get("boss_scene", "")):
@@ -148,6 +161,11 @@ func _start_spell() -> void:
 
 ## 裏ボス Union を、ステージの上の真ん中に呼び出す
 func _spawn_union() -> void:
+	# 本番と同じ場所: 脱出したあとの、暗く禍々しい雲の空(曲も Union 戦のもの)
+	for node in get_tree().current_scene.find_children("*", "", true, false):
+		if node.has_method("practice_union_backdrop"):
+			node.practice_union_backdrop()
+			break
 	await get_tree().create_timer(1.0, false).timeout
 	var packed := load(str(_mission["boss_scene"])) as PackedScene
 	if packed == null:

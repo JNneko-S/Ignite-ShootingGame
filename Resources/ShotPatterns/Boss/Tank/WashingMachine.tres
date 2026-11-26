@@ -24,7 +24,6 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("2_o0fgd")
 bullet_scene = ExtResource("1_o0fgd")
-marker_only = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 shot_count = 36
@@ -36,6 +35,5 @@ rotate_accel = 0.5
 angle_wave_amplitude = 5.5649999999999995
 angle_wave_shots = 10
 bullet_speed = 60.0
-break_hp = null
 motion = Array[ExtResource("1_gm14f")]([SubResource("Resource_w401m"), SubResource("Resource_sxhjn")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

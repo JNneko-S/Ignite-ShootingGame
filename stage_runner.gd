@@ -204,6 +204,13 @@ func upcoming_boss_name() -> String:
 			return event.boss_name
 	return ""
 
+## そのシグナル(StageSignalEvent)の、タイムラインの時刻(なければ -1)
+func signal_time(signal_name : String) -> float:
+	for entry in _entries:
+		if entry["event"] is StageSignalEvent and entry["event"].signal_name == signal_name:
+			return float(entry["time"])
+	return -1.0
+
 ## そのシグナル(StageSignalEvent)を、もう出したか(途中から始めたときも、飛ばした分は出したことにする)
 func signal_passed(signal_name : String) -> bool:
 	for i in mini(_next, _entries.size()):
@@ -231,6 +238,9 @@ func _check_segments() -> void:
 		_seg_index += 1
 		_seg_deaths = -1
 
+## プラクティス: タイムラインのイベントを実行するかを決める(false なら飛ばす)。空なら全部実行する
+var practice_event_filter : Callable
+
 func _physics_process(delta : float) -> void:
 	if not _running or _finished:
 		return
@@ -249,6 +259,8 @@ func _physics_process(delta : float) -> void:
 	while _next < _entries.size() and _entries[_next]["time"] <= stage_time:
 		var entry := _entries[_next]
 		_next += 1
+		if practice_event_filter.is_valid() and not practice_event_filter.call(entry["event"]):
+			continue
 		entry["event"].execute(self, entry["unit"])
 		if _waiting:
 			return # 待機イベントが実行された。続きは待機が終わってから

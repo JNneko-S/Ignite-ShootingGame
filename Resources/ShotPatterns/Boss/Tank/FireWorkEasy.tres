@@ -14,7 +14,6 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_22d6h")
 bullet_scene = ExtResource("1_28rle")
-marker_only = null
 shot_count = 3
 loop = false
 bullet_count = 12
@@ -26,6 +25,5 @@ rotate_accel = 0.1
 line_count = 2
 line_speed_ratio = -0.445
 bullet_speed = 200.0
-break_hp = null
 motion = Array[ExtResource("2_hvfil")]([SubResource("Resource_1lgkx")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

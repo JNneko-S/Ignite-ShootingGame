@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e2"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 1.1
+target_speed = 0.0
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e3")
+duration = 1.4
+change_speed = false
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e3")
+duration = 2.0
+target_speed = 116.6
+speed_ease = 0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 0.3
+shot_count = 8
+interval = 0.171
+pause = 1.44
+aim_at_player = false
+base_angle = 62.0
+random_shot_angle = 10.0
+random_seed = 71
+ring3d_count = 10
+ring3d_radius = 12.0
+ring3d_grow = 8.0
+ring3d_max_radius = 28.0
+ring3d_spin = 360.0
+ring3d_tilt = 80.0
+ring3d_depth_scale = 0.45
+bullet_speed = 95.4
+muzzle_offsets = Array[Vector2]([Vector2(210.0, 90.0), Vector2(150.0, 40.0)])
+motion = Array[ExtResource("e3")]([SubResource("st1"), SubResource("st2"), SubResource("st3")])
+skip_auto_tuning = true
+min_difficulty = 2
+max_difficulty = 2

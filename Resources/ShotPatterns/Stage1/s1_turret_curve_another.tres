@@ -13,7 +13,6 @@ angular_velocity = 40.0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("3")
-marker_only = null
 another_made = true
 start_delay = 0.9
 interval = 0.2
@@ -26,5 +25,4 @@ angle_wave_amplitude = 24.0
 angle_wave_shots = 18
 mirror_curve_by_side = true
 bullet_speed = 110.0
-break_hp = null
 motion = Array[ExtResource("2")]([SubResource("Resource_vx6gy")])

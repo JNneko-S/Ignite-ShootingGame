@@ -749,6 +749,20 @@ func _start_union_fight(union : Enemy, ub : Node, home : Vector2) -> void:
 	if ub:
 		ub.begin_fight(home)
 
+## プラクティスの Union 戦: 本番と同じ、暗くした雲の空と Union 戦の曲だけを用意する(母艦・演出はなし)
+func practice_union_backdrop() -> void:
+	if not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group("player") as Player
+	_build_sky()
+	_set_cloud(1.0, "sky_alpha")
+	_set_cloud(0.55, "coverage")
+	_darken_sky(0.01)
+	_cloud_speed = 1.4
+	for node in get_tree().current_scene.find_children("*", "StageBGM", true, false):
+		var bgm := node as StageBGM
+		bgm._kill_fade()
+		bgm._play_music(union_music)
+
 ## Union を出せなかったとき(読み込めないなど): 前の B エンド(暗転して終わる)
 func _plain_b_end() -> void:
 	var tree := get_tree()

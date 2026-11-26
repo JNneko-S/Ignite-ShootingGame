@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e2"]
+
+[ext_resource type="PackedScene" uid="uid://bbf2gojgvpe26" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e3"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
+
+[sub_resource type="Resource" id="st8"]
+script = ExtResource("e4")
+duration = 0.35
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st9"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="st10"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st11"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="st12"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st13"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="st2"]
+script = ExtResource("e4")
+duration = 0.35
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st3"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="st4"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st5"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="st6"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = 60.0
+
+[sub_resource type="Resource" id="st7"]
+script = ExtResource("e4")
+duration = 0.7
+change_speed = false
+angular_velocity = -60.0
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+marker_only = null
+start_delay = 0.55
+interval = 0.96
+pause = 2.805
+aim_once_per_burst = true
+muzzle_offsets = Array[Vector2]([Vector2(0, 0), Vector2(-37.5, 9.7), Vector2(35.1, 9), Vector2(-157.8, -12.8), Vector2(156.2, -12.8)])
+bullet_speed = 100.1
+counter_hp_ratio = 0.02
+bullet_scale = 1.8
+break_hp = null
+motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5"), SubResource("st6"), SubResource("st7")])
+skip_auto_tuning = true
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+marker_only = null
+with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
+start_delay = 0.6
+shot_count = 7
+interval = 0.104
+pause = 3.41
+aim_once_per_burst = true
+muzzle_offsets = Array[Vector2]([Vector2(0, 0), Vector2(-37.5, 9.7), Vector2(35.1, 9), Vector2(-157.8, -12.8), Vector2(156.2, -12.8)])
+ring3d_count = 3
+ring3d_radius = 10.0
+ring3d_spin = 300.0
+ring3d_tilt = 76.0
+bullet_speed = 90.2
+break_hp = null
+motion = Array[ExtResource("e4")]([SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12"), SubResource("st13")])
+skip_auto_tuning = true
+min_difficulty = 0
+max_difficulty = 0

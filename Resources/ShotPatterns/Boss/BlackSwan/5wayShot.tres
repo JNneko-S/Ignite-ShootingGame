@@ -18,7 +18,6 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("2_01ax5")
 bullet_scene = ExtResource("b_curve")
-marker_only = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 start_delay = 1.0
@@ -36,6 +35,5 @@ line_count = 4
 random_angle = 30.0
 random_speed_ratio = 0.5
 bullet_speed = 80.0
-break_hp = null
 motion = Array[ExtResource("1_56ley")]([SubResource("Resource_wwqqi")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

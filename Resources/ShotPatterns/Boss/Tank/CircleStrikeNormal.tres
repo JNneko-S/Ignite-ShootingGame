@@ -22,7 +22,6 @@ metadata/_custom_type_script = "uid://bh3bd44efapvd"
 [resource]
 script = ExtResource("3_7oibl")
 bullet_scene = ExtResource("1_pink")
-marker_only = null
 shot_count = 10
 loop = false
 pause = 5.0
@@ -34,6 +33,5 @@ aim_once_per_burst = true
 line_count = 2
 line_speed_ratio = 0.2
 bullet_speed = 150.0
-break_hp = null
 motion = Array[ExtResource("2_eqnhq")]([SubResource("Resource_emv7r"), SubResource("Resource_xw60u")])
 metadata/_custom_type_script = "uid://ct8u3n22w477n"

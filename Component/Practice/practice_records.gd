@@ -4,6 +4,8 @@ extends RefCounted
 ##   ・新しい印(new!): 解禁してから、一覧でまだ選んでいない
 ##   ・クリア: CLEAR(ふつう)・PLUS(イグナイトなしのプラクティス+)・ASSIST(残機を変えた)
 ## デバッグ機能を使ったプレイと、プラクティス中は、解禁しない
+## デバッグ機能が使えるとき(DebugTools.unlocked)は、全部のミッションを一時的に解禁したことにする(記録には残さない。
+## 本当は解禁していないミッションのクリアも、記録しない)
 
 const PATH := "user://practice.cfg"
 const _PracticeRun := preload("res://Component/Practice/practice_run.gd")
@@ -41,14 +43,18 @@ static func unlock(key : String) -> void:
 	_save()
 
 static func is_unlocked(key : String) -> bool:
+	return DebugTools.unlocked or saved_unlocked(key)
+
+## 記録の上で解禁しているか(デバッグの一時的な解禁を含まない)
+static func saved_unlocked(key : String) -> bool:
 	return bool(_cfg().get_value("unlocked", key, false))
 
 ## 解禁して、まだ一覧で選んでいない(new!)
 static func is_new(key : String) -> bool:
-	return is_unlocked(key) and not bool(_cfg().get_value("seen", key, false))
+	return saved_unlocked(key) and not bool(_cfg().get_value("seen", key, false))
 
 static func mark_seen(key : String) -> void:
-	if is_unlocked(key) and not _cfg().get_value("seen", key, false):
+	if saved_unlocked(key) and not _cfg().get_value("seen", key, false):
 		_cfg().set_value("seen", key, true)
 		_save()
 
@@ -57,6 +63,8 @@ static func clear_of(key : String) -> String:
 
 ## クリアを記録する(今の記録より強いときだけ上書き)
 static func set_clear(key : String, kind : String) -> void:
+	if not saved_unlocked(key):
+		return # デバッグで一時的に解禁しただけのミッション
 	if _RANK.get(kind, 0) <= _RANK.get(clear_of(key), 0):
 		return
 	_cfg().set_value("clear", key, kind)

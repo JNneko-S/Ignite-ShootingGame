@@ -16,23 +16,21 @@ script = ExtResource("e1")
 bullet_scene = ExtResource("e4")
 bullet_count = 8
 spread_angle = 360.0
-aim_at_player = true
 bullet_speed = 70.0
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
+min_difficulty = 1
+max_difficulty = 1
+skip_auto_tuning = true
 start_delay = 0.4
 shot_count = 3
 interval = 0.7
 pause = 1.2
 bullet_count = 3
 spread_angle = 60.0
-aim_at_player = true
 bullet_speed = 120.0
-split_time = 0.9
-min_difficulty = 1
-max_difficulty = 1
-skip_auto_tuning = true
 motion = Array[ExtResource("e3")]([SubResource("st1")])
+split_time = 0.9
 split_pattern = SubResource("p2")

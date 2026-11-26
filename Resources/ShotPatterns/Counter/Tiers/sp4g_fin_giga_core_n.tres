@@ -1,0 +1,146 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="2_qars5"]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Giga.tscn" id="e2"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Pink_Medium.tscn" id="e3"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Red_Normal.tscn" id="e4"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Blue_Cian.tscn" id="e5"]
+
+[ext_resource type="PackedScene" uid="uid://ci1bhbx0pfxqg" path="res://GameScene/Bullet/E_medium_flamy.tscn" id="e6"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e7"]
+
+[sub_resource type="Resource" id="p6"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e5")
+marker_only = null
+shot_count = 2
+interval = 0.14
+bullet_count = 30
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 6.0
+bullet_speed = 36.0
+bullet_accel = 48.0
+break_hp = null
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+skip_auto_tuning = true
+marker_only = null
+start_delay = 0.2
+shot_count = 8
+interval = 0.09
+pause = 4.0
+aim_at_player = false
+muzzle_offsets = Array[Vector2]([Vector2(-37.49, 9.66), Vector2(35.075, 8.97), Vector2(-157.78, -12.765), Vector2(156.17, -12.765), Vector2(-47.955, 35.19), Vector2(48.53, 33.58)])
+aim_at_point = true
+aim_point = Vector2(0, 110.4)
+arrive_time = 1.05
+bullet_speed = 200.0
+break_hp = null
+split_time = 1.25
+split_vanish = true
+
+[sub_resource type="Resource" id="p2"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e4")
+marker_only = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 30
+ring3d_radius = 58.0
+ring3d_grow = 4.0
+ring3d_max_radius = 69.6
+ring3d_spin = 28.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+break_hp = null
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="p3"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e5")
+marker_only = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 20
+ring3d_radius = 42.0
+ring3d_grow = 3.0
+ring3d_max_radius = 50.4
+ring3d_spin = -55.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+break_hp = null
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="p4"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e6")
+marker_only = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 12
+ring3d_radius = 27.0
+ring3d_max_radius = 32.4
+ring3d_spin = 120.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+break_hp = null
+skip_auto_tuning = true
+
+[sub_resource type="Resource" id="p5"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e7")
+marker_only = null
+start_delay = 2.15
+pause = 4.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+ring3d_count = 6
+ring3d_radius = 14.0
+ring3d_max_radius = 16.8
+ring3d_spin = -200.0
+ring3d_tilt = 0.0
+ring3d_depth_scale = 0.0
+bullet_speed = 46.0
+bullet_accel = 12.0
+break_hp = null
+skip_auto_tuning = true
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+marker_only = null
+with_patterns = Array[ExtResource("e1")]([SubResource("p1"), SubResource("p2"), SubResource("p3"), SubResource("p4"), SubResource("p5")])
+start_delay = 2.15
+pause = 4.0
+soften_others = 3.0
+muzzle_offsets = Array[Vector2]([Vector2(0, 110.4)])
+bullet_speed = 46.0
+bullet_accel = 12.0
+counter_hp_ratio = 0.08
+bullet_scale = 3.0
+break_hp = null
+split_time = 2.6
+split_pattern = SubResource("p6")
+split_follow_direction = false
+skip_auto_tuning = true
+min_difficulty = 1
+max_difficulty = 1

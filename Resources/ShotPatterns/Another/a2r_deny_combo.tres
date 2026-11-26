@@ -14,7 +14,6 @@ angular_velocity = 40.0
 [resource]
 script = ExtResource("3_0517n")
 bullet_scene = ExtResource("1_hsuvv")
-marker_only = null
 another_made = true
 with_patterns = Array[ExtResource("3_0517n")]([ExtResource("4_f5drh")])
 start_delay = 0.6
@@ -26,5 +25,4 @@ spread_angle = 70.0
 aim_at_player = false
 mirror_curve_by_side = true
 bullet_speed = 105.0
-break_hp = null
 motion = Array[ExtResource("2_oexux")]([SubResource("Resource_87ngc")])

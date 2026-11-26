@@ -5,22 +5,9 @@
 [ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Magenta_Aim.tscn" id="e3"]
 [ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e4"]
 
-[sub_resource type="Resource" id="p1"]
-script = ExtResource("e1")
-bullet_scene = ExtResource("e3")
-start_delay = 1.1
-shot_count = 3
-interval = 0.6
-pause = 0.0
-bullet_count = 1
-aim_at_player = true
-bullet_speed = 170.0
-skip_auto_tuning = true
-
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
 duration = 0.9
-target_speed = 0.0
 speed_trans = 4
 
 [sub_resource type="Resource" id="st3"]
@@ -37,20 +24,29 @@ target_speed = 95.0
 speed_trans = 4
 speed_ease = 0
 
+[sub_resource type="Resource" id="p1"]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e3")
+skip_auto_tuning = true
+start_delay = 1.1
+shot_count = 3
+interval = 0.6
+pause = 0.0
+bullet_speed = 170.0
+
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
-start_delay = 0.4
-shot_count = 5
-interval = 0.5
-pause = 1.1
-bullet_count = 18
-spread_angle = 190.0
-aim_at_player = true
-bullet_speed = 150.0
-soften_others = 2.5
 min_difficulty = 2
 max_difficulty = 2
 skip_auto_tuning = true
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
+start_delay = 0.4
+shot_count = 5
+interval = 0.5
+pause = 1.1
+soften_others = 2.5
+bullet_count = 18
+spread_angle = 190.0
+bullet_speed = 150.0
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4")])

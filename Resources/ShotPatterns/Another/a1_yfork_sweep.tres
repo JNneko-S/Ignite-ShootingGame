@@ -9,18 +9,15 @@
 [sub_resource type="Resource" id="split"]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_spread")
-marker_only = null
 bullet_count = 2
 spread_angle = 54.0
 aim_at_player = false
 bullet_speed = 108.0
 bullet_accel = 28.8
-break_hp = null
 
 [resource]
 script = ExtResource("shot")
 bullet_scene = ExtResource("b_split")
-marker_only = null
 black_version = ExtResource("black_ver")
 another_made = true
 start_delay = 0.6
@@ -31,6 +28,5 @@ angle_wave_amplitude = 60.0
 angle_wave_shots = 40
 swing_barrel = true
 bullet_speed = 187.2
-break_hp = null
 split_time = 0.583
 split_pattern = SubResource("split")

@@ -15,7 +15,6 @@ angular_velocity = -45.0
 [resource]
 script = ExtResource("1")
 bullet_scene = ExtResource("3")
-marker_only = null
 another_version = ExtResource("another_ver")
 black_version = ExtResource("black_ver")
 start_delay = 0.9
@@ -28,5 +27,4 @@ base_angle = 90.0
 angle_wave_amplitude = 30.0
 angle_wave_shots = 18
 bullet_speed = 110.0
-break_hp = null
 motion = Array[ExtResource("2")]([SubResource("step_0")])

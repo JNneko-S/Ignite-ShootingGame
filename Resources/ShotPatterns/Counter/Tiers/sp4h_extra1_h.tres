@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Green_Curve.tscn" id="e2"]
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 1.5
+shot_count = 40
+interval = 0.065
+pause = 1.6
+bullet_count = 4
+spread_angle = 360.0
+aim_at_player = false
+rotate_per_shot = 8.0
+reverse_every_shots = 20
+bullet_speed = 150.0
+skip_auto_tuning = true
+min_difficulty = 2
+max_difficulty = 2

@@ -9,19 +9,16 @@
 [sub_resource type="Resource" id="Resource_28gqs"]
 script = ExtResource("3_x8dq4")
 bullet_scene = ExtResource("4_6yf4s")
-marker_only = null
 bullet_count = 12
 spread_angle = 360.0
 aim_at_player = false
 line_count = 2
 line_speed_ratio = 0.4
 bullet_speed = 85.0
-break_hp = null
 
 [resource]
 script = ExtResource("3_x8dq4")
 bullet_scene = ExtResource("1_ywf2r")
-marker_only = null
 black_version = ExtResource("1_6dru1")
 another_made = true
 start_delay = 0.0
@@ -29,7 +26,6 @@ loop = false
 bullet_count = 2
 spread_angle = 60.0
 bullet_speed = 150.0
-break_hp = null
 split_time = 0.75
 split_pattern = SubResource("Resource_28gqs")
 split_follow_direction = false

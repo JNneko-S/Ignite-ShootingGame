@@ -69,7 +69,7 @@ func _next_test() -> void:
 	_sample_in = 0.5
 	DifficultyTuning.level = int(_test.get("difficulty", 2))
 	DifficultyTuning.chosen_level = int(_test.get("chosen", _test.get("difficulty", 2)))
-	HazardRank.active = false
+	HazardRank.active = bool(_test.get("another", false)) # true なら ANOTHER(ランク 0)の限定弾幕を撃つ
 	RunConfig.has_selection = false
 	RunConfig.loop = int(_test.get("loop", 1)) # 2 なら二周目の弾幕(ShooterPhase / EnemyShooter の二周目の設定)
 	DifficultyTuning.hard_plus = bool(_test.get("hard_plus", false))

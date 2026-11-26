@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ShotPattern" format=3]
+
+[ext_resource type="Script" uid="uid://ct8u3n22w477n" path="res://Resources/ShotPatterns/shot_pattern.gd" id="e1"]
+
+[ext_resource type="PackedScene" path="res://GameScene/Bullet/E_Massive_Light_Green.tscn" id="e2"]
+
+[ext_resource type="Script" uid="uid://bh3bd44efapvd" path="res://Resources/ShotPatterns/bullet_step.gd" id="e3"]
+
+[sub_resource type="Resource" id="st1"]
+script = ExtResource("e3")
+duration = 3.0
+change_speed = false
+angular_velocity = 18.0
+
+[resource]
+script = ExtResource("e1")
+bullet_scene = ExtResource("e2")
+start_delay = 2.2
+warning_time = 0.6
+shot_count = 1
+pause = 2.88
+aim_at_player = true
+mirror_curve_by_side = true
+bullet_scale = 2.3
+counter_hp_ratio = 0.05
+bullet_speed = 63.0
+muzzle_offsets = Array[Vector2]([Vector2(-200.0, 60.0), Vector2(200.0, 100.0)])
+motion = Array[ExtResource("e3")]([SubResource("st1")])
+skip_auto_tuning = true
+another_only = true
+another_made = true

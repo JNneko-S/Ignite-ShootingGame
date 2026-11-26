@@ -119,6 +119,21 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_e.tres" id="l2_tr3_q_boomerang_e"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_n.tres" id="l2_tr3_q_boomerang_n"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/tr3_q_boomerang_h.tres" id="l2_tr3_q_boomerang_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_sand_slide_e.tres" id="ct_sp2_sp2_sand_slide_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_light_line_e.tres" id="ct_sp2_sp2_light_line_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_jaw_e.tres" id="ct_sp2_sp2_jaw_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_sand_slide_n.tres" id="ct_sp2_sp2_sand_slide_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_light_line_n.tres" id="ct_sp2_sp2_light_line_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_jaw_n.tres" id="ct_sp2_sp2_jaw_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_sand_slide_h.tres" id="ct_sp2_sp2_sand_slide_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_light_line_h.tres" id="ct_sp2_sp2_light_line_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_jaw_h.tres" id="ct_sp2_sp2_jaw_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_extra1_h.tres" id="ct_sp2_extra1_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_sand_slide_a.tres" id="ct_sp2_sp2_sand_slide_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_light_line_a.tres" id="ct_sp2_sp2_light_line_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_sp2_jaw_a.tres" id="ct_sp2_sp2_jaw_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_extra1_a.tres" id="ct_sp2_extra1_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp2_extra2_a.tres" id="ct_sp2_extra2_a"]
 [sub_resource type="CircleShape2D" id="shape_main2"]
 radius = 28
 
@@ -1674,4 +1689,4 @@ spell_name = "蟻地獄 -アリジゴク-"
 trigger_phase = 2
 duration = 14.0
 shooter = NodePath("../Gun_m_top")
-patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp2_sand_slide"), ExtResource("spell_sp2_light_line"), ExtResource("spell_sp2_jaw")])
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("ct_sp2_sp2_sand_slide_e"), ExtResource("ct_sp2_sp2_light_line_e"), ExtResource("ct_sp2_sp2_jaw_e"), ExtResource("ct_sp2_sp2_sand_slide_n"), ExtResource("ct_sp2_sp2_light_line_n"), ExtResource("ct_sp2_sp2_jaw_n"), ExtResource("ct_sp2_sp2_sand_slide_h"), ExtResource("ct_sp2_sp2_light_line_h"), ExtResource("ct_sp2_sp2_jaw_h"), ExtResource("ct_sp2_extra1_h"), ExtResource("ct_sp2_sp2_sand_slide_a"), ExtResource("ct_sp2_sp2_light_line_a"), ExtResource("ct_sp2_sp2_jaw_a"), ExtResource("ct_sp2_extra1_a"), ExtResource("ct_sp2_extra2_a")])

@@ -56,6 +56,31 @@ func _connect_runner() -> void:
 			_doors.append(door)
 			_closed.append(false)
 			_opened.append(false)
+	# 途中から始めたとき(ボスへジャンプ・プラクティスなど): 突入がもう済んでいれば、突入したあとの位置へ背景を置く
+	if runner and scroller and runner.signal_passed(signal_name):
+		_skip_to_after(runner)
+
+## 突入を飛ばした: 突入の時刻に背景がいたはずの位置から、一気に流れた先(最後の隔壁が自機の下)を求め、
+## そこから next_top へ流れていく途中の、今の時刻の位置にする(隔壁は閉じたまま)
+func _skip_to_after(runner : StageRunner) -> void:
+	if not scroller._initialized:
+		scroller._initialize()
+	var signal_at := runner.signal_time(signal_name)
+	if signal_at < 0.0 or _doors.is_empty():
+		return
+	var span := maxf(scroller.arrive_at_time, 0.001)
+	var y_at_signal := lerpf(scroller._start_y, scroller._end_y, clampf(signal_at / span, 0.0, 1.0)) if scroller.arrive_at_time > 0.0 else scroller.position.y
+	var view := CameraView.visible_rect(scroller)
+	var hold_y := view.position.y + view.size.y * player_hold_ratio
+	var door_y := minf(hold_y + view.size.y * last_door_below_player, view.end.y - view.size.y * 0.05)
+	var last := _doors[_doors.size() - 1]
+	var last_at_signal := last.global_position.y + (y_at_signal - scroller.position.y)
+	scroller.position.y = y_at_signal + door_y - last_at_signal
+	for i in _doors.size():
+		_opened[i] = true
+		_closed[i] = true
+	scroller.continue_to(next_top, next_arrive_time)
+	scroller._segment_start_time = signal_at + windup_time + dash_time # 突入が終わった時刻から流れはじめたことにする
 
 func _on_stage_signal(name_ : String, _text : String) -> void:
 	if name_ == signal_name and not _running:

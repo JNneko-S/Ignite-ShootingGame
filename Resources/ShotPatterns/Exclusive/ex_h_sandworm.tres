@@ -45,14 +45,12 @@ angular_velocity = -100.0
 [sub_resource type="Resource" id="p14"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e5")
-marker_only = null
 bullet_count = 2
 spread_angle = 180.0
 aim_at_player = false
 base_angle = 90.0
 bullet_speed = 30.0
 bullet_accel = 24.0
-break_hp = null
 
 [sub_resource type="Resource" id="st2"]
 script = ExtResource("e4")
@@ -96,7 +94,6 @@ bullet_scene = ExtResource("e3")
 min_difficulty = 2
 max_difficulty = 2
 skip_auto_tuning = true
-marker_only = null
 start_delay = 0.75
 interval = 1.0
 pause = 1.8
@@ -105,7 +102,6 @@ spread_angle = 84.0
 aim_once_per_burst = true
 mirror_curve_by_side = true
 bullet_speed = 138.0
-break_hp = null
 motion = Array[ExtResource("e4")]([SubResource("st2"), SubResource("st3"), SubResource("st4"), SubResource("st5"), SubResource("st6"), SubResource("st7")])
 
 [resource]
@@ -115,7 +111,6 @@ min_difficulty = 2
 max_difficulty = 2
 replaces_others = true
 skip_auto_tuning = true
-marker_only = null
 with_patterns = Array[ExtResource("e1")]([SubResource("p1")])
 start_delay = 0.8
 shot_count = 20
@@ -126,7 +121,6 @@ spread_angle = 84.0
 aim_once_per_burst = true
 mirror_curve_by_side = true
 bullet_speed = 138.0
-break_hp = null
 motion = Array[ExtResource("e4")]([SubResource("st8"), SubResource("st9"), SubResource("st10"), SubResource("st11"), SubResource("st12"), SubResource("st13")])
 split_time = 1.9
 split_time_random = 0.15

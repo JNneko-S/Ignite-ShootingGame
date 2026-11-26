@@ -132,6 +132,32 @@
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/nr3_cage_e.tres" id="l2_nr3_cage_e"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/nr3_cage_n.tres" id="l2_nr3_cage_n"]
 [ext_resource type="Resource" path="res://Resources/ShotPatterns/Loop2/nr3_cage_h.tres" id="l2_nr3_cage_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_giga_core_e.tres" id="ct_sp4g_fin_giga_core_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_residue_spiral_e.tres" id="ct_sp4g_fin_residue_spiral_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_sp1_light_aim_e.tres" id="ct_sp4g_sp1_light_aim_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_giga_core_n.tres" id="ct_sp4g_fin_giga_core_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_residue_spiral_n.tres" id="ct_sp4g_fin_residue_spiral_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_sp1_light_aim_n.tres" id="ct_sp4g_sp1_light_aim_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_giga_core_h.tres" id="ct_sp4g_fin_giga_core_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_residue_spiral_h.tres" id="ct_sp4g_fin_residue_spiral_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_sp1_light_aim_h.tres" id="ct_sp4g_sp1_light_aim_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_extra1_h.tres" id="ct_sp4g_extra1_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_giga_core_a.tres" id="ct_sp4g_fin_giga_core_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_fin_residue_spiral_a.tres" id="ct_sp4g_fin_residue_spiral_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_sp1_light_aim_a.tres" id="ct_sp4g_sp1_light_aim_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_extra1_a.tres" id="ct_sp4g_extra1_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4g_extra2_a.tres" id="ct_sp4g_extra2_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_sp4_hydra_heads_e.tres" id="ct_sp4h_sp4_hydra_heads_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_fin_residue_spiral_e.tres" id="ct_sp4h_fin_residue_spiral_e"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_sp4_hydra_heads_n.tres" id="ct_sp4h_sp4_hydra_heads_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_fin_residue_spiral_n.tres" id="ct_sp4h_fin_residue_spiral_n"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_sp4_hydra_heads_h.tres" id="ct_sp4h_sp4_hydra_heads_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_fin_residue_spiral_h.tres" id="ct_sp4h_fin_residue_spiral_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_extra1_h.tres" id="ct_sp4h_extra1_h"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_sp4_hydra_heads_a.tres" id="ct_sp4h_sp4_hydra_heads_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_fin_residue_spiral_a.tres" id="ct_sp4h_fin_residue_spiral_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_extra1_a.tres" id="ct_sp4h_extra1_a"]
+[ext_resource type="Resource" path="res://Resources/ShotPatterns/Counter/Tiers/sp4h_extra2_a.tres" id="ct_sp4h_extra2_a"]
 
 [sub_resource type="RectangleShape2D" id="body_shape"]
 size = Vector2(104.0, 260.0)
@@ -1358,11 +1384,11 @@ script = ExtResource("counter_spell")
 spell_name = "超巨大弾 -ギガ・コア-"
 trigger_hp_ratio = 0.5
 duration = 15.0
-patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_fin_giga_core"), ExtResource("spell_fin_residue_spiral"), ExtResource("spell_sp1_light_aim")])
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("ct_sp4g_fin_giga_core_e"), ExtResource("ct_sp4g_fin_residue_spiral_e"), ExtResource("ct_sp4g_sp1_light_aim_e"), ExtResource("ct_sp4g_fin_giga_core_n"), ExtResource("ct_sp4g_fin_residue_spiral_n"), ExtResource("ct_sp4g_sp1_light_aim_n"), ExtResource("ct_sp4g_fin_giga_core_h"), ExtResource("ct_sp4g_fin_residue_spiral_h"), ExtResource("ct_sp4g_sp1_light_aim_h"), ExtResource("ct_sp4g_extra1_h"), ExtResource("ct_sp4g_fin_giga_core_a"), ExtResource("ct_sp4g_fin_residue_spiral_a"), ExtResource("ct_sp4g_sp1_light_aim_a"), ExtResource("ct_sp4g_extra1_a"), ExtResource("ct_sp4g_extra2_a")])
 
 [node name="HydraSpell" type="Node" parent="."]
 script = ExtResource("counter_spell")
 spell_name = "九頭竜 -ヒュドラ-"
 lethal = true
 duration = 16.0
-patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("spell_sp4_hydra_heads"), ExtResource("spell_fin_residue_spiral")])
+patterns = Array[ExtResource("shot_pattern_script")]([ExtResource("ct_sp4h_sp4_hydra_heads_e"), ExtResource("ct_sp4h_fin_residue_spiral_e"), ExtResource("ct_sp4h_sp4_hydra_heads_n"), ExtResource("ct_sp4h_fin_residue_spiral_n"), ExtResource("ct_sp4h_sp4_hydra_heads_h"), ExtResource("ct_sp4h_fin_residue_spiral_h"), ExtResource("ct_sp4h_extra1_h"), ExtResource("ct_sp4h_sp4_hydra_heads_a"), ExtResource("ct_sp4h_fin_residue_spiral_a"), ExtResource("ct_sp4h_extra1_a"), ExtResource("ct_sp4h_extra2_a")])

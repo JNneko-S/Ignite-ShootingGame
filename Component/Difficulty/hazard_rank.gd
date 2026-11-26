@@ -92,6 +92,7 @@ static var last_reason : String = ""
 
 ## 出撃したとき(機体選択から): 全部 0 から
 static func reset_run() -> void:
+	carriers_off = false
 	black_loop = false
 	rank = 0
 	floor_rank = 0
@@ -272,6 +273,8 @@ var _label : Label
 ## ステージの進行役(型を書くと、読み込みが循環するので、書かない)
 var _runner
 var _next_carrier : float = CARRIER_FIRST
+## オンなら、ハザードキャリアを出さない(プラクティスのボスのミッション)
+static var carriers_off : bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -311,6 +314,8 @@ func _physics_process(delta : float) -> void:
 
 ## ハザードキャリアを、ステージの時間で出す(ボス・中ボスがいるあいだと、強化が両方とも最大のときは出さない)
 func _update_carrier() -> void:
+	if carriers_off:
+		return
 	if not is_instance_valid(_runner):
 		_runner = get_tree().get_first_node_in_group("stage_runner")
 		if _runner == null:

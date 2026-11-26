@@ -32,7 +32,7 @@ const NEW_COLOR := Color(0.95, 0.5, 0.0)
 
 ## 難易度の選択肢: [選んだ難易度, 周回, 名前]
 const MODES : Array = [[0, 1, "EASY"], [1, 1, "NORMAL"], [2, 1, "HARD"], [3, 1, "ANOTHER"],
-	[0, 2, "2nd EASY"], [1, 2, "2nd NORMAL"], [2, 2, "2nd HARD"]]
+	[0, 2, "2nd EASY"], [1, 2, "2nd NORMAL"], [2, 2, "2nd HARD"], [3, 2, "2nd ANOTHER"]]
 const ROW_HEIGHT := 22.0
 
 var _modes : Array = [] # 出す選択肢(MODES の番号)
@@ -159,6 +159,10 @@ func _build_ui() -> void:
 	_list.custom_minimum_size = Vector2(304, 0)
 	_list.add_theme_constant_override("separation", 1)
 	_scroll.add_child(_list)
+	if DebugTools.unlocked:
+		var debug := _label("DEBUG  一時解禁中", FONT_JA, 9, ACCENT)
+		debug.position = Vector2(244, 53)
+		add_child(debug)
 	var help := _label("↑↓ 選ぶ    ←→ 切り替え    決定 はじめる    キャンセル もどる", FONT_JA, 9, DIM)
 	help.position = Vector2(6, 418)
 	help.size = Vector2(324, 14)
@@ -189,7 +193,7 @@ func _refresh(focus_key : String = "") -> void:
 			_entries.append(m)
 	if not union_list.is_empty():
 		# Union: 条件を満たしたら、全部まとめて解禁(新しい印が付く)
-		if _union_open:
+		if _union_open and not DebugTools.unlocked: # デバッグの一時的な解禁では、記録しない
 			var keys : Array = []
 			for m in union_list:
 				if not _Records.is_unlocked(m["key"]):
@@ -197,7 +201,7 @@ func _refresh(focus_key : String = "") -> void:
 			if not keys.is_empty():
 				_Records.unlock_all(keys)
 		_entries.append({"kind": "union_card", "key": "union_card"})
-		if _union_open or _Records.is_unlocked(union_list[0]["key"]):
+		if _union_open or _Records.saved_unlocked(union_list[0]["key"]):
 			_entries.append_array(union_list)
 	for row in _rows:
 		row.queue_free()

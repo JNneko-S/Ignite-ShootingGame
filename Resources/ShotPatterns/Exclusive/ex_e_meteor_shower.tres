@@ -8,7 +8,6 @@
 [sub_resource type="Resource" id="p1"]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e3")
-marker_only = null
 bullet_count = 5
 spread_angle = 360.0
 aim_at_player = false
@@ -16,14 +15,12 @@ random_shot_angle = 25.0
 random_seed = 3
 bullet_speed = 34.0
 bullet_accel = 18.0
-break_hp = null
 
 [resource]
 script = ExtResource("e1")
 bullet_scene = ExtResource("e2")
 max_difficulty = 0
 skip_auto_tuning = true
-marker_only = null
 start_delay = 0.6
 shot_count = 3
 interval = 0.85
@@ -38,7 +35,6 @@ random_shot_angle = 10.0
 random_seed = 7
 bullet_speed = 78.0
 bullet_scale = 1.6
-break_hp = null
 split_time = 3.0
 split_time_random = 0.5
 split_pattern = SubResource("p1")

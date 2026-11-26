@@ -31,6 +31,9 @@ static func begin(tree : SceneTree, m : Dictionary, start_lives : int, practice_
 	if ship:
 		RunConfig.ship = ship
 	HazardRank.reset_run()
+	HazardRank.carriers_off = str(m.get("kind", "")) != "zako" # ボスのミッションでは、ハザードキャリアを出さない
+	if RunConfig.difficulty == 3 and RunConfig.loop >= 2:
+		HazardRank.black_loop = true # 2nd ANOTHER は BLACK ANOTHER(ボス・中ボスは BLACK 用、雑魚は ANOTHER 用の弾幕)
 	ScoreBoard.begin_run()
 	DebugTools.pending_start_time = maxf(float(m.get("start_time", 0.0)), 0.1)
 	DebugTools.skip_intro_once = true
@@ -40,6 +43,7 @@ static func begin(tree : SceneTree, m : Dictionary, start_lives : int, practice_
 ## ミッションを終える(一覧へ戻る)
 static func finish(tree : SceneTree) -> void:
 	active = false
+	HazardRank.carriers_off = false
 	RunConfig.loop = 1
 	RunConfig.continues_used = 0
 	Engine.time_scale = 1.0
@@ -49,5 +53,6 @@ static func finish(tree : SceneTree) -> void:
 ## タイトルなどへ戻った(ミッションを途中でやめた)
 static func abort() -> void:
 	active = false
+	HazardRank.carriers_off = false
 	RunConfig.loop = 1
 	RunConfig.continues_used = 0
