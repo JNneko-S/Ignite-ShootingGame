@@ -113,6 +113,9 @@ func _another_round() -> void:
 	overlay.queue_free()
 	await get_tree().create_timer(0.6).timeout
 	StageIntro.skip_next = false
+	# まだゲームのリソースを読み込んでいなければ、暗転の上にロード画面を出して、先に全部読み込む
+	var loading = load("res://GameScene/UI/loading_overlay.gd")
+	await loading.run(get_tree())
 	# 真っ暗なので、写真を貼る切り替え(SceneSwitcher)はいらない。そのまま読み込んで切り替える
 	get_tree().change_scene_to_file(second_loop_scene)
 

@@ -1,4 +1,6 @@
 extends Node2D
+## 丸・輪・線をためて、1回の描画命令でまとめて描く道具
+var _mesh = preload("res://GameScene/Effect/batch_mesh.gd").new()
 ## 裏ボス Union の、独自の青いエネルギー弾の見た目(E_Blue_Energy の子に置く)。絵は使わず、描いて作る。
 ##   ・青い光のにじみが、脈打つ
 ##   ・まわりを、細い光の輪が2本、逆向きに回る
@@ -29,15 +31,21 @@ func _process(delta : float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	_fill_mesh()
+	_mesh.flush(get_canvas_item())
+
+## 描く形を _mesh にためる(1回の描画命令でまとめて描くため)
+func _fill_mesh() -> void:
+	_mesh.clear() # 丸・輪・線をためて、最後に1回で描く
 	var pulse := 0.5 + 0.5 * sin(_t * 9.0)
 	# 光のにじみ(外ほど薄い)
 	for i in 5:
 		var r := glow_radius * (1.0 - 0.15 * i) + pulse * 1.5
-		draw_circle(Vector2.ZERO, r, Color(0.08, 0.35, 1.0, 0.07 + 0.04 * i))
+		_mesh.circle(Vector2.ZERO, r, Color(0.08, 0.35, 1.0, 0.07 + 0.04 * i))
 	# 逆向きに回る、光の輪
 	var spin := _t * 4.0
-	draw_arc(Vector2.ZERO, glow_radius * 0.72 + pulse, spin, spin + PI * 1.3, 24, Color(0.45, 0.85, 1.0, 0.9), 1.4, true)
-	draw_arc(Vector2.ZERO, glow_radius * 0.6, -spin * 1.3, -spin * 1.3 + PI, 24, Color(0.25, 0.55, 1.0, 0.8), 1.0, true)
+	_mesh.arc(Vector2.ZERO, glow_radius * 0.72 + pulse, spin, spin + PI * 1.3, 1.4, Color(0.45, 0.85, 1.0, 0.9), 14)
+	_mesh.arc(Vector2.ZERO, glow_radius * 0.6, -spin * 1.3, -spin * 1.3 + PI, 1.0, Color(0.25, 0.55, 1.0, 0.8), 14)
 	# 放電(ぎざぎざの線が、芯から外へ)
 	_rng.seed = _spark_seed
 	for k in 3:
@@ -48,7 +56,7 @@ func _draw() -> void:
 			var f := float(s) / segs
 			var d := lerpf(glow_radius * 0.35, glow_radius * 1.05, f)
 			points.append(Vector2.from_angle(a + _rng.randf_range(-0.35, 0.35) * f) * d)
-		draw_polyline(points, Color(0.7, 0.92, 1.0, 0.85), 1.0, true)
+		_mesh.polyline(points, 1.0, Color(0.7, 0.92, 1.0, 0.85))
 	# 芯
-	draw_circle(Vector2.ZERO, glow_radius * 0.42, Color(0.3, 0.7, 1.0, 0.95))
-	draw_circle(Vector2.ZERO, glow_radius * 0.25 + pulse * 0.6, Color(0.92, 0.98, 1.0, 1.0))
+	_mesh.circle(Vector2.ZERO, glow_radius * 0.42, Color(0.3, 0.7, 1.0, 0.95))
+	_mesh.circle(Vector2.ZERO, glow_radius * 0.25 + pulse * 0.6, Color(0.92, 0.98, 1.0, 1.0))

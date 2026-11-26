@@ -27,7 +27,19 @@ func _ready() -> void:
 	watcher.set("keeper", true)
 	watcher.set("_end", float(args[3]))
 	get_tree().root.add_child.call_deferred(watcher)
-	(func() -> void: get_tree().change_scene_to_file("res://stage%d.tscn" % stage)).call_deferred()
+	if args.size() > 4 and args[4] == "warm":
+		_warm_then.call_deferred(stage)
+	else:
+		(func() -> void: get_tree().change_scene_to_file("res://stage%d.tscn" % stage)).call_deferred()
+
+func _warm_then(stage : int) -> void:
+	var t0 := Time.get_ticks_msec()
+	var loading = load("res://GameScene/UI/loading_overlay.gd")
+	get_tree().create_timer(0.5).timeout.connect(func() -> void:
+		get_viewport().get_texture().get_image().save_png("C:/Users/himar/AppData/Local/Temp/claude/96bf22a87c28d864/da572c0f-6e31-44dc-a65c-83e44b4a6ddd/scratchpad/loading.png"))
+	await loading.run(get_tree())
+	print("WARM done in %d ms, held=%d" % [Time.get_ticks_msec() - t0, load("res://Component/Scene/preload_cache.gd")._held.size()])
+	get_tree().change_scene_to_file("res://stage%d.tscn" % stage)
 
 func _process(delta : float) -> void:
 	if not keeper:

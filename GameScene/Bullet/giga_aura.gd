@@ -1,4 +1,6 @@
 extends Node2D
+## 丸・輪・線をためて、1回の描画命令でまとめて描く道具
+var _mesh = preload("res://GameScene/Effect/batch_mesh.gd").new()
 ## 超巨大弾の見た目を派手にする部品(E_Giga の子)。弾と一緒に大きくなるので、大きさは弾の絵の px で決める。
 ##   ・脈打つ赤橙の光の輪(何重にも重ねる)
 ##   ・逆に回る2本の稲妻の輪と、外へ伸び縮みする光のとげ
@@ -41,6 +43,12 @@ func _process(delta : float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	_fill_mesh()
+	_mesh.flush(get_canvas_item())
+
+## 描く形を _mesh にためる(1回の描画命令でまとめて描くため)
+func _fill_mesh() -> void:
+	_mesh.clear() # 丸・輪・線をためて、最後に1回で描く
 	var pulse := 0.5 + 0.5 * sin(_t * 7.0 + _seed)
 	# 光の輪(外ほど薄く、赤く)
 	for i in 5:
@@ -48,14 +56,14 @@ func _draw() -> void:
 		var r := glow_radius * lerpf(1.25, 0.55, k) * (1.0 + 0.08 * pulse)
 		var c := DEEP.lerp(FIRE, k)
 		c.a = lerpf(0.10, 0.32, k)
-		draw_circle(Vector2.ZERO, r, c)
+		_mesh.circle(Vector2.ZERO, r, c)
 	# 外へ伸び縮みする光のとげ
 	for i in spikes:
 		var a := TAU * float(i) / spikes + _t * 0.8
 		var len := glow_radius * (1.05 + 0.35 * sin(_t * 9.0 + i * 1.7 + _seed))
 		var dir := Vector2.from_angle(a)
-		draw_line(dir * ring_radius * 0.9, dir * len, Color(FIRE, 0.55), 0.9)
-		draw_line(dir * ring_radius * 0.9, dir * len * 0.85, Color(HOT, 0.7), 0.4)
+		_mesh.line(dir * ring_radius * 0.9, dir * len, 0.9, Color(FIRE, 0.55))
+		_mesh.line(dir * ring_radius * 0.9, dir * len * 0.85, 0.4, Color(HOT, 0.7))
 	# 逆に回る2本の稲妻の輪
 	for ring in 2:
 		var dirsign := 1.0 if ring == 0 else -1.0
@@ -66,7 +74,7 @@ func _draw() -> void:
 			var a := TAU * j / n + _t * 2.2 * dirsign
 			var jitter := 0.6 * sin(j * 3.1 + _t * 23.0 + ring * 5.0 + _seed)
 			pts.append(Vector2.from_angle(a) * (rr + jitter))
-		draw_polyline(pts, Color(HOT, 0.75 - 0.25 * ring), 0.6)
+		_mesh.polyline(pts, 0.6, Color(HOT, 0.75 - 0.25 * ring))
 	# 白く燃える芯
-	draw_circle(Vector2.ZERO, ring_radius * (0.55 + 0.1 * pulse), Color(HOT, 0.55))
-	draw_circle(Vector2.ZERO, ring_radius * 0.3, Color(1, 1, 1, 0.7))
+	_mesh.circle(Vector2.ZERO, ring_radius * (0.55 + 0.1 * pulse), Color(HOT, 0.55))
+	_mesh.circle(Vector2.ZERO, ring_radius * 0.3, Color(1, 1, 1, 0.7))

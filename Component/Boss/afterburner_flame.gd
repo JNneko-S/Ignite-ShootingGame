@@ -23,6 +23,8 @@ const DARK := Color(0.45, 0.06, 0.06)
 
 var _time : float = 0.0
 var _rect : RectangleShape2D
+## 炎の玉を1つの三角形の集まりにためて、1回で描く(玉1個ごとに描くと、1本で200回以上の描画命令になる)
+var _mesh = preload("res://GameScene/Effect/batch_mesh.gd").new()
 
 func _init() -> void:
 	var shape := CollisionShape2D.new()
@@ -61,6 +63,7 @@ func _draw() -> void:
 	var first := floori(flowed / spacing) # いちばん噴射口に近い玉の番号(玉ごとに形のゆらぎを固定する)
 	var count := int(l / spacing) + 2
 	# 外の光 → 赤橙 → 黄 → 白い芯 の順に重ねる
+	_mesh.clear()
 	for layer in 4:
 		for i in count:
 			var y := float(i) * spacing + fmod(flowed, spacing) - spacing * 0.5
@@ -77,7 +80,8 @@ func _draw() -> void:
 			if color.a <= 0.01:
 				continue
 			radius *= [1.45, 1.0, 0.68, 0.38][layer]
-			draw_circle(Vector2(x, y), radius, color)
+			_mesh.circle(Vector2(x, y), radius, color, 10)
+	_mesh.flush(get_canvas_item())
 
 ## 噴射口で細く、すぐ太くなり、先へ行くほど細くなる
 func _envelope(t : float) -> float:

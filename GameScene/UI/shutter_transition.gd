@@ -1,5 +1,7 @@
 extends CanvasLayer
 class_name ShutterTransition
+## ロード画面(新しいクラスなので、ファイルを直接読み込む)
+const _Loading := preload("res://GameScene/UI/loading_overlay.gd")
 ## 画面を覆うシャッター(上下2枚)。閉まった状態で使い、シーンを切り替えてから開く。
 ## 子に ShutterTop / ShutterBottom(shutter.gdshader の ColorRect)と、FxLayer/ScreenFx(画面のノイズ)を置く。
 ##
@@ -59,6 +61,8 @@ func close(time : float = 0.5) -> void:
 func change_scene_and_open(path : String) -> void:
 	reparent(get_tree().root)
 	get_tree().paused = false
+	# まだゲームのリソースを読み込んでいなければ、閉じたシャッターの上にロード画面を出して、先に全部読み込む
+	await _Loading.run(get_tree())
 	get_tree().change_scene_to_file(path)
 	await get_tree().process_frame
 	await get_tree().process_frame
